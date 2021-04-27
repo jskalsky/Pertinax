@@ -12,6 +12,59 @@
         <Binding Path="Main" Source="{StaticResource Locator}"/>
     </Window.DataContext>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel LastChildFill="True">
+            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox></ComboBox>
+                    <ComboBox Grid.Column="1"></ComboBox>
+                </Grid>
+                <TextBlock></TextBlock>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                <Button Content="Copy"></Button>
+            </StackPanel>
+            <ListView>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" 
+                          ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
+        <DockPanel Grid.Column="2" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox></ComboBox>
+                    <ComboBox Grid.Column="1"></ComboBox>
+                </Grid>
 
+                <TextBlock></TextBlock>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                <Button Content="Copy"></Button>
+            </StackPanel>
+            <ListView>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
     </Grid>
 </Window>
