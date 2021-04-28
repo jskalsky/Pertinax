@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:FileManager.ViewModel"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
         xmlns:local="clr-namespace:FileManager"
         mc:Ignorable="d"
         Title="File Manager" Height="450" Width="800"
@@ -24,7 +26,13 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox></ComboBox>
+                    <ComboBox ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <command:EventToCommand Command="{Binding OnTargetSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                     <ComboBox Grid.Column="1"></ComboBox>
                 </Grid>
                 <TextBlock></TextBlock>

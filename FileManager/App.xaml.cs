@@ -18,10 +18,10 @@ namespace FileManager
     {
         public App()
         {
-            string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Gis";
+            string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax";
             if (!Directory.Exists(appFolder)) Directory.CreateDirectory(appFolder);
 #if DEBUG
-            FileStream myTraceLog = new FileStream(appFolder + System.IO.Path.DirectorySeparatorChar + "Gis.deb", FileMode.Create);
+            FileStream myTraceLog = new FileStream(appFolder + System.IO.Path.DirectorySeparatorChar + "Pertinax.deb", FileMode.Create);
             TextWriterTraceListener myListener = new TextWriterTraceListener(myTraceLog);
             Debug.Listeners.Add(myListener);
             Debug.AutoFlush = true;
