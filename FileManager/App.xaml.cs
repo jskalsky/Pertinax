@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CommonServiceLocator;
+using FileManager.Properties;
+using FileManager.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -45,6 +48,15 @@ namespace FileManager
                 Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
             }
             e.Handled = false;
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            MainViewModel mvm = ServiceLocator.Current.GetInstance<MainViewModel>();
+            Settings.Default.TargetLeft = mvm.SelectedTargetLeft;
+            Settings.Default.TargetRight = mvm.SelectedTargetRight;
+            Settings.Default.Save();
         }
     }
 }

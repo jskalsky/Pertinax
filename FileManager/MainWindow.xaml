@@ -26,10 +26,10 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}">
+                    <ComboBox ItemsSource="{Binding TargetsLeft}" SelectedItem="{Binding SelectedTargetLeft}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <command:EventToCommand Command="{Binding OnTargetSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                <command:EventToCommand Command="{Binding OnTargetLeftSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -57,7 +57,13 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox></ComboBox>
+                    <ComboBox ItemsSource="{Binding TargetsRight}" SelectedItem="{Binding SelectedTargetRight}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <command:EventToCommand Command="{Binding OnTargetRightSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                     <ComboBox Grid.Column="1"></ComboBox>
                 </Grid>
 

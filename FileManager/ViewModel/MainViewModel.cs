@@ -22,8 +22,10 @@ namespace FileManager.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private string _selectedTarget;
-        private RelayCommand<SelectionChangedEventArgs> _targetSelectionChanged;
+        private string _selectedTargetLeft;
+        private RelayCommand<SelectionChangedEventArgs> _targetLeftSelectionChanged;
+        private string _selectedTargetRight;
+        private RelayCommand<SelectionChangedEventArgs> _targetRightSelectionChanged;
         private Manager _leftPanel;
         private Manager _rightPanel;
         /// <summary>
@@ -32,25 +34,59 @@ namespace FileManager.ViewModel
         public MainViewModel()
         {
             Debug.Print($"MainViewModel constructor");
-            Targets = new ObservableCollection<string>();
-            Targets.Add("Pc");
-            Targets.Add("Z2xx");
-            SelectedTarget = Targets[0];
+            TargetsLeft = new ObservableCollection<string>();
+            TargetsLeft.Add("Pc");
+            TargetsLeft.Add("Z2xx");
+            if(string.IsNullOrEmpty(Properties.Settings.Default.TargetLeft))
+            {
+                SelectedTargetLeft = TargetsLeft[0];
+                Properties.Settings.Default.TargetLeft = SelectedTargetLeft;
+            }
+            else
+            {
+                SelectedTargetLeft = Properties.Settings.Default.TargetLeft;
+            }
+            TargetsRight = new ObservableCollection<string>();
+            TargetsRight.Add("Pc");
+            TargetsRight.Add("Z2xx");
+            if (string.IsNullOrEmpty(Properties.Settings.Default.TargetRight))
+            {
+                SelectedTargetRight = TargetsRight[0];
+                Properties.Settings.Default.TargetRight = SelectedTargetRight;
+            }
+            else
+            {
+                SelectedTargetRight = Properties.Settings.Default.TargetRight;
+            }
         }
 
-        public ObservableCollection<string> Targets { get; }
-        public ObservableCollection<DriveInfo> TargetDrives { get; }
-        public string SelectedTarget { get { return _selectedTarget; } set { _selectedTarget = value; RaisePropertyChanged(); } }
+        public ObservableCollection<string> TargetsLeft { get; }
+        public ObservableCollection<DriveInfo> TargetDrivesLeft { get; }
+        public string SelectedTargetLeft { get { return _selectedTargetLeft; } set { _selectedTargetLeft = value; RaisePropertyChanged(); } }
 
-        public RelayCommand<SelectionChangedEventArgs> OnTargetSelectionChanged => _targetSelectionChanged ?? (_targetSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
-                                                                              (args) => TargetSelectionChanged(args)));
+        public ObservableCollection<string> TargetsRight { get; }
+        public ObservableCollection<DriveInfo> TargetDrivesRight { get; }
+        public string SelectedTargetRight { get { return _selectedTargetRight; } set { _selectedTargetRight = value; RaisePropertyChanged(); } }
+        public RelayCommand<SelectionChangedEventArgs> OnTargetLeftSelectionChanged => _targetLeftSelectionChanged ?? (_targetLeftSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
+                                                                              (args) => TargetLeftSelectionChanged(args)));
 
-        public void TargetSelectionChanged(SelectionChangedEventArgs args)
+        public void TargetLeftSelectionChanged(SelectionChangedEventArgs args)
         {
-            Debug.Print($"TargetSelectionChanged {args.AddedItems.Count}");
+            Debug.Print($"TargetLeftSelectionChanged {args.AddedItems.Count}");
             if (args.AddedItems.Count != 0)
             {
-                _selectedTarget = (string)args.AddedItems[0];
+                _selectedTargetLeft = (string)args.AddedItems[0];
+            }
+        }
+        public RelayCommand<SelectionChangedEventArgs> OnTargetRightSelectionChanged => _targetRightSelectionChanged ?? (_targetRightSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
+                                                                              (args) => TargetRightSelectionChanged(args)));
+
+        public void TargetRightSelectionChanged(SelectionChangedEventArgs args)
+        {
+            Debug.Print($"TargetRightSelectionChanged {args.AddedItems.Count}");
+            if (args.AddedItems.Count != 0)
+            {
+                _selectedTargetRight = (string)args.AddedItems[0];
             }
         }
     }
