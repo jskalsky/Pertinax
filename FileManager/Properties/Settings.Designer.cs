@@ -46,5 +46,29 @@ namespace FileManager.Properties {
                 this["TargetRight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ActualDirectoryLeft {
+            get {
+                return ((string)(this["ActualDirectoryLeft"]));
+            }
+            set {
+                this["ActualDirectoryLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ActualDirectoryRight {
+            get {
+                return ((string)(this["ActualDirectoryRight"]));
+            }
+            set {
+                this["ActualDirectoryRight"] = value;
+            }
+        }
     }
 }

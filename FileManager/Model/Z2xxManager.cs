@@ -19,7 +19,17 @@ namespace FileManager.Model
             throw new NotImplementedException();
         }
 
+        public override string GetDefaultDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
         public override DirectoryItem[] GetDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetActualDirectory(string actualDirectory)
         {
             throw new NotImplementedException();
         }

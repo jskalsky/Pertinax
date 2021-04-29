@@ -20,6 +20,29 @@ namespace FileManager.Model
             return DriveInfo.GetDrives();    
         }
 
+        public override string GetDefaultDirectory()
+        {
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            foreach(DriveInfo di in drives)
+            {
+                if(di.IsReady)
+                {
+                    if(di.Name == "C:\\")
+                    {
+                        return di.RootDirectory.FullName;
+                    }
+                }
+            }
+            foreach(DriveInfo di in drives)
+            {
+                if(di.IsReady)
+                {
+                    return di.RootDirectory.FullName;
+                }
+            }
+            return null;
+        }
+
         public override DirectoryItem[] GetDirectory()
         {
             string[] files = Directory.GetFiles(ActualDirectory);
@@ -34,6 +57,12 @@ namespace FileManager.Model
                 di.Add(new FileItem(Path.GetFileName(file)));
             }
             return di.ToArray();
+        }
+
+        public override void SetActualDirectory(string actualDirectory)
+        {
+            ActualDirectory = actualDirectory;
+
         }
 
         public override byte[] Upload(string fileName)

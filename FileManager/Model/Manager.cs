@@ -9,10 +9,12 @@ namespace FileManager.Model
 {
     public abstract class Manager
     {
-        public string ActualDirectory { get; set; }
+        public string ActualDirectory { get; protected  set; }
         public abstract DriveInfo[] GetAllDrives();
         public abstract DirectoryItem[] GetDirectory();
         public abstract byte[] Upload(string fileName);
         public abstract void Download(string fileName, byte[] file);
+        public abstract string GetDefaultDirectory();
+        public abstract void SetActualDirectory(string actualDirectory);
     }
 }
