@@ -58,6 +58,30 @@ namespace FileManager.ViewModel
             {
                 SelectedTargetRight = Properties.Settings.Default.TargetRight;
             }
+            TargetDrivesLeft = new ObservableCollection<DriveInfo>();
+            TargetDrivesRight = new ObservableCollection<DriveInfo>();
+            if(SelectedTargetLeft == "Pc")
+            {
+                _leftPanel = new WindowsManager();
+            }
+            else
+            {
+                if(SelectedTargetLeft == "Z2xx")
+                {
+                    _leftPanel = new Z2xxManager();
+                }
+            }
+            if (SelectedTargetRight == "Pc")
+            {
+                _rightPanel = new WindowsManager();
+            }
+            else
+            {
+                if (SelectedTargetRight == "Z2xx")
+                {
+                    _rightPanel = new Z2xxManager();
+                }
+            }
         }
 
         public ObservableCollection<string> TargetsLeft { get; }
@@ -67,6 +91,44 @@ namespace FileManager.ViewModel
         public ObservableCollection<string> TargetsRight { get; }
         public ObservableCollection<DriveInfo> TargetDrivesRight { get; }
         public string SelectedTargetRight { get { return _selectedTargetRight; } set { _selectedTargetRight = value; RaisePropertyChanged(); } }
+
+        private void InitPanel(Manager manager, ObservableCollection<DriveInfo> driveInfos, ref string selectedDrive, ref string targetDrive)
+        {
+            DriveInfo[] drives = manager.GetAllDrives();
+            if(drives != null)
+            {
+                foreach(DriveInfo di in drives)
+                {
+                    driveInfos.Add(di);
+                }
+                if(driveInfos.Count!=0)
+                {
+                    if(string.IsNullOrEmpty(selectedDrive))
+                    {
+                        selectedDrive = driveInfos[0].Name;
+                        targetDrive = driveInfos[0].Name;
+                    }
+                    else
+                    {
+                        bool founded = false;
+                        foreach(DriveInfo di in drives)
+                        {
+                            if(di.Name==selectedDrive)
+                            {
+                                targetDrive = di.Name;
+                                founded = true;
+                                break;
+                            }
+                        }
+                        if(!founded)
+                        {
+                            selectedDrive = driveInfos[0].Name;
+                            targetDrive = driveInfos[0].Name;
+                        }
+                    }
+                }
+            }
+        }
         public RelayCommand<SelectionChangedEventArgs> OnTargetLeftSelectionChanged => _targetLeftSelectionChanged ?? (_targetLeftSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
                                                                               (args) => TargetLeftSelectionChanged(args)));
 

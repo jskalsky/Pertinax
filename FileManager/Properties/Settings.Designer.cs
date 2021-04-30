@@ -70,5 +70,29 @@ namespace FileManager.Properties {
                 this["ActualDirectoryRight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TargetDriveLeft {
+            get {
+                return ((string)(this["TargetDriveLeft"]));
+            }
+            set {
+                this["TargetDriveLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TargetDriveRight {
+            get {
+                return ((string)(this["TargetDriveRight"]));
+            }
+            set {
+                this["TargetDriveRight"] = value;
+            }
+        }
     }
 }
