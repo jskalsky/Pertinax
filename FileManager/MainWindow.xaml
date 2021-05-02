@@ -33,7 +33,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-                    <ComboBox Grid.Column="1"></ComboBox>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding TargetDrivesLeft}" SelectedItem="{Binding SelectedDriveInfoLeft}" DisplayMemberPath="Name"></ComboBox>
                 </Grid>
                 <TextBlock></TextBlock>
             </StackPanel>
@@ -64,7 +64,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-                    <ComboBox Grid.Column="1"></ComboBox>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding TargetDrivesRight}" SelectedItem="{Binding SelectedDriveInfoRight}" DisplayMemberPath="Name"></ComboBox>
                 </Grid>
 
                 <TextBlock></TextBlock>
