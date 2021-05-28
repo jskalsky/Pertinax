@@ -24,14 +24,12 @@ namespace FileManager.ViewModel
     {
         private string _selectedTargetLeft;
         private RelayCommand<SelectionChangedEventArgs> _targetLeftSelectionChanged;
+        private DriveInfo _selectedDriveInfoLeft;
         private string _selectedTargetRight;
         private RelayCommand<SelectionChangedEventArgs> _targetRightSelectionChanged;
+        private DriveInfo _selectedDriveInfoRight;
         private Manager _leftPanel;
         private Manager _rightPanel;
-        private RelayCommand _settings;
-        private RelayCommand _start;
-        private RelayCommand _stop;
-
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -41,7 +39,7 @@ namespace FileManager.ViewModel
             TargetsLeft = new ObservableCollection<string>();
             TargetsLeft.Add("Pc");
             TargetsLeft.Add("Z2xx");
-            if(string.IsNullOrEmpty(Properties.Settings.Default.TargetLeft))
+            if (string.IsNullOrEmpty(Properties.Settings.Default.TargetLeft))
             {
                 SelectedTargetLeft = TargetsLeft[0];
                 Properties.Settings.Default.TargetLeft = SelectedTargetLeft;
@@ -64,13 +62,13 @@ namespace FileManager.ViewModel
             }
             TargetDrivesLeft = new ObservableCollection<DriveInfo>();
             TargetDrivesRight = new ObservableCollection<DriveInfo>();
-            if(SelectedTargetLeft == "Pc")
+            if (SelectedTargetLeft == "Pc")
             {
                 _leftPanel = new WindowsManager();
             }
             else
             {
-                if(SelectedTargetLeft == "Z2xx")
+                if (SelectedTargetLeft == "Z2xx")
                 {
                     _leftPanel = new Z2xxManager();
                 }
@@ -86,48 +84,64 @@ namespace FileManager.ViewModel
                     _rightPanel = new Z2xxManager();
                 }
             }
+            string selectedDrive = Properties.Settings.Default.TargetDriveLeft;
+            InitPanel(_leftPanel, TargetDrivesLeft, selectedDrive, out DriveInfo driveInfo);
+            SelectedDriveInfoLeft = driveInfo;
+            if(driveInfo != null)
+            {
+                Properties.Settings.Default.TargetDriveLeft = driveInfo.Name;
+            }
+            selectedDrive = Properties.Settings.Default.TargetDriveRight;
+            InitPanel(_rightPanel, TargetDrivesRight, selectedDrive, out DriveInfo driveInfoRight);
+            SelectedDriveInfoRight = driveInfoRight;
+            if(driveInfoRight != null)
+            {
+                Properties.Settings.Default.TargetDriveRight = driveInfoRight.Name;
+            }
         }
 
         public ObservableCollection<string> TargetsLeft { get; }
         public ObservableCollection<DriveInfo> TargetDrivesLeft { get; }
         public string SelectedTargetLeft { get { return _selectedTargetLeft; } set { _selectedTargetLeft = value; RaisePropertyChanged(); } }
+        public DriveInfo SelectedDriveInfoLeft { get { return _selectedDriveInfoLeft; } set { _selectedDriveInfoLeft = value; RaisePropertyChanged(); } }
 
         public ObservableCollection<string> TargetsRight { get; }
         public ObservableCollection<DriveInfo> TargetDrivesRight { get; }
         public string SelectedTargetRight { get { return _selectedTargetRight; } set { _selectedTargetRight = value; RaisePropertyChanged(); } }
+        public DriveInfo SelectedDriveInfoRight { get { return _selectedDriveInfoRight; } set { _selectedDriveInfoRight = value; RaisePropertyChanged(); } }
 
-        private void InitPanel(Manager manager, ObservableCollection<DriveInfo> driveInfos, ref string selectedDrive, ref string targetDrive)
+        private void InitPanel(Manager manager, ObservableCollection<DriveInfo> driveInfos, string selectedDriveName, out DriveInfo selectedDrive)
         {
+            driveInfos.Clear();
+            selectedDrive = null;
             DriveInfo[] drives = manager.GetAllDrives();
-            if(drives != null)
+            if (drives != null)
             {
-                foreach(DriveInfo di in drives)
+                foreach (DriveInfo di in drives)
                 {
                     driveInfos.Add(di);
                 }
-                if(driveInfos.Count!=0)
+                if (driveInfos.Count != 0)
                 {
-                    if(string.IsNullOrEmpty(selectedDrive))
+                    if (string.IsNullOrEmpty(selectedDriveName))
                     {
-                        selectedDrive = driveInfos[0].Name;
-                        targetDrive = driveInfos[0].Name;
+                        selectedDrive = driveInfos[0];
                     }
                     else
                     {
                         bool founded = false;
-                        foreach(DriveInfo di in drives)
+                        foreach (DriveInfo di in drives)
                         {
-                            if(di.Name==selectedDrive)
+                            if (di.Name == selectedDriveName)
                             {
-                                targetDrive = di.Name;
                                 founded = true;
+                                selectedDrive = di;
                                 break;
                             }
                         }
-                        if(!founded)
+                        if (!founded)
                         {
-                            selectedDrive = driveInfos[0].Name;
-                            targetDrive = driveInfos[0].Name;
+                            selectedDrive = driveInfos[0];
                         }
                     }
                 }
@@ -154,26 +168,6 @@ namespace FileManager.ViewModel
             {
                 _selectedTargetRight = (string)args.AddedItems[0];
             }
-        }
-
-        public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
-        private void SettingsDialog()
-        {
-            View.Settings settings = new View.Settings();
-            if (settings.ShowDialog() == true)
-            {
-
-            }
-        }
-        public RelayCommand StartCommand => _start ?? (_start = new RelayCommand(StartTest));
-        private void StartTest()
-        {
-            DownloadTest dt = new DownloadTest();
-            dt.Execution();
-        }
-        public RelayCommand StopCommand => _stop ?? (_stop = new RelayCommand(StopTest));
-        private void StopTest()
-        {
         }
     }
 }
