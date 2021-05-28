@@ -94,5 +94,41 @@ namespace FileManager.Properties {
                 this["TargetDriveRight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Bup {
+            get {
+                return ((string)(this["Bup"]));
+            }
+            set {
+                this["Bup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DownloadType {
+            get {
+                return ((string)(this["DownloadType"]));
+            }
+            set {
+                this["DownloadType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int RepetitiveRate {
+            get {
+                return ((int)(this["RepetitiveRate"]));
+            }
+            set {
+                this["RepetitiveRate"] = value;
+            }
+        }
     }
 }

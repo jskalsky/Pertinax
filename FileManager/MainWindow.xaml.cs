@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Interop;
 
 namespace FileManager
 {
@@ -23,6 +24,27 @@ namespace FileManager
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+            source.AddHook(WndProc);
+        }
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch(msg)
+            {
+                case 0x8001:
+                    handled = true;
+                    return (IntPtr)1;
+                case 0x8002:
+                    ProgressBarControl.Value = (ushort)wParam;
+                    handled = true;
+                    break;
+            }
+            return IntPtr.Zero;
         }
     }
 }

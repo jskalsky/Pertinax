@@ -43,6 +43,7 @@ namespace FileManager.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
         }
 
         public MainViewModel Main
@@ -53,6 +54,10 @@ namespace FileManager.ViewModel
             }
         }
         
+        public SettingsViewModel AppSettings
+        {
+            get { return ServiceLocator.Current.GetInstance<SettingsViewModel>(); }
+        }
         public static void Cleanup()
         {
             // TODO Clear the ViewModels

@@ -28,6 +28,10 @@ namespace FileManager.ViewModel
         private RelayCommand<SelectionChangedEventArgs> _targetRightSelectionChanged;
         private Manager _leftPanel;
         private Manager _rightPanel;
+        private RelayCommand _settings;
+        private RelayCommand _start;
+        private RelayCommand _stop;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -150,6 +154,26 @@ namespace FileManager.ViewModel
             {
                 _selectedTargetRight = (string)args.AddedItems[0];
             }
+        }
+
+        public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
+        private void SettingsDialog()
+        {
+            View.Settings settings = new View.Settings();
+            if (settings.ShowDialog() == true)
+            {
+
+            }
+        }
+        public RelayCommand StartCommand => _start ?? (_start = new RelayCommand(StartTest));
+        private void StartTest()
+        {
+            DownloadTest dt = new DownloadTest();
+            dt.Execution();
+        }
+        public RelayCommand StopCommand => _stop ?? (_stop = new RelayCommand(StopTest));
+        private void StopTest()
+        {
         }
     }
 }

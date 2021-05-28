@@ -13,72 +13,84 @@
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}"/>
     </Window.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel LastChildFill="True">
-            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <ComboBox ItemsSource="{Binding TargetsLeft}" SelectedItem="{Binding SelectedTargetLeft}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <command:EventToCommand Command="{Binding OnTargetLeftSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <ComboBox Grid.Column="1"></ComboBox>
-                </Grid>
-                <TextBlock></TextBlock>
-            </StackPanel>
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                <Button Content="Copy"></Button>
-            </StackPanel>
-            <ListView>
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name"></GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </DockPanel>
-        <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" 
+    <DockPanel LastChildFill="True">
+        <ToolBarTray DockPanel.Dock="Top" Background="LightSteelBlue">
+            <ToolBar Style="{DynamicResource MyToolBar}" Background="LightSteelBlue">
+                <Button Content="Settings" Command="{Binding SettingsCommand}"/>
+                <Button Content="Start" Command="{Binding StartCommand}"/>
+                <Button Content="Stop" Command="{Binding StopCommand}"/>
+            </ToolBar>
+        </ToolBarTray>
+        <StatusBar DockPanel.Dock="Bottom">
+            <ProgressBar Name="ProgressBarControl" Minimum="0" Maximum="100" Width="100" Height="15"/>
+        </StatusBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox ItemsSource="{Binding TargetsLeft}" SelectedItem="{Binding SelectedTargetLeft}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <command:EventToCommand Command="{Binding OnTargetLeftSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <ComboBox Grid.Column="1"></ComboBox>
+                    </Grid>
+                    <TextBlock></TextBlock>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                    <Button Content="Copy"></Button>
+                </StackPanel>
+                <ListView>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" 
                           ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
-        <DockPanel Grid.Column="2" LastChildFill="True">
-            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <ComboBox ItemsSource="{Binding TargetsRight}" SelectedItem="{Binding SelectedTargetRight}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <command:EventToCommand Command="{Binding OnTargetRightSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <ComboBox Grid.Column="1"></ComboBox>
-                </Grid>
+            <DockPanel Grid.Column="2" LastChildFill="True">
+                <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox ItemsSource="{Binding TargetsRight}" SelectedItem="{Binding SelectedTargetRight}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <command:EventToCommand Command="{Binding OnTargetRightSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <ComboBox Grid.Column="1"></ComboBox>
+                    </Grid>
 
-                <TextBlock></TextBlock>
-            </StackPanel>
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                <Button Content="Copy"></Button>
-            </StackPanel>
-            <ListView>
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name"></GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </DockPanel>
-    </Grid>
+                    <TextBlock></TextBlock>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                    <Button Content="Copy"></Button>
+                </StackPanel>
+                <ListView>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
 </Window>
