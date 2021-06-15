@@ -88,6 +88,7 @@
     <Compile Include="Model\WindowsManager.cs" />
     <Compile Include="Model\Z2xxManager.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ScrollIntoViewBehavior.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\Settings.xaml.cs">

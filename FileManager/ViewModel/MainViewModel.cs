@@ -1,4 +1,5 @@
 using FileManager.Model;
+using FileManager.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
@@ -30,12 +31,19 @@ namespace FileManager.ViewModel
         private DriveInfo _selectedDriveInfoRight;
         private Manager _leftPanel;
         private Manager _rightPanel;
+        private RelayCommand _settings;
+        private RelayCommand _start;
+
+        private uint _freeRam;
+        private int _nrFiles;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
             Debug.Print($"MainViewModel constructor");
+            Messages = new ObservableCollection<string>();
             TargetsLeft = new ObservableCollection<string>();
             TargetsLeft.Add("Pc");
             TargetsLeft.Add("Z2xx");
@@ -109,7 +117,18 @@ namespace FileManager.ViewModel
         public ObservableCollection<DriveInfo> TargetDrivesRight { get; }
         public string SelectedTargetRight { get { return _selectedTargetRight; } set { _selectedTargetRight = value; RaisePropertyChanged(); } }
         public DriveInfo SelectedDriveInfoRight { get { return _selectedDriveInfoRight; } set { _selectedDriveInfoRight = value; RaisePropertyChanged(); } }
+        public ObservableCollection<string> Messages { get; }
+        public uint FreeRam
+        {
+            get { return _freeRam; }
+            set { _freeRam = value;RaisePropertyChanged(); }
+        }
 
+        public int NrFiles
+        {
+            get { return _nrFiles; }
+            set { _nrFiles = value;RaisePropertyChanged(); }
+        }
         private void InitPanel(Manager manager, ObservableCollection<DriveInfo> driveInfos, string selectedDriveName, out DriveInfo selectedDrive)
         {
             driveInfos.Clear();
@@ -168,6 +187,22 @@ namespace FileManager.ViewModel
             {
                 _selectedTargetRight = (string)args.AddedItems[0];
             }
+        }
+
+        public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
+        private void SettingsDialog()
+        {
+            Settings settings = new Settings();
+            if(settings.ShowDialog() == true)
+            {
+
+            }
+        }
+        public RelayCommand StartCommand => _start ?? (_start = new RelayCommand(Start));
+        private void Start()
+        {
+            DownloadTest dt = new DownloadTest();
+            dt.Test();
         }
     }
 }

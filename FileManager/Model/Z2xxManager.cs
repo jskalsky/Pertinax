@@ -16,27 +16,26 @@ namespace FileManager.Model
 
         public override DriveInfo[] GetAllDrives()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override string GetDefaultDirectory()
         {
-            throw new NotImplementedException();
+            return string.Empty;
         }
 
         public override DirectoryItem[] GetDirectory()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override void SetActualDirectory(string actualDirectory)
         {
-            throw new NotImplementedException();
         }
 
         public override byte[] Upload(string fileName)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

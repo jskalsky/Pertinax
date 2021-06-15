@@ -54,8 +54,8 @@ namespace FileManager
         {
             base.OnExit(e);
             MainViewModel mvm = ServiceLocator.Current.GetInstance<MainViewModel>();
-            Settings.Default.TargetLeft = mvm.SelectedTargetLeft;
-            Settings.Default.TargetRight = mvm.SelectedTargetRight;
+//            Settings.Default.TargetLeft = mvm.SelectedTargetLeft;
+//            Settings.Default.TargetRight = mvm.SelectedTargetRight;
             Settings.Default.Save();
         }
     }
