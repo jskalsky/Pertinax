@@ -26,7 +26,7 @@ namespace FileManager.View
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            FileManager.Properties.Settings.Default.Bup = TextBlockBup.Text;
+            FileManager.Properties.Settings.Default.Startup = TextBlockBup.Text;
             DialogResult = true;
         }
     }

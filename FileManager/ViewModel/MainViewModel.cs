@@ -202,7 +202,7 @@ namespace FileManager.ViewModel
         private void Start()
         {
             DownloadTest dt = new DownloadTest();
-            dt.Test();
+            dt.Test(Properties.Settings.Default.Startup, Properties.Settings.Default.RepetitiveRate, Properties.Settings.Default.IsTls);
         }
     }
 }

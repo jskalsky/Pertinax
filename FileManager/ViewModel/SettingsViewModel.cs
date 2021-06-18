@@ -12,47 +12,45 @@ namespace FileManager.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private string _selectedDownloadType;
-        private string _bupFilename;
-
+        private string _startupFilename;
+        private int _repetitiveRate;
+        private bool _isTls;
         private RelayCommand _browse;
 
         public SettingsViewModel()
         {
-            DownloadTypes = new string[] { "With reset", "Without reset" };
-            if(string.IsNullOrEmpty(Settings.Default.DownloadType))
+            if (!string.IsNullOrEmpty(Settings.Default.Startup))
             {
-                SelectedDownloadType = DownloadTypes[0];
+                StartupFileName = Settings.Default.Startup;
             }
-            else
-            {
-                SelectedDownloadType = Settings.Default.DownloadType;
-            }
-            if(!string.IsNullOrEmpty(Settings.Default.Bup))
-            {
-                BupFileName = Settings.Default.Bup;
-            }
-        }
-        public string[] DownloadTypes { get; }
-        public string SelectedDownloadType
-        {
-            get { return _selectedDownloadType; }
-            set { _selectedDownloadType = value; RaisePropertyChanged(); }
+            RepetitiveRate = Settings.Default.RepetitiveRate;
+            IsTls = Settings.Default.IsTls;
         }
 
-        public string BupFileName
+        public string StartupFileName
         {
-            get { return _bupFilename; }
-            set { _bupFilename = value;RaisePropertyChanged(); }
+            get { return _startupFilename; }
+            set { _startupFilename = value; RaisePropertyChanged(); }
         }
 
+        public int RepetitiveRate
+        {
+            get { return _repetitiveRate; }
+            set { _repetitiveRate = value; RaisePropertyChanged(); }
+        }
+
+        public bool IsTls
+        {
+            get { return _isTls; }
+            set { _isTls = value;RaisePropertyChanged(); }
+        }
         public RelayCommand BrowseCommand => _browse ?? (_browse = new RelayCommand(BrowseDialog));
         private void BrowseDialog()
         {
-            OpenFileDialog ofn = new OpenFileDialog() { Multiselect = false, Filter = Resources.FilterBup };
-            if(ofn.ShowDialog() == true)
+            OpenFileDialog ofn = new OpenFileDialog() { Multiselect = false, Filter = Resources.FilterStartup };
+            if (ofn.ShowDialog() == true)
             {
-                BupFileName = ofn.FileName;
+                StartupFileName = ofn.FileName;
             }
         }
     }

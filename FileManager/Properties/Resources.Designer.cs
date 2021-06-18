@@ -61,11 +61,11 @@ namespace FileManager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Buf files (*.bup)|*.bup.
+        ///   Looks up a localized string similar to Startup files (*.sup)|*.sup.
         /// </summary>
-        internal static string FilterBup {
+        internal static string FilterStartup {
             get {
-                return ResourceManager.GetString("FilterBup", resourceCulture);
+                return ResourceManager.GetString("FilterStartup", resourceCulture);
             }
         }
     }

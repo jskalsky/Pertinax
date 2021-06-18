@@ -54,6 +54,10 @@ namespace FileManager
         {
             base.OnExit(e);
             MainViewModel mvm = ServiceLocator.Current.GetInstance<MainViewModel>();
+            SettingsViewModel svm = ServiceLocator.Current.GetInstance<SettingsViewModel>();
+            Settings.Default.Startup = svm.StartupFileName;
+            Settings.Default.RepetitiveRate = svm.RepetitiveRate;
+            Settings.Default.IsTls = svm.IsTls;
 //            Settings.Default.TargetLeft = mvm.SelectedTargetLeft;
 //            Settings.Default.TargetRight = mvm.SelectedTargetRight;
             Settings.Default.Save();

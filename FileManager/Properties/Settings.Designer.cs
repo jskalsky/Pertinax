@@ -12,7 +12,7 @@ namespace FileManager.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -98,24 +98,12 @@ namespace FileManager.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Bup {
+        public string Startup {
             get {
-                return ((string)(this["Bup"]));
+                return ((string)(this["Startup"]));
             }
             set {
-                this["Bup"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DownloadType {
-            get {
-                return ((string)(this["DownloadType"]));
-            }
-            set {
-                this["DownloadType"] = value;
+                this["Startup"] = value;
             }
         }
         
@@ -128,6 +116,18 @@ namespace FileManager.Properties {
             }
             set {
                 this["RepetitiveRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsTls {
+            get {
+                return ((bool)(this["IsTls"]));
+            }
+            set {
+                this["IsTls"] = value;
             }
         }
     }

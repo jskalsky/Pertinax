@@ -21,17 +21,16 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Download type"/>
-                    <ComboBox Margin="10,0,0,0" MinWidth="200" ItemsSource="{Binding DownloadTypes}" SelectedItem="{Binding SelectedDownloadType}"></ComboBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="File name"/>
-                    <TextBlock MinWidth="300" Margin="10,0,10,0" Text="{Binding BupFileName}" Name="TextBlockBup"/>
+                    <Label Content="Startup"/>
+                    <TextBlock MinWidth="300" Margin="10,0,10,0" Text="{Binding StartupFileName}" Name="TextBlockBup"/>
                     <Button Content="..." Command="{Binding BrowseCommand}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Repetition rate"/>
-                    <TextBlock Text="100" VerticalAlignment="Center" MinWidth="60" TextAlignment="Right"/>
+                    <TextBlock Text="{Binding RepetitiveRate}" VerticalAlignment="Center" MinWidth="60" TextAlignment="Right"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="Tls" IsChecked="{Binding IsTls}" VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
