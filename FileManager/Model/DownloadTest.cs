@@ -25,6 +25,7 @@ namespace FileManager.Model
                     Kos2021.Kos.DownloadFile(handle, id, ip, bupName, $"/usr/pertinax/bup/{Path.GetFileName(bupName)}", Process.GetCurrentProcess().MainWindowHandle);
                     ushort taskNo = 0;
                     Kos2021.Kos.NewTask(handle, id, ip, $"{ Path.GetFileNameWithoutExtension(bupName)}", T1, T2, 0, out taskNo);
+                    Kos2021.Kos.GetTaskNo(handle, id, ip, $"{ Path.GetFileNameWithoutExtension(bupName)}", out taskNo);
                     Kos2021.Kos.RequestTask(handle, id, ip, taskNo, 4, 0);
                 }
                 catch (Exception exc)
@@ -45,7 +46,8 @@ namespace FileManager.Model
                     Kos2021.Kos.DownloadFile(handle, id, ip, bupName, $"/usr/pertinax/bup/{Path.GetFileName(bupName)}", Process.GetCurrentProcess().MainWindowHandle);
                     ushort taskNo = 0;
                     Kos2021.Kos.NewTask(handle, id, ip, $"{ Path.GetFileNameWithoutExtension(bupName)}", T1, T2, 0, out taskNo);
-                    Kos2021.Kos.RequestTask(handle, id, ip, taskNo, 4, 0);
+                    Kos2021.Kos.GetTaskNo(handle, id, ip, $"{ Path.GetFileNameWithoutExtension(bupName)}", out taskNo);
+                    Kos2021.Kos.RequestTask(handle, id, ip, taskNo, 0x60, 0);
                 }
                 catch (Exception exc)
                 {
@@ -209,11 +211,11 @@ namespace FileManager.Model
                         if (isTls)
                         {
                             string winFileName = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax" + Path.DirectorySeparatorChar + "sync.hsa";
-                            await ExecutionTls(handle, id, ip, bup.Name, bup.T1, bup.T2, winFileName);
+                            await ExecutionTls(handle, id, ip, bup.Name, (ushort)(bup.T1 | 0x8000), bup.T2, winFileName);
                         }
                         else
                         {
-                            await Execution(handle, id, ip, bup.Name, bup.T1, bup.T2);
+                            await Execution(handle, id, ip, bup.Name, (ushort)(bup.T1 | 0x8000), bup.T2);
                         }
                         if (messages.Count != 0)
                         {

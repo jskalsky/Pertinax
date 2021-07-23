@@ -157,11 +157,37 @@ namespace FileManager.Kos2021
             }
             catch (COMException e)
             {
+                Debug.Print($"RequestTask {e.Message}");
+                StackTrace stackTrace = new StackTrace(e, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
                 TestKosException(e);
                 throw;
             }
         }
 
+        public static void GetTaskNo(uint handle, byte id, string ip, string name, out ushort no)
+        {
+            try
+            {
+                ushort n = 0;
+                KosLib.kosGetTaskNo(handle, KosIpAddress.GetAddress(ip, id), name, out n);
+                no = n;
+            }
+            catch (COMException e)
+            {
+                Debug.Print($"RequestTask {e.Message}");
+                StackTrace stackTrace = new StackTrace(e, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
+                TestKosException(e);
+                throw;
+            }
+        }
         public static void SystemInfo(uint handle, byte id, string ip, out SystemInfo si)
         {
             try
@@ -245,6 +271,12 @@ namespace FileManager.Kos2021
             }
             catch (COMException exc)
             {
+                Debug.Print($"DownloadFile {exc.Message}");
+                StackTrace stackTrace = new StackTrace(exc, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
                 TestKosException(exc);
                 throw;
             }
@@ -310,6 +342,7 @@ namespace FileManager.Kos2021
         private static void TestKosException(COMException exc)
         {
             Console.WriteLine($"Exception {exc.ErrorCode:X}");
+            Debug.Print($"Exception {exc.ErrorCode:X}");
             LastHResult = exc.ErrorCode & 0xffff;
             if (((exc.ErrorCode >> 16) & 0x7ff) == 100)
             {
