@@ -1,4 +1,5 @@
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 
 namespace OpcUaExplorer.ViewModel
 {
@@ -16,19 +17,29 @@ namespace OpcUaExplorer.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private RelayCommand _settings;
+        private string _serverIpAddress;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+            ServerIpAddress = Properties.Settings.Default.ServerIpAddress;
+        }
+
+        public string ServerIpAddress
+        {
+            get { return _serverIpAddress; }
+            set { _serverIpAddress = value; RaisePropertyChanged(); }
+        }
+        public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
+        private void SettingsDialog()
+        {
+            View.Setup settings = new View.Setup();
+            if (settings.ShowDialog() == true)
+            {
+
+            }
         }
     }
 }

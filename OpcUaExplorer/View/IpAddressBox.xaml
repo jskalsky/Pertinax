@@ -4,9 +4,33 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:OpcUaExplorer.View"
+             xmlns:vm="clr-namespace:OpcUaExplorer.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="20" d:DesignWidth="160">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="30" />
+        </Grid.ColumnDefinitions>
+        <TextBox Name="Part1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part1_GotFocus" Loaded="Part1_Loaded">
+            <TextBox.Text>
+                <Binding Path="Part1" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <vm:IpAddressValidationRule ValidationStep="RawProposedValue"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="."/>
+        <TextBox Name="Part2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part2_GotFocus" Text="255"></TextBox>
+        <TextBlock Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="."/>
+        <TextBox Name="Part3" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part3_GotFocus" Text="255"></TextBox>
+        <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="."/>
+        <TextBox Name="Part4" Grid.Column="6" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part4_GotFocus" Text="255"></TextBox>
     </Grid>
 </UserControl>

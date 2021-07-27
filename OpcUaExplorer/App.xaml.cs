@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpcUaExplorer.Properties;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -57,7 +58,7 @@ namespace OpcUaExplorer
 //            Settings.Default.IsTls = svm.IsTls;
             //            Settings.Default.TargetLeft = mvm.SelectedTargetLeft;
             //            Settings.Default.TargetRight = mvm.SelectedTargetRight;
-//            Settings.Default.Save();
+            Settings.Default.Save();
         }
     }
 }

@@ -24,5 +24,45 @@ namespace OpcUaExplorer.View
         {
             InitializeComponent();
         }
+
+        private void Part1_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            if(tb != null)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void Part2_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            if (tb != null)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void Part3_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            if (tb != null)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void Part4_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            if (tb != null)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void Part1_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }

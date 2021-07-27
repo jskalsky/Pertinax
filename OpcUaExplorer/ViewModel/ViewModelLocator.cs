@@ -43,6 +43,7 @@ namespace OpcUaExplorer.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<SetupVm>();
         }
 
         public MainViewModel Main
@@ -52,7 +53,15 @@ namespace OpcUaExplorer.ViewModel
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
-        
+
+        public SetupVm SetupDialog
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SetupVm>();
+            }
+        }
+
         public static void Cleanup()
         {
             // TODO Clear the ViewModels

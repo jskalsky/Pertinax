@@ -20,8 +20,17 @@
     <DockPanel LastChildFill="True">
         <ToolBarTray DockPanel.Dock="Top" Background="LightSteelBlue">
             <ToolBar Style="{DynamicResource MyToolBar}" Background="LightSteelBlue">
-                <Button Content="{StaticResource PropertiesIcon}"/>
+                <TextBlock Text="{Binding ServerIpAddress}" Foreground="Black" Background="White" VerticalAlignment="Center"/>
+                <Button Content="{StaticResource PropertiesIcon}" Command="{Binding SettingsCommand}"/>
             </ToolBar>
         </ToolBarTray>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Grid.Column="0"></TreeView>
+        </Grid>
     </DockPanel>
 </Window>
