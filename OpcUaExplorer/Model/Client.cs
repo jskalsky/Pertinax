@@ -14,6 +14,7 @@ namespace OpcUaExplorer.Model
     {
         private DispatcherTimer _timer;
         private bool _connected;
+        private bool _browse;
         public Client(string ip)
         {
             ServerIpAddress = ip;
@@ -21,6 +22,7 @@ namespace OpcUaExplorer.Model
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
             Connected = false;
+            _browse = true;
         }
 
         string ServerIpAddress { get; }
@@ -44,6 +46,25 @@ namespace OpcUaExplorer.Model
             int result = OpcUa.Connect(ip);
             Debug.Print($"result= {result}");
             Connected = (result != 0) ? false : true;
+            if (Connected && _browse)
+            {
+                int nr = 0;
+                BrowseResponse[] br = null;
+                result = OpcUa.Browse(85, ref nr, br);
+                Debug.Print($"Browse {nr}");
+                br = new BrowseResponse[nr];
+                for (int i = 0; i < nr; ++i)
+                {
+                    br[i] = new BrowseResponse(0, 0, new byte[32], 0, new byte[32], new byte[32]);
+                }
+                Debug.Print($"br {br[0]}, {br[1]}, {nr}");
+                result = OpcUa.Browse(85, ref nr, br);
+                for (int i = 0; i < nr; ++i)
+                {
+                    Debug.Print($"{br[i]}");
+                    Debug.Print($"i= {i}, {br[i].numeric}");
+                }
+            }
         }
 
         public int Open(int security)

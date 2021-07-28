@@ -27,3 +27,16 @@ extern "C" OPCUA_API int __stdcall Connect(const char *address)
         return 1;
     }
 }
+
+extern "C" OPCUA_API int __stdcall Browse(unsigned long id, int* nr, BrowseResponse uk[])
+{
+    try
+    {
+        return client.Browse(id, nr, uk);
+    }
+    catch (...)
+    {
+        return 1;
+    }
+}
+
