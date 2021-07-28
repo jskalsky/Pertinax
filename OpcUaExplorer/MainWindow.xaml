@@ -20,10 +20,15 @@
     <DockPanel LastChildFill="True">
         <ToolBarTray DockPanel.Dock="Top" Background="LightSteelBlue">
             <ToolBar Style="{DynamicResource MyToolBar}" Background="LightSteelBlue">
-                <TextBlock Text="{Binding ServerIpAddress}" Foreground="Black" Background="White" VerticalAlignment="Center"/>
                 <Button Content="{StaticResource PropertiesIcon}" Command="{Binding SettingsCommand}"/>
             </ToolBar>
         </ToolBarTray>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Server" Foreground="Black" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding ServerIpAddress}" Foreground="{Binding IpForeground}"  Background="{Binding IpBackground}"  VerticalAlignment="Center" Margin="10"/>
+            </StackPanel>
+        </StatusBar>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

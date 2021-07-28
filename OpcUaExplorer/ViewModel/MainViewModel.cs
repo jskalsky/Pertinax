@@ -1,5 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using System.Windows.Media;
 
 namespace OpcUaExplorer.ViewModel
 {
@@ -19,18 +20,54 @@ namespace OpcUaExplorer.ViewModel
     {
         private RelayCommand _settings;
         private string _serverIpAddress;
+        private Brush _ipForeground;
+        private Brush _ipBackground;
+        private Model.Client _client;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
             ServerIpAddress = Properties.Settings.Default.ServerIpAddress;
+            IpBackground = new SolidColorBrush(Colors.Red);
+            IpForeground = new SolidColorBrush(Colors.White);
+            _client = new Model.Client(ServerIpAddress);
+            _client.PropertyChanged += _client_PropertyChanged;
+            _client.Open(0);
+        }
+
+        private void _client_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "Connected":
+                    if(_client.Connected)
+                    {
+                        IpBackground = new SolidColorBrush(Colors.Green);
+                    }
+                    else
+                    {
+                        IpBackground = new SolidColorBrush(Colors.Red);
+                    }
+                    break;
+            }
         }
 
         public string ServerIpAddress
         {
             get { return _serverIpAddress; }
             set { _serverIpAddress = value; RaisePropertyChanged(); }
+        }
+
+        public Brush IpForeground
+        {
+            get { return _ipForeground; }
+            set { _ipForeground = value; RaisePropertyChanged(); }
+        }
+        public Brush IpBackground
+        {
+            get { return _ipBackground; }
+            set { _ipBackground = value; RaisePropertyChanged(); }
         }
         public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
         private void SettingsDialog()

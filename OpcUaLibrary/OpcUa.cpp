@@ -1,0 +1,29 @@
+#include "OpcUa.h"
+#include "Client.h"
+#include <exception>
+
+Client client;
+
+extern "C" OPCUA_API int __stdcall OpenClient(int security)
+{
+    try
+    {
+        return client.Open(security);
+    }
+    catch (...)
+    {
+        return 1;
+    }
+}
+
+extern "C" OPCUA_API int __stdcall Connect(const char *address)
+{
+    try
+    {
+        return client.Connect(address);
+    }
+    catch (...)
+    {
+        return 1;
+    }
+}

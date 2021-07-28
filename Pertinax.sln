@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientOpcUa", "ClientOpcUa\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpcUaExplorer", "OpcUaExplorer\OpcUaExplorer.csproj", "{2630B4ED-0AD9-4899-88CB-D67DFFE88CBD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpcUaLibrary", "OpcUaLibrary\OpcUaLibrary.vcxproj", "{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,16 @@ Global
 		{2630B4ED-0AD9-4899-88CB-D67DFFE88CBD}.Release|x64.Build.0 = Release|Any CPU
 		{2630B4ED-0AD9-4899-88CB-D67DFFE88CBD}.Release|x86.ActiveCfg = Release|Any CPU
 		{2630B4ED-0AD9-4899-88CB-D67DFFE88CBD}.Release|x86.Build.0 = Release|Any CPU
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Debug|x64.ActiveCfg = Debug|x64
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Debug|x64.Build.0 = Debug|x64
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Debug|x86.ActiveCfg = Debug|Win32
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Debug|x86.Build.0 = Debug|Win32
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Release|Any CPU.ActiveCfg = Release|Win32
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Release|x64.ActiveCfg = Release|x64
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Release|x64.Build.0 = Release|x64
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Release|x86.ActiveCfg = Release|Win32
+		{EBB6643C-7516-48D8-BA99-DB0582AC0FC4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
