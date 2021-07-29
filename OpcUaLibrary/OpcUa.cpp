@@ -28,11 +28,11 @@ extern "C" OPCUA_API int __stdcall Connect(const char *address)
     }
 }
 
-extern "C" OPCUA_API int __stdcall Browse(unsigned long id, int* nr, BrowseResponse uk[])
+extern "C" OPCUA_API int __stdcall Browse(unsigned short int namespaceIndex, unsigned long id, int* nr, BrowseResponse uk[])
 {
     try
     {
-        return client.Browse(id, nr, uk);
+        return client.Browse(namespaceIndex, id, nr, uk);
     }
     catch (...)
     {

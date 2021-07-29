@@ -1,5 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using System.Diagnostics;
 using System.Windows.Media;
 
 namespace OpcUaExplorer.ViewModel
@@ -23,6 +24,7 @@ namespace OpcUaExplorer.ViewModel
         private Brush _ipForeground;
         private Brush _ipBackground;
         private Model.Client _client;
+        private Model.TreeViewItem _root;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -34,6 +36,7 @@ namespace OpcUaExplorer.ViewModel
             _client = new Model.Client(ServerIpAddress);
             _client.PropertyChanged += _client_PropertyChanged;
             _client.Open(0);
+            _root = null;
         }
 
         private void _client_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -48,6 +51,14 @@ namespace OpcUaExplorer.ViewModel
                     else
                     {
                         IpBackground = new SolidColorBrush(Colors.Red);
+                    }
+                    break;
+                case "Root":
+                    Root = _client.Root;
+                    Debug.Print($"Root children= {Root.Children.Count}, {Root.Name}");
+                    foreach(Model.TreeViewItem tvi in Root.Children)
+                    {
+                        Debug.Print($"    {tvi.Name}");
                     }
                     break;
             }
@@ -68,6 +79,12 @@ namespace OpcUaExplorer.ViewModel
         {
             get { return _ipBackground; }
             set { _ipBackground = value; RaisePropertyChanged(); }
+        }
+
+        public Model.TreeViewItem Root
+        {
+            get { return _root; }
+            set { _root = value; RaisePropertyChanged(); }
         }
         public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
         private void SettingsDialog()

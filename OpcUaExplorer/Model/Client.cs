@@ -15,6 +15,7 @@ namespace OpcUaExplorer.Model
         private DispatcherTimer _timer;
         private bool _connected;
         private bool _browse;
+        private TreeViewItem _treeViewItem;
         public Client(string ip)
         {
             ServerIpAddress = ip;
@@ -23,6 +24,7 @@ namespace OpcUaExplorer.Model
             _timer.Interval = new TimeSpan(0, 0, 10);
             Connected = false;
             _browse = true;
+            _treeViewItem = new TreeViewItem("Root");
         }
 
         string ServerIpAddress { get; }
@@ -31,6 +33,12 @@ namespace OpcUaExplorer.Model
             get { return _connected; }
             set { _connected = value; OnPropertyChanged("Connected"); }
         }
+
+        public TreeViewItem Root
+        {
+            get { return _treeViewItem; }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)
@@ -48,22 +56,25 @@ namespace OpcUaExplorer.Model
             Connected = (result != 0) ? false : true;
             if (Connected && _browse)
             {
-                int nr = 0;
-                BrowseResponse[] br = null;
-                result = OpcUa.Browse(85, ref nr, br);
-                Debug.Print($"Browse {nr}");
-                br = new BrowseResponse[nr];
-                for (int i = 0; i < nr; ++i)
+                BrowseItem[] items = OpcUa.Browse(0, 84);
+                Debug.Print($"items= {items.Length}");
+                foreach(BrowseItem bi in items)
                 {
-                    br[i] = new BrowseResponse(0, 0, new byte[32], 0, new byte[32], new byte[32]);
+                    Debug.Print($"browse= {bi.BrowseName}, {bi.DisplayName}");
+                    string name = bi.BrowseName;
+                    if(name == string.Empty)
+                    {
+                        name = bi.DisplayName;
+                    }
+                    if(name == string.Empty)
+                    {
+                        name = "Unknown";
+                    }
+                    _treeViewItem.AddChild(name, bi);
+                    Debug.Print($"Ch= {_treeViewItem.Children.Count}");
                 }
-                Debug.Print($"br {br[0]}, {br[1]}, {nr}");
-                result = OpcUa.Browse(85, ref nr, br);
-                for (int i = 0; i < nr; ++i)
-                {
-                    Debug.Print($"{br[i]}");
-                    Debug.Print($"i= {i}, {br[i].numeric}");
-                }
+                _browse = false;
+                OnPropertyChanged("Root");
             }
         }
 

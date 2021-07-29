@@ -73,8 +73,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\BrowseItem.cs" />
     <Compile Include="Model\Client.cs" />
     <Compile Include="Model\OpcUa.cs" />
+    <Compile Include="Model\TreeViewItem.cs" />
     <Compile Include="ViewModel\IpAddressBoxVm.cs" />
     <Compile Include="ViewModel\IpAddressValidationRule.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

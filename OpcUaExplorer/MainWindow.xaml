@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:OpcUaExplorer.ViewModel"
+        xmlns:model="clr-namespace:OpcUaExplorer.Model"
         xmlns:local="clr-namespace:OpcUaExplorer"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
@@ -35,7 +36,13 @@
                 <ColumnDefinition Width="4"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0"></TreeView>
+            <TreeView Grid.Column="0" ItemsSource="{Binding Root}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:TreeViewItem}" ItemsSource="{Binding Path=Children}">
+                        <TextBlock Text="{Binding Path=Name}" Foreground="Black"/>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
         </Grid>
     </DockPanel>
 </Window>
