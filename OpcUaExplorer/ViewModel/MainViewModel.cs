@@ -1,6 +1,8 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
 
 namespace OpcUaExplorer.ViewModel
@@ -20,11 +22,13 @@ namespace OpcUaExplorer.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private RelayCommand _settings;
+        private RelayCommand<RoutedPropertyChangedEventArgs<object>> _addressSpaceSelectionChanged;
         private string _serverIpAddress;
         private Brush _ipForeground;
         private Brush _ipBackground;
         private Model.Client _client;
-        private Model.TreeViewItem _root;
+        private ObservableCollection<Model.TreeViewItem> _addressSpace;
+        private Model.BrowseItem _selectedTreeItem;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -36,7 +40,6 @@ namespace OpcUaExplorer.ViewModel
             _client = new Model.Client(ServerIpAddress);
             _client.PropertyChanged += _client_PropertyChanged;
             _client.Open(0);
-            _root = null;
         }
 
         private void _client_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -53,13 +56,8 @@ namespace OpcUaExplorer.ViewModel
                         IpBackground = new SolidColorBrush(Colors.Red);
                     }
                     break;
-                case "Root":
-                    Root = _client.Root;
-                    Debug.Print($"Root children= {Root.Children.Count}, {Root.Name}");
-                    foreach(Model.TreeViewItem tvi in Root.Children)
-                    {
-                        Debug.Print($"    {tvi.Name}");
-                    }
+                case "AddressSpace":
+                    AddressSpace = _client.AddressSpace;
                     break;
             }
         }
@@ -81,10 +79,16 @@ namespace OpcUaExplorer.ViewModel
             set { _ipBackground = value; RaisePropertyChanged(); }
         }
 
-        public Model.TreeViewItem Root
+        public ObservableCollection<Model.TreeViewItem> AddressSpace
         {
-            get { return _root; }
-            set { _root = value; RaisePropertyChanged(); }
+            get { return _addressSpace; }
+            set { _addressSpace = value; RaisePropertyChanged(); }
+        }
+
+        public Model.BrowseItem SelectedTreeItem
+        {
+            get { return _selectedTreeItem; }
+            set { _selectedTreeItem = value; RaisePropertyChanged(); }
         }
         public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
         private void SettingsDialog()
@@ -94,6 +98,14 @@ namespace OpcUaExplorer.ViewModel
             {
 
             }
+        }
+
+        public RelayCommand<RoutedPropertyChangedEventArgs<object>> OnAddressSpaceSelectionChanged => _addressSpaceSelectionChanged ??
+          (_addressSpaceSelectionChanged = new RelayCommand<RoutedPropertyChangedEventArgs<object>>((args) => AddressSpaceSelectionChanged(args)));
+        public void AddressSpaceSelectionChanged(RoutedPropertyChangedEventArgs<object> args)
+        {
+            Debug.Print($"Selected {args.NewValue}");
+            SelectedTreeItem = ((Model.TreeViewItem)args.NewValue).Tag;
         }
     }
 }

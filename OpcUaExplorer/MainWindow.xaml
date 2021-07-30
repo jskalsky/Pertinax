@@ -13,6 +13,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <Image x:Key="PropertiesIcon" Source="Icons\PropertyIcon.png" Width="16" Height="16"/>
+            <model:TagImageConverter x:Key="TagImageConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <Window.DataContext>
@@ -36,13 +37,23 @@
                 <ColumnDefinition Width="4"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0" ItemsSource="{Binding Root}">
+            <TreeView Grid.Column="0" ItemsSource="{Binding AddressSpace}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <command:EventToCommand Command="{Binding OnAddressSpaceSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate DataType="{x:Type model:TreeViewItem}" ItemsSource="{Binding Path=Children}">
-                        <TextBlock Text="{Binding Path=Name}" Foreground="Black"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="16" Height="16" Stretch="Fill" 
+                                   Source="{Binding Path=Tag.NodeClass, Converter={StaticResource TagImageConverter} }"/>
+                            <TextBlock Text="{Binding Path=Name}" Foreground="Black"/>
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
+            <DataGrid Grid.Column="2" ItemsSource="{Binding SelectedTreeItem}"></DataGrid>
         </Grid>
     </DockPanel>
 </Window>

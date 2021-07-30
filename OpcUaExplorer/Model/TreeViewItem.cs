@@ -19,11 +19,12 @@ namespace OpcUaExplorer.Model
         public string Name { get; }
         public BrowseItem Tag { get; set; }
 
-        public void AddChild(string name, BrowseItem bi)
+        public TreeViewItem AddChild(string name, BrowseItem bi)
         {
             TreeViewItem child = new TreeViewItem(name);
             child.Tag = bi;
             Children.Add(child);
+            return child;
         }
     }
 }

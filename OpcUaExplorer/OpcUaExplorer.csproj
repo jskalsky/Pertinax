@@ -76,6 +76,7 @@
     <Compile Include="Model\BrowseItem.cs" />
     <Compile Include="Model\Client.cs" />
     <Compile Include="Model\OpcUa.cs" />
+    <Compile Include="Model\TagImageConverter.cs" />
     <Compile Include="Model\TreeViewItem.cs" />
     <Compile Include="ViewModel\IpAddressBoxVm.cs" />
     <Compile Include="ViewModel\IpAddressValidationRule.cs" />
@@ -136,10 +137,20 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Icons\PropertyIcon.png" />
     <Resource Include="Icons\Property_501.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ClassIcon.png" />
+    <Resource Include="Icons\Method_636.png" />
+    <Resource Include="Icons\Pointer_6127.png" />
+    <Resource Include="Icons\Structure_507.png" />
+    <Resource Include="Icons\Table_748.png" />
+    <Resource Include="Icons\TypeDefinition_521.png" />
+    <Resource Include="Icons\Type_527.png" />
+    <Resource Include="Icons\Union-Friend_536.png" />
+    <Resource Include="Icons\View_8933_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

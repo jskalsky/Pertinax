@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -12,10 +13,13 @@ namespace OpcUaExplorer.Model
 {
     public class Client : INotifyPropertyChanged
     {
+        private const ushort DefaultNamespace = 0;
+        private const uint RootNode = 84;
+
         private DispatcherTimer _timer;
         private bool _connected;
         private bool _browse;
-        private TreeViewItem _treeViewItem;
+        private ObservableCollection<TreeViewItem> _addressSpace;
         public Client(string ip)
         {
             ServerIpAddress = ip;
@@ -24,7 +28,7 @@ namespace OpcUaExplorer.Model
             _timer.Interval = new TimeSpan(0, 0, 10);
             Connected = false;
             _browse = true;
-            _treeViewItem = new TreeViewItem("Root");
+            _addressSpace = new ObservableCollection<TreeViewItem>();
         }
 
         string ServerIpAddress { get; }
@@ -34,9 +38,9 @@ namespace OpcUaExplorer.Model
             set { _connected = value; OnPropertyChanged("Connected"); }
         }
 
-        public TreeViewItem Root
+        public ObservableCollection<TreeViewItem> AddressSpace
         {
-            get { return _treeViewItem; }
+            get { return _addressSpace; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,7 +60,7 @@ namespace OpcUaExplorer.Model
             Connected = (result != 0) ? false : true;
             if (Connected && _browse)
             {
-                BrowseItem[] items = OpcUa.Browse(0, 84);
+                BrowseItem[] items = OpcUa.Browse(DefaultNamespace, RootNode);
                 Debug.Print($"items= {items.Length}");
                 foreach(BrowseItem bi in items)
                 {
@@ -70,11 +74,35 @@ namespace OpcUaExplorer.Model
                     {
                         name = "Unknown";
                     }
-                    _treeViewItem.AddChild(name, bi);
-                    Debug.Print($"Ch= {_treeViewItem.Children.Count}");
+                    TreeViewItem tvi = new TreeViewItem(name);
+                    tvi.Tag = bi;
+                    _addressSpace.Add(tvi);
+                    BrowseNode(tvi, bi);
                 }
                 _browse = false;
-                OnPropertyChanged("Root");
+                OnPropertyChanged("AddressSpace");
+            }
+        }
+
+        private void BrowseNode(TreeViewItem parent, BrowseItem node)
+        {
+            if(node.NodeIdType == NodeIdType.Numeric)
+            {
+                BrowseItem[] items = OpcUa.Browse(node.NamespaceIndex, node.Numeric);
+                foreach(BrowseItem bi in items)
+                {
+                    string name = bi.BrowseName;
+                    if (name == string.Empty)
+                    {
+                        name = bi.DisplayName;
+                    }
+                    if (name == string.Empty)
+                    {
+                        name = "Unknown";
+                    }
+                    TreeViewItem child = parent.AddChild(name, bi);
+                    BrowseNode(child, bi);
+                }
             }
         }
 
