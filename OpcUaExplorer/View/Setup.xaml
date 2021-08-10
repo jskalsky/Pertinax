@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
         xmlns:local="clr-namespace:OpcUaExplorer.View"
         mc:Ignorable="d"
         Title="Setup" Height="300" Width="600" Loaded="Window_Loaded">
@@ -14,10 +16,21 @@
             <Button Name="ButtonOk" Content="Ok" Margin="0,10,10,10" IsDefault="True" Click="ButtonOk_Click"/>
             <Button Content="Cancel" Margin="0,10,10,10" IsCancel="True"/>
         </StackPanel>
-        <StackPanel>
-            <Label Content="Server Ip address"/>
-            <local:IpAddressBox x:Name="Ip"/>
-            <local:IpAddressBox x:Name="Mask"/>
-        </StackPanel>
+        <GroupBox Header="Servers" VerticalAlignment="Stretch">
+            <StackPanel Orientation="Vertical">
+                <ListBox MinHeight="140" ItemsSource="{Binding Ips}" SelectedItem="{Binding SelectedIp}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <command:EventToCommand Command="{Binding OnIpSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+                <local:IpAddressBox Margin="0,10,0,0" IpAddress="{Binding NewIp}"></local:IpAddressBox>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Add" Margin="10,10,0,0" Command="{Binding AddIpCommand}"/>
+                    <Button Content="Remove" Margin="10,10,0,0" Command="{Binding EraseIpCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
     </DockPanel>
 </Window>

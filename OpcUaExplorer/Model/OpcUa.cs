@@ -28,7 +28,7 @@ namespace OpcUaExplorer.Model
     internal static class OpcUa
     {
         public const int MaxBrowseItems = 128;
-        public const int MaxStringLength = 32;
+        public const int MaxStringLength = 64;
 
         [DllImport("OpcUaLibrary.dll")]
         public static extern int OpenClient(int security);
@@ -50,10 +50,12 @@ namespace OpcUaExplorer.Model
             }
             int nr = MaxBrowseItems;
             int res = Browse(namespaceIndex, numeric, ref nr, br);
-            Debug.Print($"Browse= {res}, nr= {nr}");
+            Debug.Print($"Browse= {res}, nr= {nr}, {namespaceIndex}, {numeric}");
             for (int i = 0; i < nr; ++i)
             {
-                result.Add(new BrowseItem(br[i]));
+                BrowseItem bi = new BrowseItem(br[i]);
+                result.Add(bi);
+                Debug.Print($"  {i} : {bi.NodeClass}, {bi.NodeIdType}, {bi.Numeric}, {bi.BrowseName}, {bi.DisplayName}");
             }
             return result.ToArray();
         }

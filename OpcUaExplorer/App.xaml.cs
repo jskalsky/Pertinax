@@ -26,7 +26,7 @@ namespace OpcUaExplorer
             TextWriterTraceListener myListener = new TextWriterTraceListener(myTraceLog);
             Debug.Listeners.Add(myListener);
             Debug.AutoFlush = true;
-            Debug.WriteLine("Start");
+            Debug.WriteLine($"Start {DateTime.Now.TimeOfDay}");
 #endif
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
         }
@@ -59,6 +59,7 @@ namespace OpcUaExplorer
             //            Settings.Default.TargetLeft = mvm.SelectedTargetLeft;
             //            Settings.Default.TargetRight = mvm.SelectedTargetRight;
             Settings.Default.Save();
+            Debug.Print($"Exit {DateTime.Now.TimeOfDay}");
         }
     }
 }

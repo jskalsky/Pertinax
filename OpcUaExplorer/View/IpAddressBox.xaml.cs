@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,6 +27,22 @@ namespace OpcUaExplorer.View
             InitializeComponent();
         }
 
+        public static readonly DependencyProperty IpAddressProperty = DependencyProperty.Register("IpAddress", typeof(IPAddress), typeof(IpAddressBox));
+
+        public IPAddress IpAddress
+        {
+            get { Debug.Print($"get {(IPAddress)GetValue(IpAddressProperty)}"); return (IPAddress)GetValue(IpAddressProperty); }
+            set { Debug.Print($"set {value}"); SetValue(IpAddressProperty, value); DivideToParts(value); }
+        }
+
+        private void DivideToParts(IPAddress address)
+        {
+            byte[] addr = address.GetAddressBytes();
+            Part1.Text = addr[0].ToString();
+            Part2.Text = addr[1].ToString();
+            Part3.Text = addr[2].ToString();
+            Part4.Text = addr[3].ToString();
+        }
         private void Part1_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;

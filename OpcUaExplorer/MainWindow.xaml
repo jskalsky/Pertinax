@@ -25,10 +25,12 @@
                 <Button Content="{StaticResource PropertiesIcon}" Command="{Binding SettingsCommand}"/>
             </ToolBar>
         </ToolBarTray>
-        <StatusBar DockPanel.Dock="Bottom">
+        <StatusBar DockPanel.Dock="Bottom" Height="30">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Server" Foreground="Black" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding ServerIpAddress}" Foreground="{Binding IpForeground}"  Background="{Binding IpBackground}"  VerticalAlignment="Center" Margin="10"/>
+                <TextBlock Text="{Binding SelectedServer}" Foreground="{Binding IpForeground}"  Background="{Binding IpBackground}"  VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <ComboBox ItemsSource="{Binding Servers}" SelectedItem="{Binding SelectedServer}" Margin="10,0,0,0">
+                </ComboBox>
             </StackPanel>
         </StatusBar>
         <Grid>

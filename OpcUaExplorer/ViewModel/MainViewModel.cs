@@ -1,7 +1,9 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Net;
 using System.Windows;
 using System.Windows.Media;
 
@@ -23,31 +25,39 @@ namespace OpcUaExplorer.ViewModel
     {
         private RelayCommand _settings;
         private RelayCommand<RoutedPropertyChangedEventArgs<object>> _addressSpaceSelectionChanged;
-        private string _serverIpAddress;
         private Brush _ipForeground;
         private Brush _ipBackground;
         private Model.Client _client;
         private ObservableCollection<Model.TreeViewItem> _addressSpace;
         private Model.BrowseItem _selectedTreeItem;
+        private List<string> _servers;
+        private string _selectedServer;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
-            ServerIpAddress = Properties.Settings.Default.ServerIpAddress;
+            _servers = new List<string>();
+            foreach (string server in Properties.Settings.Default.Servers)
+            {
+                _servers.Add(server);
+            }
+            RaisePropertyChanged("Servers");
+            SelectedServer = Properties.Settings.Default.SelectedServer;
+
             IpBackground = new SolidColorBrush(Colors.Red);
             IpForeground = new SolidColorBrush(Colors.White);
-            _client = new Model.Client(ServerIpAddress);
+            _client = new Model.Client(SelectedServer);
             _client.PropertyChanged += _client_PropertyChanged;
             _client.Open(0);
         }
 
         private void _client_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case "Connected":
-                    if(_client.Connected)
+                    if (_client.Connected)
                     {
                         IpBackground = new SolidColorBrush(Colors.Green);
                     }
@@ -62,12 +72,16 @@ namespace OpcUaExplorer.ViewModel
             }
         }
 
-        public string ServerIpAddress
+        public List<string> Servers
         {
-            get { return _serverIpAddress; }
-            set { _serverIpAddress = value; RaisePropertyChanged(); }
+            get { return _servers; }
         }
 
+        public string SelectedServer
+        {
+            get { return _selectedServer; }
+            set { _selectedServer = value; RaisePropertyChanged(); }
+        }
         public Brush IpForeground
         {
             get { return _ipForeground; }

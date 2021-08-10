@@ -78,7 +78,6 @@
     <Compile Include="Model\OpcUa.cs" />
     <Compile Include="Model\TagImageConverter.cs" />
     <Compile Include="Model\TreeViewItem.cs" />
-    <Compile Include="ViewModel\IpAddressBoxVm.cs" />
     <Compile Include="ViewModel\IpAddressValidationRule.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SetupVm.cs" />
