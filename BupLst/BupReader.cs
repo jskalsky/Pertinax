@@ -10,6 +10,7 @@ namespace BupLst
     public class BupReader
     {
         const int BufferSize = 1024 * 1024;
+        private static Dictionary<ushort, Io> Ios = new Dictionary<ushort, Io>();
         public static void Read(string fileName)
         {
             string lstName = Path.ChangeExtension(fileName, "lst");
@@ -146,30 +147,31 @@ namespace BupLst
                 }
                 else
                 {
-                    string ioType = "Unknown";
+                    IoClass ioClass = IoClass.Unknown;
                     switch (t & 0xc000)
                     {
                         case 0x0000:
-                            ioType = "BlockOut";
+                            ioClass = IoClass.BlockOut;
                             break;
                         case 0x4000:
                             if ((t & 0x2000) != 0)
                             {
-                                ioType = "ExtOut";
+                                ioClass = IoClass.ExtOut;
                             }
                             else
                             {
-                                ioType = "ExtIn";
+                                ioClass = IoClass.ExtIn;
                             }
                             break;
                         case 0x8000:
-                            ioType = "UnconnectedIn";
+                            ioClass = IoClass.UnconnectedIn;
                             break;
                         case 0xc000:
-                            ioType = "UnconnectedOut";
+                            ioClass = IoClass.UnconnectedOut;
                             break;
                     }
-                    sw.WriteLine($"Io= {i}, {ioType}, {t & 0x1fff}");
+                    sw.WriteLine($"Io= {i}, {ioClass}, {t & 0x1fff}");
+                    Ios[i] = new Io(ioClass, (ushort)(t & 0x1fff));
                 }
             }
             ushort nrPars = ReadWord(br);
