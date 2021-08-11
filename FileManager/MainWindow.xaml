@@ -53,14 +53,19 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ComboBox>
-                        <ComboBox Grid.Column="1"></ComboBox>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding LeftDrives}" SelectedItem="{Binding LeftSelectedDrive}"></ComboBox>
                     </Grid>
-                    <TextBlock></TextBlock>
+                    <TextBlock Text="{Binding LeftActualFolder}" Foreground="Black"></TextBlock>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                     <Button Content="Copy"></Button>
                 </StackPanel>
-                <ListView>
+                <ListView ItemsSource="{Binding LeftDirectory}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <command:EventToCommand Command="{Binding OnLeftDoubleClick,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Name"></GridViewColumn>
@@ -84,15 +89,20 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ComboBox>
-                        <ComboBox Grid.Column="1"></ComboBox>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding RightDrives}" SelectedItem="{Binding RightSelectedDrive}"></ComboBox>
                     </Grid>
 
-                    <TextBlock></TextBlock>
+                    <TextBlock Text="{Binding RightActualFolder}"></TextBlock>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                     <Button Content="Copy"></Button>
                 </StackPanel>
-                <ListView>
+                <ListView ItemsSource="{Binding RightDirectory}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <command:EventToCommand Command="{Binding OnRightDoubleClick,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Name"></GridViewColumn>

@@ -25,9 +25,9 @@ namespace FileManager.Model
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
             List<string> drvs = new List<string>();
-            foreach(DriveInfo di in drives)
+            foreach (DriveInfo di in drives)
             {
-                if(di.IsReady)
+                if (di.IsReady)
                 {
                     drvs.Add(di.RootDirectory.FullName);
                 }
@@ -37,13 +37,26 @@ namespace FileManager.Model
 
         public override void SelectDrive(string drive, string actualDirectory)
         {
-            if(string.IsNullOrEmpty(actualDirectory))
+            if (Drives == null)
+            {
+                return;
+            }
+            if (Drives.Length == 0)
+            {
+                return;
+            }
+            if(string.IsNullOrEmpty(drive))
+            {
+                drive = Drives[0];
+            }
+            SelectedDrive = drive;
+            if (string.IsNullOrEmpty(actualDirectory))
             {
                 ActualDirectory = drive;
             }
             else
             {
-                if(actualDirectory.Contains(drive))
+                if (actualDirectory.Contains(drive))
                 {
                     ActualDirectory = actualDirectory;
                 }
@@ -56,21 +69,28 @@ namespace FileManager.Model
 
         public override void ChangeDirectory(string dir)
         {
-            if(!string.IsNullOrEmpty(_actualDirectory))
+            if (!string.IsNullOrEmpty(_actualDirectory))
             {
                 string ad = _actualDirectory;
                 if (dir == "..")
                 {
                     int index = ad.LastIndexOf('\\');
-                    if(index > 0)
+                    if (index > 0)
                     {
-                        ad.Remove(index);
+                        ad = ad.Remove(index + 1);
+                        if(ad != Path.GetPathRoot(ad))
+                        {
+                            ad = ad.Remove(index);
+                        }
                         ActualDirectory = ad;
                     }
                 }
                 else
                 {
-                    ad += Path.DirectorySeparatorChar;
+                    if(ad[ad.Length - 1] != Path.DirectorySeparatorChar)
+                    {
+                        ad += Path.DirectorySeparatorChar;
+                    }
                     ad += dir;
                     ActualDirectory = ad;
                 }
@@ -79,26 +99,48 @@ namespace FileManager.Model
 
         public override void RefreshDirectory()
         {
-            if(!string.IsNullOrEmpty(_actualDirectory))
+            if (!string.IsNullOrEmpty(_actualDirectory))
             {
                 string[] files = Directory.GetFiles(_actualDirectory);
                 string[] folders = Directory.GetDirectories(_actualDirectory);
                 string root = Path.GetPathRoot(_actualDirectory);
-                if(!string.IsNullOrEmpty(root))
+                if (!string.IsNullOrEmpty(root))
                 {
-                    if(root != _actualDirectory)
+                    List<string> flds = new List<string>();
+                    if (root != _actualDirectory)
                     {
-                        List<string> flds = new List<string>();
-                        flds.AddRange(folders);
-                        flds.Insert(0, "..");
+                        flds.Add("..");
+                        foreach(string folder in folders)
+                        {
+                            int index = folder.LastIndexOf('\\');
+                            if(index > 0)
+                            {
+                                string fol = folder.Substring(index + 1);
+                                flds.Add($"[{fol}]");
+                            }
+                        }
                         Folders = flds.ToArray();
                     }
                     else
                     {
-                        Folders = folders;
+                        foreach (string folder in folders)
+                        {
+                            int index = folder.LastIndexOf('\\');
+                            if (index > 0)
+                            {
+                                string fol = folder.Substring(index + 1);
+                                flds.Add($"[{fol}]");
+                            }
+                        }
+                        Folders = flds.ToArray();
                     }
                 }
-                Files = files;
+                List<string> fs = new List<string>();
+                foreach(string file in files)
+                {
+                    fs.Add(Path.GetFileName(file));
+                }
+                Files = fs.ToArray();
             }
         }
     }

@@ -81,6 +81,7 @@
     <Compile Include="Kos2021\Kos.cs" />
     <Compile Include="Kos2021\KosIpAddress.cs" />
     <Compile Include="Model\Bup.cs" />
+    <Compile Include="Model\DiagClient.cs" />
     <Compile Include="Model\DirectoryItem.cs" />
     <Compile Include="Model\DownloadTest.cs" />
     <Compile Include="Model\FileItem.cs" />

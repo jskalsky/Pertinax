@@ -9,35 +9,24 @@ namespace FileManager.Model
 {
     public class Z2xxManager : Manager
     {
+        public override void ChangeDirectory(string dir)
+        {
+        }
+
+        public override void RefreshDirectory()
+        {
+        }
+
+        public override void RefreshDrives()
+        {
+        }
+
+        public override void SelectDrive(string drive, string actualDirectory)
+        {
+        }
         public override void Download(string fileName, byte[] file)
         {
-            throw new NotImplementedException();
         }
-
-        public override DriveInfo[] GetAllDrives()
-        {
-            return null;
-        }
-
-        public override string GetDefaultDirectory()
-        {
-            return string.Empty;
-        }
-
-        public override DirectoryItem[] GetDirectory()
-        {
-            return null;
-        }
-
-        public override bool IsWindowsManager()
-        {
-            return false;
-        }
-
-        public override void SetActualDirectory(string actualDirectory)
-        {
-        }
-
         public override byte[] Upload(string fileName)
         {
             return null;

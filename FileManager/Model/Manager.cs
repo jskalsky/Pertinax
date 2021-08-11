@@ -44,7 +44,13 @@ namespace FileManager.Model
         public string[] Files
         {
             get { return _files; }
-            protected set { _files = value;OnPropertyChanged("Files"); }
+            protected set { _files = value; OnPropertyChanged("Files"); }
+        }
+
+        public string SelectedDrive
+        {
+            get { return _selectedDrive; }
+            set { _selectedDrive = value; OnPropertyChanged("SelectedDrive"); }
         }
         private void OnPropertyChanged(string name)
         {
