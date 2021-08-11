@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,55 @@ using System.Threading.Tasks;
 
 namespace FileManager.Model
 {
-    public abstract class Manager
+    public abstract class Manager : INotifyPropertyChanged
     {
-        public string ActualDirectory { get; protected  set; }
-        public abstract DriveInfo[] GetAllDrives();
-        public abstract DirectoryItem[] GetDirectory();
+        protected string[] _drives;
+        protected string _actualDirectory;
+        protected string[] _folders;
+        protected string[] _files;
+        protected string _selectedDrive;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected Manager()
+        {
+            _actualDirectory = string.Empty;
+            _selectedDrive = string.Empty;
+        }
+
+        public string[] Drives
+        {
+            get { return _drives; }
+            protected set { _drives = value; OnPropertyChanged("Drives"); }
+        }
+
+        public string ActualDirectory
+        {
+            get { return _actualDirectory; }
+            protected set { _actualDirectory = value; OnPropertyChanged("ActualDirectory"); }
+        }
+
+        public string[] Folders
+        {
+            get { return _folders; }
+            protected set { _folders = value; OnPropertyChanged("Folders"); }
+        }
+
+        public string[] Files
+        {
+            get { return _files; }
+            protected set { _files = value;OnPropertyChanged("Files"); }
+        }
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
         public abstract byte[] Upload(string fileName);
         public abstract void Download(string fileName, byte[] file);
-        public abstract string GetDefaultDirectory();
-        public abstract void SetActualDirectory(string actualDirectory);
+        public abstract void RefreshDrives();
+        public abstract void SelectDrive(string drive, string actualDirectory);
+        public abstract void ChangeDirectory(string dir);
+        public abstract void RefreshDirectory();
     }
 }

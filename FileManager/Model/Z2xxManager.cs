@@ -29,6 +29,11 @@ namespace FileManager.Model
             return null;
         }
 
+        public override bool IsWindowsManager()
+        {
+            return false;
+        }
+
         public override void SetActualDirectory(string actualDirectory)
         {
         }

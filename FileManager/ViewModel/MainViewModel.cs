@@ -68,6 +68,7 @@ namespace FileManager.ViewModel
             {
                 SelectedTargetRight = Properties.Settings.Default.TargetRight;
             }
+
             TargetDrivesLeft = new ObservableCollection<DriveInfo>();
             TargetDrivesRight = new ObservableCollection<DriveInfo>();
             if (SelectedTargetLeft == "Pc")
@@ -92,6 +93,7 @@ namespace FileManager.ViewModel
                     _rightPanel = new Z2xxManager();
                 }
             }
+
             string selectedDrive = Properties.Settings.Default.TargetDriveLeft;
             InitPanel(_leftPanel, TargetDrivesLeft, selectedDrive, out DriveInfo driveInfo);
             SelectedDriveInfoLeft = driveInfo;

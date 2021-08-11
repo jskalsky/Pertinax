@@ -14,62 +14,92 @@ namespace FileManager.Model
             string fileN = ActualDirectory + Path.DirectorySeparatorChar + fileName;
             File.WriteAllBytes(fileN, file);
         }
-
-        public override DriveInfo[] GetAllDrives()
-        {
-            return DriveInfo.GetDrives();    
-        }
-
-        public override string GetDefaultDirectory()
-        {
-            DriveInfo[] drives = DriveInfo.GetDrives();
-            foreach(DriveInfo di in drives)
-            {
-                if(di.IsReady)
-                {
-                    if(di.Name == "C:\\")
-                    {
-                        return di.RootDirectory.FullName;
-                    }
-                }
-            }
-            foreach(DriveInfo di in drives)
-            {
-                if(di.IsReady)
-                {
-                    return di.RootDirectory.FullName;
-                }
-            }
-            return null;
-        }
-
-        public override DirectoryItem[] GetDirectory()
-        {
-            string[] files = Directory.GetFiles(ActualDirectory);
-            string[] dirs = Directory.GetDirectories(ActualDirectory);
-            List<DirectoryItem> di = new List<DirectoryItem>();
-            foreach(string dir in dirs)
-            {
-                di.Add(new FolderItem(Path.GetDirectoryName(dir)));
-            }
-            foreach(string file in files)
-            {
-                di.Add(new FileItem(Path.GetFileName(file)));
-            }
-            return di.ToArray();
-        }
-
-        public override void SetActualDirectory(string actualDirectory)
-        {
-            ActualDirectory = actualDirectory;
-
-        }
-
         public override byte[] Upload(string fileName)
         {
             string fileN = ActualDirectory + Path.DirectorySeparatorChar + fileName;
             byte[] file = File.ReadAllBytes(fileN);
             return file;
+        }
+
+        public override void RefreshDrives()
+        {
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            List<string> drvs = new List<string>();
+            foreach(DriveInfo di in drives)
+            {
+                if(di.IsReady)
+                {
+                    drvs.Add(di.RootDirectory.FullName);
+                }
+            }
+            Drives = drvs.ToArray();
+        }
+
+        public override void SelectDrive(string drive, string actualDirectory)
+        {
+            if(string.IsNullOrEmpty(actualDirectory))
+            {
+                ActualDirectory = drive;
+            }
+            else
+            {
+                if(actualDirectory.Contains(drive))
+                {
+                    ActualDirectory = actualDirectory;
+                }
+                else
+                {
+                    ActualDirectory = drive;
+                }
+            }
+        }
+
+        public override void ChangeDirectory(string dir)
+        {
+            if(!string.IsNullOrEmpty(_actualDirectory))
+            {
+                string ad = _actualDirectory;
+                if (dir == "..")
+                {
+                    int index = ad.LastIndexOf('\\');
+                    if(index > 0)
+                    {
+                        ad.Remove(index);
+                        ActualDirectory = ad;
+                    }
+                }
+                else
+                {
+                    ad += Path.DirectorySeparatorChar;
+                    ad += dir;
+                    ActualDirectory = ad;
+                }
+            }
+        }
+
+        public override void RefreshDirectory()
+        {
+            if(!string.IsNullOrEmpty(_actualDirectory))
+            {
+                string[] files = Directory.GetFiles(_actualDirectory);
+                string[] folders = Directory.GetDirectories(_actualDirectory);
+                string root = Path.GetPathRoot(_actualDirectory);
+                if(!string.IsNullOrEmpty(root))
+                {
+                    if(root != _actualDirectory)
+                    {
+                        List<string> flds = new List<string>();
+                        flds.AddRange(folders);
+                        flds.Insert(0, "..");
+                        Folders = flds.ToArray();
+                    }
+                    else
+                    {
+                        Folders = folders;
+                    }
+                }
+                Files = files;
+            }
         }
     }
 }
