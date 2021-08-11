@@ -11,8 +11,11 @@ namespace BupLst
     {
         const int BufferSize = 1024 * 1024;
         private static Dictionary<ushort, Io> Ios = new Dictionary<ushort, Io>();
+        private static SortedDictionary<ushort, List<string>> Net = new SortedDictionary<ushort, List<string>>();
         public static void Read(string fileName)
         {
+            Ios.Clear();
+            Net.Clear();
             string lstName = Path.ChangeExtension(fileName, "lst");
             using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize))
             {
@@ -27,7 +30,7 @@ namespace BupLst
                             {
                                 ushort blockId = ReadWord(br);
                                 uint length = ReadUint(br) * 2;
-                                sw.WriteLine($"BlockId= {blockId}, Length= {length}");
+                                sw.WriteLine($"BlockId= {blockId}, Length= {length}, Pos= {fs.Position:X}");
                                 switch (blockId)
                                 {
                                     case 11:
@@ -38,6 +41,12 @@ namespace BupLst
                                         break;
                                     case 20:
                                         Read20(length, br, sw);
+                                        break;
+                                    case 24:
+                                        Read24(length, br, sw);
+                                        break;
+                                    case 25:
+                                        Read25(length, br, sw);
                                         break;
                                     default:
                                         br.ReadBytes((int)length);
@@ -54,6 +63,24 @@ namespace BupLst
                             {
                                 break;
                             }
+                        }
+                        foreach (KeyValuePair<ushort, List<string>> pair in Net)
+                        {
+                            sw.Write($"{pair.Key}->");
+                            bool isFirst = true;
+                            foreach (string s in pair.Value)
+                            {
+                                if (isFirst)
+                                {
+                                    isFirst = false;
+                                    sw.Write($"{s}");
+                                }
+                                else
+                                {
+                                    sw.Write($"-{s}");
+                                }
+                            }
+                            sw.WriteLine();
                         }
                     }
                 }
@@ -121,7 +148,15 @@ namespace BupLst
         public static string ReadString(int length, BinaryReader br)
         {
             byte[] bytes = br.ReadBytes(length);
-            return Encoding.ASCII.GetString(bytes);
+            List<byte> corrected = new List<byte>();
+            foreach (byte b in bytes)
+            {
+                if (b != 0)
+                {
+                    corrected.Add(b);
+                }
+            }
+            return Encoding.ASCII.GetString(corrected.ToArray());
         }
         public static string ReadString(BinaryReader br)
         {
@@ -228,7 +263,82 @@ namespace BupLst
                 for (ushort j = 0; j < nrPins; ++j)
                 {
                     ushort pinIndex = ReadWord(br);
+                    if (!Net.TryGetValue(pinIndex, out List<string> ios))
+                    {
+                        ios = new List<string>();
+                        Net[pinIndex] = ios;
+                    }
+                    string s = $"{blockName}:{j + 1}";
+                    ios.Add(s);
                     sw.WriteLine($"  {j + 1}, {pinIndex}");
+                }
+            }
+        }
+
+        private static void Read24(uint length, BinaryReader br, StreamWriter sw)
+        {
+            ushort nrDrvs = ReadWord(br);
+            sw.WriteLine($"In {nrDrvs}");
+            for (ushort i = 0; i < nrDrvs; ++i)
+            {
+                string drvName = ReadString(br);
+                ushort nrFlags = ReadWord(br);
+                for (ushort j = 0; j < nrFlags; ++j)
+                {
+                    ushort flagLength = ReadWord(br);
+                    if((flagLength % 2) != 0)
+                    {
+                        ++flagLength;
+                    }
+                    byte[] flag = br.ReadBytes(flagLength);
+                    ushort index = ReadWord(br);
+                    sw.Write($"{drvName},{index}-");
+                    foreach(byte b in flag)
+                    {
+                        sw.Write($"{b:X} ");
+                    }
+                    sw.WriteLine();
+                    if (!Net.TryGetValue(index, out List<string> ios))
+                    {
+                        ios = new List<string>();
+                        Net[index] = ios;
+                    }
+                    string s = $"{drvName}:{j}";
+                    ios.Add(s);
+                }
+            }
+        }
+        private static void Read25(uint length, BinaryReader br, StreamWriter sw)
+        {
+            ushort nrDrvs = ReadWord(br);
+            sw.WriteLine($"Out {nrDrvs}");
+            for (ushort i = 0; i < nrDrvs; ++i)
+            {
+                string drvName = ReadString(br);
+                ushort nrFlags = ReadWord(br);
+                for (ushort j = 0; j < nrFlags; ++j)
+                {
+                    ushort flagLength = ReadWord(br);
+                    if ((flagLength % 2) != 0)
+                    {
+                        ++flagLength;
+                    }
+                    byte[] flag = br.ReadBytes(flagLength);
+                    ushort index = ReadWord(br);
+                    ushort indexOut = ReadWord(br);
+                    sw.Write($"{drvName},{index},{indexOut}-");
+                    foreach (byte b in flag)
+                    {
+                        sw.Write($"{b:X} ");
+                    }
+                    sw.WriteLine();
+                    if (!Net.TryGetValue(index, out List<string> ios))
+                    {
+                        ios = new List<string>();
+                        Net[index] = ios;
+                    }
+                    string s = $"{drvName}:{j}";
+                    ios.Add(s);
                 }
             }
         }
