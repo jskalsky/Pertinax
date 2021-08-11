@@ -7,6 +7,9 @@
              xmlns:vm="clr-namespace:OpcUaExplorer.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="160">
+    <UserControl.DataContext>
+        <Binding Path="SetupDialog" Source="{StaticResource Locator}"/>
+    </UserControl.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30" />
@@ -17,7 +20,9 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
-        <TextBox Name="Part1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part1_GotFocus" Loaded="Part1_Loaded">
+        <TextBox Name="Part1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part1_GotFocus" Loaded="Part1_Loaded"
+                 Text="{Binding Part1}">
+            <!--
             <TextBox.Text>
                 <Binding Path="Part1" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -25,12 +30,16 @@
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
+            -->
         </TextBox>
         <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="."/>
-        <TextBox Name="Part2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part2_GotFocus" Text="255"></TextBox>
+        <TextBox Name="Part2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part2_GotFocus" 
+                 Text="{Binding Part2}"></TextBox>
         <TextBlock Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="."/>
-        <TextBox Name="Part3" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part3_GotFocus" Text="255"></TextBox>
+        <TextBox Name="Part3" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part3_GotFocus" 
+                 Text="{Binding Part3}"></TextBox>
         <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="."/>
-        <TextBox Name="Part4" Grid.Column="6" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part4_GotFocus" Text="255"></TextBox>
+        <TextBox Name="Part4" Grid.Column="6" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" GotFocus="Part4_GotFocus" 
+                 Text="{Binding Part4}"></TextBox>
     </Grid>
 </UserControl>

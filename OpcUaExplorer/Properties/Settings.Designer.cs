@@ -25,13 +25,27 @@ namespace OpcUaExplorer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10.10.13.252")]
-        public string ServerIpAddress {
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>127.0.0.1</string>\r\n  <string>10.10.13.252</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection Servers {
             get {
-                return ((string)(this["ServerIpAddress"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["Servers"]));
             }
             set {
-                this["ServerIpAddress"] = value;
+                this["Servers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string SelectedServer {
+            get {
+                return ((string)(this["SelectedServer"]));
+            }
+            set {
+                this["SelectedServer"] = value;
             }
         }
     }

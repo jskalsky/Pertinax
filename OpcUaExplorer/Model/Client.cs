@@ -14,7 +14,7 @@ namespace OpcUaExplorer.Model
     public class Client : INotifyPropertyChanged
     {
         private const ushort DefaultNamespace = 0;
-        private const uint RootNode = 84;
+        private const uint RootNode = 85;
 
         private DispatcherTimer _timer;
         private bool _connected;
@@ -64,20 +64,23 @@ namespace OpcUaExplorer.Model
                 Debug.Print($"items= {items.Length}");
                 foreach(BrowseItem bi in items)
                 {
-                    Debug.Print($"browse= {bi.BrowseName}, {bi.DisplayName}");
-                    string name = bi.BrowseName;
-                    if(name == string.Empty)
+                    if(bi.NodeClass == NodeClass.Object || bi.NodeClass == NodeClass.Variable)
                     {
-                        name = bi.DisplayName;
+                        Debug.Print($"browse= {bi.BrowseName}, {bi.DisplayName}");
+                        string name = bi.BrowseName;
+                        if (name == string.Empty)
+                        {
+                            name = bi.DisplayName;
+                        }
+                        if (name == string.Empty)
+                        {
+                            name = "Unknown";
+                        }
+                        TreeViewItem tvi = new TreeViewItem(name);
+                        tvi.Tag = bi;
+                        _addressSpace.Add(tvi);
+                        BrowseNode(tvi, bi);
                     }
-                    if(name == string.Empty)
-                    {
-                        name = "Unknown";
-                    }
-                    TreeViewItem tvi = new TreeViewItem(name);
-                    tvi.Tag = bi;
-                    _addressSpace.Add(tvi);
-                    BrowseNode(tvi, bi);
                 }
                 _browse = false;
                 OnPropertyChanged("AddressSpace");
@@ -86,9 +89,15 @@ namespace OpcUaExplorer.Model
 
         private void BrowseNode(TreeViewItem parent, BrowseItem node)
         {
+            Debug.Print($"parent= {parent.Name}, {node.NodeIdType}");
             if(node.NodeIdType == NodeIdType.Numeric)
             {
+                Debug.Print($"BR {node.NamespaceIndex}, {node.Numeric}");
                 BrowseItem[] items = OpcUa.Browse(node.NamespaceIndex, node.Numeric);
+                foreach(BrowseItem bit in items)
+                {
+                    Debug.Print($"  bit= {bit.BrowseName}, {bit.DisplayName}, {bit.NamespaceIndex}, {bit.NodeClass}, {bit.NodeIdType}, {bit.Numeric}");
+                }
                 foreach(BrowseItem bi in items)
                 {
                     string name = bi.BrowseName;

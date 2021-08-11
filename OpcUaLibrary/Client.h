@@ -5,7 +5,7 @@
 #include <open62541/plugin/securitypolicy.h>
 
 #define NO_SIMULATION
-#define MAX_STRING_LENGTH   32
+#define MAX_STRING_LENGTH   64
 
 struct BrowseResponse
 {
