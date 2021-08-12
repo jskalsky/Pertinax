@@ -46,6 +46,7 @@ namespace FileManager.ViewModel
         private string _rightSelectedDrive;
         private string _rightActualFolder;
         private RelayCommand<MouseButtonEventArgs> _rightDoubleClick;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -133,10 +134,12 @@ namespace FileManager.ViewModel
                 case "SelectedDrive":
                     RightSelectedDrive = _rightPanel.SelectedDrive;
                     Properties.Settings.Default.TargetDriveRight = _rightSelectedDrive;
+                    Debug.Print($"RightSelectedDrive= {Properties.Settings.Default.TargetDriveRight}");
                     break;
                 case "ActualDirectory":
                     RightActualFolder = _rightPanel.ActualDirectory;
                     Properties.Settings.Default.ActualDirectoryRight = _rightActualFolder;
+                    Debug.Print($"ActualDirectoryRight= {Properties.Settings.Default.ActualDirectoryRight}");
                     break;
                 case "Folders":
                     RightDirectory.Clear();
@@ -150,6 +153,9 @@ namespace FileManager.ViewModel
                     {
                         RightDirectory.Add(file);
                     }
+                    break;
+                case "LastError":
+                    Messages.Add(_rightPanel.LastError);
                     break;
             }
         }
@@ -183,6 +189,9 @@ namespace FileManager.ViewModel
                     {
                         LeftDirectory.Add(file);
                     }
+                    break;
+                case "LastError":
+                    Messages.Add(_leftPanel.LastError);
                     break;
             }
         }
@@ -248,6 +257,26 @@ namespace FileManager.ViewModel
             if (args.AddedItems.Count != 0)
             {
                 _selectedTargetRight = (string)args.AddedItems[0];
+                _rightPanel.PropertyChanged -= _rightPanel_PropertyChanged;
+                if (_selectedTargetRight == "Pc")
+                {
+                    _rightPanel = new WindowsManager();
+                }
+                else
+                {
+                    if (_selectedTargetRight == "Z2xx")
+                    {
+                        _rightPanel = new Z2xxManager();
+                    }
+                }
+                _rightPanel.PropertyChanged += _rightPanel_PropertyChanged;
+                Properties.Settings.Default.TargetRight = _selectedTargetRight;
+                _rightPanel.RefreshDrives();
+                RightSelectedDrive = string.Empty;
+                RightActualFolder = string.Empty;
+                _rightPanel.SelectDrive(_rightSelectedDrive, _rightActualFolder);
+                RightDirectory.Clear();
+                _rightPanel.RefreshDirectory();
             }
         }
 

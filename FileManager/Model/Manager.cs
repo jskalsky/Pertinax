@@ -15,14 +15,21 @@ namespace FileManager.Model
         protected string[] _folders;
         protected string[] _files;
         protected string _selectedDrive;
+        protected string _lastError;
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected Manager()
         {
             _actualDirectory = string.Empty;
             _selectedDrive = string.Empty;
+            _lastError = string.Empty;
         }
 
+        public string LastError
+        {
+            get { return _lastError; }
+            set { _lastError = value; OnPropertyChanged("LastError"); }
+        }
         public string[] Drives
         {
             get { return _drives; }
