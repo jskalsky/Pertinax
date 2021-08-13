@@ -71,5 +71,6 @@ namespace FileManager.Model
         public abstract void SelectDrive(string drive, string actualDirectory);
         public abstract void ChangeDirectory(string dir);
         public abstract void RefreshDirectory();
+        public abstract string MakeFilename(string selectedItem);
     }
 }

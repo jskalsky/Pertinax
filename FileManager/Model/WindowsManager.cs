@@ -16,8 +16,7 @@ namespace FileManager.Model
         }
         public override byte[] Upload(string fileName)
         {
-            string fileN = ActualDirectory + Path.DirectorySeparatorChar + fileName;
-            byte[] file = File.ReadAllBytes(fileN);
+            byte[] file = File.ReadAllBytes(fileName);
             return file;
         }
 
@@ -142,6 +141,12 @@ namespace FileManager.Model
                 }
                 Files = fs.ToArray();
             }
+        }
+
+        public override string MakeFilename(string selectedItem)
+        {
+            string filename = ActualDirectory + Path.DirectorySeparatorChar + selectedItem;
+            return filename;
         }
     }
 }

@@ -12,8 +12,8 @@ namespace BupLst
         {
             try
             {
-                BupReader.Read("OCHRANY.bup");
-                BupReader.Read("OCHRANYautomat.bup"); 
+                BupReader.Read("HW_OUTPUT_nove_IDE.bup");
+                BupReader.Read("HW_OUTPUT_stare_IDE.bup"); 
             }
             catch(Exception exc)
             {

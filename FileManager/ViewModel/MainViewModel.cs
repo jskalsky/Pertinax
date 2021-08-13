@@ -40,12 +40,21 @@ namespace FileManager.ViewModel
         private List<string> _leftDrives;
         private string _leftSelectedDrive;
         private string _leftActualFolder;
+        private string _leftSelectedDir;
+
         private RelayCommand<MouseButtonEventArgs> _leftDoubleClick;
+        private RelayCommand<SelectionChangedEventArgs> _leftDirSelectionChanged;
+        private RelayCommand<SelectionChangedEventArgs> _leftDriveSelectionChanged;
+        private RelayCommand _leftCopy;
 
         private List<string> _rightDrives;
         private string _rightSelectedDrive;
         private string _rightActualFolder;
+        private string _rightSelectedDir;
         private RelayCommand<MouseButtonEventArgs> _rightDoubleClick;
+        private RelayCommand<SelectionChangedEventArgs> _rightDirSelectionChanged;
+        private RelayCommand<SelectionChangedEventArgs> _rightDriveSelectionChanged;
+        private RelayCommand _rightCopy;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -110,11 +119,11 @@ namespace FileManager.ViewModel
             _rightDrives = new List<string>();
             _leftPanel.RefreshDrives();
             _rightPanel.RefreshDrives();
-            _leftSelectedDrive = Properties.Settings.Default.TargetDriveLeft;
-            _leftActualFolder = Properties.Settings.Default.ActualDirectoryLeft;
+            LeftSelectedDrive = Properties.Settings.Default.TargetDriveLeft;
+            LeftActualFolder = Properties.Settings.Default.ActualDirectoryLeft;
             _leftPanel.SelectDrive(_leftSelectedDrive, _leftActualFolder);
-            _rightSelectedDrive = Properties.Settings.Default.TargetDriveRight;
-            _rightActualFolder = Properties.Settings.Default.ActualDirectoryRight;
+            RightSelectedDrive = Properties.Settings.Default.TargetDriveRight;
+            RightActualFolder = Properties.Settings.Default.ActualDirectoryRight;
             _rightPanel.SelectDrive(_rightSelectedDrive, _rightActualFolder);
             LeftDirectory = new ObservableCollection<string>();
             RightDirectory = new ObservableCollection<string>();
@@ -210,6 +219,11 @@ namespace FileManager.ViewModel
             set { _leftActualFolder = value; RaisePropertyChanged(); }
         }
         public ObservableCollection<string> LeftDirectory { get; }
+        public string LeftSelectedDir
+        {
+            get { return _leftSelectedDir; }
+            set { _leftSelectedDir = value; RaisePropertyChanged(); }
+        }
         public ObservableCollection<string> TargetsRight { get; }
         public ObservableCollection<DriveInfo> TargetDrivesRight { get; }
         public string SelectedTargetRight { get { return _selectedTargetRight; } set { _selectedTargetRight = value; RaisePropertyChanged(); } }
@@ -224,6 +238,11 @@ namespace FileManager.ViewModel
             set { _rightActualFolder = value; RaisePropertyChanged(); }
         }
         public ObservableCollection<string> RightDirectory { get; }
+        public string RightSelectedDir
+        {
+            get { return _rightSelectedDir; }
+            set { _rightSelectedDir = value; RaisePropertyChanged(); }
+        }
 
         public ObservableCollection<string> Messages { get; }
         public uint FreeRam
@@ -246,6 +265,26 @@ namespace FileManager.ViewModel
             if (args.AddedItems.Count != 0)
             {
                 _selectedTargetLeft = (string)args.AddedItems[0];
+                _leftPanel.PropertyChanged -= _leftPanel_PropertyChanged;
+                if (_selectedTargetLeft == "Pc")
+                {
+                    _leftPanel = new WindowsManager();
+                }
+                else
+                {
+                    if (_selectedTargetLeft == "Z2xx")
+                    {
+                        _leftPanel = new Z2xxManager();
+                    }
+                }
+                _leftPanel.PropertyChanged += _leftPanel_PropertyChanged;
+                Properties.Settings.Default.TargetLeft = _selectedTargetLeft;
+                _leftPanel.RefreshDrives();
+                LeftSelectedDrive = string.Empty;
+                LeftActualFolder = string.Empty;
+                _leftPanel.SelectDrive(_leftSelectedDrive, _leftActualFolder);
+                LeftDirectory.Clear();
+                _leftPanel.RefreshDirectory();
             }
         }
         public RelayCommand<SelectionChangedEventArgs> OnTargetRightSelectionChanged => _targetRightSelectionChanged ?? (_targetRightSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
@@ -328,6 +367,88 @@ namespace FileManager.ViewModel
                     selectedItem = selectedItem.Trim(new[] { '[', ']' });
                 }
                 _rightPanel.ChangeDirectory(selectedItem);
+                _rightPanel.RefreshDirectory();
+            }
+        }
+
+        public RelayCommand<SelectionChangedEventArgs> OnLeftDirSelectionChanged => _leftDirSelectionChanged ??
+                                                                                    (_leftDirSelectionChanged =
+                                                                                      new RelayCommand<SelectionChangedEventArgs>(
+                                                                                        (args) => LeftDirSelectionChanged(args)));
+
+        public void LeftDirSelectionChanged(SelectionChangedEventArgs args)
+        {
+            if (args.AddedItems.Count == 1)
+            {
+                _leftSelectedDir = args.AddedItems[0] as string;
+            }
+        }
+
+        public RelayCommand<SelectionChangedEventArgs> OnRightDirSelectionChanged => _rightDirSelectionChanged ??
+                                                                                    (_rightDirSelectionChanged =
+                                                                                      new RelayCommand<SelectionChangedEventArgs>(
+                                                                                        (args) => RightDirSelectionChanged(args)));
+
+        public void RightDirSelectionChanged(SelectionChangedEventArgs args)
+        {
+            if (args.AddedItems.Count == 1)
+            {
+                _rightSelectedDir = args.AddedItems[0] as string;
+            }
+        }
+
+        public RelayCommand OnRightCopy => _rightCopy ?? (_rightCopy = new RelayCommand(RightCopy));
+        private void RightCopy()
+        {
+        }
+
+        public RelayCommand OnLeftCopy => _leftCopy ?? (_leftCopy = new RelayCommand(LeftCopy));
+        private void LeftCopy()
+        {
+            if(!string.IsNullOrEmpty(_leftSelectedDir) && !string.IsNullOrEmpty(_rightActualFolder))
+            {
+                if(_leftSelectedDir != ".." && _leftSelectedDir[0] != '[')
+                {
+                    string sourceFilename = _leftPanel.MakeFilename(_leftSelectedDir);
+                    string destinationFilename = _rightPanel.MakeFilename(_leftSelectedDir);
+                    byte[] fileInBytes = _leftPanel.Upload(sourceFilename);
+                    _rightPanel.Download(destinationFilename, fileInBytes);
+                    RightDirectory.Clear();
+                    _rightPanel.RefreshDirectory();
+                }
+            }
+        }
+
+        public RelayCommand<SelectionChangedEventArgs> OnDriveLeftSelectionChanged => _leftDriveSelectionChanged ?? (_leftDriveSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
+                                                                               (args) => LeftDriveSelectionChanged(args)));
+
+        public void LeftDriveSelectionChanged(SelectionChangedEventArgs args)
+        {
+            Debug.Print($"LeftDriveSelectionChanged {args.AddedItems.Count}");
+            if (args.AddedItems.Count != 0)
+            {
+                LeftSelectedDrive = (string)args.AddedItems[0];
+                Properties.Settings.Default.TargetDriveLeft = _leftSelectedDrive;
+                LeftActualFolder = (string)args.AddedItems[0];
+                _leftPanel.SelectDrive(_leftSelectedDrive, _leftActualFolder);
+                LeftDirectory.Clear();
+                _leftPanel.RefreshDirectory();
+            }
+        }
+
+        public RelayCommand<SelectionChangedEventArgs> OnDriveRightSelectionChanged => _rightDriveSelectionChanged ?? (_rightDriveSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
+                                                                               (args) => RightDriveSelectionChanged(args)));
+
+        public void RightDriveSelectionChanged(SelectionChangedEventArgs args)
+        {
+            Debug.Print($"RightDriveSelectionChanged {args.AddedItems.Count}");
+            if (args.AddedItems.Count != 0)
+            {
+                RightSelectedDrive = (string)args.AddedItems[0];
+                Properties.Settings.Default.TargetDriveRight = _rightSelectedDrive;
+                RightActualFolder = (string)args.AddedItems[0];
+                _rightPanel.SelectDrive(_rightSelectedDrive, _rightActualFolder);
+                RightDirectory.Clear();
                 _rightPanel.RefreshDirectory();
             }
         }

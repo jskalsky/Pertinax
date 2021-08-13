@@ -53,17 +53,26 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ComboBox>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding LeftDrives}" SelectedItem="{Binding LeftSelectedDrive}"></ComboBox>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding LeftDrives}" SelectedItem="{Binding LeftSelectedDrive}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <command:EventToCommand Command="{Binding OnDriveLeftSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
                     </Grid>
                     <TextBlock Text="{Binding LeftActualFolder}" Foreground="Black"></TextBlock>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                    <Button Content="Copy"></Button>
+                    <Button Content="Copy" Width="50" Command="{Binding OnLeftCopy}"/>
                 </StackPanel>
-                <ListView ItemsSource="{Binding LeftDirectory}">
+                <ListView ItemsSource="{Binding LeftDirectory}" SelectedItem="{Binding LeftSelectedDir}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
                             <command:EventToCommand Command="{Binding OnLeftDoubleClick,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <command:EventToCommand Command="{Binding OnLeftDirSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <ListView.View>
@@ -89,18 +98,26 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ComboBox>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding RightDrives}" SelectedItem="{Binding RightSelectedDrive}"></ComboBox>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding RightDrives}" SelectedItem="{Binding RightSelectedDrive}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <command:EventToCommand Command="{Binding OnDriveRightSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
                     </Grid>
-
                     <TextBlock Text="{Binding RightActualFolder}"></TextBlock>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                    <Button Content="Copy"></Button>
+                    <Button Content="Copy" Width="50" Command="{Binding OnRightCopy}"/>
                 </StackPanel>
-                <ListView ItemsSource="{Binding RightDirectory}">
+                <ListView ItemsSource="{Binding RightDirectory}" SelectedItem="{Binding RightSelectedDir}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
                             <command:EventToCommand Command="{Binding OnRightDoubleClick,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <command:EventToCommand Command="{Binding OnRightDirSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <ListView.View>
