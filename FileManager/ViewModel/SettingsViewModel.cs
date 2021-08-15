@@ -4,7 +4,10 @@ using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,14 +20,32 @@ namespace FileManager.ViewModel
         private bool _isTls;
         private RelayCommand _browse;
 
+        private string _server;
+        private string _selectedServer;
+
+        private RelayCommand _add;
         public SettingsViewModel()
         {
+            Servers = new ObservableCollection<string>();
             if (!string.IsNullOrEmpty(Settings.Default.Startup))
             {
                 StartupFileName = Settings.Default.Startup;
             }
             RepetitiveRate = Settings.Default.RepetitiveRate;
             IsTls = Settings.Default.IsTls;
+            foreach(string server in Properties.Settings.Default.Servers)
+            {
+                Servers.Add(server);
+            }
+            if(string.IsNullOrEmpty(Properties.Settings.Default.SelectedServer))
+            {
+                SelectedServer = Servers[0];
+                Properties.Settings.Default.SelectedServer = SelectedServer;
+            }
+            else
+            {
+                SelectedServer = Properties.Settings.Default.SelectedServer;
+            }
         }
 
         public string StartupFileName
@@ -44,6 +65,19 @@ namespace FileManager.ViewModel
             get { return _isTls; }
             set { _isTls = value;RaisePropertyChanged(); }
         }
+
+        public string Server
+        {
+            get { return _server; }
+            set { _server = value;RaisePropertyChanged(); }
+        }
+
+        public string SelectedServer
+        {
+            get { return _selectedServer; }
+            set { _selectedServer = value;RaisePropertyChanged(); }
+        }
+        public ObservableCollection<string> Servers { get; }
         public RelayCommand BrowseCommand => _browse ?? (_browse = new RelayCommand(BrowseDialog));
         private void BrowseDialog()
         {
@@ -51,6 +85,15 @@ namespace FileManager.ViewModel
             if (ofn.ShowDialog() == true)
             {
                 StartupFileName = ofn.FileName;
+            }
+        }
+        public RelayCommand OnAdd => _add ?? (_add = new RelayCommand(Add));
+        private void Add()
+        {
+            Debug.Print($"Server={Server}");
+            if(IPAddress.TryParse(Server, out IPAddress ip))
+            {
+                Servers.Add(Server);
             }
         }
     }

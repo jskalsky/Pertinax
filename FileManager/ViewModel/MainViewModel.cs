@@ -1,3 +1,4 @@
+using CommonServiceLocator;
 using FileManager.Model;
 using FileManager.View;
 using GalaSoft.MvvmLight;
@@ -325,7 +326,8 @@ namespace FileManager.ViewModel
             Settings settings = new Settings();
             if(settings.ShowDialog() == true)
             {
-
+                SettingsViewModel mvm = ServiceLocator.Current.GetInstance<SettingsViewModel>();
+                Properties.Settings.Default.SelectedServer = mvm.SelectedServer;
             }
         }
         public RelayCommand StartCommand => _start ?? (_start = new RelayCommand(Start));

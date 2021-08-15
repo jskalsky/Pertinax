@@ -76,8 +76,11 @@ namespace FileManager.Model
 
         public override void RefreshDirectory()
         {
-            _diagClient.ReadDir("10.10.13.252", 4, _actualDirectory);
-            _diagClient.ReadDir("10.10.13.252", 3, _actualDirectory);
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedServer))
+            {
+                _diagClient.ReadDir(Properties.Settings.Default.SelectedServer, 4, _actualDirectory);
+                _diagClient.ReadDir(Properties.Settings.Default.SelectedServer, 3, _actualDirectory);
+            }
         }
 
         public override void RefreshDrives()
@@ -101,7 +104,10 @@ namespace FileManager.Model
         }
         public override void Download(string fileName, byte[] file)
         {
-            _diagClient.DownloadFile("10.10.13.252", fileName, file);
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedServer))
+            {
+                _diagClient.DownloadFile(Properties.Settings.Default.SelectedServer, fileName, file);
+            }
         }
         public override byte[] Upload(string fileName)
         {
