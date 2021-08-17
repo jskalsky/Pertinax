@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerOpcUa", "ServerOpcUa\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BupLst", "BupLst\BupLst.csproj", "{9A5504B2-C26F-468D-97D0-DD1D6A57ACBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpcSrcMaker", "OpcSrcMaker\OpcSrcMaker.csproj", "{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,18 @@ Global
 		{9A5504B2-C26F-468D-97D0-DD1D6A57ACBD}.Release|x64.Build.0 = Release|Any CPU
 		{9A5504B2-C26F-468D-97D0-DD1D6A57ACBD}.Release|x86.ActiveCfg = Release|Any CPU
 		{9A5504B2-C26F-468D-97D0-DD1D6A57ACBD}.Release|x86.Build.0 = Release|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Debug|x86.Build.0 = Debug|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Release|x64.Build.0 = Release|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{AFD5DB54-5ABF-44F5-B089-70B0C817D9F1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
