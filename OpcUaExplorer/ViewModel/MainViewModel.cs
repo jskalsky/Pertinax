@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace OpcUaExplorer.ViewModel
@@ -25,6 +26,7 @@ namespace OpcUaExplorer.ViewModel
     {
         private RelayCommand _settings;
         private RelayCommand<RoutedPropertyChangedEventArgs<object>> _addressSpaceSelectionChanged;
+        private RelayCommand<SelectionChangedEventArgs> _serverSelectionChanged;
         private Brush _ipForeground;
         private Brush _ipBackground;
         private Model.Client _client;
@@ -121,5 +123,19 @@ namespace OpcUaExplorer.ViewModel
             Debug.Print($"Selected {args.NewValue}");
             SelectedTreeItem = ((Model.TreeViewItem)args.NewValue).Tag;
         }
+
+        public RelayCommand<SelectionChangedEventArgs> OnServerSelectionChanged => _serverSelectionChanged ?? (_serverSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
+                                                                              (args) => ServerSelectionChanged(args)));
+
+        public void ServerSelectionChanged(SelectionChangedEventArgs args)
+        {
+            Debug.Print($"ServerSelectionChanged {args.AddedItems.Count}");
+            if (args.AddedItems.Count != 0)
+            {
+                _selectedServer = (string)args.AddedItems[0];
+                Properties.Settings.Default.SelectedServer = _selectedServer;
+            }
+        }
+
     }
 }

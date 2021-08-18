@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace OpcUaExplorer.Model
         {
             NamespaceIndex = br.namespaceIndex;
             NodeIdType = (NodeIdType)br.identifierType;
+            Debug.Print($"NamespaceIndex= {NamespaceIndex}, NodeIdType= {NodeIdType}");
             if(NodeIdType == NodeIdType.Numeric)
             {
                 Numeric = br.numeric;
@@ -28,7 +30,9 @@ namespace OpcUaExplorer.Model
                 }
             }
             NodeClass = (NodeClass)br.nodeClass;
+            Debug.Print($"browse= {br.browseNameLength}");
             BrowseName = (br.browseNameLength == 0) ? string.Empty : Encoding.ASCII.GetString(br.browseName, 0, br.browseNameLength);
+            Debug.Print($"dis= {br.displayNameLength}");
             DisplayName = (br.displayNameLength == 0) ? string.Empty : Encoding.ASCII.GetString(br.displayName, 0, br.displayNameLength);
         }
         public ushort NamespaceIndex { get; }

@@ -86,6 +86,13 @@ namespace FileManager.Model
         public override void RefreshDrives()
         {
             List<string> drives = new List<string>();
+            if(Properties.Settings.Default.Servers != null)
+            {
+                foreach(string drive in Properties.Settings.Default.Servers)
+                {
+                    drives.Add(drive);
+                }
+            }
             Drives = drives.ToArray();
         }
 

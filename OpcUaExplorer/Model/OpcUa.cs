@@ -53,6 +53,7 @@ namespace OpcUaExplorer.Model
             Debug.Print($"Browse= {res}, nr= {nr}, {namespaceIndex}, {numeric}");
             for (int i = 0; i < nr; ++i)
             {
+                Debug.Print($"br= {br[i]}");
                 BrowseItem bi = new BrowseItem(br[i]);
                 result.Add(bi);
                 Debug.Print($"  {i} : {bi.NodeClass}, {bi.NodeIdType}, {bi.Numeric}, {bi.BrowseName}, {bi.DisplayName}");

@@ -61,7 +61,7 @@ namespace OpcUaExplorer.Model
             if (Connected && _browse)
             {
                 BrowseItem[] items = OpcUa.Browse(DefaultNamespace, RootNode);
-                Debug.Print($"items= {items.Length}");
+                Debug.Print($"items= {items}");
                 foreach(BrowseItem bi in items)
                 {
                     if(bi.NodeClass == NodeClass.Object || bi.NodeClass == NodeClass.Variable)

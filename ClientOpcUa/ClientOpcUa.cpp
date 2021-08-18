@@ -7,6 +7,8 @@
 #include <open62541/plugin/log_stdout.h>
 
 UA_NodeId idFloats1, idFloats2, idFloats3, idFloats4;
+UA_NodeId Resistance;
+bool isMotor1 = false;
 
 void Browse(UA_Client* client, UA_BrowseRequest& browseRequest)
 {
@@ -43,6 +45,18 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest)
                 idFloats4 = ref->nodeId.nodeId;
                 printf("4 Mam %lu", idFloats4.identifier.numeric);
             }
+            if (displayName == "Motor1")
+            {
+                isMotor1 = true;
+            }
+            if (displayName == "RezistanceV")
+            {
+                if (isMotor1)
+                {
+                    Resistance = ref->nodeId.nodeId;
+                    isMotor1 = false;
+                }
+            }
             browseRequest.nodesToBrowse[0].nodeId = ref->nodeId.nodeId;
             Browse(client, browseRequest);
         }
@@ -78,30 +92,40 @@ int main()
 
     Browse(client, bReq);
 
-/*    UA_ReadRequest rr;
+    UA_ReadRequest rr;
     UA_ReadRequest_init(&rr);
-    rr.nodesToReadSize = 2;
-    rr.nodesToRead = (UA_ReadValueId*)UA_Array_new(2, &UA_TYPES[UA_TYPES_READVALUEID]);
+    rr.nodesToReadSize = 1;
+    rr.nodesToRead = (UA_ReadValueId*)UA_Array_new(1, &UA_TYPES[UA_TYPES_READVALUEID]);
     UA_ReadValueId_init(&rr.nodesToRead[0]);
     rr.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
-    rr.nodesToRead[0].nodeId = idFloats1;
-    UA_ReadValueId_init(&rr.nodesToRead[1]);
-    rr.nodesToRead[1].attributeId = UA_ATTRIBUTEID_VALUE;
-    rr.nodesToRead[1].nodeId = idFloats2;
+    rr.nodesToRead[0].nodeId = Resistance;
 
     UA_ReadResponse readResponse = UA_Client_Service_read(client, rr);
     printf("serviceResult= %x\n", readResponse.responseHeader.serviceResult);
-    UA_ReadResponse_clear(&readResponse);*/
+    if (readResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD)
+    {
+        for (size_t i = 0; i < readResponse.resultsSize; ++i)
+        {
+            printf("Status= %x, %f, hasStatus= %d, hasValue= %d\n", readResponse.results[i].status, 
+                *(float*)readResponse.results[0].value.data, readResponse.results[0].hasStatus, readResponse.results[0].hasValue);
+        }
+    }
+    UA_ReadResponse_clear(&readResponse);
 
     UA_Variant* val = UA_Variant_new();
+    UA_DateTime dt = UA_DateTime_nowMonotonic();
     UA_StatusCode sc = UA_Client_readValueAttribute(client, idFloats1, val);
-    printf("1 Read= %x\n", sc);
+//    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
+//    printf("1 Read= %x, %lld\n", sc, dt1 - dt);
     sc = UA_Client_readValueAttribute(client, idFloats2, val);
-    printf("2 Read= %x\n", sc);
+//    printf("2 Read= %x\n", sc);
     sc = UA_Client_readValueAttribute(client, idFloats3, val);
-    printf("3 Read= %x\n", sc);
+//    printf("3 Read= %x\n", sc);
     sc = UA_Client_readValueAttribute(client, idFloats4, val);
-    printf("4 Read= %x\n", sc);
+    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
+    printf("4 Read= %x, %lld\n", sc, dt1 - dt);
+
+
     UA_Variant_delete(val);
 
     UA_Client_delete(client);

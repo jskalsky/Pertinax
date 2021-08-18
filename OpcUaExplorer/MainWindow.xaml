@@ -30,6 +30,11 @@
                 <TextBlock Text="Server" Foreground="Black" VerticalAlignment="Center"/>
                 <TextBlock Text="{Binding SelectedServer}" Foreground="{Binding IpForeground}"  Background="{Binding IpBackground}"  VerticalAlignment="Center" Margin="10,0,0,0"/>
                 <ComboBox ItemsSource="{Binding Servers}" SelectedItem="{Binding SelectedServer}" Margin="10,0,0,0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <command:EventToCommand Command="{Binding OnServerSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </ComboBox>
             </StackPanel>
         </StatusBar>
