@@ -8,6 +8,7 @@
 
 UA_NodeId idFloats1, idFloats2, idFloats3, idFloats4;
 UA_NodeId Resistance;
+UA_NodeId idCounter;
 bool isMotor1 = false;
 
 void Browse(UA_Client* client, UA_BrowseRequest& browseRequest)
@@ -45,17 +46,9 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest)
                 idFloats4 = ref->nodeId.nodeId;
                 printf("4 Mam %lu", idFloats4.identifier.numeric);
             }
-            if (displayName == "Motor1")
+            if (displayName == "Counter")
             {
-                isMotor1 = true;
-            }
-            if (displayName == "RezistanceV")
-            {
-                if (isMotor1)
-                {
-                    Resistance = ref->nodeId.nodeId;
-                    isMotor1 = false;
-                }
+                idCounter = ref->nodeId.nodeId;
             }
             browseRequest.nodesToBrowse[0].nodeId = ref->nodeId.nodeId;
             Browse(client, browseRequest);
@@ -73,13 +66,22 @@ int main()
     UA_Client_newWithConfig(pConfig);
 
     UA_ClientConfig_setDefault(UA_Client_getConfig(client));
-    UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
+
+    UA_StatusCode retval;
+    for (int i = 0; i < 5; ++i)
+    {
+        retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
+        if (retval != UA_STATUSCODE_GOOD)
+        {
+            printf("Connect %x\n", retval);
+        }
+    }
     if (retval != UA_STATUSCODE_GOOD)
     {
-        printf("Connect %x\n", retval);
         UA_Client_delete(client);
         return (int)retval;
     }
+
     printf("Connect Ok\n");
     UA_BrowseRequest bReq;
     UA_BrowseRequest_init(&bReq);
@@ -92,41 +94,66 @@ int main()
 
     Browse(client, bReq);
 
+    /*    UA_ReadRequest rr;
+        UA_ReadRequest_init(&rr);
+        rr.nodesToReadSize = 1;
+        rr.nodesToRead = (UA_ReadValueId*)UA_Array_new(1, &UA_TYPES[UA_TYPES_READVALUEID]);
+        UA_ReadValueId_init(&rr.nodesToRead[0]);
+        rr.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
+        rr.nodesToRead[0].nodeId = Resistance;
+
+        UA_ReadResponse readResponse = UA_Client_Service_read(client, rr);
+        printf("serviceResult= %x\n", readResponse.responseHeader.serviceResult);
+        if (readResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD)
+        {
+            for (size_t i = 0; i < readResponse.resultsSize; ++i)
+            {
+                printf("Status= %x, %f, hasStatus= %d, hasValue= %d\n", readResponse.results[i].status,
+                    *(float*)readResponse.results[0].value.data, readResponse.results[0].hasStatus, readResponse.results[0].hasValue);
+            }
+        }
+        UA_ReadResponse_clear(&readResponse);*/
+
+    UA_Variant* val = UA_Variant_new();
+    UA_DateTime dt = UA_DateTime_nowMonotonic();
+    UA_StatusCode sc = UA_Client_readValueAttribute(client, idFloats1, val);
+    //    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
+    //    printf("1 Read= %x, %lld\n", sc, dt1 - dt);
+    sc = UA_Client_readValueAttribute(client, idFloats2, val);
+    //    printf("2 Read= %x\n", sc);
+    sc = UA_Client_readValueAttribute(client, idFloats3, val);
+    //    printf("3 Read= %x\n", sc);
+    sc = UA_Client_readValueAttribute(client, idFloats4, val);
+    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
+    printf("4 Read= %x, %lld\n", sc, dt1 - dt);
+
     UA_ReadRequest rr;
     UA_ReadRequest_init(&rr);
     rr.nodesToReadSize = 1;
     rr.nodesToRead = (UA_ReadValueId*)UA_Array_new(1, &UA_TYPES[UA_TYPES_READVALUEID]);
     UA_ReadValueId_init(&rr.nodesToRead[0]);
     rr.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
-    rr.nodesToRead[0].nodeId = Resistance;
+    rr.nodesToRead[0].nodeId = idCounter;
 
-    UA_ReadResponse readResponse = UA_Client_Service_read(client, rr);
-    printf("serviceResult= %x\n", readResponse.responseHeader.serviceResult);
-    if (readResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD)
+    UA_ReadResponse readResponse;
+    for (int i = 0; i < 10; ++i)
     {
-        for (size_t i = 0; i < readResponse.resultsSize; ++i)
+        readResponse = UA_Client_Service_read(client, rr);
+        printf("serviceResult= %x\n", readResponse.responseHeader.serviceResult);
+        if (readResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD)
         {
-            printf("Status= %x, %f, hasStatus= %d, hasValue= %d\n", readResponse.results[i].status, 
-                *(float*)readResponse.results[0].value.data, readResponse.results[0].hasStatus, readResponse.results[0].hasValue);
+            for (size_t i = 0; i < readResponse.resultsSize; ++i)
+            {
+                printf("Status= %x, %d, hasStatus= %d, hasValue= %d\n", readResponse.results[i].status,
+                    *(int*)readResponse.results[0].value.data, readResponse.results[0].hasStatus, readResponse.results[0].hasValue);
+            }
         }
+        UA_ReadResponse_clear(&readResponse);
+        Sleep(500);
     }
-    UA_ReadResponse_clear(&readResponse);
-
-    UA_Variant* val = UA_Variant_new();
-    UA_DateTime dt = UA_DateTime_nowMonotonic();
-    UA_StatusCode sc = UA_Client_readValueAttribute(client, idFloats1, val);
-//    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
-//    printf("1 Read= %x, %lld\n", sc, dt1 - dt);
-    sc = UA_Client_readValueAttribute(client, idFloats2, val);
-//    printf("2 Read= %x\n", sc);
-    sc = UA_Client_readValueAttribute(client, idFloats3, val);
-//    printf("3 Read= %x\n", sc);
-    sc = UA_Client_readValueAttribute(client, idFloats4, val);
-    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
-    printf("4 Read= %x, %lld\n", sc, dt1 - dt);
 
 
-    UA_Variant_delete(val);
+        UA_Variant_delete(val);
 
     UA_Client_delete(client);
     return 0;
