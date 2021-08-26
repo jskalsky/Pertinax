@@ -31,10 +31,17 @@ namespace OpcSrcMaker
                 {
                     Console.WriteLine($"  {dt.TableName}");
                 }
+                SrcMaker srcMaker = new SrcMaker();
+                srcMaker.Make(ds, 15, 3);
             }
             catch(Exception exc)
             {
                 Console.WriteLine($"Exception: {exc.Message}");
+                StackTrace stackTrace = new StackTrace(exc, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Console.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
             }
         }
     }

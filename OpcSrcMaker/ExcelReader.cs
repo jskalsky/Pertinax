@@ -29,10 +29,14 @@ namespace OpcSrcMaker
                     int rows = range.Rows.Count;
                     int cols = range.Columns.Count;
                     Debug.Print($"{worksheet.Name}: Col= {cols}, {rows}");
+                    for (int col = 0; col < cols; ++col)
+                    {
+                        dt.Columns.Add(new DataColumn(col.ToString(), typeof(string)));
+                    }
                     for (int row = 1; row <= rows; ++row)
                     {
-                        DataRow dataRow = new DataTable().NewRow();
-                        dt.Rows.Add(dataRow);
+                        Debug.Print($"row= {row}");
+                        DataRow dataRow = dt.NewRow();
                         for (int col = 1; col <= cols; ++col)
                         {
                             string val = string.Empty;
@@ -40,8 +44,9 @@ namespace OpcSrcMaker
                             {
                                 val = range.Cells[row, col].Value2.ToString();
                             }
-                            dataRow[col] = val;
+                            dataRow[col - 1] = val;
                         }
+                        dt.Rows.Add(dataRow);
                     }
                     Console.WriteLine($"{worksheet.Name} END");
                     Marshal.ReleaseComObject(range);
@@ -50,7 +55,12 @@ namespace OpcSrcMaker
             }
             catch (Exception exc)
             {
-                Debug.Print($"Exc= {exc.Message}");
+                Console.WriteLine($"Exc= {exc.Message}");
+                StackTrace stackTrace = new StackTrace(exc, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Console.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
             }
             finally
             {
