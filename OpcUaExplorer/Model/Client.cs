@@ -19,6 +19,7 @@ namespace OpcUaExplorer.Model
         private DispatcherTimer _timer;
         private bool _connected;
         private bool _browse;
+        private bool _read;
         private ObservableCollection<TreeViewItem> _addressSpace;
         public Client(string ip)
         {
@@ -28,6 +29,7 @@ namespace OpcUaExplorer.Model
             _timer.Interval = new TimeSpan(0, 0, 10);
             Connected = false;
             _browse = true;
+            _read = false;
             _addressSpace = new ObservableCollection<TreeViewItem>();
         }
 
@@ -58,32 +60,41 @@ namespace OpcUaExplorer.Model
             int result = OpcUa.Connect(ip);
             Debug.Print($"result= {result}");
             Connected = (result != 0) ? false : true;
-            if (Connected && _browse)
+            if(!Connected)
             {
-                BrowseItem[] items = OpcUa.Browse(DefaultNamespace, RootNode);
-                Debug.Print($"items= {items}");
-                foreach(BrowseItem bi in items)
+                _browse = true;
+                _read = false;
+            }
+            else
+            {
+                if (_browse)
                 {
-                    if(bi.NodeClass == NodeClass.Object || bi.NodeClass == NodeClass.Variable)
+                    BrowseItem[] items = OpcUa.Browse(DefaultNamespace, RootNode);
+                    Debug.Print($"items= {items}");
+                    foreach (BrowseItem bi in items)
                     {
-                        Debug.Print($"browse= {bi.BrowseName}, {bi.DisplayName}");
-                        string name = bi.BrowseName;
-                        if (name == string.Empty)
+                        if (bi.NodeClass == NodeClass.Object || bi.NodeClass == NodeClass.Variable)
                         {
-                            name = bi.DisplayName;
+                            Debug.Print($"browse= {bi.BrowseName}, {bi.DisplayName}");
+                            string name = bi.BrowseName;
+                            if (name == string.Empty)
+                            {
+                                name = bi.DisplayName;
+                            }
+                            if (name == string.Empty)
+                            {
+                                name = "Unknown";
+                            }
+                            TreeViewItem tvi = new TreeViewItem(name);
+                            tvi.Tag = bi;
+                            _addressSpace.Add(tvi);
+                            BrowseNode(tvi, bi);
                         }
-                        if (name == string.Empty)
-                        {
-                            name = "Unknown";
-                        }
-                        TreeViewItem tvi = new TreeViewItem(name);
-                        tvi.Tag = bi;
-                        _addressSpace.Add(tvi);
-                        BrowseNode(tvi, bi);
                     }
+                    _browse = false;
+                    _read = true;
+                    OnPropertyChanged("AddressSpace");
                 }
-                _browse = false;
-                OnPropertyChanged("AddressSpace");
             }
         }
 

@@ -102,3 +102,14 @@ int Client::Browse(unsigned short namespaceIndex, unsigned long id, int* nr, Bro
 #endif
     return 0;
 }
+
+int Client::ReadFloatArray(unsigned short int namespaceIndex, unsigned long id, int* floatArraySize, float floatArray[])
+{
+    UA_Variant* val = UA_Variant_new();
+    UA_StatusCode sc = UA_Client_readValueAttribute(UaClient, UA_NODEID_NUMERIC(namespaceIndex, id), val);
+    memcpy(floatArray, val->data, val->arrayLength * sizeof(float));
+    *floatArraySize = val->arrayLength;
+    UA_Variant_delete(val);
+    return (int)sc;
+}
+

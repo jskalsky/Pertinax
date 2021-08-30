@@ -1,3 +1,4 @@
+using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace OpcUaExplorer.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private RelayCommand _settings;
+        private RelayCommand _treeContextMenuRead;
         private RelayCommand<RoutedPropertyChangedEventArgs<object>> _addressSpaceSelectionChanged;
         private RelayCommand<SelectionChangedEventArgs> _serverSelectionChanged;
         private Brush _ipForeground;
@@ -34,6 +36,7 @@ namespace OpcUaExplorer.ViewModel
         private Model.BrowseItem _selectedTreeItem;
         private List<string> _servers;
         private string _selectedServer;
+        private ObservableCollection<Model.BrowseItem> _readItems;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -52,6 +55,7 @@ namespace OpcUaExplorer.ViewModel
             _client = new Model.Client(SelectedServer);
             _client.PropertyChanged += _client_PropertyChanged;
             _client.Open(0);
+            ReadItems = new ObservableCollection<Model.BrowseItem>();
         }
 
         private void _client_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -106,13 +110,24 @@ namespace OpcUaExplorer.ViewModel
             get { return _selectedTreeItem; }
             set { _selectedTreeItem = value; RaisePropertyChanged(); }
         }
+
+        public ObservableCollection<Model.BrowseItem> ReadItems
+        {
+            get { return _readItems; }
+            set { _readItems = value;RaisePropertyChanged(); }
+        }
         public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
         private void SettingsDialog()
         {
             View.Setup settings = new View.Setup();
             if (settings.ShowDialog() == true)
             {
-
+                Properties.Settings.Default.Servers.Clear();
+                SetupVm svm = ServiceLocator.Current.GetInstance<SetupVm>();
+                foreach (IPAddress ip in svm.Ips)
+                {
+                    Properties.Settings.Default.Servers.Add(ip.ToString());
+                }
             }
         }
 
@@ -134,6 +149,14 @@ namespace OpcUaExplorer.ViewModel
             {
                 _selectedServer = (string)args.AddedItems[0];
                 Properties.Settings.Default.SelectedServer = _selectedServer;
+            }
+        }
+        public RelayCommand TreeContextMenuReadCommand => _treeContextMenuRead ?? (_treeContextMenuRead = new RelayCommand(TreeContextMenuRead));
+        private void TreeContextMenuRead()
+        {
+            if(SelectedTreeItem != null)
+            {
+                ReadItems.Add(SelectedTreeItem);
             }
         }
 

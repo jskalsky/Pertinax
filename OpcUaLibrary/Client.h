@@ -29,4 +29,5 @@ public:
     int Open(int security);
     int Connect(const char* address);
     int Browse(unsigned short namespaceIndex, unsigned long id, int* nr, BrowseResponse uk[]);
+    int ReadFloatArray(unsigned short int namespaceIndex, unsigned long id, int* floatArraySize, float floatArray[]);
 };

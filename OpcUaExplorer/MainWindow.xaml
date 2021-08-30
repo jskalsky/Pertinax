@@ -45,6 +45,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TreeView Grid.Column="0" ItemsSource="{Binding AddressSpace}">
+                <TreeView.Resources>
+                    <ContextMenu x:Key="TreeContextMenu" Opened="ContextMenu_Opened">
+                        <MenuItem Header="Read" Command="{Binding TreeContextMenuReadCommand}"/>
+                    </ContextMenu>
+                </TreeView.Resources>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <command:EventToCommand Command="{Binding OnAddressSpaceSelectionChanged,Mode=OneWay}" PassEventArgsToCommand="True"/>
@@ -55,12 +60,20 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Width="16" Height="16" Stretch="Fill" 
                                    Source="{Binding Path=Tag.NodeClass, Converter={StaticResource TagImageConverter} }"/>
-                            <TextBlock Text="{Binding Path=Name}" Foreground="Black"/>
+                            <TextBlock Text="{Binding Path=Name}" Foreground="Black" ContextMenu="{StaticResource TreeContextMenu}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
-            <DataGrid Grid.Column="2" ItemsSource="{Binding SelectedTreeItem}"></DataGrid>
+            <ListView Grid.Column="2" ItemsSource="{Binding ReadItems}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}"></GridViewColumn>
+                        <GridViewColumn Header="Ns" DisplayMemberBinding="{Binding NamespaceIndex}"></GridViewColumn>
+                        <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Numeric}"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
     </DockPanel>
 </Window>

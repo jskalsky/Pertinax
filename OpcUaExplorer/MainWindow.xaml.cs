@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonServiceLocator;
+using OpcUaExplorer.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,13 @@ namespace OpcUaExplorer
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            MainViewModel mvm = ServiceLocator.Current.GetInstance<MainViewModel>();
+            ContextMenu menu = sender as ContextMenu;
+            menu.DataContext = mvm;
         }
     }
 }
