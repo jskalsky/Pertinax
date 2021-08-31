@@ -29,7 +29,7 @@ namespace OpcUaExplorer.Model
     {
         public const int MaxBrowseItems = 128;
         public const int MaxStringLength = 64;
-        public const int MaxArray = 512;
+        public const int MaxBuffer = 8192;
 
         [DllImport("OpcUaLibrary.dll")]
         public static extern int OpenClient(int security);
@@ -38,7 +38,7 @@ namespace OpcUaExplorer.Model
         [DllImport("OpcUaLibrary.dll")]
         public static extern int Browse(ushort namespaceIndex, uint numeric, ref int nr, [Out] BrowseResponse[] responses);
         [DllImport("OpcUaLibrary.dll")]
-        public static extern int ReadFloatArray(ushort namespaceIndex, uint numeric, ref int floatArraySize, [Out] float[] floatArray);
+        public static extern int Read(ushort namespaceIndex, uint numeric, ref int length, ref int type, ref int arrayLength, [Out] byte[] buffer);
         public static BrowseItem[] Browse(ushort namespaceIndex, uint numeric)
         {
             List<BrowseItem> result = new List<BrowseItem>();
@@ -62,17 +62,22 @@ namespace OpcUaExplorer.Model
             }
             return result.ToArray();
         }
-        public static float[] ReadFloatArray(ushort namespaceIndex, uint numeric, ref int length)
+        public static byte[] Read(ushort namespaceIndex, uint numeric, ref int type, ref int arrayLength)
         {
-            float[] floatArray = new float[MaxArray];
-            int floatArraySize = MaxArray;
-            int res = ReadFloatArray(namespaceIndex, numeric, ref floatArraySize, floatArray);
-            length = floatArraySize;
+            byte[] buffer = new byte[MaxBuffer];
+            int length = MaxBuffer;
+            int t = 0;
+            int al = 0;
+            int res = Read(namespaceIndex, numeric, ref length, ref t, ref al, buffer);
             if(res != 0)
             {
                 return null;
             }
-            return floatArray;
+            byte[] result = new byte[length];
+            Array.Copy(buffer, result, length);
+            type = t;
+            arrayLength = al;
+            return result;
         }
     }
 }

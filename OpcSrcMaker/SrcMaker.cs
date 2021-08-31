@@ -54,11 +54,11 @@ namespace OpcSrcMaker
 
         private void GetMaxSubindex()
         {
-            foreach(KeyValuePair<string,NodeId> pair in Nids)
+            foreach (KeyValuePair<string, NodeId> pair in Nids)
             {
-                if(MaxSubindex.TryGetValue(pair.Value.Name, out NodeId max))
+                if (MaxSubindex.TryGetValue(pair.Value.Name, out NodeId max))
                 {
-                    if(pair.Value.Subindex > max.Subindex)
+                    if (pair.Value.Subindex > max.Subindex)
                     {
                         MaxSubindex[pair.Value.Name] = pair.Value;
                     }
@@ -73,7 +73,7 @@ namespace OpcSrcMaker
         private void AddTab(StreamWriter sw, int nrSpaces)
         {
             StringBuilder sb = new StringBuilder();
-            for(int i=0;i<nrSpaces;++i)
+            for (int i = 0; i < nrSpaces; ++i)
             {
                 sb.Append(' ');
             }
@@ -83,7 +83,7 @@ namespace OpcSrcMaker
         private void AddString(StreamWriter sw, int nrSpaces, string text, bool addNewLine = true)
         {
             AddTab(sw, nrSpaces);
-            if(addNewLine)
+            if (addNewLine)
             {
                 sw.WriteLine(text);
             }
@@ -108,32 +108,36 @@ namespace OpcSrcMaker
         {
             sw.WriteLine($"void {className}::Set{name}(int index, {valType} val)");
             sw.WriteLine("{");
-            AddString(sw, nrSpaces * 2, $"{name}[index] = val;");
+            AddString(sw, nrSpaces, $"{name}[index] = val;");
             sw.WriteLine("}");
             sw.WriteLine();
         }
 
         private void AddTestFunction(StreamWriter sw, int nrSpaces, string className)
         {
-            sw.WriteLine($"void {className}::Test()");
+            sw.WriteLine($"UA_StatusCode {className}::Test()");
             sw.WriteLine("{");
 
             int floatValue = 1;
             bool booleanValue = false;
-            foreach(NodeId nodeId in Nids.Values)
+            foreach (NodeId nodeId in Nids.Values)
             {
-                if(nodeId.ValueType == 15)
+                if (nodeId.ValueType == 15)
                 {
                     string bv = (booleanValue) ? "true" : "false";
-                    AddString(sw, nrSpaces * 2, $"{nodeId.Name}[{nodeId.Subindex}] = {bv};");
+                    AddString(sw, nrSpaces, $"{nodeId.Name}[{nodeId.Subindex}] = {bv};");
                     booleanValue = !booleanValue;
                 }
                 else
                 {
-                    AddString(sw, nrSpaces * 2, $"{nodeId.Name}[{nodeId.Subindex}] = {floatValue};");
+                    AddString(sw, nrSpaces, $"{nodeId.Name}[{nodeId.Subindex}] = {floatValue};");
                     ++floatValue;
                 }
             }
+            sw.WriteLine();
+
+            AddString(sw, nrSpaces, $"UA_StatusCode sc = Write();");
+            AddString(sw, nrSpaces, $"return sc;");
             sw.WriteLine("}");
             sw.WriteLine();
         }
@@ -171,9 +175,28 @@ namespace OpcSrcMaker
             sw.WriteLine("}");
             sw.WriteLine();
         }
+
+        private void AddWriteFunction(StreamWriter sw, int nrSpaces, string className)
+        {
+            sw.WriteLine($"UA_StatusCode {className}::Write()");
+            sw.WriteLine("{");
+            AddString(sw, nrSpaces, $"UA_StatusCode sc;");
+            foreach (KeyValuePair<string, NodeId> pair in MaxSubindex)
+            {
+                int valType = (pair.Value.ValueType == 15) ? 0 : 9;
+                AddString(sw, nrSpaces, $"sc = WriteArray({pair.Key}NodeId, {pair.Key}, {pair.Key}_Length, {valType});");
+                AddString(sw, nrSpaces, $"if(sc != UA_STATUSCODE_GOOD)");
+                AddString(sw, nrSpaces, "{");
+                AddString(sw, nrSpaces * 2, "return sc;");
+                AddString(sw, nrSpaces, "}");
+            }
+            AddString(sw, nrSpaces, $"return sc;");
+            sw.WriteLine("}");
+            sw.WriteLine();
+        }
         private void MakeHeader(string fileName, int nrSpaces)
         {
-            using(StreamWriter sw = new StreamWriter(fileName))
+            using (StreamWriter sw = new StreamWriter(fileName))
             {
                 sw.WriteLine($"#ifndef {Path.GetFileNameWithoutExtension(fileName).ToUpper()}_H_");
                 sw.WriteLine($"#define {Path.GetFileNameWithoutExtension(fileName).ToUpper()}_H_");
@@ -195,9 +218,10 @@ namespace OpcSrcMaker
                 }
                 sw.WriteLine();
                 AddString(sw, nrSpaces, $"virtual UA_StatusCode Open();");
-//                AddString(sw, nrSpaces, $"virtual void Close();");
-                AddString(sw, nrSpaces, $"void Test();");
+                //                AddString(sw, nrSpaces, $"virtual void Close();");
+                AddString(sw, nrSpaces, $"UA_StatusCode Test();");
                 AddString(sw, nrSpaces, $"unsigned short int Iterate();");
+                AddString(sw, nrSpaces, $"UA_StatusCode Write();");
 
                 sw.WriteLine("private:");
                 foreach (KeyValuePair<string, NodeId> pair in MaxSubindex)
@@ -205,7 +229,7 @@ namespace OpcSrcMaker
                     AddConstInt(sw, nrSpaces, $"{pair.Key}_Length", pair.Value.Subindex + 1);
                 }
                 sw.WriteLine();
-                foreach (KeyValuePair<string,NodeId> pair in MaxSubindex)
+                foreach (KeyValuePair<string, NodeId> pair in MaxSubindex)
                 {
                     string valType = (pair.Value.ValueType == 15) ? "bool" : "float";
                     AddPointer(sw, nrSpaces, pair.Key, valType);
@@ -224,7 +248,7 @@ namespace OpcSrcMaker
         private void MakeCpp(string fileName, int nrSpaces)
         {
             string name = Path.GetFileNameWithoutExtension(fileName);
-            using(StreamWriter sw = new StreamWriter(fileName))
+            using (StreamWriter sw = new StreamWriter(fileName))
             {
                 sw.WriteLine($"#include \"{name}.h\"");
                 sw.WriteLine();
@@ -260,6 +284,7 @@ namespace OpcSrcMaker
                 AddOpenFunction(sw, nrSpaces, name);
                 AddTestFunction(sw, nrSpaces, name);
                 AddIterateFunction(sw, nrSpaces, name);
+                AddWriteFunction(sw, nrSpaces, name);
             }
         }
         public void Make(DataSet cfg, int colNodeId, int colDescription = -1, bool hasHeader = true, string className = "OpcUaZ1xx", int tab = 4)

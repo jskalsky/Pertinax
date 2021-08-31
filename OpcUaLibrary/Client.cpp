@@ -103,13 +103,32 @@ int Client::Browse(unsigned short namespaceIndex, unsigned long id, int* nr, Bro
     return 0;
 }
 
-int Client::ReadFloatArray(unsigned short int namespaceIndex, unsigned long id, int* floatArraySize, float floatArray[])
+int Client::Read(unsigned short int namespaceIndex, unsigned long id, int* length, int *type, int *arrayLength, unsigned char buffer[])
 {
+    int result = 0;
     UA_Variant* val = UA_Variant_new();
     UA_StatusCode sc = UA_Client_readValueAttribute(UaClient, UA_NODEID_NUMERIC(namespaceIndex, id), val);
-    memcpy(floatArray, val->data, val->arrayLength * sizeof(float));
-    *floatArraySize = val->arrayLength;
+    if (sc != UA_STATUSCODE_GOOD)
+    {
+        result = (int)sc;
+    }
+    else
+    {
+        UA_DataTypeKind typeKind = (UA_DataTypeKind)val->type->typeKind;
+        int variableSize = (val->arrayLength == -1) ? val->type->memSize : val->type->memSize * val->arrayLength;
+        if (variableSize < *length)
+        {
+            *length = variableSize;
+            memcpy(buffer, val->data, variableSize);
+            *type = typeKind;
+            *arrayLength = val->arrayLength;
+        }
+        else
+        {
+            result = 1000;
+        }
+    }
     UA_Variant_delete(val);
-    return (int)sc;
+    return result;
 }
 

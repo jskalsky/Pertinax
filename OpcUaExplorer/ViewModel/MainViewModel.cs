@@ -37,6 +37,12 @@ namespace OpcUaExplorer.ViewModel
         private List<string> _servers;
         private string _selectedServer;
         private ObservableCollection<Model.BrowseItem> _readItems;
+
+        private uint _connectionError;
+        private uint _connectionOk;
+        private uint _readError;
+        private uint _readOk;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -56,6 +62,14 @@ namespace OpcUaExplorer.ViewModel
             _client.PropertyChanged += _client_PropertyChanged;
             _client.Open(0);
             ReadItems = new ObservableCollection<Model.BrowseItem>();
+            if(Properties.Settings.Default.Variables == null)
+            {
+                Properties.Settings.Default.Variables = new System.Collections.Specialized.StringCollection();
+            }
+            ConnectionError = 0;
+            ConnectionOk = 0;
+            ReadError = 0;
+            ReadOk = 0;
         }
 
         private void _client_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -74,6 +88,25 @@ namespace OpcUaExplorer.ViewModel
                     break;
                 case "AddressSpace":
                     AddressSpace = _client.AddressSpace;
+                    break;
+                case "ReadItems":
+                    foreach(Model.BrowseItem bi in _client.ReadItems)
+                    {
+                        ReadItems.Add(bi);
+                        _client.AddReadVariable(bi);
+                    }
+                    break;
+                case "ConnectionOk":
+                    ConnectionOk = _client.ConnectionOk;
+                    break;
+                case "ConnectionError":
+                    ConnectionError = _client.ConnectionError;
+                    break;
+                case "ReadOk":
+                    ReadOk = _client.ReadOk;
+                    break;
+                case "ReadError":
+                    ReadError = _client.ReadError;
                     break;
             }
         }
@@ -116,6 +149,28 @@ namespace OpcUaExplorer.ViewModel
             get { return _readItems; }
             set { _readItems = value;RaisePropertyChanged(); }
         }
+        public uint ConnectionError
+        {
+            get { return _connectionError; }
+            set { _connectionError = value; RaisePropertyChanged(); }
+        }
+        public uint ConnectionOk
+        {
+            get { return _connectionOk; }
+            set { _connectionOk = value; RaisePropertyChanged(); }
+        }
+        public uint ReadError
+        {
+            get { return _readError; }
+            set { _readError = value; RaisePropertyChanged(); }
+        }
+        public uint ReadOk
+        {
+            get { return _readOk; }
+            set { _readOk = value; RaisePropertyChanged(); }
+        }
+
+
         public RelayCommand SettingsCommand => _settings ?? (_settings = new RelayCommand(SettingsDialog));
         private void SettingsDialog()
         {
@@ -157,6 +212,8 @@ namespace OpcUaExplorer.ViewModel
             if(SelectedTreeItem != null)
             {
                 ReadItems.Add(SelectedTreeItem);
+                Properties.Settings.Default.Variables.Add(SelectedTreeItem.DisplayName);
+                Properties.Settings.Default.Save();
             }
         }
 

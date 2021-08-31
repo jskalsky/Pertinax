@@ -48,5 +48,16 @@ namespace OpcUaExplorer.Properties {
                 this["SelectedServer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection Variables {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["Variables"]));
+            }
+            set {
+                this["Variables"] = value;
+            }
+        }
     }
 }
