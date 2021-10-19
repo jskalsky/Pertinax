@@ -65,15 +65,40 @@
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
-            <ListView Grid.Column="2" ItemsSource="{Binding ReadItems}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}"></GridViewColumn>
-                        <GridViewColumn Header="Ns" DisplayMemberBinding="{Binding NamespaceIndex}"></GridViewColumn>
-                        <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Numeric}"></GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="4"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0" ItemsSource="{Binding ReadItems}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}"></GridViewColumn>
+                            <GridViewColumn Header="Ns" DisplayMemberBinding="{Binding NamespaceIndex}"></GridViewColumn>
+                            <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Numeric}"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Grid.Row="2" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Connection errors" Foreground="Black" MinWidth="100"/>
+                        <TextBlock Text="{Binding ConnectionError}" Foreground="Black" Margin="10,0,0,0" MinWidth="100" TextAlignment="Right"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Connection Ok" Foreground="Black" MinWidth="100"/>
+                        <TextBlock Text="{Binding ConnectionOk}" Foreground="Black" Margin="10,0,0,0" MinWidth="100" TextAlignment="Right"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Read errors" Foreground="Black" MinWidth="100"/>
+                        <TextBlock Text="{Binding ReadError}" Foreground="Black" Margin="10,0,0,0" MinWidth="100" TextAlignment="Right"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Read Ok" Foreground="Black" MinWidth="100"/>
+                        <TextBlock Text="{Binding ReadOk}" Foreground="Black" Margin="10,0,0,0" MinWidth="100" TextAlignment="Right"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
         </Grid>
     </DockPanel>
 </Window>

@@ -40,11 +40,11 @@ extern "C" OPCUA_API int __stdcall Browse(unsigned short int namespaceIndex, uns
     }
 }
 
-extern "C" OPCUA_API int __stdcall ReadFloatArray(unsigned short int namespaceIndex, unsigned long id, int* floatArraySize, float floatArray[])
+extern "C" OPCUA_API int __stdcall Read(unsigned short int namespaceIndex, unsigned long id, int* length, int* type, int* arrayLength, unsigned char buffer[])
 {
     try
     {
-        return client.ReadFloatArray(namespaceIndex, id, floatArraySize, floatArray);
+        return client.Read(namespaceIndex, id, length, type, arrayLength, buffer);
     }
     catch (...)
     {
