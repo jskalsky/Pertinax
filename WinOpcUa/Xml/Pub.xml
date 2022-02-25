@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<OPCUAParameters ObjectTypeCount="1" UsePublisher="true" SubscribersCount="1" PublisherId="1" xmlns="http://www.zat.cz/OPCUAParameters">
+  <Subscriber IpAddress="168431100" LocalAddress="723406057539371008" PublisherRootType="Publisher1" />
+  <ObjectType Id="1" Name="Publisher1" VariablesCount="2">
+    <Variables Name="Out1" BasicType="7" />
+    <Variables Name="Out2" BasicType="7" />
+  </ObjectType>
+</OPCUAParameters>
