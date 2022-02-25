@@ -12,8 +12,7 @@ namespace FileManager.Model
     {
         protected string[] _drives;
         protected string _actualDirectory;
-        protected string[] _folders;
-        protected string[] _files;
+        protected string[] _dirItems;
         protected string _selectedDrive;
         protected string _lastError;
 
@@ -42,16 +41,10 @@ namespace FileManager.Model
             protected set { _actualDirectory = value; OnPropertyChanged("ActualDirectory"); }
         }
 
-        public string[] Folders
+        public string[] DirItems
         {
-            get { return _folders; }
-            protected set { _folders = value; OnPropertyChanged("Folders"); }
-        }
-
-        public string[] Files
-        {
-            get { return _files; }
-            protected set { _files = value; OnPropertyChanged("Files"); }
+            get { return _dirItems; }
+            protected set { _dirItems = value; OnPropertyChanged("DirItems"); }
         }
 
         public string SelectedDrive
@@ -72,5 +65,7 @@ namespace FileManager.Model
         public abstract void ChangeDirectory(string dir);
         public abstract void RefreshDirectory();
         public abstract string MakeFilename(string selectedItem);
+        public abstract void SymLink(string old, string newPath);
+        public abstract void Remove(string path);
     }
 }

@@ -25,6 +25,21 @@ namespace OpcUaExplorer.Model
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OpcUa.MaxStringLength)]
         public byte[] displayName;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct OpcValue
+    {
+        public int valueType;
+        public int status;
+        public float floatValue;
+        public byte byteValue;
+        public ushort ushortValue;
+        public uint uintValue;
+        public char charValue;
+        public short shortValue;
+        public int intValue;
+        public int booleanValue;
+    }
     internal static class OpcUa
     {
         public const int MaxBrowseItems = 128;
@@ -32,13 +47,26 @@ namespace OpcUaExplorer.Model
         public const int MaxBuffer = 8192;
 
         [DllImport("OpcUaLibrary.dll")]
-        public static extern int OpenClient(int security);
+        public static extern int OpenClient(int security, uint localMaxMessage, uint remoteMaxMessage);
         [DllImport("OpcUaLibrary.dll")]
         public static extern int Connect(string address);
         [DllImport("OpcUaLibrary.dll")]
         public static extern int Browse(ushort namespaceIndex, uint numeric, ref int nr, [Out] BrowseResponse[] responses);
         [DllImport("OpcUaLibrary.dll")]
         public static extern int Read(ushort namespaceIndex, uint numeric, ref int length, ref int type, ref int arrayLength, [Out] byte[] buffer);
+        [DllImport("OpcUaLibrary.dll")]
+        public static extern int ServiceRead(ushort namespaceIndex, int length, uint[] ids, [Out] OpcValue[] values);
+
+        public static OpcValue[] ServiceReadItems(ushort namespaceIndex, uint[] ids)
+        {
+            OpcValue[] values = new OpcValue[ids.Length];
+            int result = ServiceRead(namespaceIndex, ids.Length, ids, values);
+            if(result != 0)
+            {
+                return null;
+            }
+            return values;
+        }
         public static BrowseItem[] Browse(ushort namespaceIndex, uint numeric)
         {
             List<BrowseItem> result = new List<BrowseItem>();

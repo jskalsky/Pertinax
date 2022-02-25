@@ -20,26 +20,14 @@ namespace FileManager.Model
 
         private void _diagClient_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case "LastError":
                     LastError = _diagClient.LastError;
                     break;
-                case "Dirs":
-                    if(_actualDirectory.Length==1 && _actualDirectory[0] == '/')
-                    {
-                        Folders = _diagClient.Dirs;
-                    }
-                    else
-                    {
-                        List<string> folders = new List<string>();
-                        folders.Add("..");
-                        folders.AddRange(_diagClient.Dirs);
-                        Folders = folders.ToArray();
-                    }
-                    break;
-                case "Files":
-                    Files = _diagClient.Files;
+                case "DirItems":
+                    Debug.Print($"Z2xxManager DirItems= {_diagClient.DirItems.Length}");
+                    DirItems = _diagClient.DirItems;
                     break;
             }
         }
@@ -78,17 +66,18 @@ namespace FileManager.Model
         {
             if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedServer))
             {
-                _diagClient.ReadDir(Properties.Settings.Default.SelectedServer, 4, _actualDirectory);
-                _diagClient.ReadDir(Properties.Settings.Default.SelectedServer, 3, _actualDirectory);
+                //                _diagClient.ReadDir(Properties.Settings.Default.SelectedServer, 4, _actualDirectory);
+                //                _diagClient.ReadDir(Properties.Settings.Default.SelectedServer, 3, _actualDirectory);
+                _diagClient.GetDirectory(Properties.Settings.Default.SelectedServer, _actualDirectory);
             }
         }
 
         public override void RefreshDrives()
         {
             List<string> drives = new List<string>();
-            if(Properties.Settings.Default.Servers != null)
+            if (Properties.Settings.Default.Servers != null)
             {
-                foreach(string drive in Properties.Settings.Default.Servers)
+                foreach (string drive in Properties.Settings.Default.Servers)
                 {
                     drives.Add(drive);
                 }
@@ -100,7 +89,7 @@ namespace FileManager.Model
         {
             Debug.Print($"SelectDrive");
             SelectedDrive = string.Empty;
-            if(string.IsNullOrEmpty(actualDirectory))
+            if (string.IsNullOrEmpty(actualDirectory))
             {
                 ActualDirectory = "/";
             }
@@ -125,6 +114,22 @@ namespace FileManager.Model
         {
             string filename = ActualDirectory + '/' + selectedItem;
             return filename;
+        }
+
+        public override void SymLink(string old, string newPath)
+        {
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedServer))
+            {
+                _diagClient.SymLink(Properties.Settings.Default.SelectedServer, old, newPath);
+            }
+        }
+
+        public override void Remove(string path)
+        {
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedServer))
+            {
+                _diagClient.Remove(Properties.Settings.Default.SelectedServer, path);
+            }
         }
     }
 }

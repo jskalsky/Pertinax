@@ -13,10 +13,9 @@ namespace FileManager.Model
 {
     public class DiagClient : INotifyPropertyChanged
     {
-        private const int BufferSize = 4096;
+        private const int BufferSize = 0x4000;
         private string _lastError;
-        private string[] _dirs;
-        private string[] _files;
+        private string[] _dirItems;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,15 +30,10 @@ namespace FileManager.Model
             set { _lastError = value; OnPropertyChanged("LastError"); }
         }
 
-        public string[] Dirs
+        public string[] DirItems
         {
-            get { return _dirs; }
-            set { _dirs = value; OnPropertyChanged("Dirs"); }
-        }
-        public string[] Files
-        {
-            get { return _files; }
-            set { _files = value; OnPropertyChanged("Files"); }
+            get { return _dirItems; }
+            set { _dirItems = value; OnPropertyChanged("DirItems"); }
         }
         private void OnPropertyChanged(string name)
         {
@@ -126,7 +120,7 @@ namespace FileManager.Model
                     IntelMotorola(buf, 0, 2);
                     ushort id = BitConverter.ToUInt16(buf, 0);
 
-                    switch(id) // V jednotce je chyba, pri GetDirectories a GetFiles je rxLength spatne, je to delka nazvu + 2(id), ale za id je int = pocet nazvu
+                    switch (id) // V jednotce je chyba, pri GetDirectories a GetFiles je rxLength spatne, je to delka nazvu + 2(id), ale za id je int = pocet nazvu
                     {
                         case 3:
                             rxLength += 2;
@@ -137,7 +131,8 @@ namespace FileManager.Model
                     }
                     byte[] rxdata = new byte[rxLength];
                     int rx = await stream.ReadAsync(rxdata, 0, (int)rxLength);
-                    if(rx == 0)
+                    Debug.Print($"rx= {rx}");
+                    if (rx == 0)
                     {
                         return null;
                     }
@@ -221,49 +216,149 @@ namespace FileManager.Model
                 LastError = exc.Message;
             }
         }
-        public async void ReadDir(string ip, ushort id, string dir)
+
+        public async void SymLink(string ip, string oldName, string newName, int rxTimeout = 5000)
         {
+            TcpClient tcpClient = new TcpClient();
             try
             {
-                byte[] dirBytes = Encoding.ASCII.GetBytes(dir);
-                int sendBufLength = 4 + 2 + 2 + dirBytes.Length;
-                byte[] sendBuf = new byte[sendBufLength];
-                SetHeader(sendBuf, sendBufLength - 4, id);
-                byte[] dirLength = BitConverter.GetBytes((ushort)dir.Length);
-                IntelMotorola(dirLength, 0, 2);
-                Array.Copy(dirLength, 0, sendBuf, 6, 2);
-                Array.Copy(dirBytes, 0, sendBuf, 8, dirBytes.Length);
-                byte[] rxData = await SendAsync(ip, sendBuf);
-                if (rxData != null)
+                await ConnectAsync(ip, tcpClient);
+                using (NetworkStream ns = tcpClient.GetStream())
                 {
-                    Debug.Print($"ReadDir {rxData.Length}");
-                    using (MemoryStream ms = new MemoryStream(rxData))
+                    uint txLength = 2 + 2 + (uint)oldName.Length + 1 + 2 + (uint)newName.Length + 1;
+                    await ns.WriteAsync(IntelMotorolaB(txLength), 0, 4);
+                    await ns.WriteAsync(IntelMotorolaB((ushort)7), 0, 2);
+                    byte[] strEnd = new byte[] { 0 };
+                    await ns.WriteAsync(IntelMotorolaB((ushort)oldName.Length), 0, 2);
+                    byte[] destination = Encoding.ASCII.GetBytes(oldName);
+                    await ns.WriteAsync(destination, 0, destination.Length);
+                    await ns.WriteAsync(strEnd, 0, 1);
+                    await ns.WriteAsync(IntelMotorolaB((ushort)newName.Length), 0, 2);
+                    destination = Encoding.ASCII.GetBytes(newName);
+                    await ns.WriteAsync(destination, 0, destination.Length);
+                    await ns.WriteAsync(strEnd, 0, 1);
+
+                    await ns.FlushAsync();
+
+                    ns.ReadTimeout = rxTimeout;
+
+                    byte[] rxBuffer = new byte[BufferSize];
+                    await ns.ReadAsync(rxBuffer, 0, 4);
+                    uint rxLength = IntelMotorolaUint(rxBuffer);
+                    Debug.Print($"SymLink= {rxLength}");
+                }
+            }
+            catch (Exception exc)
+            {
+                LastError = exc.Message;
+            }
+        }
+
+        public async void GetDirectory(string ip, string dir, int rxTimeout = 5000)
+        {
+            byte[] dirBytes = Encoding.ASCII.GetBytes(dir);
+            int sendBufLength = 4 + 2 + 2 + dirBytes.Length;
+            byte[] sendBuf = new byte[sendBufLength];
+            SetHeader(sendBuf, sendBufLength - 4, 6);
+            byte[] dirLength = BitConverter.GetBytes((ushort)dir.Length);
+            IntelMotorola(dirLength, 0, 2);
+            Array.Copy(dirLength, 0, sendBuf, 6, 2);
+            Array.Copy(dirBytes, 0, sendBuf, 8, dirBytes.Length);
+            byte[] rxData = await SendAsync(ip, sendBuf);
+            if (rxData != null)
+            {
+                Debug.Print($"GetDirectory {rxData.Length}");
+                using (MemoryStream ms = new MemoryStream(rxData))
+                {
+                    using (BinaryReader br = new BinaryReader(ms))
                     {
-                        using (BinaryReader br = new BinaryReader(ms))
+                        UInt16 result = IntelMotorola(br.ReadUInt16());
+                        Debug.Print($"result= {result}");
+                        if (result == 0)
                         {
-                            List<string> dirs = new List<string>();
-                            uint nr = IntelMotorola(br.ReadUInt32());
-                            for (ushort i = 0; i < nr; ++i)
+                            List<string> d = new List<string>();
+                            List<string> l = new List<string>();
+                            List<string> f = new List<string>();
+                            try
                             {
-                                ushort length = IntelMotorola(br.ReadUInt16());
-                                byte[] dirName = br.ReadBytes(length);
-                                br.ReadByte();
-                                string name = (id == 4)? $"[{Encoding.ASCII.GetString(dirName)}]" : $"{Encoding.ASCII.GetString(dirName)}";
-                                dirs.Add(name);
-                            }
-                            if(id == 4)
-                            {
-                                Dirs = dirs.ToArray();
-                            }
-                            else
-                            {
-                                if(id == 3)
+                                while (true)
                                 {
-                                    Files = dirs.ToArray();
+                                    UInt16 type = IntelMotorola(br.ReadUInt16());
+                                    UInt16 length = IntelMotorola(br.ReadUInt16());
+                                    byte[] name = br.ReadBytes(length);
+                                    br.ReadByte(); // 0 na konci
+                                    string s = Encoding.ASCII.GetString(name);
+                                    Debug.Print($"type= {type}, length= {length}, name= {s}");
+                                    switch (type)
+                                    {
+                                        case 1:
+                                            d.Add(s);
+                                            break;
+                                        case 2:
+                                            l.Add(s);
+                                            break;
+                                        case 3:
+                                            f.Add(s);
+                                            break;
+                                    }
+
                                 }
+                            }
+                            catch (EndOfStreamException)
+                            {
+
+                            }
+                            d.Sort(StringComparer.CurrentCultureIgnoreCase);
+                            l.Sort(StringComparer.CurrentCultureIgnoreCase);
+                            f.Sort(StringComparer.CurrentCultureIgnoreCase);
+                            List<string> items = new List<string>();
+                            foreach(string s in d)
+                            {
+                                items.Add($"[{s}]");
+                            }
+                            foreach (string s in l)
+                            {
+                                items.Add($"{s}");
+                            }
+                            foreach (string s in f)
+                            {
+                                items.Add(s);
+                            }
+                            DirItems = items.ToArray();
+                            foreach(string di in DirItems)
+                            {
+                                Debug.Print($"DI= {di}");
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public async void Remove(string ip, string rName, int rxTimeout = 5000)
+        {
+            TcpClient tcpClient = new TcpClient();
+            try
+            {
+                await ConnectAsync(ip, tcpClient);
+                using (NetworkStream ns = tcpClient.GetStream())
+                {
+                    uint txLength = 2 + 2 + (uint)rName.Length + 1;
+                    await ns.WriteAsync(IntelMotorolaB(txLength), 0, 4);
+                    await ns.WriteAsync(IntelMotorolaB((ushort)8), 0, 2);
+                    byte[] strEnd = new byte[] { 0 };
+                    await ns.WriteAsync(IntelMotorolaB((ushort)rName.Length), 0, 2);
+                    byte[] destination = Encoding.ASCII.GetBytes(rName);
+                    await ns.WriteAsync(destination, 0, destination.Length);
+                    await ns.WriteAsync(strEnd, 0, 1);
+                    await ns.FlushAsync();
+
+                    ns.ReadTimeout = rxTimeout;
+
+                    byte[] rxBuffer = new byte[BufferSize];
+                    await ns.ReadAsync(rxBuffer, 0, 4);
+                    uint rxLength = IntelMotorolaUint(rxBuffer);
+                    Debug.Print($"Remove= {rxLength}");
                 }
             }
             catch (Exception exc)

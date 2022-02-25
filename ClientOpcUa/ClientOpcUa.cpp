@@ -114,7 +114,7 @@ int main()
         }
         UA_ReadResponse_clear(&readResponse);*/
 
-    UA_Variant* val = UA_Variant_new();
+/*    UA_Variant* val = UA_Variant_new();
     UA_DateTime dt = UA_DateTime_nowMonotonic();
     UA_StatusCode sc = UA_Client_readValueAttribute(client, idFloats1, val);
     //    UA_DateTime dt1 = UA_DateTime_nowMonotonic();
@@ -153,7 +153,7 @@ int main()
     }
 
 
-        UA_Variant_delete(val);
+        UA_Variant_delete(val);*/
 
     UA_Client_delete(client);
     return 0;

@@ -23,7 +23,7 @@ namespace OpcUaExplorer.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
             "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
@@ -32,31 +32,25 @@ namespace OpcUaExplorer.Properties {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["Servers"]));
             }
-            set {
-                this["Servers"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10.10.13.252")]
         public string SelectedServer {
             get {
                 return ((string)(this["SelectedServer"]));
             }
-            set {
-                this["SelectedServer"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>Z1xx</string>\r\n</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection Variables {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["Variables"]));
-            }
-            set {
-                this["Variables"] = value;
             }
         }
     }

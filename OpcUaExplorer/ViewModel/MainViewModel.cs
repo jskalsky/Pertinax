@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Windows;
@@ -33,10 +34,10 @@ namespace OpcUaExplorer.ViewModel
         private Brush _ipBackground;
         private Model.Client _client;
         private ObservableCollection<Model.TreeViewItem> _addressSpace;
-        private Model.BrowseItem _selectedTreeItem;
+        private Model.TreeViewItem _selectedTreeItem;
         private List<string> _servers;
         private string _selectedServer;
-        private ObservableCollection<Model.BrowseItem> _readItems;
+        private ObservableCollection<Model.TreeViewItem> _readItems;
 
         private uint _connectionError;
         private uint _connectionOk;
@@ -48,6 +49,7 @@ namespace OpcUaExplorer.ViewModel
         /// </summary>
         public MainViewModel()
         {
+            ConfigurationManager.RefreshSection("OpcUaExplorer.Properties.Settings");
             _servers = new List<string>();
             foreach (string server in Properties.Settings.Default.Servers)
             {
@@ -61,11 +63,11 @@ namespace OpcUaExplorer.ViewModel
             _client = new Model.Client(SelectedServer);
             _client.PropertyChanged += _client_PropertyChanged;
             _client.Open(0);
-            ReadItems = new ObservableCollection<Model.BrowseItem>();
-            if(Properties.Settings.Default.Variables == null)
-            {
-                Properties.Settings.Default.Variables = new System.Collections.Specialized.StringCollection();
-            }
+            ReadItems = new ObservableCollection<Model.TreeViewItem>();
+//            if(Properties.Settings.Default.Variables == null)
+//            {
+//                Properties.Settings.Default.Variables = new System.Collections.Specialized.StringCollection();
+//            }
             ConnectionError = 0;
             ConnectionOk = 0;
             ReadError = 0;
@@ -90,11 +92,7 @@ namespace OpcUaExplorer.ViewModel
                     AddressSpace = _client.AddressSpace;
                     break;
                 case "ReadItems":
-                    foreach(Model.BrowseItem bi in _client.ReadItems)
-                    {
-                        ReadItems.Add(bi);
-                        _client.AddReadVariable(bi);
-                    }
+                    ReadItems = _client.ReadItems;
                     break;
                 case "ConnectionOk":
                     ConnectionOk = _client.ConnectionOk;
@@ -138,13 +136,13 @@ namespace OpcUaExplorer.ViewModel
             set { _addressSpace = value; RaisePropertyChanged(); }
         }
 
-        public Model.BrowseItem SelectedTreeItem
+        public Model.TreeViewItem SelectedTreeItem
         {
             get { return _selectedTreeItem; }
             set { _selectedTreeItem = value; RaisePropertyChanged(); }
         }
 
-        public ObservableCollection<Model.BrowseItem> ReadItems
+        public ObservableCollection<Model.TreeViewItem> ReadItems
         {
             get { return _readItems; }
             set { _readItems = value;RaisePropertyChanged(); }
@@ -191,7 +189,7 @@ namespace OpcUaExplorer.ViewModel
         public void AddressSpaceSelectionChanged(RoutedPropertyChangedEventArgs<object> args)
         {
             Debug.Print($"Selected {args.NewValue}");
-            SelectedTreeItem = ((Model.TreeViewItem)args.NewValue).Tag;
+            SelectedTreeItem = (Model.TreeViewItem)args.NewValue;
         }
 
         public RelayCommand<SelectionChangedEventArgs> OnServerSelectionChanged => _serverSelectionChanged ?? (_serverSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
@@ -203,19 +201,35 @@ namespace OpcUaExplorer.ViewModel
             if (args.AddedItems.Count != 0)
             {
                 _selectedServer = (string)args.AddedItems[0];
-                Properties.Settings.Default.SelectedServer = _selectedServer;
+//                Properties.Settings.Default.SelectedServer = _selectedServer;
             }
         }
         public RelayCommand TreeContextMenuReadCommand => _treeContextMenuRead ?? (_treeContextMenuRead = new RelayCommand(TreeContextMenuRead));
         private void TreeContextMenuRead()
         {
+            Debug.Print($"TreeContextMenuRead {SelectedTreeItem}");
             if(SelectedTreeItem != null)
             {
-                ReadItems.Add(SelectedTreeItem);
-                Properties.Settings.Default.Variables.Add(SelectedTreeItem.DisplayName);
-                Properties.Settings.Default.Save();
+                Debug.Print($"NodeClass= {SelectedTreeItem.Tag.NodeClass}");
+                if(SelectedTreeItem.Tag.NodeClass == Model.NodeClass.Variable || SelectedTreeItem.Tag.NodeClass == Model.NodeClass.Object)
+                {
+                    Debug.Print($"Ukladam {SelectedTreeItem.Tag.DisplayName}");
+                    bool found = false;
+                    foreach(string dn in Properties.Settings.Default.Variables)
+                    {
+                        if(dn == SelectedTreeItem.Tag.DisplayName)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found)
+                    {
+                        Properties.Settings.Default.Variables.Add(SelectedTreeItem.Tag.DisplayName);
+                        Properties.Settings.Default.Save();
+                    }
+                }
             }
         }
-
     }
 }

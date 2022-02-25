@@ -68,19 +68,18 @@
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="4"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="70"/>
                 </Grid.RowDefinitions>
-                <ListView Grid.Row="0" ItemsSource="{Binding ReadItems}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}"></GridViewColumn>
-                            <GridViewColumn Header="Ns" DisplayMemberBinding="{Binding NamespaceIndex}"></GridViewColumn>
-                            <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Numeric}"></GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <StackPanel Grid.Row="2" Orientation="Vertical">
+                <TreeView Grid.Row="0" ItemsSource="{Binding ReadItems}">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type model:TreeViewItem}" ItemsSource="{Binding Path=Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Name}" Foreground="Black"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+                <StackPanel Grid.Row="1" Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Connection errors" Foreground="Black" MinWidth="100"/>
                         <TextBlock Text="{Binding ConnectionError}" Foreground="Black" Margin="10,0,0,0" MinWidth="100" TextAlignment="Right"/>

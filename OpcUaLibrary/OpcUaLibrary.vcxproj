@@ -86,21 +86,22 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;OPCUALIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;OPCUALIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\open62541\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\open62541\include;E:\Pertinax\PertinaxRuntime\Linux\LibPtx;E:\Pertinax\PertinaxRuntime\Linux\Xsd\libxsd;E:\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa;C:\Program Files %28x86%29\xerces-c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\open62541\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;open62541.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\open62541\lib;C:\Program Files %28x86%29\xerces-c\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;open62541.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)OpcUaExplorer\bin\Debug\$(TargetName)$(TargetExt)</Command>
+      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)WinOpcUa\bin\x86\Debug\$(TargetName)$(TargetExt)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -109,11 +110,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;OPCUALIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;OPCUALIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\open62541\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\open62541\include;E:\Pertinax\PertinaxRuntime\Linux\LibPtx;E:\Pertinax\PertinaxRuntime\Linux\Xsd\libxsd;E:\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa;C:\Program Files %28x86%29\xerces-c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,11 +123,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\open62541\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;open62541.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\open62541\lib;C:\Program Files %28x86%29\xerces-c\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;open62541.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)OpcUaExplorer\bin\Debug\$(TargetName)$(TargetExt)</Command>
+      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)WinOpcUa\bin\x86\Debug\$(TargetName)$(TargetExt)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -163,13 +165,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Client.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Client.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Connection.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\DrvOpcUa.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\OpcUaStation.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Publisher.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Server.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\ServerAddressSpace.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Subscriber.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Variable.h" />
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\VariableCollection.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="OpcUa.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Certificate.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Client.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Connection.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\DrvOpcUa.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\OpcUaPars.cxx" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\OpcUaStation.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Publisher.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Server.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\ServerAddressSpace.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Subscriber.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Variable.cpp" />
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\VariableCollection.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="OpcUa.cpp" />
     <ClCompile Include="pch.cpp">

@@ -1,14 +1,27 @@
 #include "OpcUa.h"
-#include "Client.h"
 #include <exception>
+#include "DrvOpcUa.h"
+DrvOpcUa Opc;
 
-Client client;
-
-extern "C" OPCUA_API int __stdcall OpenClient(int security)
+extern "C" OPCUA_API int Open(const char* path)
 {
     try
     {
-        return client.Open(security);
+        bool res = Opc.Open(path);
+        printf("res= %d, %s\n", res, path);
+        return (int)res;
+    }
+    catch (...)
+    {
+        return 0;
+    }
+}
+/*
+extern "C" OPCUA_API int __stdcall OpenClient(int security, unsigned long localMaxMessage, unsigned long remoteMaxMessage)
+{
+    try
+    {
+        return client.Open(security, localMaxMessage, remoteMaxMessage);
     }
     catch (...)
     {
@@ -51,3 +64,16 @@ extern "C" OPCUA_API int __stdcall Read(unsigned short int namespaceIndex, unsig
         return 1;
     }
 }
+
+extern "C" OPCUA_API int __stdcall ServiceRead(unsigned short int namespaceIndex, int length, unsigned long id[], OpcValue values[])
+{
+    try
+    {
+        return client.ServiceRead(namespaceIndex, length, id, values);
+    }
+    catch (...)
+    {
+        return 1;
+    }
+}
+*/

@@ -94,6 +94,13 @@ namespace FileManager.ViewModel
             if(IPAddress.TryParse(Server, out IPAddress ip))
             {
                 Servers.Add(Server);
+                Properties.Settings.Default.Servers.Clear();
+                foreach(string server in Servers)
+                {
+                    Properties.Settings.Default.Servers.Add(server);
+                }
+                Properties.Settings.Default.SelectedServer = SelectedServer;
+                Properties.Settings.Default.Save();
             }
         }
     }

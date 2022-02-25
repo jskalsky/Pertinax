@@ -47,6 +47,8 @@ namespace FileManager.ViewModel
         private RelayCommand<SelectionChangedEventArgs> _leftDirSelectionChanged;
         private RelayCommand<SelectionChangedEventArgs> _leftDriveSelectionChanged;
         private RelayCommand _leftCopy;
+        private RelayCommand _leftLink;
+        private RelayCommand _leftRemove;
 
         private List<string> _rightDrives;
         private string _rightSelectedDrive;
@@ -56,7 +58,10 @@ namespace FileManager.ViewModel
         private RelayCommand<SelectionChangedEventArgs> _rightDirSelectionChanged;
         private RelayCommand<SelectionChangedEventArgs> _rightDriveSelectionChanged;
         private RelayCommand _rightCopy;
+        private RelayCommand _rightLink;
+        private RelayCommand _rightRemove;
 
+        private string _selectedServer;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -130,11 +135,14 @@ namespace FileManager.ViewModel
             RightDirectory = new ObservableCollection<string>();
             _leftPanel.RefreshDirectory();
             _rightPanel.RefreshDirectory();
+
+            SettingsViewModel svm = ServiceLocator.Current.GetInstance<SettingsViewModel>();
+            SelectedServer = svm.SelectedServer;
         }
 
         private void _rightPanel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case "Drives":
                     _rightDrives.Clear();
@@ -151,17 +159,11 @@ namespace FileManager.ViewModel
                     Properties.Settings.Default.ActualDirectoryRight = _rightActualFolder;
                     Debug.Print($"ActualDirectoryRight= {Properties.Settings.Default.ActualDirectoryRight}");
                     break;
-                case "Folders":
+                case "DirItems":
                     RightDirectory.Clear();
-                    foreach(string folder in _rightPanel.Folders)
+                    foreach (string folder in _rightPanel.DirItems)
                     {
                         RightDirectory.Add(folder);
-                    }
-                    break;
-                case "Files":
-                    foreach (string file in _rightPanel.Files)
-                    {
-                        RightDirectory.Add(file);
                     }
                     break;
                 case "LastError":
@@ -187,17 +189,11 @@ namespace FileManager.ViewModel
                     LeftActualFolder = _leftPanel.ActualDirectory;
                     Properties.Settings.Default.ActualDirectoryLeft = _leftActualFolder;
                     break;
-                case "Folders":
+                case "DirItems":
                     LeftDirectory.Clear();
-                    foreach (string folder in _leftPanel.Folders)
+                    foreach (string folder in _leftPanel.DirItems)
                     {
                         LeftDirectory.Add(folder);
-                    }
-                    break;
-                case "Files":
-                    foreach (string file in _leftPanel.Files)
-                    {
-                        LeftDirectory.Add(file);
                     }
                     break;
                 case "LastError":
@@ -249,13 +245,19 @@ namespace FileManager.ViewModel
         public uint FreeRam
         {
             get { return _freeRam; }
-            set { _freeRam = value;RaisePropertyChanged(); }
+            set { _freeRam = value; RaisePropertyChanged(); }
         }
 
         public int NrFiles
         {
             get { return _nrFiles; }
-            set { _nrFiles = value;RaisePropertyChanged(); }
+            set { _nrFiles = value; RaisePropertyChanged(); }
+        }
+
+        public string SelectedServer
+        {
+            get { return _selectedServer; }
+            set { _selectedServer = value; RaisePropertyChanged(); }
         }
         public RelayCommand<SelectionChangedEventArgs> OnTargetLeftSelectionChanged => _targetLeftSelectionChanged ?? (_targetLeftSelectionChanged = new RelayCommand<SelectionChangedEventArgs>(
                                                                               (args) => TargetLeftSelectionChanged(args)));
@@ -324,7 +326,7 @@ namespace FileManager.ViewModel
         private void SettingsDialog()
         {
             Settings settings = new Settings();
-            if(settings.ShowDialog() == true)
+            if (settings.ShowDialog() == true)
             {
                 SettingsViewModel mvm = ServiceLocator.Current.GetInstance<SettingsViewModel>();
                 Properties.Settings.Default.SelectedServer = mvm.SelectedServer;
@@ -343,10 +345,10 @@ namespace FileManager.ViewModel
         public void LeftDoubleClick(MouseButtonEventArgs args)
         {
             ListView lv = (ListView)args.Source;
-            if(lv.SelectedItem != null)
+            if (lv.SelectedItem != null)
             {
                 string selectedItem = (string)lv.SelectedItem;
-                if(selectedItem[0] == '[')
+                if (selectedItem[0] == '[')
                 {
                     selectedItem = selectedItem.Trim(new[] { '[', ']' });
                 }
@@ -407,14 +409,82 @@ namespace FileManager.ViewModel
         public RelayCommand OnLeftCopy => _leftCopy ?? (_leftCopy = new RelayCommand(LeftCopy));
         private void LeftCopy()
         {
-            if(!string.IsNullOrEmpty(_leftSelectedDir) && !string.IsNullOrEmpty(_rightActualFolder))
+            if (!string.IsNullOrEmpty(_leftSelectedDir) && !string.IsNullOrEmpty(_rightActualFolder))
             {
-                if(_leftSelectedDir != ".." && _leftSelectedDir[0] != '[')
+                if (_leftSelectedDir != ".." && _leftSelectedDir[0] != '[')
                 {
                     string sourceFilename = _leftPanel.MakeFilename(_leftSelectedDir);
                     string destinationFilename = _rightPanel.MakeFilename(_leftSelectedDir);
                     byte[] fileInBytes = _leftPanel.Upload(sourceFilename);
                     _rightPanel.Download(destinationFilename, fileInBytes);
+                    RightDirectory.Clear();
+                    _rightPanel.RefreshDirectory();
+                }
+            }
+        }
+
+        public RelayCommand OnLeftLink => _leftLink ?? (_leftLink = new RelayCommand(LeftLink));
+        private void LeftLink()
+        {
+            if (!string.IsNullOrEmpty(_leftSelectedDir))
+            {
+                if (_leftSelectedDir != ".." && _leftSelectedDir[0] != '[')
+                {
+                    string[] items = _leftSelectedDrive.Split('.');
+                    string oldName = _leftPanel.MakeFilename(_leftSelectedDir);
+                    string newName1 = items[0] + '.' + items[1] + '.' + items[2];
+                    string newName2 = items[0] + '.' + items[1];
+                    _leftPanel.SymLink(oldName, _leftPanel.MakeFilename(newName1));
+                    _leftPanel.SymLink(oldName, _leftPanel.MakeFilename(newName2));
+                    LeftDirectory.Clear();
+                    _leftPanel.RefreshDirectory();
+                }
+            }
+        }
+
+        public RelayCommand OnLeftRemove => _leftRemove ?? (_leftRemove = new RelayCommand(LeftRemove));
+        private void LeftRemove()
+        {
+            if (!string.IsNullOrEmpty(_leftSelectedDir))
+            {
+                if (_leftSelectedDir != ".." && _leftSelectedDir[0] != '[')
+                {
+                    string name = _leftPanel.MakeFilename(_leftSelectedDir);
+                    _leftPanel.Remove(name);
+                    LeftDirectory.Clear();
+                    _leftPanel.RefreshDirectory();
+                }
+            }
+        }
+
+        public RelayCommand OnRightLink => _rightLink ?? (_rightLink = new RelayCommand(RightLink));
+        private void RightLink()
+        {
+            if (!string.IsNullOrEmpty(_rightSelectedDir))
+            {
+                if (_rightSelectedDir != ".." && _rightSelectedDir[0] != '[')
+                {
+                    string[] items = _rightSelectedDir.Split('.');
+                    string oldName = _rightPanel.MakeFilename(_rightSelectedDir);
+                    string newName1 = items[0] + '.' + items[1] + '.' + items[2];
+                    string newName2 = items[0] + '.' + items[1];
+                    _rightPanel.SymLink(oldName, _rightPanel.MakeFilename(newName1));
+                    _rightPanel.SymLink(oldName, _rightPanel.MakeFilename(newName2));
+                    RightDirectory.Clear();
+                    _rightPanel.RefreshDirectory();
+                }
+            }
+        }
+
+        public RelayCommand OnRightRemove => _rightRemove ?? (_rightRemove = new RelayCommand(RightRemove));
+        private void RightRemove()
+        {
+            if (!string.IsNullOrEmpty(_rightSelectedDir))
+            {
+                if (_rightSelectedDir != ".." && _rightSelectedDir[0] != '[')
+                {
+                    string name = _rightPanel.MakeFilename(_rightSelectedDir);
+                    _rightPanel.Remove(name);
                     RightDirectory.Clear();
                     _rightPanel.RefreshDirectory();
                 }

@@ -103,9 +103,9 @@ namespace FileManager.Model
                 string[] files = Directory.GetFiles(_actualDirectory);
                 string[] folders = Directory.GetDirectories(_actualDirectory);
                 string root = Path.GetPathRoot(_actualDirectory);
+                List<string> flds = new List<string>();
                 if (!string.IsNullOrEmpty(root))
                 {
-                    List<string> flds = new List<string>();
                     if (root != _actualDirectory)
                     {
                         flds.Add("..");
@@ -118,7 +118,6 @@ namespace FileManager.Model
                                 flds.Add($"[{fol}]");
                             }
                         }
-                        Folders = flds.ToArray();
                     }
                     else
                     {
@@ -131,15 +130,13 @@ namespace FileManager.Model
                                 flds.Add($"[{fol}]");
                             }
                         }
-                        Folders = flds.ToArray();
                     }
                 }
-                List<string> fs = new List<string>();
                 foreach(string file in files)
                 {
-                    fs.Add(Path.GetFileName(file));
+                    flds.Add(Path.GetFileName(file));
                 }
-                Files = fs.ToArray();
+                DirItems = flds.ToArray();
             }
         }
 
@@ -147,6 +144,16 @@ namespace FileManager.Model
         {
             string filename = ActualDirectory + Path.DirectorySeparatorChar + selectedItem;
             return filename;
+        }
+
+        public override void SymLink(string old, string newPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Remove(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }

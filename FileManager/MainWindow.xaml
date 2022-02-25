@@ -31,6 +31,7 @@
                         <vm:ScrollIntoViewBehavior/>
                     </i:Interaction.Behaviors>
                 </ListBox>
+                <TextBlock Text="{Binding SelectedServer}" Width="100" Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
         </StatusBar>
         <Grid>
@@ -65,6 +66,8 @@
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                     <Button Content="Copy" Width="50" Command="{Binding OnLeftCopy}"/>
+                    <Button Content="Link" Width="50" Margin="5,0,0,0" Command="{Binding OnLeftLink}"/>
+                    <Button Content="Remove" Width="50" Margin="5,0,0,0" Command="{Binding OnLeftRemove}"/>
                 </StackPanel>
                 <ListView ItemsSource="{Binding LeftDirectory}" SelectedItem="{Binding LeftSelectedDir}">
                     <i:Interaction.Triggers>
@@ -110,6 +113,8 @@
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                     <Button Content="Copy" Width="50" Command="{Binding OnRightCopy}"/>
+                    <Button Content="Link" Width="50" Margin="5,0,0,0" Command="{Binding OnRightLink}"/>
+                    <Button Content="Remove" Width="50" Margin="5,0,0,0" Command="{Binding OnRightRemove}"/>
                 </StackPanel>
                 <ListView ItemsSource="{Binding RightDirectory}" SelectedItem="{Binding RightSelectedDir}">
                     <i:Interaction.Triggers>

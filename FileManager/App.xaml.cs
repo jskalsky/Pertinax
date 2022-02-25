@@ -24,7 +24,7 @@ namespace FileManager
             string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax";
             if (!Directory.Exists(appFolder)) Directory.CreateDirectory(appFolder);
 #if DEBUG
-            FileStream myTraceLog = new FileStream(appFolder + System.IO.Path.DirectorySeparatorChar + "Pertinax.deb", FileMode.Create);
+            FileStream myTraceLog = new FileStream(appFolder + System.IO.Path.DirectorySeparatorChar + "Pertinax.deb", FileMode.Create, FileAccess.Write, FileShare.Write);
             TextWriterTraceListener myListener = new TextWriterTraceListener(myTraceLog);
             Debug.Listeners.Add(myListener);
             Debug.AutoFlush = true;

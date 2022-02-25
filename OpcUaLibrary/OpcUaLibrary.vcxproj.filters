@@ -24,7 +24,34 @@
     <ClInclude Include="OpcUa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h">
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\DrvOpcUa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\OpcUaStation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Publisher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\ServerAddressSpace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Subscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Variable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\VariableCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +65,40 @@
     <ClCompile Include="OpcUa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp">
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Certificate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Connection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\DrvOpcUa.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\OpcUaStation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Publisher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\ServerAddressSpace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Subscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\Variable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\VariableCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Pertinax\PertinaxRuntime\Linux\Drv_OpcUa\OpcUaPars.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
