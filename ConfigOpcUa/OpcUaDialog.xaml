@@ -6,6 +6,14 @@
         xmlns:local="clr-namespace:ConfigOpcUa"
         mc:Ignorable="d"
         Title="OpcUaDialog" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:ConfigOpcUa.ViewModel" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Path="Main" Source="{StaticResource Locator}"/>
+    </Window.DataContext>
     <Border BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Configurator OpcUa" Background="LightSteelBlue" Foreground="White"/>
