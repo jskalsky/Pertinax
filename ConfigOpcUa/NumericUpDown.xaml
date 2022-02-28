@@ -14,12 +14,8 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="0" VerticalAlignment="Center" Margin="2,0,2,0"/>
             <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="16">
-                <Button>
-                    <Image Source="GlyphUp.png" Height="6"/>
-                </Button>
-                <Button>
-                    <Image Source="GlyphDown.png" Height="6"/>
-                </Button>
+                <Button Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ConfigOpcUa}},Path=UpImage}" Height="11"/>
+                <Button Height="11"/>
             </StackPanel>
         </Grid>
     </Border>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,16 @@ namespace ConfigOpcUa
     {
         public NumericUpDown()
         {
+            Debug.Print("NumericUpDown");
             InitializeComponent();
+        }
+
+        public static readonly DependencyProperty UpImageProperty = DependencyProperty.Register("UpImage", typeof(object), typeof(NumericUpDown));
+
+        public object UpImage
+        {
+            get => (object)GetValue(UpImageProperty);
+            set { Debug.Print($"UpImage= {value}"); SetValue(UpImageProperty, value); }
         }
     }
 }

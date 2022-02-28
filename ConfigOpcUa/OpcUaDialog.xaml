@@ -9,6 +9,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:ConfigOpcUa.ViewModel" />
+            <Image x:Key="Down" Source="Icons/GlyphDown.png" Height="6"/>
+            <Image x:Key="Up" Source="Icons/GlyphUp.png" Height="6"/>
         </ResourceDictionary>
     </Window.Resources>
     <Window.DataContext>
@@ -68,11 +70,11 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Array size"/>
-                            <local:NumericUpDown/>
+                            <local:NumericUpDown UpImage="{StaticResource Up}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Repetition rate"/>
-                            <local:NumericUpDown/>
+                            <local:NumericUpDown UpImage="{StaticResource Up}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Button Content="Add"/>
