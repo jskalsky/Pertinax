@@ -1,21 +1,17 @@
-﻿<Window x:Class="ConfigOpcUa.OpcUaDialog"
+﻿<Window x:Class="ConfigOpcUa.net.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ConfigOpcUa"
+        xmlns:local="clr-namespace:ConfigOpcUa.net"
         mc:Ignorable="d"
-        Title="OpcUaDialog" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+        Title="MainWindow" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
     <Window.Resources>
         <ResourceDictionary>
-            <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:ConfigOpcUa.ViewModel" />
-            <Image x:Key="Down" Source="Icons/GlyphDown.png" Height="6"/>
             <Image x:Key="Up" Source="Icons/GlyphUp.png" Height="6"/>
+            <Image x:Key="Down" Source="Icons/GlyphDown.png" Height="6"/>
         </ResourceDictionary>
     </Window.Resources>
-    <Window.DataContext>
-        <Binding Path="Main" Source="{StaticResource Locator}"/>
-    </Window.DataContext>
     <Border BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Configurator OpcUa" Background="LightSteelBlue" Foreground="White"/>
@@ -70,11 +66,23 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Array size"/>
-                            <local:NumericUpDown UpImage="{StaticResource Up}"/>
+                            <Border BorderBrush="DarkGray" BorderThickness="1" Width="100" Height="22">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="0" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                                    <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="16" MinHeight="22">
+                                        <Button Name="ButtonUp" Loaded="ButtonUp_Loaded">
+                                            <Image Source="Resources/ImageUp.png" Height="9" Width="9"/>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Repetition rate"/>
-                            <local:NumericUpDown UpImage="{StaticResource Up}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Button Content="Add"/>

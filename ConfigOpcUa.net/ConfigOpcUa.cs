@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigOpcUa.net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,8 +29,8 @@ namespace ConfigOpcUa
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
-            OpcUaDialog opcUaDialog = new OpcUaDialog();
-            opcUaDialog.ShowDialog();
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.ShowDialog();
         }
 
         public override void OS9Files(out string pFiles, string pName, int typ)
