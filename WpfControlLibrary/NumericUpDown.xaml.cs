@@ -26,16 +26,33 @@ namespace WpfControlLibrary
             InitializeComponent();
         }
 
-        private void Button_Loaded(object sender, RoutedEventArgs e)
+        public static readonly DependencyProperty MinProperty = DependencyProperty.Register("Min", typeof(int), typeof(NumericUpDown));
+        public int Min
         {
-            int a = 10;
+            get { return (int)GetValue(MinProperty); }
+            set { SetValue(MinProperty, value); }
         }
 
-        private void Image_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        public static readonly DependencyProperty MaxProperty = DependencyProperty.Register("Max", typeof(int), typeof(NumericUpDown));
+        public int Max
         {
-            string current = Directory.GetCurrentDirectory();
-            File.WriteAllText("e:\\image.txt", current);
-            int a = 10;
+            get { return (int)GetValue(MaxProperty); }
+            set { SetValue(MaxProperty, value); }
+        }
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(int), typeof(NumericUpDown));
+        public int Value
+        {
+            get { return (int)GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); TextBlockValue.Text = value.ToString(); }
+        }
+
+        private void ButtonUp_Click(object sender, RoutedEventArgs e)
+        {
+            if(Value + 1 <= Max)
+            {
+                ++Value;
+                TextBlockValue.Text = Value.ToString();
+            }
         }
     }
 }

@@ -21,9 +21,19 @@ namespace ConfigOpcUa.net
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(object dataContext)
         {
             InitializeComponent();
+            DataContext = dataContext;
+        }
+
+        private void AddObject_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel vm = DataContext as ViewModel;
+            if (vm != null)
+            {
+                vm.AddObject();
+            }
         }
     }
 }

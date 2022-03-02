@@ -12,10 +12,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="0" VerticalAlignment="Center" Margin="2,0,2,0"/>
+            <TextBlock Name="TextBlockValue" Grid.Column="0" Text="0" VerticalAlignment="Center" Margin="2,0,2,0"/>
             <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="16">
-                <Button Loaded="Button_Loaded">
-                    <Image Source="/WpfControlLibrary;component/Icons/GlyphUp.png" Height="6" ImageFailed="Image_ImageFailed"/>
+                <Button Click="ButtonUp_Click">
+                    <Image Source="/WpfControlLibrary;component/Icons/GlyphUp.png" Height="6"/>
                 </Button>
                 <Button>
                     <Image Source="/WpfControlLibrary;component/Icons/GlyphDown.png" Height="6"/>

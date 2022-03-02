@@ -9,6 +9,12 @@ namespace ConfigOpcUa
 {
     public class ConfigOpcUa : ConfigPtx.CfgPtx
     {
+        private readonly ViewModel _viewModel;
+
+        public ConfigOpcUa()
+        {
+            _viewModel = new ViewModel();
+        }
         public override void CheckProject(string pName, string pErrName)
         {
         }
@@ -29,7 +35,7 @@ namespace ConfigOpcUa
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
-            MainWindow mainWindow = new MainWindow();
+            MainWindow mainWindow = new MainWindow(_viewModel);
             mainWindow.ShowDialog();
         }
 
