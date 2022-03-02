@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,18 @@ namespace WpfControlLibrary
         public NumericUpDown()
         {
             InitializeComponent();
+        }
+
+        private void Button_Loaded(object sender, RoutedEventArgs e)
+        {
+            int a = 10;
+        }
+
+        private void Image_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            string current = Directory.GetCurrentDirectory();
+            File.WriteAllText("e:\\image.txt", current);
+            int a = 10;
         }
     }
 }

@@ -56,15 +56,8 @@
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="OpcUaDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpcUaDialog.xaml.cs">
-      <DependentUpon>OpcUaDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -86,6 +79,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\GlyphDown.png" />
+    <Resource Include="Icons\GlyphUp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

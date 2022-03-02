@@ -96,13 +96,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="GlyphDown.png">
+    <Content Include="Resources\ImageUp.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="GlyphUp.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="Resources\ImageUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WpfControlLibrary\WpfControlLibrary.csproj">
+      <Project>{3da4f639-b5f6-4201-a804-117c206d407c}</Project>
+      <Name>WpfControlLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

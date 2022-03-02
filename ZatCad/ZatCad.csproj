@@ -103,6 +103,10 @@
       <Project>{94548AD1-50EC-409E-B52D-5D9901C8CD7B}</Project>
       <Name>ConfigOpcUa.net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfControlLibrary\WpfControlLibrary.csproj">
+      <Project>{3da4f639-b5f6-4201-a804-117c206d407c}</Project>
+      <Name>WpfControlLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

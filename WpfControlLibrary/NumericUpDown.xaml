@@ -6,12 +6,6 @@
              xmlns:local="clr-namespace:WpfControlLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <Image x:Key="Up" Source="Icons/GlyphUp.png" Height="6"/>
-            <Image x:Key="Down" Source="Icons/GlyphDown.png" Height="6"/>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <Border BorderBrush="DarkGray" BorderThickness="1" Width="100" Height="22">
         <Grid Background="White">
             <Grid.ColumnDefinitions>
@@ -20,8 +14,12 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="0" VerticalAlignment="Center" Margin="2,0,2,0"/>
             <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="16">
-                <Button Content="{StaticResource Up}"/>
-                <Button Content="{StaticResource Down}"/>
+                <Button Loaded="Button_Loaded">
+                    <Image Source="/WpfControlLibrary;component/Icons/GlyphUp.png" Height="6" ImageFailed="Image_ImageFailed"/>
+                </Button>
+                <Button>
+                    <Image Source="/WpfControlLibrary;component/Icons/GlyphDown.png" Height="6"/>
+                </Button>
             </StackPanel>
         </Grid>
     </Border>
