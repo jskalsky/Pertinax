@@ -21,6 +21,7 @@ namespace ConfigOpcUaNet
         private int _arraySizeValue;
         private int _repetitionRateValue;
         private OpcObject _selectedOpcObject;
+        private string _itemName;
 
         private int _nextItemIndex;
         public ViewModel()
@@ -30,7 +31,35 @@ namespace ConfigOpcUaNet
             _selectedBasicType = _basicTypes[0];
             _selectedAccess = _access[0];
             _selectedRank = _rank[0];
-            _nextItemIndex = 1;
+            _nextItemIndex = GetMaxItemIndex() + 1;
+            ItemName = $"Item{_nextItemIndex}";
+        }
+
+        private int GetMaxItemIndex()
+        {
+            int maxIndex = 0;
+            foreach(OpcObject oo in Objects)
+            {
+                foreach(OpcObjectItem ooi in oo.Items)
+                {
+                    int i = ooi.Name.IndexOf("Item");
+                    if(i==0)
+                    {
+                        string index = ooi.Name.Remove(0, 4);
+                        if(index.Length > 0)
+                        {
+                            if(int.TryParse(index,out int result))
+                            {
+                                if(result > maxIndex)
+                                {
+                                    maxIndex = result;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return maxIndex;
         }
         public string ObjectName
         {
@@ -87,6 +116,18 @@ namespace ConfigOpcUaNet
         {
             get { return _selectedOpcObject; }
             set { _selectedOpcObject = value; OnPropertyChanged("SelectedOpcObject"); }
+        }
+
+        public string ItemName
+        {
+            get { return _itemName; }
+            set { _itemName = value;OnPropertyChanged("ItemName"); }
+        }
+
+        public int NextItemIndex
+        {
+            get { return _nextItemIndex; }
+            set { _nextItemIndex = value; }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         private void OnPropertyChanged(string name)

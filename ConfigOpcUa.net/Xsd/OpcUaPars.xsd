@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://www.zat.cz/OPCUAParameters" xmlns="http://www.zat.cz/OPCUAParameters" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--  IdentifierConstrainedStringType  -->
+  <xsd:simpleType name="IdentifierConstrainedStringType">
+    <xsd:union>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:minLength value="1" />
+          <xsd:pattern value="^[a-zA-Z_][a-zA-Z0-9_]*$" />
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="">
+            <xsd:annotation>
+              <xsd:documentation>VAROVÁNÍ: Nepoužívat pro hodnotu parametru!</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
+  <!--  VariableTypeConstraintConstrainedByteType  -->
+  <xsd:simpleType name="VariableTypeConstraintConstrainedByteType">
+    <xsd:restriction base="xsd:unsignedByte">
+      <xsd:enumeration value="0">
+        <xsd:annotation>
+          <xsd:documentation>Jednoduchá proměnná</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="1">
+        <xsd:annotation>
+          <xsd:documentation>Pole</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="2">
+        <xsd:annotation>
+          <xsd:documentation>Objekt</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!--  AccessTypeConstraintConstrainedByteType  -->
+  <xsd:simpleType name="AccessTypeConstraintConstrainedByteType">
+    <xsd:restriction base="xsd:unsignedByte">
+      <xsd:enumeration value="0">
+        <xsd:annotation>
+          <xsd:documentation>Čtení</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="1">
+        <xsd:annotation>
+          <xsd:documentation>Zápis</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="2">
+        <xsd:annotation>
+          <xsd:documentation>Čtení/Zápis</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!--  BasicTypeConstraintConstrainedByteType  -->
+  <xsd:simpleType name="BasicTypeConstraintConstrainedByteType">
+    <xsd:restriction base="xsd:unsignedByte">
+      <xsd:enumeration value="0">
+        <xsd:annotation>
+          <xsd:documentation>Boolean</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="1">
+        <xsd:annotation>
+          <xsd:documentation>Uint8</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="2">
+        <xsd:annotation>
+          <xsd:documentation>Uint16</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="3">
+        <xsd:annotation>
+          <xsd:documentation>Uint32</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="4">
+        <xsd:annotation>
+          <xsd:documentation>Int8</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="5">
+        <xsd:annotation>
+          <xsd:documentation>Int16</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="6">
+        <xsd:annotation>
+          <xsd:documentation>Int32</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="7">
+        <xsd:annotation>
+          <xsd:documentation>Float</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="8">
+        <xsd:annotation>
+          <xsd:documentation>Double</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!--  ArraySizeConstraintConstrainedUshortType  -->
+  <xsd:simpleType name="ArraySizeConstraintConstrainedUshortType">
+    <xsd:restriction base="xsd:unsignedShort">
+      <xsd:minInclusive value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!--  OPCUAParameters  -->
+  <xsd:element name="OPCUAParameters" type="OPCUAParametersType" />
+  <!--  OPCUAParametersType  -->
+  <xsd:complexType name="OPCUAParametersType">
+    <xsd:sequence>
+      <xsd:element name="Server" type="ServerType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>"Server 1" - Server 1.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Subscriber" type="SubscriberType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>"Odběratel 1" - Odběratel (subscriber) 1</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Publisher" type="PublisherType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>"Vydavatel 1" - Vydavatel (publisher) 1</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ObjectType" type="ObjectTypeType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>"Typ 1 - {0}" - Typ objektu 1 - {0}.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="UseServer" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít server" - Použít server.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ServerEncryption" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít šifrování" - Použít šifrování komunikace.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ServerRootType" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Typ objektu" - Typ objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="UseClient" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít klienta" - Použít klienta.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ServersCount" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Počet serverů" - Počet serverů.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="UsePublisher" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít vydavatele" - Použít vydavatele (publisher).</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="PublisherEncryption" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít šifrování" - Použít šifrování komunikace.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="PublisherId" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Id vydavatele" - Id vydavatele (publisher). Musí být unikátní v celé síti.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="SubscribersCount" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Počet odběratelů" - Počet odběratelů (subscriber).</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="UseSubscriber" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít odběratele" - Použít odběratele (subscriber).</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="SubscriberEncryption" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít šifrování" - Použít šifrování komunikace.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="PublishersCount" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Počet vydavatelů" - Počet vydavatelů (publisher).</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ObjectTypeCount" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Počet typů objektů" - Počet typů objektů.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <!--  ServerType  -->
+  <xsd:complexType name="ServerType">
+    <xsd:attribute name="Description" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Popis" - Server 1 - popis.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ClientEncryption" use="optional" type="xsd:boolean" default="false">
+      <xsd:annotation>
+        <xsd:documentation>"Použít šifrování" - Použít šifrování komunikace.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="IpAddress" use="optional" type="xsd:unsignedInt" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"[[0]Master ]IP adresa" - IP adresa serveru OPC UA[[0] pro nature master řídící desku].</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="SlaveIpAddress" use="optional" type="xsd:unsignedInt" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Slave IP adresa" - IP adresa serveru OPC UA pro nature slave řídící desku.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="LocalAddress" use="optional" type="xsd:unsignedLong" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Lokální IP adresa" - Lokální IP adresa, přes kterou se komunikuje se serverem OPC UA.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ClientRootType" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Typ objektu" - Typ objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="QueryPeriod" use="optional" type="xsd:unsignedShort" default="500">
+      <xsd:annotation>
+        <xsd:documentation>"Perioda dotazování [ms]" - Perioda dotazování [ms].</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <!--  SubscriberType  -->
+  <xsd:complexType name="SubscriberType">
+    <xsd:attribute name="Description" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Popis" - Odběratel 1 - popis.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="IpAddress" use="optional" type="xsd:unsignedInt" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"[[0]Master ]IP adresa" - IP adresa odběratele OPC UA[[0] pro nature master řídící desku].</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="SlaveIpAddress" use="optional" type="xsd:unsignedInt" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Slave IP adresa" - IP adresa odběratele OPC UA pro nature slave řídící desku.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="LocalAddress" use="optional" type="xsd:unsignedLong" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Lokální IP adresa" - Lokální IP adresa, přes kterou se komunikuje s odběratelem OPC UA.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="PublisherRootType" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Typ objektu" - Typ objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="SendPeriod" use="optional" type="xsd:unsignedShort" default="500">
+      <xsd:annotation>
+        <xsd:documentation>"Perioda odesílání [ms]" - Perioda odesílání [ms].</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <!--  PublisherType  -->
+  <xsd:complexType name="PublisherType">
+    <xsd:attribute name="Description" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Popis" - Vydavatel 1 - popis.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="PublisherId" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Id vydavatele" - Id vydavatele (publisher). Musí být unikátní v celé síti.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="SubscriberRootType" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Typ objektu" - Typ objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <!--  ObjectTypeType  -->
+  <xsd:complexType name="ObjectTypeType">
+    <xsd:sequence>
+      <xsd:element name="Variables" type="VariablesType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>"Proměnná 1 - {0}" - Proměnná 1 - {0}.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="Description" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Popis" - Typ 1 - {0} - popis.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="Name" use="optional" type="IdentifierConstrainedStringType" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Jméno" - Jméno typu objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="Id" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Id" - Id typu objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="BaseType" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Bázový typ" - Bázový typ.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="VariablesCount" use="optional" type="xsd:unsignedShort" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Počet proměnných" - Počet proměnných.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <!--  VariablesType  -->
+  <xsd:complexType name="VariablesType">
+    <xsd:attribute name="Description" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Popis" - Proměnná 1 - {0} - popis.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="Name" use="optional" type="IdentifierConstrainedStringType" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Jméno" - Jméno proměnné.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="Type" use="optional" type="VariableTypeConstraintConstrainedByteType" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Typ proměnné" - Typ proměnné.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="AccessType" use="optional" type="AccessTypeConstraintConstrainedByteType" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Typ přístupu" - Typ přístupu z pohledu klienta.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="BasicType" use="optional" type="BasicTypeConstraintConstrainedByteType" default="0">
+      <xsd:annotation>
+        <xsd:documentation>"Základní datový typ" - Základní datový typ.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ArraySize" use="optional" type="ArraySizeConstraintConstrainedUshortType" default="1">
+      <xsd:annotation>
+        <xsd:documentation>"Velikost pole" - Velikost pole.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ObjectType" use="optional" type="xsd:string" default="">
+      <xsd:annotation>
+        <xsd:documentation>"Typ objektu" - Jméno typu objektu.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+</xsd:schema>

@@ -54,5 +54,22 @@ namespace ConfigOpcUaNet
         {
 
         }
+
+        private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel vm = DataContext as ViewModel;
+            if (vm != null)
+            {
+                if(vm.SelectedOpcObject != null)
+                {
+                    for(int i=0;i<vm.RepetitionRateValue;++i)
+                    {
+                        vm.SelectedOpcObject.AddItem(vm.ItemName, vm.SelectedBasicType, vm.SelectedAccess, vm.SelectedRank, vm.ArraySizeValue.ToString());
+                        ++vm.NextItemIndex;
+                        vm.ItemName = $"Item{vm.NextItemIndex}";
+                    }
+                }
+            }
+        }
     }
 }
