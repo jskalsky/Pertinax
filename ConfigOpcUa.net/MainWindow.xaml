@@ -1,12 +1,15 @@
-﻿<Window x:Class="ConfigOpcUa.net.MainWindow"
+﻿<Window x:Class="ConfigOpcUaNet.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ConfigOpcUa.net" 
+        xmlns:local="clr-namespace:ConfigOpcUaNet" 
         xmlns:wpfcontrollibrary="clr-namespace:WpfControlLibrary;assembly=WpfControlLibrary"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:ViewModel/>
+    </Window.DataContext>
     <Border BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Configurator OpcUa" Background="LightSteelBlue" Foreground="White"/>
@@ -20,7 +23,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ListView Grid.Column="0" Height="100" ItemsSource="{Binding Path=Objects}">
+                    <ListView Grid.Column="0" Height="100" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" SelectionChanged="ListViewObjects_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
@@ -47,7 +50,17 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ListView Grid.Column="0"></ListView>
+                    <ListView Grid.Column="0" ItemsSource="{Binding Path=SelectedOpcObject.Items}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding BasicType}"/>
+                                <GridViewColumn Header="Access" DisplayMemberBinding="{Binding Access}"/>
+                                <GridViewColumn Header="Rank" DisplayMemberBinding="{Binding Rank}"/>
+                                <GridViewColumn Header="ArraySize" DisplayMemberBinding="{Binding ArraySize}"/>
+                            </GridView> 
+                        </ListView.View>
+                    </ListView>
                     <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -77,8 +90,8 @@
                         <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=BasicTypes}" SelectedItem="{Binding Path=SelectedBasicType,Mode=TwoWay}"></ComboBox>
                         <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Path=Access}" SelectedItem="{Binding Path=SelectedAccess,Mode=TwoWay}"></ComboBox>
                         <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding Path=Rank}" SelectedItem="{Binding Path=SelectedRank,Mode=TwoWay}"></ComboBox>
-                        <wpfcontrollibrary:NumericUpDown Grid.Column="1" Grid.Row="4" Min="1" Max="500" Value="{Binding Path=ArraySizeValue,Mode=TwoWay}"/>
-                        <wpfcontrollibrary:NumericUpDown Grid.Column="1" Grid.Row="5"/>
+                        <wpfcontrollibrary:NumericUpDown Grid.Column="1" Grid.Row="4" MinNumeric="1" MaxNumeric="500" NumericValue="{Binding Path=ArraySizeValue}"/>
+                        <wpfcontrollibrary:NumericUpDown Grid.Column="1" Grid.Row="5" MinNumeric="1" MaxNumeric="2000" NumericValue="{Binding Path=RepetitionRateValue}"/>
                     </Grid>
                 </Grid>
             </StackPanel>

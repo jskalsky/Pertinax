@@ -1,4 +1,4 @@
-﻿using ConfigOpcUa;
+﻿using ConfigOpcUaNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +21,11 @@ namespace ZatCad
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ConfigOpcUa.ConfigOpcUa configOpcUa;
+        private readonly ConfigOpcUa configOpcUa;
         public MainWindow()
         {
             InitializeComponent();
-            configOpcUa = new ConfigOpcUa.ConfigOpcUa();
+            configOpcUa = new ConfigOpcUa();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

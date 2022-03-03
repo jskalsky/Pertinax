@@ -24,34 +24,60 @@ namespace WpfControlLibrary
         public NumericUpDown()
         {
             InitializeComponent();
+//            DataContext = this;
         }
 
-        public static readonly DependencyProperty MinProperty = DependencyProperty.Register("Min", typeof(int), typeof(NumericUpDown));
-        public int Min
+        public static readonly DependencyProperty MinNumericProperty = DependencyProperty.Register("MinNumeric", typeof(int), typeof(NumericUpDown));
+        public int MinNumeric
         {
-            get { return (int)GetValue(MinProperty); }
-            set { SetValue(MinProperty, value); }
+            get { return (int)GetValue(MinNumericProperty); }
+            set { SetValue(MinNumericProperty, value); }
         }
 
-        public static readonly DependencyProperty MaxProperty = DependencyProperty.Register("Max", typeof(int), typeof(NumericUpDown));
-        public int Max
+        public static readonly DependencyProperty MaxNumericProperty = DependencyProperty.Register("MaxNumeric", typeof(int), typeof(NumericUpDown));
+        public int MaxNumeric
         {
-            get { return (int)GetValue(MaxProperty); }
-            set { SetValue(MaxProperty, value); }
+            get { return (int)GetValue(MaxNumericProperty); }
+            set { SetValue(MaxNumericProperty, value); }
         }
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(int), typeof(NumericUpDown));
-        public int Value
+        public static readonly DependencyProperty NumericValueProperty = DependencyProperty.Register("NumericValue", typeof(int), typeof(NumericUpDown));
+        public int NumericValue
         {
-            get { return (int)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); TextBlockValue.Text = value.ToString(); }
+            get { return (int)GetValue(NumericValueProperty); }
+            set { SetValue(NumericValueProperty, value); }
         }
 
         private void ButtonUp_Click(object sender, RoutedEventArgs e)
         {
-            if(Value + 1 <= Max)
+            if(NumericValue + 1 <= MaxNumeric)
             {
-                ++Value;
-                TextBlockValue.Text = Value.ToString();
+                ++NumericValue;
+                TextBoxValue.Text = NumericValue.ToString();
+            }
+        }
+
+        private void TextBoxValue_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(int.TryParse(TextBoxValue.Text,out int val))
+            {
+                if(val >= MinNumeric && val <= MaxNumeric)
+                {
+                    NumericValue = val;
+                }
+            }
+        }
+
+        private void TextBoxValue_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBoxValue.Text = NumericValue.ToString();
+        }
+
+        private void ButtonDown_Click(object sender, RoutedEventArgs e)
+        {
+            if(NumericValue - 1 >= MinNumeric)
+            {
+                --NumericValue;
+                TextBoxValue.Text = NumericValue.ToString();
             }
         }
     }

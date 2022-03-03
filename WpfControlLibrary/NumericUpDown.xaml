@@ -6,18 +6,18 @@
              xmlns:local="clr-namespace:WpfControlLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border BorderBrush="DarkGray" BorderThickness="1" Width="100" Height="22">
+    <Border BorderBrush="DarkGray" BorderThickness="1" Width="100" Height="22" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
         <Grid Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="TextBlockValue" Grid.Column="0" Text="0" VerticalAlignment="Center" Margin="2,0,2,0"/>
+            <TextBox Name="TextBoxValue" Grid.Column="0" Text="0" BorderThickness="0" VerticalAlignment="Center" Margin="2,0,2,0" LostFocus="TextBoxValue_LostFocus" Loaded="TextBoxValue_Loaded"/>
             <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="16">
                 <Button Click="ButtonUp_Click">
                     <Image Source="/WpfControlLibrary;component/Icons/GlyphUp.png" Height="6"/>
                 </Button>
-                <Button>
+                <Button Click="ButtonDown_Click">
                     <Image Source="/WpfControlLibrary;component/Icons/GlyphDown.png" Height="6"/>
                 </Button>
             </StackPanel>

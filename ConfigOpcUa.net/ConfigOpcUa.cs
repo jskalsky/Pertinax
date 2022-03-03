@@ -1,19 +1,17 @@
-﻿using ConfigOpcUa.net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigOpcUa
+namespace ConfigOpcUaNet
 {
     public class ConfigOpcUa : ConfigPtx.CfgPtx
     {
-        private readonly ViewModel _viewModel;
+        private ViewModel _viewModel = null;
 
         public ConfigOpcUa()
         {
-            _viewModel = new ViewModel();
         }
         public override void CheckProject(string pName, string pErrName)
         {
@@ -35,7 +33,8 @@ namespace ConfigOpcUa
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
-            MainWindow mainWindow = new MainWindow(_viewModel);
+            MainWindow mainWindow = new MainWindow();
+            _viewModel = mainWindow.Open();
             mainWindow.ShowDialog();
         }
 

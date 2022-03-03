@@ -13,27 +13,46 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfControlLibrary;
 
-namespace ConfigOpcUa.net
+namespace ConfigOpcUaNet
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(object dataContext)
+        public MainWindow()
         {
             InitializeComponent();
-            DataContext = dataContext;
+//            DataContext = new ViewModel();
         }
 
+        public ViewModel Open()
+        {
+            ViewModel vm = DataContext as ViewModel;
+            if (vm != null)
+            {
+                vm.Open();
+            }
+            return vm;
+        }
         private void AddObject_Click(object sender, RoutedEventArgs e)
         {
             ViewModel vm = DataContext as ViewModel;
             if (vm != null)
             {
-                vm.AddObject();
+                OpcObject oo = vm.AddObject();
+                if(oo != null)
+                {
+                    vm.SelectedOpcObject = oo;
+                }
             }
+        }
+
+        private void ListViewObjects_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
