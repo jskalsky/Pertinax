@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="OpcObject.cs" />
     <Compile Include="OpcObjectItem.cs" />
+    <Compile Include="OpcUaPars.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

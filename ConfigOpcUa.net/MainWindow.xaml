@@ -10,17 +10,17 @@
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
-    <Border BorderBrush="DarkGray" BorderThickness="1">
+    <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Configurator OpcUa" Background="LightSteelBlue" Foreground="White"/>
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,5,5">
-                <Button Content="OK" IsDefault="True"/>
-                <Button Content="Cancel" IsCancel="True" Margin="5,0,0,0"/>
+                <Button Content="OK" IsDefault="True" Click="ButtonOk_Click" Width="50"/>
+                <Button Content="Cancel" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="5,5,5,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="300"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <ListView Grid.Column="0" Height="100" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" SelectionChanged="ListViewObjects_SelectionChanged">
@@ -30,70 +30,72 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Name"/>
-                            <TextBox Margin="5,0,5,0" Text="{Binding Path=ObjectName,Mode=TwoWay}" VerticalAlignment="Center" MinWidth="200"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Add" Click="AddObject_Click"/>
-                            <Button Content="Remove" Margin="5,0,0,0"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Object"/>
-                    <TextBlock/>
-                </StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <ListView Grid.Column="0" ItemsSource="{Binding Path=SelectedOpcObject.Items}">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding BasicType}"/>
-                                <GridViewColumn Header="Access" DisplayMemberBinding="{Binding Access}"/>
-                                <GridViewColumn Header="Rank" DisplayMemberBinding="{Binding Rank}"/>
-                                <GridViewColumn Header="ArraySize" DisplayMemberBinding="{Binding ArraySize}"/>
-                            </GridView> 
-                        </ListView.View>
-                    </ListView>
                     <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Name"/>
-                        <Label Grid.Row="1" Content="Basic type"/>
-                        <Label Grid.Row="2" Content="Access"/>
-                        <Label Grid.Row="3" Content="Rank"/>
-                        <Label Grid.Row="4" Content="Array size"/>
-                        <Label Grid.Row="5" Content="Repetition rate"/>
-                        <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="5,2,0,0">
-                            <Button Content="Add" Click="ButtonAddItem_Click"/>
-                            <Button Content="Edit" Margin="2,0,0,0"/>
-                            <Button Content="Remove" Margin="2,0,0,0"/>
-                        </StackPanel>
-                        <TextBox Grid.Column="1" Text="{Binding Path=ItemName,Mode=TwoWay}"/>
-                        <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=BasicTypes}" SelectedItem="{Binding Path=SelectedBasicType,Mode=TwoWay}"></ComboBox>
-                        <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Path=Access}" SelectedItem="{Binding Path=SelectedAccess,Mode=TwoWay}"></ComboBox>
-                        <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding Path=Rank}" SelectedItem="{Binding Path=SelectedRank,Mode=TwoWay}"></ComboBox>
-                        <wpfcontrollibrary:NumericUpDown Grid.Column="1" Grid.Row="4" MinNumeric="1" MaxNumeric="500" NumericValue="{Binding Path=ArraySizeValue}"/>
-                        <wpfcontrollibrary:NumericUpDown Grid.Column="1" Grid.Row="5" MinNumeric="1" MaxNumeric="2000" NumericValue="{Binding Path=RepetitionRateValue,Mode=TwoWay}"/>
+                        <GroupBox Header="Client"></GroupBox>
+                        <GroupBox Header="Server" Grid.Column="1"></GroupBox>
+                        <GroupBox Header="Publisher" Grid.Row="1">
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Group" VerticalAlignment="Center"/>
+                                    <wpfcontrollibrary:IpAddressBox/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Subscriber" Grid.Row="1" Grid.Column="1"></GroupBox>
                     </Grid>
                 </Grid>
+                <StackPanel Orientation="Horizontal" Margin="5,5,0,5">
+                    <Button Content="Add" Click="AddObject_Click" Width="50"/>
+                    <Button Content="Remove" Margin="5,0,0,0" Width="50"/>
+                </StackPanel>
+                <ListView Grid.Column="0" ItemsSource="{Binding Path=SelectedOpcObject.Items}" MinHeight="200">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Type">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Access">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Access}" SelectedItem="{Binding SelectedAccess,Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Rank">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank,Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="ArraySize">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <wpfcontrollibrary:NumericUpDown MinNumeric="0" MaxNumeric="2500" NumericValue="{Binding ArraySizeValue,Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="5,5,0,0">
+                    <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
+                    <Button Content="Remove" Margin="4,0,0,0" Width="50"/>
+                </StackPanel>
             </StackPanel>
         </DockPanel>
     </Border>
