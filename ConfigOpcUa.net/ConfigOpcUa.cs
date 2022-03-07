@@ -11,7 +11,6 @@ namespace ConfigOpcUaNet
 {
     public class ConfigOpcUa : ConfigPtx.CfgPtx
     {
-        private ViewModel _viewModel = null;
         private readonly Dictionary<string, byte> _basicTypes = new Dictionary<string, byte>() { { "Boolean", 0 }, { "UInt8", 1 }, { "UInt16", 2 }, { "UInt32", 3 }, { "Int8", 4 }, { "Int16", 5 },
             {"Int32", 6 }, {"Float", 7 }, {"Double", 8 } };
         public ConfigOpcUa()
@@ -38,7 +37,6 @@ namespace ConfigOpcUaNet
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
             MainWindow mainWindow = new MainWindow();
-            _viewModel = mainWindow.Open();
             if((bool)mainWindow.ShowDialog())
             {
                 ExportToXml("e:\\ExportCfg.xml");
@@ -60,9 +58,13 @@ namespace ConfigOpcUaNet
         {
         }
 
+        private void SaveConfiguration(string fileName)
+        {
+            opcConfigurationType opc = new opcConfigurationType();
+        }
         private void ExportToXml(string fileName)
         {
-            OPCUAParametersType pars = new OPCUAParametersType();
+/*            OPCUAParametersType pars = new OPCUAParametersType();
             pars.ObjectTypeCount = 1;
             pars.UsePublisher = true;
             pars.SubscribersCount = 1;
@@ -88,13 +90,13 @@ namespace ConfigOpcUaNet
                 variables.Clear();
                 foreach(OpcObjectItem ooi in oo.Items)
                 {
-//                    if(_basicTypes.TryGetValue(ooi.BasicType, out byte typeCode))
-//                    {
-//                        VariablesType vt = new VariablesType();
-//                        vt.Name = ooi.Name;
-//                        vt.BasicType = typeCode;
-//                        variables.Add(vt);
-//                    }
+                    if(_basicTypes.TryGetValue(ooi.BasicType, out byte typeCode))
+                    {
+                        VariablesType vt = new VariablesType();
+                        vt.Name = ooi.Name;
+                        vt.BasicType = typeCode;
+                        variables.Add(vt);
+                    }
                 }
                 ott.Variables = variables.ToArray();
                 objects.Add(ott);
@@ -105,7 +107,7 @@ namespace ConfigOpcUaNet
             using(TextWriter tw = new StreamWriter(fileName))
             {
                 serializer.Serialize(tw, pars);
-            }
+            }*/
         }
     }
 }

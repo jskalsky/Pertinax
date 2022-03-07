@@ -27,38 +27,27 @@
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="PublishingInterval">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <wpfcontrollibrary:NumericUpDown MinNumeric="0" MaxNumeric="2000" NumericValue="{Binding PublishingInterval,Mode=TwoWay}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
                     <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <GroupBox Header="Client"></GroupBox>
-                        <GroupBox Header="Server" Grid.Column="1"></GroupBox>
-                        <GroupBox Header="Publisher" Grid.Row="1">
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Group" VerticalAlignment="Center"/>
-                                    <wpfcontrollibrary:IpAddressBox/>
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Header="Subscriber" Grid.Row="1" Grid.Column="1">
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Group" VerticalAlignment="Center"/>
-                                    <wpfcontrollibrary:IpAddressBox/>
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
+                        <StackPanel Grid.Column="0" Orientation="Vertical">
+                            <Label Content="Local Ip address"/>
+                            <wpfcontrollibrary:IpAddressBox Margin="5,0,0,0" IpAddress="{Binding LocalIpAddress,Mode=TwoWay}"/>
+                            <Label Content="Multicast group address"/>
+                            <wpfcontrollibrary:IpAddressBox Margin="5,0,0,0" IpAddress="{Binding LocalIpAddress, RelativeSource={RelativeSource AncestorType=wpfcontrollibrary:IpAddressBox}}"/>
+                        </StackPanel>
                     </Grid>
                 </Grid>
                 <StackPanel Orientation="Horizontal" Margin="5,5,0,5">

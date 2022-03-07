@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,8 @@ namespace ConfigOpcUaNet
         private int _repetitionRateValue;
         private OpcObject _selectedOpcObject;
         private string _itemName;
+        private IPAddress _localIpAddress;
+        private IPAddress _groupAddress;
 
         private int _nextItemIndex;
         public ViewModel()
@@ -33,6 +36,7 @@ namespace ConfigOpcUaNet
             _selectedRank = _rank[0];
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
+            GroupAddress = IPAddress.Parse("224.0.0.22");
         }
 
         private int GetMaxItemIndex()
@@ -128,6 +132,18 @@ namespace ConfigOpcUaNet
         {
             get { return _nextItemIndex; }
             set { _nextItemIndex = value; }
+        }
+
+        public IPAddress LocalIpAddress
+        {
+            get { return _localIpAddress; }
+            set { _localIpAddress = value; OnPropertyChanged("LocalIpAddress"); }
+        }
+
+        public IPAddress GroupAddress
+        {
+            get { return _groupAddress; }
+            set { _groupAddress = value; OnPropertyChanged("GroupAddress"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         private void OnPropertyChanged(string name)

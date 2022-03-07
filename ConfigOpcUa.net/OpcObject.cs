@@ -13,9 +13,11 @@ namespace ConfigOpcUaNet
         public OpcObject(string name)
         {
             Name = name;
+            PublishingInterval = 0;
             _items = new ObservableCollection<OpcObjectItem>();
         }
         public string Name { get; }
+        public int PublishingInterval { get; }
         public ObservableCollection<OpcObjectItem> Items => _items;
 
         public OpcObjectItem AddItem(string name, string basicType, string access, string rank, string arraySize)

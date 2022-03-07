@@ -25,18 +25,9 @@ namespace ConfigOpcUaNet
         public MainWindow()
         {
             InitializeComponent();
-//            DataContext = new ViewModel();
+            DataContext = new ViewModel();
         }
 
-        public ViewModel Open()
-        {
-            ViewModel vm = DataContext as ViewModel;
-            if (vm != null)
-            {
-                vm.Open();
-            }
-            return vm;
-        }
         private void AddObject_Click(object sender, RoutedEventArgs e)
         {
             ViewModel vm = DataContext as ViewModel;
