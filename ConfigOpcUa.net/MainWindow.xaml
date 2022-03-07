@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ConfigOpcUaNet" 
         xmlns:wpfcontrollibrary="clr-namespace:WpfControlLibrary;assembly=WpfControlLibrary"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+        Title="MainWindow" Height="500" Width="800" WindowStyle="None" ResizeMode="NoResize">
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
@@ -23,7 +23,7 @@
                         <ColumnDefinition Width="300"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ListView Grid.Column="0" Height="100" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" SelectionChanged="ListViewObjects_SelectionChanged">
+                    <ListView Grid.Column="0" Height="150" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" SelectionChanged="ListViewObjects_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
@@ -50,7 +50,15 @@
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Subscriber" Grid.Row="1" Grid.Column="1"></GroupBox>
+                        <GroupBox Header="Subscriber" Grid.Row="1" Grid.Column="1">
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Group" VerticalAlignment="Center"/>
+                                    <wpfcontrollibrary:IpAddressBox/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
                     </Grid>
                 </Grid>
                 <StackPanel Orientation="Horizontal" Margin="5,5,0,5">
@@ -92,9 +100,13 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="5,5,0,0">
-                    <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
-                    <Button Content="Remove" Margin="4,0,0,0" Width="50"/>
+                <StackPanel Orientation="Horizontal" Margin="5,5,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
+                        <Label Content="Count" Margin="5,0,0,0"/>
+                        <wpfcontrollibrary:NumericUpDown MinNumeric="1" MaxNumeric="2000" Margin="5,0,0,0"/>
+                    </StackPanel>
+                    <Button Content="Remove" Margin="30,0,0,0" Width="50"/>
                 </StackPanel>
             </StackPanel>
         </DockPanel>
