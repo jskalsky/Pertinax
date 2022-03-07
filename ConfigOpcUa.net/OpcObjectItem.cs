@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ConfigOpcUaNet
 {
-    public class OpcObjectItem
+    public class OpcObjectItem : INotifyPropertyChanged
     {
         private readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
         private string _selectedBasicType;
@@ -16,13 +17,19 @@ namespace ConfigOpcUaNet
         private string _selectedRank;
         private int _arraySizeValue;
 
-        public OpcObjectItem(string name, string basicType, string access, string rank, string arraySize)
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        public OpcObjectItem(string name)
         {
             Name = name;
-            SelectedAccess = access;
-            SelectedRank = rank;
+            SelectedAccess = _access[0];
+            SelectedRank = _rank[0];
             ArraySizeValue = 0;
-            SelectedBasicType = basicType;
+            SelectedBasicType = _basicTypes[7];
         }
         public string Name { get; }
 
@@ -62,7 +69,7 @@ namespace ConfigOpcUaNet
         public int ArraySizeValue
         {
             get { return _arraySizeValue; }
-            set { _arraySizeValue = value;}
+            set { _arraySizeValue = value; OnPropertyChanged("ArraySizeValue"); }
         }
     }
 }

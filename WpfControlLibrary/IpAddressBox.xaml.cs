@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -24,6 +25,7 @@ namespace WpfControlLibrary
         public IpAddressBox()
         {
             InitializeComponent();
+//            (this.Content as FrameworkElement).DataContext = this;
         }
 
         public static readonly DependencyProperty IpAddressProperty = DependencyProperty.Register("IpAddress", typeof(IPAddress), typeof(IpAddressBox));
@@ -31,9 +33,15 @@ namespace WpfControlLibrary
         public IPAddress IpAddress
         {
             get { return (IPAddress)GetValue(IpAddressProperty); }
-            set { SetValue(IpAddressProperty, value); DivideToParts(value); }
+            set { SetValueIpAddress(IpAddressProperty, value); DivideToParts(value); }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        void SetValueIpAddress(DependencyProperty property,object value,[System.Runtime.CompilerServices.CallerMemberName] string p=null)
+        {
+            SetValue(property, value);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
+        }
         private void DivideToParts(IPAddress address)
         {
             byte[] addr = address.GetAddressBytes();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,7 +34,7 @@ namespace ConfigOpcUaNet
             ViewModel vm = DataContext as ViewModel;
             if (vm != null)
             {
-                OpcObject oo = vm.AddObject();
+                OpcObject oo = vm.AddObject("Pertinax");
                 if(oo != null)
                 {
                     vm.SelectedOpcObject = oo;
@@ -55,7 +56,7 @@ namespace ConfigOpcUaNet
                 {
                     for(int i=0;i<vm.RepetitionRateValue;++i)
                     {
-                        vm.SelectedOpcObject.AddItem(vm.ItemName, vm.SelectedBasicType, vm.SelectedAccess, vm.SelectedRank, vm.ArraySizeValue.ToString());
+                        vm.SelectedOpcObject.AddItem(vm.ItemName);
                         ++vm.NextItemIndex;
                         vm.ItemName = $"Item{vm.NextItemIndex}";
                     }
@@ -71,6 +72,15 @@ namespace ConfigOpcUaNet
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModel vm)
+            {
+                vm.RepetitionRateValue = 1;
+                vm.GroupAddressString = "224.0.0.22";
+            }
         }
     }
 }
