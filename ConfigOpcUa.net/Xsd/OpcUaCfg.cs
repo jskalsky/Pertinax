@@ -51,7 +51,7 @@ namespace ConfigOpcUaNet {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Objects")]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Object", IsNullable=false)]
         public objectType[] Objects {
             get {
                 return this.objectsField;

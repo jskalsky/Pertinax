@@ -31,7 +31,13 @@
         <xs:sequence>
             <xs:element name="LocalIpAddress" type="IpAddress"/>
             <xs:element name="GroupIpAddress" type="IpAddress"/>
-            <xs:element name="Objects" type="objectType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Objects">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Object" type="objectType" minOccurs="1" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
     <xs:element name="OpcConfiguration" type="opcConfigurationType"/>
