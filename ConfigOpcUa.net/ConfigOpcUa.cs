@@ -39,7 +39,10 @@ namespace ConfigOpcUaNet
             MainWindow mainWindow = new MainWindow();
             if((bool)mainWindow.ShowDialog())
             {
-                ExportToXml("e:\\ExportCfg.xml");
+                if(mainWindow.DataContext is ViewModel vm)
+                {
+                    SaveConfiguration("c:\\Work\\ExportCfg.xml", vm);
+                }
             }
         }
 
@@ -58,9 +61,37 @@ namespace ConfigOpcUaNet
         {
         }
 
-        private void SaveConfiguration(string fileName)
+        private void SaveConfiguration(string fileName, ViewModel vm)
         {
             opcConfigurationType opc = new opcConfigurationType();
+            opc.GroupIpAddress = vm.GroupAddressString;
+            List<objectType> objects = new List<objectType>();
+            List<objectItemType> items = new List<objectItemType>();
+            foreach(OpcObject oo in vm.Objects)
+            {
+                objectType ot = new objectType();
+                ot.Name = oo.Name;
+                ot.PublishingInterval = (ushort)oo.PublishingInterval;
+                items.Clear();
+                foreach(OpcObjectItem ooi in oo.Items)
+                {
+                    objectItemType oit = new objectItemType();
+                    oit.Name = ooi.Name;
+                    oit.ArraySize = (ushort)ooi.ArraySizeValue;
+                    oit.Access = ooi.SelectedAccess;
+                    oit.BasicType = ooi.SelectedBasicType;
+                    oit.Rank = ooi.SelectedRank;
+                    items.Add(oit);
+                }
+                ot.Items = items.ToArray();
+                objects.Add(ot);
+            }
+            opc.Objects = objects.ToArray();
+            XmlSerializer serializer = new XmlSerializer(typeof(opcConfigurationType));
+            using (TextWriter tw = new StreamWriter(fileName))
+            {
+                serializer.Serialize(tw, opc);
+            }
         }
         private void ExportToXml(string fileName)
         {

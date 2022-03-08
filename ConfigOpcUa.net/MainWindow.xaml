@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ConfigOpcUaNet" 
         xmlns:wpfcontrollibrary="clr-namespace:WpfControlLibrary;assembly=WpfControlLibrary"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800" WindowStyle="None" ResizeMode="NoResize">
+        Title="MainWindow" Height="500" Width="800" WindowStyle="None" ResizeMode="NoResize" Loaded="Window_Loaded">
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
@@ -44,9 +44,9 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Orientation="Vertical">
                             <Label Content="Local Ip address"/>
-                            <wpfcontrollibrary:IpAddressBox Margin="5,0,0,0" IpAddress="{Binding LocalIpAddress,Mode=TwoWay}"/>
+                            <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
                             <Label Content="Multicast group address"/>
-                            <wpfcontrollibrary:IpAddressBox Margin="5,0,0,0" IpAddress="{Binding LocalIpAddress, RelativeSource={RelativeSource AncestorType=wpfcontrollibrary:IpAddressBox}}"/>
+                            <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -93,7 +93,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
                         <Label Content="Count" Margin="5,0,0,0"/>
-                        <wpfcontrollibrary:NumericUpDown MinNumeric="1" MaxNumeric="2000" Margin="5,0,0,0"/>
+                        <wpfcontrollibrary:NumericUpDown MinNumeric="1" MaxNumeric="2000" NumericValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
                     </StackPanel>
                     <Button Content="Remove" Margin="30,0,0,0" Width="50"/>
                 </StackPanel>

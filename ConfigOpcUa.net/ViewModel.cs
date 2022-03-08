@@ -12,31 +12,21 @@ namespace ConfigOpcUaNet
     public class ViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        private string _objectName;
-        private readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
-        private string _selectedBasicType;
-        private readonly string[] _access = new string[] { "Read", "Write", "ReadWrite" };
-        private string _selectedAccess;
-        private readonly string[] _rank = new string[] { "SimpleVariable", "Array" };
-        private string _selectedRank;
-        private int _arraySizeValue;
         private int _repetitionRateValue;
         private OpcObject _selectedOpcObject;
         private string _itemName;
         private IPAddress _localIpAddress;
         private IPAddress _groupAddress;
+        private string _localIpAddressString;
+        private string _groupAddressString;
 
         private int _nextItemIndex;
         public ViewModel()
         {
-            _objectName = "Pertinax";
+
             Objects = new ObservableCollection<OpcObject>();
-            _selectedBasicType = _basicTypes[0];
-            _selectedAccess = _access[0];
-            _selectedRank = _rank[0];
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
-            GroupAddress = IPAddress.Parse("224.0.0.22");
         }
 
         private int GetMaxItemIndex()
@@ -64,50 +54,6 @@ namespace ConfigOpcUaNet
                 }
             }
             return maxIndex;
-        }
-        public string ObjectName
-        {
-            get { return _objectName; }
-            set { _objectName = value; OnPropertyChanged("ObjectName"); }
-        }
-
-        public string[] BasicTypes
-        {
-            get { return _basicTypes; }
-        }
-
-        public string SelectedBasicType
-        {
-            get { return _selectedBasicType; }
-            set { _selectedBasicType = value; OnPropertyChanged("SelectedBasicType"); }
-        }
-
-        public string[] Access
-        {
-            get { return _access; }
-        }
-
-        public string SelectedAccess
-        {
-            get { return _selectedAccess; }
-            set { _selectedAccess = value; OnPropertyChanged("SelectedAccess"); }
-        }
-
-        public string[] Rank
-        {
-            get { return _rank; }
-        }
-
-        public string SelectedRank
-        {
-            get { return _selectedRank; }
-            set { _selectedRank = value;OnPropertyChanged("SelectedRank"); }
-        }
-
-        public int ArraySizeValue
-        {
-            get { return _arraySizeValue; }
-            set { _arraySizeValue = value; OnPropertyChanged("ArraySizeValue"); }
         }
 
         public int RepetitionRateValue
@@ -145,6 +91,18 @@ namespace ConfigOpcUaNet
             get { return _groupAddress; }
             set { _groupAddress = value; OnPropertyChanged("GroupAddress"); }
         }
+
+        public string LocalIpAddressString
+        {
+            get { return _localIpAddressString; }
+            set { _localIpAddressString = value;OnPropertyChanged("LocalIpAddressString"); }
+        }
+
+        public string GroupAddressString
+        {
+            get { return _groupAddressString; }
+            set { _groupAddressString = value;OnPropertyChanged("GroupAddressString"); }
+        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         private void OnPropertyChanged(string name)
         {
@@ -152,21 +110,16 @@ namespace ConfigOpcUaNet
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public void Open()
-        {
-            ArraySizeValue = 1;
-            RepetitionRateValue = 1;
-        }
-        public OpcObject AddObject()
+        public OpcObject AddObject(string name)
         {
             foreach(OpcObject opcObject in Objects)
             {
-                if(opcObject.Name == _objectName)
+                if(opcObject.Name == name)
                 {
                     return null;
                 }
             }
-            OpcObject oo = new OpcObject(_objectName);
+            OpcObject oo = new OpcObject(name);
             Objects.Add(oo);
             return oo;
         }
