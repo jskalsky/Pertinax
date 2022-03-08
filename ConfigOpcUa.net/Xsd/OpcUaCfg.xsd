@@ -13,32 +13,41 @@
               value="^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$" />
         </xs:restriction>
     </xs:simpleType>
-    <xs:complexType name="objectItemType">
-        <xs:attribute name="Name" type="xs:string"/>
-        <xs:attribute name="BasicType" type="xs:string"/>
-        <xs:attribute name="Access" type="xs:string"/>
-        <xs:attribute name="Rank" type="xs:string"/>
-        <xs:attribute name="ArraySize" type="xs:unsignedShort"/>
-    </xs:complexType>
-    <xs:complexType name="objectType">
-        <xs:sequence>
-            <xs:element name="Items" type="objectItemType" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:sequence>
-        <xs:attribute name="Name" type="xs:string"/>
-        <xs:attribute name="PublishingInterval" type="xs:unsignedShort"/>
-    </xs:complexType>
-    <xs:complexType name="opcConfigurationType">
-        <xs:sequence>
-            <xs:element name="LocalIpAddress" type="IpAddress"/>
-            <xs:element name="GroupIpAddress" type="IpAddress"/>
-            <xs:element name="Objects">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Object" type="objectType" minOccurs="1" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:element name="OpcConfiguration" type="opcConfigurationType"/>
+    <xs:element name="OpcConfiguration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="LocalIpAddress" type="IpAddress"/>
+                <xs:element name="GroupIpAddress" type="IpAddress"/>
+                <xs:element name="Objects">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Object" minOccurs="1" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Items">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="Item"  minOccurs="1" maxOccurs="unbounded">
+                                                        <xs:complexType>
+                                                            <xs:attribute name="Name" type="xs:string"/>
+                                                            <xs:attribute name="BasicType" type="xs:string"/>
+                                                            <xs:attribute name="Access" type="xs:string"/>
+                                                            <xs:attribute name="Rank" type="xs:string"/>
+                                                            <xs:attribute name="ArraySize" type="xs:unsignedShort"/>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="Name" type="xs:string"/>
+                                    <xs:attribute name="PublishingInterval" type="xs:unsignedShort"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>

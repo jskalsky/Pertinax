@@ -88,7 +88,6 @@ namespace WpfControlLibrary
 
         private void Part1_Loaded(object sender, RoutedEventArgs e)
         {
-            int a = 10;
         }
     }
 }

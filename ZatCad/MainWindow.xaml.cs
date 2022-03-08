@@ -22,6 +22,7 @@ namespace ZatCad
     public partial class MainWindow : Window
     {
         private readonly ConfigOpcUa configOpcUa;
+        private string FileName = "e:\\test.xml";
         public MainWindow()
         {
             InitializeComponent();
@@ -30,7 +31,8 @@ namespace ZatCad
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            configOpcUa.MakeConfig(null, "test.cfg");
+            configOpcUa.LoadConfig(FileName);
+            configOpcUa.MakeConfig(null, FileName);
         }
     }
 }

@@ -26,7 +26,6 @@ namespace ConfigOpcUaNet
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new ViewModel();
         }
 
         private void AddObject_Click(object sender, RoutedEventArgs e)

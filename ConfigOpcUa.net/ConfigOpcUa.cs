@@ -1,6 +1,7 @@
 ﻿using OpcUaPars;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,71 +14,191 @@ namespace ConfigOpcUaNet
     {
         private readonly Dictionary<string, byte> _basicTypes = new Dictionary<string, byte>() { { "Boolean", 0 }, { "UInt8", 1 }, { "UInt16", 2 }, { "UInt32", 3 }, { "Int8", 4 }, { "Int16", 5 },
             {"Int32", 6 }, {"Float", 7 }, {"Double", 8 } };
+        private ViewModel _vm;
         public ConfigOpcUa()
         {
+            try
+            {
+
+            }
+            catch(Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
+            using (StreamWriter sw = new StreamWriter("e:\\zatcad.log"))
+            {
+                sw.WriteLine($"ConfigOpcUa constructor");
+            }
+
+/*            lName = "OpcUa";
+            lDescription = "OpcUa";
+            lVersion = "1.0.0.0";
+            string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax";
+            if (!Directory.Exists(appFolder)) Directory.CreateDirectory(appFolder);
+#if DEBUG
+            FileStream myTraceLog = new FileStream(appFolder + System.IO.Path.DirectorySeparatorChar + "ConfigOpcUa.deb", FileMode.Create, FileAccess.Write, FileShare.Write);
+            TextWriterTraceListener myListener = new TextWriterTraceListener(myTraceLog);
+            Debug.Listeners.Add(myListener);
+            Debug.AutoFlush = true;
+            Debug.WriteLine("Start");
+#endif
+            _vm = new ViewModel();*/
         }
         public override void CheckProject(string pName, string pErrName)
         {
+            //            Debug.Print($"CheckProject {pName}, {pErrName}");
+            try
+            {
+
+            }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
         }
 
         public override byte[] CheCoLabel(int mod, string pLabel)
         {
+            try
+            {
+
+            }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
+            //            Debug.Print($"CheCoLabel {mod}, {pLabel}");
             return null;
         }
 
         public override string CreatePort(System.Windows.Forms.IWin32Window hWnd)
         {
+            //            Debug.Print($"CreatePort");
+            try
+            {
+
+            }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
             return string.Empty;
         }
 
         public override void LoadConfig(string pName)
         {
+            try
+            {
+
+            }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
+            /*            Debug.Print($"LoadConfig {pName}");
+                        if (File.Exists(pName))
+                        {
+                            XmlSerializer serializer = new XmlSerializer(typeof(OpcConfiguration));
+                            using(TextReader tr = new StreamReader(pName))
+                            {
+                                OpcConfiguration opc = (OpcConfiguration)serializer.Deserialize(tr);
+                                _vm.GroupAddressString = opc.GroupIpAddress;
+                                _vm.LocalIpAddressString = opc.LocalIpAddress;
+                                _vm.Objects.Clear();
+                                foreach(OpcConfigurationObject oco in opc.Objects)
+                                {
+                                    OpcObject oo = new OpcObject(oco.Name);
+                                    oo.PublishingInterval = oco.PublishingInterval;
+                                    foreach(OpcConfigurationObjectItem ocoi in oco.Items)
+                                    {
+                                        OpcObjectItem ooi = new OpcObjectItem(ocoi.Name);
+                                        ooi.SelectedAccess = ocoi.Access;
+                                        ooi.SelectedBasicType = ocoi.BasicType;
+                                        ooi.SelectedRank = ocoi.Rank;
+                                        ooi.ArraySizeValue = ocoi.ArraySize;
+                                        oo.AddItem(ooi);
+                                    }
+                                    _vm.Objects.Add(oo);
+                                }
+                                _vm.SelectedOpcObject = _vm.Objects[0];
+                            }
+                        }*/
         }
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
-            MainWindow mainWindow = new MainWindow();
-            if((bool)mainWindow.ShowDialog())
+            try
             {
-                if(mainWindow.DataContext is ViewModel vm)
-                {
-                    SaveConfiguration("c:\\Work\\ExportCfg.xml", vm);
-                }
+
             }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
+            /*            Debug.Print($"MakeConfig {pName}");
+                        MainWindow mainWindow = new MainWindow();
+                        mainWindow.DataContext = _vm;
+                        if((bool)mainWindow.ShowDialog())
+                        {
+                            //                    SaveConfiguration("c:\\Work\\ExportCfg.xml", vm);
+                            SaveConfiguration(pName, _vm);
+                        }*/
         }
 
         public override void OS9Files(out string pFiles, string pName, int typ)
         {
-            pFiles = string.Empty;
+            //            Debug.Print($"OS9Files {pName}, {typ}");
+            pFiles = null;
+            try
+            {
+                pFiles = string.Empty;
+            }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
         }
 
         public override void StartupLines(out string pLinesW, out string pLines, string pName, int typ)
         {
-            pLinesW = string.Empty;
-            pLines = string.Empty;
+            //            Debug.Print($"StartupLines {pName}, {typ}");
+            pLines = null;
+            pLinesW = null;
+            try
+            {
+                pLinesW = string.Empty;
+                pLines = string.Empty;
+            }
+            catch (Exception exc)
+            {
+                File.WriteAllText("e:\\zatcad.log", exc.Message);
+            }
         }
 
         public override void UnLoadConfig()
         {
+//            Debug.Print($"UnLoadConfig");
         }
 
         private void SaveConfiguration(string fileName, ViewModel vm)
         {
-            opcConfigurationType opc = new opcConfigurationType();
+            OpcConfiguration opc = new OpcConfiguration();
             opc.GroupIpAddress = vm.GroupAddressString;
-            List<objectType> objects = new List<objectType>();
-            List<objectItemType> items = new List<objectItemType>();
+            List<OpcConfigurationObject> objects = new List<OpcConfigurationObject>();
+            List<OpcConfigurationObjectItem> items = new List<OpcConfigurationObjectItem>();
             foreach(OpcObject oo in vm.Objects)
             {
-                objectType ot = new objectType();
+                OpcConfigurationObject ot = new OpcConfigurationObject();
                 ot.Name = oo.Name;
                 ot.PublishingInterval = (ushort)oo.PublishingInterval;
+                ot.PublishingIntervalSpecified = true;
                 items.Clear();
                 foreach(OpcObjectItem ooi in oo.Items)
                 {
-                    objectItemType oit = new objectItemType();
+                    OpcConfigurationObjectItem oit = new OpcConfigurationObjectItem();
                     oit.Name = ooi.Name;
                     oit.ArraySize = (ushort)ooi.ArraySizeValue;
+                    oit.ArraySizeSpecified = true;
                     oit.Access = ooi.SelectedAccess;
                     oit.BasicType = ooi.SelectedBasicType;
                     oit.Rank = ooi.SelectedRank;
@@ -87,7 +208,7 @@ namespace ConfigOpcUaNet
                 objects.Add(ot);
             }
             opc.Objects = objects.ToArray();
-            XmlSerializer serializer = new XmlSerializer(typeof(opcConfigurationType));
+            XmlSerializer serializer = new XmlSerializer(typeof(OpcConfiguration));
             using (TextWriter tw = new StreamWriter(fileName))
             {
                 serializer.Serialize(tw, opc);

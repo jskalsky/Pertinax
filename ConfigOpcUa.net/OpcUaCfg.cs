@@ -20,15 +20,15 @@ namespace ConfigOpcUaNet {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/ConfigOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute("OpcConfiguration", Namespace="http://tempuri.org/ConfigOpcUa.xsd", IsNullable=false)]
-    public partial class opcConfigurationType {
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/ConfigOpcUa.xsd")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/ConfigOpcUa.xsd", IsNullable=false)]
+    public partial class OpcConfiguration {
         
         private string localIpAddressField;
         
         private string groupIpAddressField;
         
-        private objectType[] objectsField;
+        private OpcConfigurationObject[] objectsField;
         
         /// <remarks/>
         public string LocalIpAddress {
@@ -51,8 +51,8 @@ namespace ConfigOpcUaNet {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Objects")]
-        public objectType[] Objects {
+        [System.Xml.Serialization.XmlArrayItemAttribute("Object", IsNullable=false)]
+        public OpcConfigurationObject[] Objects {
             get {
                 return this.objectsField;
             }
@@ -67,10 +67,10 @@ namespace ConfigOpcUaNet {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/ConfigOpcUa.xsd")]
-    public partial class objectType {
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/ConfigOpcUa.xsd")]
+    public partial class OpcConfigurationObject {
         
-        private objectItemType[] itemsField;
+        private OpcConfigurationObjectItem[] itemsField;
         
         private string nameField;
         
@@ -79,8 +79,8 @@ namespace ConfigOpcUaNet {
         private bool publishingIntervalFieldSpecified;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Items")]
-        public objectItemType[] Items {
+        [System.Xml.Serialization.XmlArrayItemAttribute("Item", IsNullable=false)]
+        public OpcConfigurationObjectItem[] Items {
             get {
                 return this.itemsField;
             }
@@ -128,8 +128,8 @@ namespace ConfigOpcUaNet {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/ConfigOpcUa.xsd")]
-    public partial class objectItemType {
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/ConfigOpcUa.xsd")]
+    public partial class OpcConfigurationObjectItem {
         
         private string nameField;
         

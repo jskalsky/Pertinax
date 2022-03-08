@@ -44,5 +44,15 @@ namespace ConfigOpcUaNet
             _items.Add(ooi);
             return ooi;
         }
+
+        public void AddItem(OpcObjectItem ooi)
+        {
+            _items.Add(ooi);
+        }
+
+        public void Clear()
+        {
+            _items.Clear();
+        }
     }
 }
