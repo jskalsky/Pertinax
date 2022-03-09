@@ -1,4 +1,5 @@
-﻿using OpcUaPars;
+﻿using ConfigOpcUaNet;
+using OpcUaPars;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace ConfigOpcUaNet
+namespace ConfigOpcUa
 {
     public class ConfigOpcUa : ConfigPtx.CfgPtx
     {
@@ -17,20 +18,7 @@ namespace ConfigOpcUaNet
         private ViewModel _vm;
         public ConfigOpcUa()
         {
-            try
-            {
-
-            }
-            catch(Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
-            using (StreamWriter sw = new StreamWriter("e:\\zatcad.log"))
-            {
-                sw.WriteLine($"ConfigOpcUa constructor");
-            }
-
-/*            lName = "OpcUa";
+            lName = "OpcUa";
             lDescription = "OpcUa";
             lVersion = "1.0.0.0";
             string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax";
@@ -42,142 +30,87 @@ namespace ConfigOpcUaNet
             Debug.AutoFlush = true;
             Debug.WriteLine("Start");
 #endif
-            _vm = new ViewModel();*/
+            _vm = new ViewModel();
         }
         public override void CheckProject(string pName, string pErrName)
         {
-            //            Debug.Print($"CheckProject {pName}, {pErrName}");
-            try
-            {
-
-            }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
+            Debug.Print($"CheckProject {pName}, {pErrName}");
         }
 
         public override byte[] CheCoLabel(int mod, string pLabel)
         {
-            try
-            {
-
-            }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
-            //            Debug.Print($"CheCoLabel {mod}, {pLabel}");
+            Debug.Print($"CheCoLabel {mod}, {pLabel}");
             return null;
         }
 
         public override string CreatePort(System.Windows.Forms.IWin32Window hWnd)
         {
-            //            Debug.Print($"CreatePort");
-            try
-            {
-
-            }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
+            Debug.Print($"CreatePort");
             return string.Empty;
         }
 
         public override void LoadConfig(string pName)
         {
-            try
+            Debug.Print($"LoadConfig {pName}");
+            if (File.Exists(pName))
             {
-
-            }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
-            /*            Debug.Print($"LoadConfig {pName}");
-                        if (File.Exists(pName))
+                XmlSerializer serializer = new XmlSerializer(typeof(OpcConfiguration));
+                using (TextReader tr = new StreamReader(pName))
+                {
+                    OpcConfiguration opc = (OpcConfiguration)serializer.Deserialize(tr);
+                    _vm.GroupAddressString = opc.GroupIpAddress;
+                    _vm.LocalIpAddressString = opc.LocalIpAddress;
+                    _vm.Objects.Clear();
+                    foreach (OpcConfigurationObject oco in opc.Objects)
+                    {
+                        OpcObject oo = new OpcObject(oco.Name);
+                        oo.PublishingInterval = oco.PublishingInterval;
+                        oo.Pub = oco.Pub;
+                        oo.Sub = oco.Sub;
+                        foreach (OpcConfigurationObjectItem ocoi in oco.Items)
                         {
-                            XmlSerializer serializer = new XmlSerializer(typeof(OpcConfiguration));
-                            using(TextReader tr = new StreamReader(pName))
-                            {
-                                OpcConfiguration opc = (OpcConfiguration)serializer.Deserialize(tr);
-                                _vm.GroupAddressString = opc.GroupIpAddress;
-                                _vm.LocalIpAddressString = opc.LocalIpAddress;
-                                _vm.Objects.Clear();
-                                foreach(OpcConfigurationObject oco in opc.Objects)
-                                {
-                                    OpcObject oo = new OpcObject(oco.Name);
-                                    oo.PublishingInterval = oco.PublishingInterval;
-                                    foreach(OpcConfigurationObjectItem ocoi in oco.Items)
-                                    {
-                                        OpcObjectItem ooi = new OpcObjectItem(ocoi.Name);
-                                        ooi.SelectedAccess = ocoi.Access;
-                                        ooi.SelectedBasicType = ocoi.BasicType;
-                                        ooi.SelectedRank = ocoi.Rank;
-                                        ooi.ArraySizeValue = ocoi.ArraySize;
-                                        oo.AddItem(ooi);
-                                    }
-                                    _vm.Objects.Add(oo);
-                                }
-                                _vm.SelectedOpcObject = _vm.Objects[0];
-                            }
-                        }*/
+                            OpcObjectItem ooi = new OpcObjectItem(ocoi.Name);
+                            ooi.SelectedAccess = ocoi.Access;
+                            ooi.SelectedBasicType = ocoi.BasicType;
+                            ooi.SelectedRank = ocoi.Rank;
+                            ooi.ArraySizeValue = ocoi.ArraySize;
+                            oo.AddItem(ooi);
+                        }
+                        _vm.Objects.Add(oo);
+                    }
+                    _vm.SelectedOpcObject = _vm.Objects[0];
+                }
+            }
         }
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
-            try
+            Debug.Print($"MakeConfig {pName}");
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.DataContext = _vm;
+            if ((bool)mainWindow.ShowDialog())
             {
-
+                //                    SaveConfiguration("c:\\Work\\ExportCfg.xml", vm);
+                SaveConfiguration(pName, _vm);
             }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
-            /*            Debug.Print($"MakeConfig {pName}");
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.DataContext = _vm;
-                        if((bool)mainWindow.ShowDialog())
-                        {
-                            //                    SaveConfiguration("c:\\Work\\ExportCfg.xml", vm);
-                            SaveConfiguration(pName, _vm);
-                        }*/
         }
 
         public override void OS9Files(out string pFiles, string pName, int typ)
         {
-            //            Debug.Print($"OS9Files {pName}, {typ}");
+            Debug.Print($"OS9Files {pName}, {typ}");
             pFiles = null;
-            try
-            {
-                pFiles = string.Empty;
-            }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
         }
 
         public override void StartupLines(out string pLinesW, out string pLines, string pName, int typ)
         {
-            //            Debug.Print($"StartupLines {pName}, {typ}");
+            Debug.Print($"StartupLines {pName}, {typ}");
             pLines = null;
             pLinesW = null;
-            try
-            {
-                pLinesW = string.Empty;
-                pLines = string.Empty;
-            }
-            catch (Exception exc)
-            {
-                File.WriteAllText("e:\\zatcad.log", exc.Message);
-            }
         }
 
         public override void UnLoadConfig()
         {
-//            Debug.Print($"UnLoadConfig");
+            Debug.Print($"UnLoadConfig");
         }
 
         private void SaveConfiguration(string fileName, ViewModel vm)
@@ -186,14 +119,18 @@ namespace ConfigOpcUaNet
             opc.GroupIpAddress = vm.GroupAddressString;
             List<OpcConfigurationObject> objects = new List<OpcConfigurationObject>();
             List<OpcConfigurationObjectItem> items = new List<OpcConfigurationObjectItem>();
-            foreach(OpcObject oo in vm.Objects)
+            foreach (OpcObject oo in vm.Objects)
             {
                 OpcConfigurationObject ot = new OpcConfigurationObject();
                 ot.Name = oo.Name;
                 ot.PublishingInterval = (ushort)oo.PublishingInterval;
                 ot.PublishingIntervalSpecified = true;
+                ot.Pub = oo.Pub;
+                ot.PubSpecified = true;
+                ot.Sub = oo.Sub;
+                ot.SubSpecified = true;
                 items.Clear();
-                foreach(OpcObjectItem ooi in oo.Items)
+                foreach (OpcObjectItem ooi in oo.Items)
                 {
                     OpcConfigurationObjectItem oit = new OpcConfigurationObjectItem();
                     oit.Name = ooi.Name;
@@ -216,50 +153,50 @@ namespace ConfigOpcUaNet
         }
         private void ExportToXml(string fileName)
         {
-/*            OPCUAParametersType pars = new OPCUAParametersType();
-            pars.ObjectTypeCount = 1;
-            pars.UsePublisher = true;
-            pars.SubscribersCount = 1;
-            pars.PublisherId = 1;
+            /*            OPCUAParametersType pars = new OPCUAParametersType();
+                        pars.ObjectTypeCount = 1;
+                        pars.UsePublisher = true;
+                        pars.SubscribersCount = 1;
+                        pars.PublisherId = 1;
 
-            List<SubscriberType> subscribers = new List<SubscriberType>();
-            SubscriberType st = new SubscriberType();
-            st.IpAddress = 168431100;
-            st.LocalAddress = 723406057539371008;
-            st.PublisherRootType = "Pertinax";
-            subscribers.Add(st);
-            pars.Subscriber = subscribers.ToArray();
+                        List<SubscriberType> subscribers = new List<SubscriberType>();
+                        SubscriberType st = new SubscriberType();
+                        st.IpAddress = 168431100;
+                        st.LocalAddress = 723406057539371008;
+                        st.PublisherRootType = "Pertinax";
+                        subscribers.Add(st);
+                        pars.Subscriber = subscribers.ToArray();
 
-            List<ObjectTypeType> objects = new List<ObjectTypeType>();
-            ushort id = 1;
-            List<VariablesType> variables = new List<VariablesType>();
-            foreach(OpcObject oo in _viewModel.Objects)
-            {
-                ObjectTypeType ott = new ObjectTypeType();
-                ott.Id = id++;
-                ott.Name = oo.Name;
-                ott.VariablesCount = (ushort)oo.Items.Count;
-                variables.Clear();
-                foreach(OpcObjectItem ooi in oo.Items)
-                {
-                    if(_basicTypes.TryGetValue(ooi.BasicType, out byte typeCode))
-                    {
-                        VariablesType vt = new VariablesType();
-                        vt.Name = ooi.Name;
-                        vt.BasicType = typeCode;
-                        variables.Add(vt);
-                    }
-                }
-                ott.Variables = variables.ToArray();
-                objects.Add(ott);
-            }
-            pars.ObjectType = objects.ToArray();
+                        List<ObjectTypeType> objects = new List<ObjectTypeType>();
+                        ushort id = 1;
+                        List<VariablesType> variables = new List<VariablesType>();
+                        foreach(OpcObject oo in _viewModel.Objects)
+                        {
+                            ObjectTypeType ott = new ObjectTypeType();
+                            ott.Id = id++;
+                            ott.Name = oo.Name;
+                            ott.VariablesCount = (ushort)oo.Items.Count;
+                            variables.Clear();
+                            foreach(OpcObjectItem ooi in oo.Items)
+                            {
+                                if(_basicTypes.TryGetValue(ooi.BasicType, out byte typeCode))
+                                {
+                                    VariablesType vt = new VariablesType();
+                                    vt.Name = ooi.Name;
+                                    vt.BasicType = typeCode;
+                                    variables.Add(vt);
+                                }
+                            }
+                            ott.Variables = variables.ToArray();
+                            objects.Add(ott);
+                        }
+                        pars.ObjectType = objects.ToArray();
 
-            XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
-            using(TextWriter tw = new StreamWriter(fileName))
-            {
-                serializer.Serialize(tw, pars);
-            }*/
+                        XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
+                        using(TextWriter tw = new StreamWriter(fileName))
+                        {
+                            serializer.Serialize(tw, pars);
+                        }*/
         }
     }
 }

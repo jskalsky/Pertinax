@@ -21,12 +21,12 @@ namespace ZatCad
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ConfigOpcUa configOpcUa;
+        private readonly ConfigOpcUa.ConfigOpcUa configOpcUa;
         private string FileName = "e:\\test.xml";
         public MainWindow()
         {
             InitializeComponent();
-            configOpcUa = new ConfigOpcUa();
+            configOpcUa = new ConfigOpcUa.ConfigOpcUa();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

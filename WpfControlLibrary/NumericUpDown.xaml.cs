@@ -27,32 +27,39 @@ namespace WpfControlLibrary
 //            DataContext = this;
         }
 
-        public static readonly DependencyProperty MinNumericProperty = DependencyProperty.Register("MinNumeric", typeof(int), typeof(NumericUpDown));
-        public int MinNumeric
+        public static readonly DependencyProperty NudMinProperty = DependencyProperty.Register("NudMin", typeof(int), typeof(NumericUpDown), new PropertyMetadata(0));
+        public int NudMin
         {
-            get { return (int)GetValue(MinNumericProperty); }
-            set { SetValue(MinNumericProperty, value); }
+            get { return (int)GetValue(NudMinProperty); }
+            set { SetValue(NudMinProperty, value); }
         }
 
-        public static readonly DependencyProperty MaxNumericProperty = DependencyProperty.Register("MaxNumeric", typeof(int), typeof(NumericUpDown));
-        public int MaxNumeric
+        public static readonly DependencyProperty NudMaxProperty = DependencyProperty.Register("NudMax", typeof(int), typeof(NumericUpDown), new PropertyMetadata(1000));
+        public int NudMax
         {
-            get { return (int)GetValue(MaxNumericProperty); }
-            set { SetValue(MaxNumericProperty, value); }
+            get { return (int)GetValue(NudMaxProperty); }
+            set { SetValue(NudMaxProperty, value); }
         }
-        public static readonly DependencyProperty NumericValueProperty = DependencyProperty.Register("NumericValue", typeof(int), typeof(NumericUpDown));
-        public int NumericValue
+        public static readonly DependencyProperty NudValueProperty = DependencyProperty.Register("NudValue", typeof(int), typeof(NumericUpDown));
+        public int NudValue
         {
-            get { return (int)GetValue(NumericValueProperty); }
-            set { SetValue(NumericValueProperty, value); }
+            get { return (int)GetValue(NudValueProperty); }
+            set { SetValue(NudValueProperty, value); }
+        }
+
+        public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown), new PropertyMetadata(1));
+        public int NudIncrement
+        {
+            get { return (int)GetValue(NudIncrementProperty); }
+            set { SetValue(NudIncrementProperty, value); }
         }
 
         private void ButtonUp_Click(object sender, RoutedEventArgs e)
         {
-            if(NumericValue + 1 <= MaxNumeric)
+            if(NudValue + NudIncrement <= NudMax)
             {
-                ++NumericValue;
-                TextBoxValue.Text = NumericValue.ToString();
+                NudValue += NudIncrement;
+                TextBoxValue.Text = NudValue.ToString();
             }
         }
 
@@ -60,24 +67,24 @@ namespace WpfControlLibrary
         {
             if(int.TryParse(TextBoxValue.Text,out int val))
             {
-                if(val >= MinNumeric && val <= MaxNumeric)
+                if(val >= NudMin && val <= NudMax)
                 {
-                    NumericValue = val;
+                    NudValue = val;
                 }
             }
         }
 
         private void TextBoxValue_Loaded(object sender, RoutedEventArgs e)
         {
-            TextBoxValue.Text = NumericValue.ToString();
+            TextBoxValue.Text = NudValue.ToString();
         }
 
         private void ButtonDown_Click(object sender, RoutedEventArgs e)
         {
-            if(NumericValue - 1 >= MinNumeric)
+            if(NudValue - NudIncrement >= NudMin)
             {
-                --NumericValue;
-                TextBoxValue.Text = NumericValue.ToString();
+                NudValue -= NudIncrement;
+                TextBoxValue.Text = NudValue.ToString();
             }
         }
     }

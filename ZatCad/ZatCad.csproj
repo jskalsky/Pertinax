@@ -16,7 +16,7 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -100,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConfigOpcUa.net\ConfigOpcUa.net.csproj">
-      <Project>{94548AD1-50EC-409E-B52D-5D9901C8CD7B}</Project>
+      <Project>{94548ad1-50ec-409e-b52d-5d9901c8cd7b}</Project>
       <Name>ConfigOpcUa.net</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfControlLibrary\WpfControlLibrary.csproj">

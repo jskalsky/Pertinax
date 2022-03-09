@@ -25,6 +25,8 @@ namespace ConfigOpcUaNet
         {
 
             Objects = new ObservableCollection<OpcObject>();
+            PublisherObjects = new ObservableCollection<OpcObject>();
+            SubscriberObjects = new ObservableCollection<OpcObject>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
         }
@@ -104,6 +106,8 @@ namespace ConfigOpcUaNet
             set { _groupAddressString = value;OnPropertyChanged("GroupAddressString"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
+        public ObservableCollection<OpcObject> PublisherObjects { get; private set; }
+        public ObservableCollection<OpcObject> SubscriberObjects { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

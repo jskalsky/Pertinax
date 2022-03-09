@@ -78,6 +78,14 @@ namespace ConfigOpcUaNet {
         
         private bool publishingIntervalFieldSpecified;
         
+        private bool pubField;
+        
+        private bool pubFieldSpecified;
+        
+        private bool subField;
+        
+        private bool subFieldSpecified;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Item", IsNullable=false)]
         public OpcConfigurationObjectItem[] Items {
@@ -119,6 +127,50 @@ namespace ConfigOpcUaNet {
             }
             set {
                 this.publishingIntervalFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool Pub {
+            get {
+                return this.pubField;
+            }
+            set {
+                this.pubField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool PubSpecified {
+            get {
+                return this.pubFieldSpecified;
+            }
+            set {
+                this.pubFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool Sub {
+            get {
+                return this.subField;
+            }
+            set {
+                this.subField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool SubSpecified {
+            get {
+                return this.subFieldSpecified;
+            }
+            set {
+                this.subFieldSpecified = value;
             }
         }
     }

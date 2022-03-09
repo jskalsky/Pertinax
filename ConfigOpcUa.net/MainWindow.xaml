@@ -20,26 +20,48 @@
             <StackPanel Orientation="Vertical" Margin="5,5,5,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="250"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ListView Grid.Column="0" Height="150" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" SelectionChanged="ListViewObjects_SelectionChanged">
+                    <ListView Name="Objects" Grid.Column="0" Height="150" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" SelectionChanged="ListViewObjects_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Pub">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Name="CheckBoxPub" IsChecked="{Binding Pub}"  Click="CheckBoxPub_Click"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Sub">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding Sub}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="PublishingInterval">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <wpfcontrollibrary:NumericUpDown MinNumeric="0" MaxNumeric="2000" NumericValue="{Binding PublishingInterval,Mode=TwoWay}"/>
+                                            <wpfcontrollibrary:NumericUpDown  NudMin="0" NudMax="2000" NudIncrement="10" NudValue="{Binding PublishingInterval,Mode=TwoWay}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
                             </GridView>
                         </ListView.View>
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Remove"/>
+                                <MenuItem Header="Add to Publisher"/>
+                                <MenuItem Header="Add to Subscriber"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                     </ListView>
                     <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Orientation="Vertical">
@@ -82,7 +104,7 @@
                             <GridViewColumn Header="ArraySize">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <wpfcontrollibrary:NumericUpDown MinNumeric="0" MaxNumeric="2500" NumericValue="{Binding ArraySizeValue,Mode=TwoWay}"/>
+                                        <wpfcontrollibrary:NumericUpDown NudMin="0" NudMax="2500" NudValue="{Binding ArraySizeValue,Mode=TwoWay}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -93,7 +115,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
                         <Label Content="Count" Margin="5,0,0,0"/>
-                        <wpfcontrollibrary:NumericUpDown MinNumeric="1" MaxNumeric="2000" NumericValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
+                        <wpfcontrollibrary:NumericUpDown NudMin="1" NudMax="2000" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
                     </StackPanel>
                     <Button Content="Remove" Margin="30,0,0,0" Width="50"/>
                 </StackPanel>

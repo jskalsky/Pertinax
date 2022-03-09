@@ -13,6 +13,8 @@ namespace ConfigOpcUaNet
         private readonly ObservableCollection<OpcObjectItem> _items;
         private int _publishingInterval;
         private string _name;
+        private bool _pub;
+        private bool _sub;
         public OpcObject(string name)
         {
             Name = name;
@@ -28,6 +30,17 @@ namespace ConfigOpcUaNet
         {
             get { return _publishingInterval; }
             set { _publishingInterval = value; OnPropertyChanged("PublishingInterval"); }
+        }
+
+        public bool Pub
+        {
+            get { return _pub; }
+            set { _pub = value; OnPropertyChanged("Pub"); }
+        }
+        public bool Sub
+        {
+            get { return _sub; }
+            set { _sub = value; OnPropertyChanged("Sub"); }
         }
         public ObservableCollection<OpcObjectItem> Items => _items;
 

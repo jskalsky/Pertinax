@@ -81,5 +81,9 @@ namespace ConfigOpcUaNet
                 vm.GroupAddressString = "224.0.0.22";
             }
         }
+
+        private void CheckBoxPub_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }
