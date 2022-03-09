@@ -46,6 +46,23 @@ namespace ConfigOpcUa
         public override string CreatePort(System.Windows.Forms.IWin32Window hWnd)
         {
             Debug.Print($"CreatePort");
+            _vm.RootNode = new PortsNode("Ports");
+            foreach (OpcObject oo in _vm.Objects)
+            {
+                if (oo.Pub)
+                {
+                    PortsNode outputs = _vm.RootNode.Add("Outputs");
+                    foreach (OpcObjectItem ooi in oo.Items)
+                    {
+                        outputs.Add($"O.OPCUA.R.{oo.Name}.{ooi.Name}");
+                    }
+                }
+            }
+            PortDialog pd = new PortDialog();
+            if ((bool)pd.ShowDialog())
+            {
+
+            }
             return string.Empty;
         }
 

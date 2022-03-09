@@ -19,6 +19,7 @@ namespace ConfigOpcUaNet
         private IPAddress _groupAddress;
         private string _localIpAddressString;
         private string _groupAddressString;
+        private PortsNode _rootNode;
 
         private int _nextItemIndex;
         public ViewModel()
@@ -104,6 +105,12 @@ namespace ConfigOpcUaNet
         {
             get { return _groupAddressString; }
             set { _groupAddressString = value;OnPropertyChanged("GroupAddressString"); }
+        }
+
+        public PortsNode RootNode
+        {
+            get { return _rootNode; }
+            set { _rootNode = value;OnPropertyChanged("RootNode"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<OpcObject> PublisherObjects { get; private set; }

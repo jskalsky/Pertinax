@@ -34,5 +34,11 @@ namespace ZatCad
             configOpcUa.LoadConfig(FileName);
             configOpcUa.MakeConfig(null, FileName);
         }
+
+        private void ButtonPort_Click(object sender, RoutedEventArgs e)
+        {
+            configOpcUa.LoadConfig(FileName);
+            string port = configOpcUa.CreatePort();
+        }
     }
 }
