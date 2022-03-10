@@ -12,7 +12,7 @@ namespace WinOpcUa
         {
             try
             {
-                int res = DrvOpcUa.Open("e:\\Projects\\Pertinax\\WinOpcUa\\Xml\\Pub.xml");
+                int res = DrvOpcUa.Open("c:\\WorkProjects\\Pertinax\\WinOpcUa\\Xml\\Pub.xml");
             }
             catch(Exception exc)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,17 +9,17 @@ namespace WpfControlLibrary
 {
     public class PortsNode
     {
-        private readonly List<PortsNode> _children;
+        private readonly ObservableCollection<PortsNode> _children;
 
         public PortsNode()
         {
-            _children = new List<PortsNode>();
+            _children = new ObservableCollection<PortsNode>();
             Text = string.Empty;
         }
 
         public PortsNode(string text)
         {
-            _children = new List<PortsNode>();
+            _children = new ObservableCollection<PortsNode>();
             Text = text;
         }
 

@@ -12,7 +12,7 @@ namespace PgmError
         private static int startBez = 0, startS = 0;
         static void Main(string[] args)
         {
-            string folder = "e:\\Automaty\\TestDiagVynechani\\STANICE_6_01\\TEMP";
+            string folder = "c:\\WorkAutomaty\\TestDiagVynechani\\STANICE_6_01\\TEMP";
             string filenameBez = folder + Path.DirectorySeparatorChar + "nicBez.txt";
             string filenameS = folder + Path.DirectorySeparatorChar + "nicS.txt";
             string filenameOut = folder + Path.DirectorySeparatorChar + "nicout.txt";

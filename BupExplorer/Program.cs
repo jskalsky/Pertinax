@@ -13,7 +13,7 @@ namespace BupExplorer
 
         static void Main(string[] args)
         {
-            Read("e:\\Work\\Bup\\Vaclav\\S104_BIN.bup");
+            Read("c:\\WorkWork\\Bup\\Vaclav\\S104_BIN.bup");
         }
 
         public static ushort IntelMotorola(ushort val)

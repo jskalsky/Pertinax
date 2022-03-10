@@ -31,6 +31,15 @@ namespace WpfControlLibrary
             ArraySizeValue = 0;
             SelectedBasicType = _basicTypes[7];
         }
+
+        public OpcObjectItem(OpcObjectItem ooi)
+        {
+            Name = ooi.Name;
+            SelectedAccess = ooi.SelectedAccess;
+            SelectedBasicType = ooi.SelectedBasicType;
+            SelectedRank = ooi.SelectedRank;
+            ArraySizeValue = ooi.ArraySizeValue;
+        }
         public string Name { get; }
 
         public string[] BasicTypes

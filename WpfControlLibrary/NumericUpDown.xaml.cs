@@ -24,7 +24,6 @@ namespace WpfControlLibrary
         public NumericUpDown()
         {
             InitializeComponent();
-            File.WriteAllText("e:\\zat15.log", $"NumericUpDown");
             //            DataContext = this;
         }
 

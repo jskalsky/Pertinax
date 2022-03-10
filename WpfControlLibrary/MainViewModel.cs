@@ -29,6 +29,8 @@ namespace WpfControlLibrary
             SubscriberObjects = new ObservableCollection<OpcObject>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
+            GroupAddressString = "224.0.0.22";
+            LocalIpAddressString = "10.10.13.253";
         }
 
         private int GetMaxItemIndex()

@@ -14,7 +14,7 @@ int main()
 {
     try
     {
-/*        Opc.Open("e:\\Projects\\Pertinax\\WinOpcUa\\Xml\\Pub.xml");
+/*        Opc.Open("c:\\WorkProjects\\Pertinax\\WinOpcUa\\Xml\\Pub.xml");
 
         for (int i = 0; i < 20; ++i)
         {
@@ -24,7 +24,7 @@ int main()
         myTask.AddFlag(8, -1, 3, 1, 0, 0, "Out1(Publisher1)");
         myTask.AddFlag(8, -1, 3, 1, 0, 0, "Out2(Publisher1)");
 
-        Opc.Open("e:\\Projects\\Pertinax\\WinOpcUa\\Xml\\Sub.xml");
+        Opc.Open("c:\\WorkProjects\\Pertinax\\WinOpcUa\\Xml\\Sub.xml");
         printf("Open Ok\n");
         IO_REAL ioreal;
         uint16 indexy[2]{ 0,1 };

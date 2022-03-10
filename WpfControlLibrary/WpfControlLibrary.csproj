@@ -69,6 +69,9 @@
   <ItemGroup>
     <Compile Include="OpcObject.cs" />
     <Compile Include="OpcObjectItem.cs" />
+    <Compile Include="PortDialog.xaml.cs">
+      <DependentUpon>PortDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PortsNode.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="ViewModelPorts.cs" />
@@ -94,6 +97,10 @@
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PortDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -9,13 +10,11 @@ namespace WpfControlLibrary
 {
     public class ViewModelPorts : INotifyPropertyChanged
     {
-        private PortsNode _rootNode;
-
-        public PortsNode RootNode
+        public ViewModelPorts()
         {
-            get { return _rootNode; }
-            set { _rootNode = value; OnPropertyChanged("RootNode"); }
+            RootNodes = new ObservableCollection<PortsNode>();
         }
+        public ObservableCollection<PortsNode> RootNodes { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)

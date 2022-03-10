@@ -16,7 +16,9 @@ namespace ConfigOpcUa
         private readonly Dictionary<string, byte> _basicTypes = new Dictionary<string, byte>() { { "Boolean", 0 }, { "UInt8", 1 }, { "UInt16", 2 }, { "UInt32", 3 }, { "Int8", 4 }, { "Int16", 5 },
             {"Int32", 6 }, {"Float", 7 }, {"Double", 8 } };
         private readonly Dictionary<string, byte> _access = new Dictionary<string, byte>() { { "Read", 0 }, { "Write", 1 }, { "ReadWrite", 2 } };
-        //        private ViewModel _vm;
+        private readonly List<WpfControlLibrary.OpcObject> _objects;
+        private string _localIpAddress;
+        private string _groupAddress;
         public ConfigOpcUa()
         {
             lName = "OpcUa";
@@ -31,8 +33,32 @@ namespace ConfigOpcUa
                         Debug.AutoFlush = true;
                         Debug.WriteLine("Start");
             #endif*/
-            //            _vm = new ViewModel();
+            _objects = new List<WpfControlLibrary.OpcObject>();
         }
+
+        private string GetBasicType(byte b)
+        {
+            foreach (KeyValuePair<string, byte> pair in _basicTypes)
+            {
+                if (pair.Value == b)
+                {
+                    return pair.Key;
+                }
+            }
+            return null;
+        }
+        private string GetAccess(byte b)
+        {
+            foreach (KeyValuePair<string, byte> pair in _access)
+            {
+                if (pair.Value == b)
+                {
+                    return pair.Key;
+                }
+            }
+            return null;
+        }
+
         public override void CheckProject(string pName, string pErrName)
         {
             Debug.Print($"CheckProject {pName}, {pErrName}");
@@ -47,40 +73,76 @@ namespace ConfigOpcUa
         public override string CreatePort(System.Windows.Forms.IWin32Window hWnd)
         {
             Debug.Print($"CreatePort");
-            /*            _vm.RootNode = new PortsNode("Ports");
-                        foreach (OpcObject oo in _vm.Objects)
+            WpfControlLibrary.PortDialog pd = new WpfControlLibrary.PortDialog();
+            if(pd.DataContext is WpfControlLibrary.ViewModelPorts vmp)
+            {
+                foreach (WpfControlLibrary.OpcObject oo in _objects)
+                {
+                    if (oo.Pub)
+                    {
+                        WpfControlLibrary.PortsNode outputs = new WpfControlLibrary.PortsNode("Outputs");
+                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                         {
-                            if (oo.Pub)
-                            {
-                                PortsNode outputs = _vm.RootNode.Add("Outputs");
-                                foreach (OpcObjectItem ooi in oo.Items)
-                                {
-                                    outputs.Add($"O.OPCUA.R.{oo.Name}.{ooi.Name}");
-                                }
-                            }
+                            outputs.Add($"O.OPCUA.R.{oo.Name}.{ooi.Name}");
                         }
-                        PortDialog pd = new PortDialog();
-                        if ((bool)pd.ShowDialog())
-                        {
+                        vmp.RootNodes.Add(outputs);
+                    }
+                }
+            }
+            if ((bool)pd.ShowDialog())
+            {
 
-                        }*/
+            }
             return string.Empty;
         }
 
         public override void LoadConfig(string pName)
         {
-            File.WriteAllText("e:\\zat10.log", $"LoadConfig {pName}");
+            if (File.Exists(pName))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
+                using (TextReader tr = new StreamReader(pName))
+                {
+                    OPCUAParametersType pars = (OPCUAParametersType)serializer.Deserialize(tr);
+                    ushort sendPeriod = pars.Subscriber[0].SendPeriod;
+                    byte[] groupAddressBytes = BitConverter.GetBytes(pars.Subscriber[0].IpAddress);
+                    IPAddress groupAddress = new IPAddress(groupAddressBytes);
+                    _groupAddress = groupAddress.ToString();
+                    byte[] localAddressBytes = BitConverter.GetBytes((uint)pars.Subscriber[0].LocalAddress);
+                    IPAddress localAddress = new IPAddress(localAddressBytes);
+                    _localIpAddress = localAddress.ToString();
+                    foreach (ObjectTypeType ott in pars.ObjectType)
+                    {
+                        WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name);
+                        if (sendPeriod != 0)
+                        {
+                            oo.Pub = true;
+                        }
+                        oo.PublishingInterval = sendPeriod;
+                        foreach (VariablesType vt in ott.Variables)
+                        {
+                            WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name);
+                            ooi.SelectedBasicType = GetBasicType(vt.BasicType);
+                            ooi.SelectedAccess = GetAccess(vt.AccessType);
+                            ooi.ArraySizeValue = vt.ArraySize;
+                            ooi.SelectedRank = (vt.Type == 0) ? "SimpleVariable" : "Array";
+                            oo.AddItem(ooi);
+                        }
+                        _objects.Add(oo);
+                    }
+                }
+            }
             /*            Debug.Print($"LoadConfig {pName}");
                         if (File.Exists(pName))
                         {
-                            File.WriteAllText("e:\\zat13.log", $"File exists");
+                            File.WriteAllText("c:\\Workzat13.log", $"File exists");
                             XmlSerializer serializer = new XmlSerializer(typeof(OpcConfiguration));
-                            File.WriteAllText("e:\\zat14.log", $"serializer {serializer}");
+                            File.WriteAllText("c:\\Workzat14.log", $"serializer {serializer}");
                             using (TextReader tr = new StreamReader(pName))
                             {
-                                File.WriteAllText("e:\\zat11.log", $"tr {tr}");
+                                File.WriteAllText("c:\\Workzat11.log", $"tr {tr}");
                                 OpcConfiguration opc = (OpcConfiguration)serializer.Deserialize(tr);
-                                File.WriteAllText("e:\\zat12.log", $"opc {opc}, _vm= {_vm}");
+                                File.WriteAllText("c:\\Workzat12.log", $"opc {opc}, _vm= {_vm}");
                                 _vm.GroupAddressString = opc.GroupIpAddress;
                                 _vm.LocalIpAddressString = opc.LocalIpAddress;
                                 _vm.Objects.Clear();
@@ -104,7 +166,7 @@ namespace ConfigOpcUa
                                 _vm.SelectedOpcObject = _vm.Objects[0];
                             }
                         }
-                        File.WriteAllText("e:\\zat11.log", $"LoadConfig end");*/
+                        File.WriteAllText("c:\\Workzat11.log", $"LoadConfig end");*/
         }
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
@@ -113,18 +175,29 @@ namespace ConfigOpcUa
             WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
             if (mainWindow.DataContext is WpfControlLibrary.MainViewModel vm)
             {
-                vm.GroupAddressString = "224.0.0.22";
-                vm.LocalIpAddressString = "10.10.13.253";
+                if (!string.IsNullOrEmpty(_localIpAddress))
+                {
+                    vm.GroupAddressString = _groupAddress;
+                    vm.LocalIpAddressString = _localIpAddress;
+                }
+                vm.Objects.Clear();
+                foreach (WpfControlLibrary.OpcObject oo in _objects)
+                {
+                    WpfControlLibrary.OpcObject opcObject = new WpfControlLibrary.OpcObject(oo);
+                    vm.Objects.Add(opcObject);
+                    foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                    {
+                        opcObject.AddItem(new WpfControlLibrary.OpcObjectItem(ooi));
+                    }
+                }
+                vm.SelectedOpcObject = vm.Objects[0];
             }
 
             if ((bool)mainWindow.ShowDialog())
             {
-                File.WriteAllText("e:\\zat40.log", $"MakeConfig {pName}, {mainWindow.DataContext}");
                 if (mainWindow.DataContext is WpfControlLibrary.MainViewModel mvm)
                 {
-                    File.WriteAllText("e:\\zat41.log", $"Pred");
                     SaveConfiguration(pName, mvm);
-                    File.WriteAllText("e:\\zat40.log", $"Po");
                 }
             }
         }
@@ -194,7 +267,6 @@ namespace ConfigOpcUa
             pars.PublisherId = 1;
 
             ushort sendPeriod = 0;
-            File.WriteAllText("e:\\zat50.log", $"1");
 
             foreach (WpfControlLibrary.OpcObject oo in mvm.Objects)
             {
@@ -210,7 +282,6 @@ namespace ConfigOpcUa
                     break;
                 }
             }
-            File.WriteAllText("e:\\zat51.log", $"1");
 
             List<SubscriberType> subscribers = new List<SubscriberType>();
             SubscriberType st = new SubscriberType();
@@ -222,7 +293,6 @@ namespace ConfigOpcUa
             st.SendPeriod = sendPeriod;
             subscribers.Add(st);
             pars.Subscriber = subscribers.ToArray();
-            File.WriteAllText("e:\\zat52.log", $"1");
 
             List<ObjectTypeType> objects = new List<ObjectTypeType>();
             ushort id = 1;
@@ -254,14 +324,12 @@ namespace ConfigOpcUa
                 objects.Add(ott);
             }
             pars.ObjectType = objects.ToArray();
-            File.WriteAllText("e:\\zat53.log", $"1");
 
             XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
             using (TextWriter tw = new StreamWriter(fileName))
             {
                 serializer.Serialize(tw, pars);
             }
-            File.WriteAllText("e:\\zat54.log", $"1");
         }
     }
 }

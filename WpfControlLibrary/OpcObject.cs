@@ -21,6 +21,15 @@ namespace WpfControlLibrary
             PublishingInterval = 0;
             _items = new ObservableCollection<OpcObjectItem>();
         }
+
+        public OpcObject(OpcObject oo)
+        {
+            Name = oo.Name;
+            Pub = oo.Pub;
+            Sub = oo.Sub;
+            PublishingInterval = oo.PublishingInterval;
+            _items = new ObservableCollection<OpcObjectItem>();
+        }
         public string Name
         {
             get { return _name; }

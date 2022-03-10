@@ -191,8 +191,8 @@ namespace FileManager.Model
             {
                 handle = Kos2021.Kos.OpenDevice(selectedDevice, 5000);
                 //                string bupFolder = Path.GetDirectoryName(Settings.Default.Bup);
-                //                string bupFolder = "e:\\Automaty\\Grati3\\30CJJ01_A20\\TEMP";
-                //string bupFolder = "e:\\Automaty\\FeltonKral\\1HC020_A1\\TEMP";
+                //                string bupFolder = "c:\\WorkAutomaty\\Grati3\\30CJJ01_A20\\TEMP";
+                //string bupFolder = "c:\\WorkAutomaty\\FeltonKral\\1HC020_A1\\TEMP";
                 //string[] bups = Directory.GetFiles(bupFolder, "*.bup");
                 //                ushort[] T1 = new ushort[] { 1, 5, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 1, 5 };
                 //                ushort[] T2 = new ushort[] { 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 3, 4, 0, 0, 4 };

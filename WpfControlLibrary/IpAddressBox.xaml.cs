@@ -26,7 +26,7 @@ namespace WpfControlLibrary
         public IpAddressBox()
         {
             InitializeComponent();
-            File.WriteAllText("e:\\zat15.log", $"NumericUpDown");
+            File.WriteAllText("c:\\Workzat15.log", $"NumericUpDown");
             //            (this.Content as FrameworkElement).DataContext = this;
         }
 
