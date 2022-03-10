@@ -24,17 +24,18 @@ namespace WpfControlLibrary
         public NumericUpDown()
         {
             InitializeComponent();
-//            DataContext = this;
+            File.WriteAllText("e:\\zat15.log", $"NumericUpDown");
+            //            DataContext = this;
         }
 
-        public static readonly DependencyProperty NudMinProperty = DependencyProperty.Register("NudMin", typeof(int), typeof(NumericUpDown), new PropertyMetadata(0));
+        public static readonly DependencyProperty NudMinProperty = DependencyProperty.Register("NudMin", typeof(int), typeof(NumericUpDown));
         public int NudMin
         {
             get { return (int)GetValue(NudMinProperty); }
             set { SetValue(NudMinProperty, value); }
         }
 
-        public static readonly DependencyProperty NudMaxProperty = DependencyProperty.Register("NudMax", typeof(int), typeof(NumericUpDown), new PropertyMetadata(1000));
+        public static readonly DependencyProperty NudMaxProperty = DependencyProperty.Register("NudMax", typeof(int), typeof(NumericUpDown));
         public int NudMax
         {
             get { return (int)GetValue(NudMaxProperty); }
@@ -47,7 +48,7 @@ namespace WpfControlLibrary
             set { SetValue(NudValueProperty, value); }
         }
 
-        public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown), new PropertyMetadata(1));
+        public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown));
         public int NudIncrement
         {
             get { return (int)GetValue(NudIncrementProperty); }

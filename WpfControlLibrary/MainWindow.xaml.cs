@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,11 +10,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfControlLibrary;
 
-namespace ConfigOpcUaNet
+namespace WpfControlLibrary
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -30,11 +26,11 @@ namespace ConfigOpcUaNet
 
         private void AddObject_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel vm = DataContext as ViewModel;
+            MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
                 OpcObject oo = vm.AddObject("Pertinax");
-                if(oo != null)
+                if (oo != null)
                 {
                     vm.SelectedOpcObject = oo;
                 }
@@ -48,12 +44,12 @@ namespace ConfigOpcUaNet
 
         private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel vm = DataContext as ViewModel;
+            MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
-                if(vm.SelectedOpcObject != null)
+                if (vm.SelectedOpcObject != null)
                 {
-                    for(int i=0;i<vm.RepetitionRateValue;++i)
+                    for (int i = 0; i < vm.RepetitionRateValue; ++i)
                     {
                         vm.SelectedOpcObject.AddItem(vm.ItemName);
                         ++vm.NextItemIndex;
@@ -75,7 +71,7 @@ namespace ConfigOpcUaNet
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ViewModel vm)
+            if (DataContext is MainViewModel vm)
             {
                 vm.RepetitionRateValue = 1;
                 vm.GroupAddressString = "224.0.0.22";

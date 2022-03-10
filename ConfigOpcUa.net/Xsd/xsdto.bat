@@ -1,1 +1,0 @@
-"c:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.7.2 Tools\x64\xsd.exe" OpcUaPars.xsd /classes /namespace:OpcUaPars

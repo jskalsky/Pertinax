@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ConfigPtx">
-      <HintPath>..\ConfigOpcUa.net\Ptx\ConfigPtx.dll</HintPath>
+      <HintPath>..\ConfigOpcUa\Ptx\ConfigPtx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -99,9 +99,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConfigOpcUa.net\ConfigOpcUa.net.csproj">
-      <Project>{94548ad1-50ec-409e-b52d-5d9901c8cd7b}</Project>
-      <Name>ConfigOpcUa.net</Name>
+    <ProjectReference Include="..\ConfigOpcUa\ConfigOpcUa.csproj">
+      <Project>{31ac3c90-a51c-4e7e-aa21-32cd2f6e91c7}</Project>
+      <Name>ConfigOpcUa</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfControlLibrary\WpfControlLibrary.csproj">
       <Project>{3da4f639-b5f6-4201-a804-117c206d407c}</Project>

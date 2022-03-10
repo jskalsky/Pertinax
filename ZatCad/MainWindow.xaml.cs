@@ -1,6 +1,7 @@
-﻿using ConfigOpcUaNet;
+﻿using ConfigOpcUa;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,14 +26,28 @@ namespace ZatCad
         private string FileName = "e:\\test.xml";
         public MainWindow()
         {
-            InitializeComponent();
-            configOpcUa = new ConfigOpcUa.ConfigOpcUa();
+            try
+            {
+                InitializeComponent();
+                configOpcUa = new ConfigOpcUa.ConfigOpcUa();
+            }
+            catch(Exception exc)
+            {
+                File.WriteAllText("e:\\zat.log", exc.Message);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            configOpcUa.LoadConfig(FileName);
-            configOpcUa.MakeConfig(null, FileName);
+            try
+            {
+                configOpcUa.LoadConfig(FileName);
+                configOpcUa.MakeConfig(null, FileName);
+            }
+            catch(Exception exc)
+            {
+                File.WriteAllText("e:\\zat.log", exc.Message);
+            }
         }
 
         private void ButtonPort_Click(object sender, RoutedEventArgs e)

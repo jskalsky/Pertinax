@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -25,7 +26,8 @@ namespace WpfControlLibrary
         public IpAddressBox()
         {
             InitializeComponent();
-//            (this.Content as FrameworkElement).DataContext = this;
+            File.WriteAllText("e:\\zat15.log", $"NumericUpDown");
+            //            (this.Content as FrameworkElement).DataContext = this;
         }
 
         public static readonly DependencyProperty IpAddressProperty = DependencyProperty.Register("IpAddress", typeof(IPAddress), typeof(IpAddressBox));

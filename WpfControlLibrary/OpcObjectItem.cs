@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigOpcUaNet
+namespace WpfControlLibrary
 {
     public class OpcObjectItem : INotifyPropertyChanged
     {
@@ -52,7 +52,7 @@ namespace ConfigOpcUaNet
         public string SelectedAccess
         {
             get { return _selectedAccess; }
-            set { _selectedAccess = value;}
+            set { _selectedAccess = value; }
         }
 
         public string[] Rank

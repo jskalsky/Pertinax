@@ -7,9 +7,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigOpcUaNet
+namespace WpfControlLibrary
 {
-    public class ViewModel : INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private int _repetitionRateValue;
@@ -19,10 +19,9 @@ namespace ConfigOpcUaNet
         private IPAddress _groupAddress;
         private string _localIpAddressString;
         private string _groupAddressString;
-        private PortsNode _rootNode;
 
         private int _nextItemIndex;
-        public ViewModel()
+        public MainViewModel()
         {
 
             Objects = new ObservableCollection<OpcObject>();
@@ -35,19 +34,19 @@ namespace ConfigOpcUaNet
         private int GetMaxItemIndex()
         {
             int maxIndex = 0;
-            foreach(OpcObject oo in Objects)
+            foreach (OpcObject oo in Objects)
             {
-                foreach(OpcObjectItem ooi in oo.Items)
+                foreach (OpcObjectItem ooi in oo.Items)
                 {
                     int i = ooi.Name.IndexOf("Item");
-                    if(i==0)
+                    if (i == 0)
                     {
                         string index = ooi.Name.Remove(0, 4);
-                        if(index.Length > 0)
+                        if (index.Length > 0)
                         {
-                            if(int.TryParse(index,out int result))
+                            if (int.TryParse(index, out int result))
                             {
-                                if(result > maxIndex)
+                                if (result > maxIndex)
                                 {
                                     maxIndex = result;
                                 }
@@ -74,7 +73,7 @@ namespace ConfigOpcUaNet
         public string ItemName
         {
             get { return _itemName; }
-            set { _itemName = value;OnPropertyChanged("ItemName"); }
+            set { _itemName = value; OnPropertyChanged("ItemName"); }
         }
 
         public int NextItemIndex
@@ -98,20 +97,15 @@ namespace ConfigOpcUaNet
         public string LocalIpAddressString
         {
             get { return _localIpAddressString; }
-            set { _localIpAddressString = value;OnPropertyChanged("LocalIpAddressString"); }
+            set { _localIpAddressString = value; OnPropertyChanged("LocalIpAddressString"); }
         }
 
         public string GroupAddressString
         {
             get { return _groupAddressString; }
-            set { _groupAddressString = value;OnPropertyChanged("GroupAddressString"); }
+            set { _groupAddressString = value; OnPropertyChanged("GroupAddressString"); }
         }
 
-        public PortsNode RootNode
-        {
-            get { return _rootNode; }
-            set { _rootNode = value;OnPropertyChanged("RootNode"); }
-        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<OpcObject> PublisherObjects { get; private set; }
         public ObservableCollection<OpcObject> SubscriberObjects { get; private set; }
@@ -123,9 +117,9 @@ namespace ConfigOpcUaNet
 
         public OpcObject AddObject(string name)
         {
-            foreach(OpcObject opcObject in Objects)
+            foreach (OpcObject opcObject in Objects)
             {
-                if(opcObject.Name == name)
+                if (opcObject.Name == name)
                 {
                     return null;
                 }
