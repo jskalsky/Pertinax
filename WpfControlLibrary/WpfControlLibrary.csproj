@@ -74,6 +74,8 @@
     </Compile>
     <Compile Include="PortsNode.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="PublisherItem.cs" />
+    <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
     <Page Include="IpAddressBox.xaml">
       <SubType>Designer</SubType>

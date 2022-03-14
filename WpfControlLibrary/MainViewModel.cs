@@ -19,14 +19,15 @@ namespace WpfControlLibrary
         private IPAddress _groupAddress;
         private string _localIpAddressString;
         private string _groupAddressString;
+        private int _publisherId;
 
         private int _nextItemIndex;
         public MainViewModel()
         {
 
             Objects = new ObservableCollection<OpcObject>();
-            PublisherObjects = new ObservableCollection<OpcObject>();
-            SubscriberObjects = new ObservableCollection<OpcObject>();
+            PublisherObjects = new ObservableCollection<PublisherItem>();
+            SubscriberObjects = new ObservableCollection<SubscriberItem>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
             GroupAddressString = "224.0.0.22";
@@ -108,9 +109,14 @@ namespace WpfControlLibrary
             set { _groupAddressString = value; OnPropertyChanged("GroupAddressString"); }
         }
 
+        public int PublisherId
+        {
+            get { return _publisherId; }
+            set { _publisherId = value; OnPropertyChanged("PublisherId"); }
+        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
-        public ObservableCollection<OpcObject> PublisherObjects { get; private set; }
-        public ObservableCollection<OpcObject> SubscriberObjects { get; private set; }
+        public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
+        public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

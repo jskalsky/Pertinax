@@ -11,45 +11,22 @@ namespace WpfControlLibrary
     public class OpcObject : INotifyPropertyChanged
     {
         private readonly ObservableCollection<OpcObjectItem> _items;
-        private int _publishingInterval;
         private string _name;
-        private bool _pub;
-        private bool _sub;
         public OpcObject(string name)
         {
             Name = name;
-            PublishingInterval = 0;
             _items = new ObservableCollection<OpcObjectItem>();
         }
 
         public OpcObject(OpcObject oo)
         {
             Name = oo.Name;
-            Pub = oo.Pub;
-            Sub = oo.Sub;
-            PublishingInterval = oo.PublishingInterval;
             _items = new ObservableCollection<OpcObjectItem>();
         }
         public string Name
         {
             get { return _name; }
             set { _name = value; OnPropertyChanged("Name"); }
-        }
-        public int PublishingInterval
-        {
-            get { return _publishingInterval; }
-            set { _publishingInterval = value; OnPropertyChanged("PublishingInterval"); }
-        }
-
-        public bool Pub
-        {
-            get { return _pub; }
-            set { _pub = value; OnPropertyChanged("Pub"); }
-        }
-        public bool Sub
-        {
-            get { return _sub; }
-            set { _sub = value; OnPropertyChanged("Sub"); }
         }
         public ObservableCollection<OpcObjectItem> Items => _items;
 

@@ -75,11 +75,24 @@ namespace WpfControlLibrary
             {
                 vm.RepetitionRateValue = 1;
                 vm.GroupAddressString = "224.0.0.22";
+                vm.LocalIpAddressString = "10.10.13.253";
+                vm.PublisherId = 1;
             }
         }
 
         private void CheckBoxPub_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void MenuItemAddPub_Click(object sender, RoutedEventArgs e)
+        {
+            if(DataContext is MainViewModel vm)
+            {
+                if(vm.SelectedOpcObject != null)
+                {
+                    vm.PublisherObjects.Add(new PublisherItem(vm.SelectedOpcObject.Name, 100));
+                }
+            }
         }
     }
 }
