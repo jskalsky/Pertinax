@@ -65,7 +65,7 @@
                                 <Label Content="Id"/>
                                 <local:NumericUpDown Margin="2,0,0,0" NudMin="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" VerticalAlignment="Top"/>
                             </StackPanel>
-                            <ListView Grid.Row="1" ItemsSource="{Binding PublisherObjects}">
+                            <ListView Grid.Row="1" ItemsSource="{Binding PublisherObjects}" SelectedItem="{Binding SelectedPublisherItem}">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Object" Width="150" DisplayMemberBinding="{Binding ObjectName}"/>

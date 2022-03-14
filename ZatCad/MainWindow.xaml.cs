@@ -23,7 +23,7 @@ namespace ZatCad
     public partial class MainWindow : Window
     {
         private readonly ConfigOpcUa.ConfigOpcUa configOpcUa;
-        private string FileName = "e:\\Work\\test.xml";
+        private string FileName = App.AppFolder + "\\" + "test.xml";
         public MainWindow()
         {
             try
@@ -33,7 +33,7 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("e:\\Work\\zat.log", exc.Message);
+                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
             }
         }
 
@@ -46,7 +46,7 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("e:\\Work\\zat.log", exc.Message);
+                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
             }
         }
 

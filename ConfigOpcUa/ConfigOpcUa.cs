@@ -183,7 +183,7 @@ namespace ConfigOpcUa
 
                     if (pars.UsePublisher)
                     {
-                        _publisherId = (int)IntelMotorola(pars.PublisherId);
+                        _publisherId = (int)pars.PublisherId;
                         string[] ips = pars.Publisher[0].Description.Split(';');
                         if(ips.Length==2)
                         {
@@ -198,13 +198,17 @@ namespace ConfigOpcUa
                     _objects.Clear();
                     foreach (ObjectTypeType ott in pars.ObjectType)
                     {
+                        if(ott.Variables == null)
+                        {
+                            continue;
+                        }
                         WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name);
                         foreach (VariablesType vt in ott.Variables)
                         {
                             WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name);
                             ooi.SelectedBasicType = GetBasicType(vt.BasicType);
                             ooi.SelectedAccess = GetAccess(vt.AccessType);
-                            ooi.ArraySizeValue = IntelMotorola(vt.ArraySize);
+                            ooi.ArraySizeValue = vt.ArraySize;
                             ooi.SelectedRank = (vt.Type == 0) ? "SimpleVariable" : "Array";
                             oo.AddItem(ooi);
                         }
@@ -273,6 +277,14 @@ namespace ConfigOpcUa
                 if (vm.Objects.Count > 0)
                 {
                     vm.SelectedOpcObject = vm.Objects[0];
+                }
+                foreach(WpfControlLibrary.PublisherItem pi in _publisherItems)
+                {
+                    vm.PublisherObjects.Add(pi);
+                }
+                if(vm.PublisherObjects.Count != 0)
+                {
+                    vm.SelectedPublisherItem = vm.PublisherObjects[0];
                 }
             }
 
@@ -347,21 +359,23 @@ namespace ConfigOpcUa
         private void SaveConfiguration(string fileName, WpfControlLibrary.MainViewModel mvm)
         {
             OPCUAParametersType pars = new OPCUAParametersType();
-            pars.ObjectTypeCount = IntelMotorola((ushort)mvm.Objects.Count);
+            pars.ObjectTypeCount = (ushort)mvm.Objects.Count;
             pars.UsePublisher = (mvm.PublisherObjects.Count != 0) ? true : false;
             pars.UseSubscriber = (mvm.SubscriberObjects.Count != 0) ? true : false;
             pars.UseServer = true;
-            pars.PublisherId = IntelMotorola((ushort)mvm.PublisherId);
+            pars.PublisherId = (ushort)mvm.PublisherId;
 
             List<PublisherType> pts = new List<PublisherType>();
             foreach (WpfControlLibrary.PublisherItem publisherItem in mvm.PublisherObjects)
             {
                 PublisherType pt = new PublisherType();
-                pt.PublisherId = IntelMotorola((ushort)publisherItem.PublishingInterval);
+                pt.PublisherId = (ushort)publisherItem.PublishingInterval;
                 pt.SubscriberRootType = publisherItem.ObjectName;
                 pt.Description = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString};";
+                pts.Add(pt);
                 pars.Publisher = pts.ToArray();
             }
+            pars.PublishersCount = (ushort)mvm.PublisherObjects.Count;
 
 /*            List<SubscriberType> subscribers = new List<SubscriberType>();
             SubscriberType st = new SubscriberType();
@@ -380,9 +394,9 @@ namespace ConfigOpcUa
             foreach (WpfControlLibrary.OpcObject oo in mvm.Objects)
             {
                 ObjectTypeType ott = new ObjectTypeType();
-                ott.Id = IntelMotorola(id++);
+                ott.Id = id++;
                 ott.Name = oo.Name;
-                ott.VariablesCount = IntelMotorola((ushort)oo.Items.Count);
+                ott.VariablesCount = (ushort)oo.Items.Count;
                 variables.Clear();
                 foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                 {
@@ -394,7 +408,7 @@ namespace ConfigOpcUa
                         if (_access.TryGetValue(ooi.SelectedAccess, out byte accessCode))
                         {
                             vt.AccessType = accessCode;
-                            vt.ArraySize = IntelMotorola((ushort)ooi.ArraySizeValue);
+                            vt.ArraySize = (ushort)ooi.ArraySizeValue;
                             vt.Type = (ooi.SelectedRank == "SimpleVariable") ? (byte)0 : (byte)1;
                             variables.Add(vt);
                         }

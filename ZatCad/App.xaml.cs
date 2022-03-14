@@ -19,10 +19,10 @@ namespace ZatCad
     {
         public App()
         {
-            string appFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax";
-            if (!Directory.Exists(appFolder)) Directory.CreateDirectory(appFolder);
+            AppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "Pertinax";
+            if (!Directory.Exists(AppFolder)) Directory.CreateDirectory(AppFolder);
 #if DEBUG
-            FileStream myTraceLog = new FileStream(appFolder + System.IO.Path.DirectorySeparatorChar + "Zatcad.deb", FileMode.Create, FileAccess.Write, FileShare.Write);
+            FileStream myTraceLog = new FileStream(AppFolder + System.IO.Path.DirectorySeparatorChar + "Zatcad.deb", FileMode.Create, FileAccess.Write, FileShare.Write);
             TextWriterTraceListener myListener = new TextWriterTraceListener(myTraceLog);
             Debug.Listeners.Add(myListener);
             Debug.AutoFlush = true;
@@ -31,6 +31,7 @@ namespace ZatCad
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
         }
 
+        public static string AppFolder { get; set; }
         private void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             string msg = $"Exception: {e.Exception.Message}";

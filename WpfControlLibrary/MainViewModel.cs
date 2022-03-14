@@ -20,6 +20,7 @@ namespace WpfControlLibrary
         private string _localIpAddressString;
         private string _groupAddressString;
         private int _publisherId;
+        private PublisherItem _selectedPublisherItem;
 
         private int _nextItemIndex;
         public MainViewModel()
@@ -113,6 +114,12 @@ namespace WpfControlLibrary
         {
             get { return _publisherId; }
             set { _publisherId = value; OnPropertyChanged("PublisherId"); }
+        }
+
+        public PublisherItem SelectedPublisherItem
+        {
+            get { return _selectedPublisherItem; }
+            set { _selectedPublisherItem = value; OnPropertyChanged("SelectedPublisherItem"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
