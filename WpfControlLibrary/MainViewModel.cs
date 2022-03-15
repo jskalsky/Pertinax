@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -21,6 +22,7 @@ namespace WpfControlLibrary
         private string _groupAddressString;
         private int _publisherId;
         private PublisherItem _selectedPublisherItem;
+        private SubscriberItem _selectedSubscriberItem;
 
         private int _nextItemIndex;
         public MainViewModel()
@@ -35,24 +37,29 @@ namespace WpfControlLibrary
             LocalIpAddressString = "10.10.13.253";
         }
 
-        private int GetMaxItemIndex()
+        public int GetMaxItemIndex()
         {
             int maxIndex = 0;
+            Debug.Print($"GetMaxItemIndex {Objects.Count}");
             foreach (OpcObject oo in Objects)
             {
+                Debug.Print($"Items= {oo.Items.Count}");
                 foreach (OpcObjectItem ooi in oo.Items)
                 {
                     int i = ooi.Name.IndexOf("Item");
                     if (i == 0)
                     {
                         string index = ooi.Name.Remove(0, 4);
+                        Debug.Print($"index= {index}");
                         if (index.Length > 0)
                         {
                             if (int.TryParse(index, out int result))
                             {
+                                Debug.Print($"result= {result}");
                                 if (result > maxIndex)
                                 {
                                     maxIndex = result;
+                                    Debug.Print($"maxIndex= {maxIndex}");
                                 }
                             }
                         }
@@ -120,6 +127,12 @@ namespace WpfControlLibrary
         {
             get { return _selectedPublisherItem; }
             set { _selectedPublisherItem = value; OnPropertyChanged("SelectedPublisherItem"); }
+        }
+
+        public SubscriberItem SelectedSubscriberItem
+        {
+            get { return _selectedSubscriberItem; }
+            set { _selectedSubscriberItem = value; OnPropertyChanged("SelectedSubscriberItem"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }

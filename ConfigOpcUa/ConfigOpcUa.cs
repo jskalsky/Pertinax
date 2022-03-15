@@ -29,6 +29,9 @@ namespace ConfigOpcUa
         private int _publisherId;
         private readonly List<WpfControlLibrary.PublisherItem> _publisherItems;
         private readonly List<WpfControlLibrary.SubscriberItem> _subscriberItems;
+
+        private readonly List<WpfControlLibrary.PortsNode> _ports;
+        private readonly Dictionary<string, string> _allPorts;
         public ConfigOpcUa()
         {
             lName = "OpcUa";
@@ -46,6 +49,9 @@ namespace ConfigOpcUa
             _objects = new List<WpfControlLibrary.OpcObject>();
             _publisherItems = new List<WpfControlLibrary.PublisherItem>();
             _subscriberItems = new List<WpfControlLibrary.SubscriberItem>();
+            _ports = new List<WpfControlLibrary.PortsNode>();
+            _allPorts = new Dictionary<string, string>();
+            _publisherId = 1;
         }
 
         public static void IntelMotorola(byte[] bytes, int start, int length)
@@ -118,7 +124,15 @@ namespace ConfigOpcUa
         public override byte[] CheCoLabel(int mod, string pLabel)
         {
             Debug.Print($"CheCoLabel {mod}, {pLabel}");
-            string[] items = pLabel.Split('.');
+            if(!_allPorts.TryGetValue(pLabel, out string port))
+            {
+                throw new ApplicationException($"Unknown label {pLabel}");
+            }
+            string[] items = port.Split('.');
+            for(int i=0;i<items.Length;++i)
+            {
+                Debug.Print($"item {i}, {items[i]}");
+            }
             if (!_ptxTypeCode.TryGetValue(items[2][0], out byte tc))
             {
                 throw new ApplicationException($"Bad type {pLabel}");
@@ -130,10 +144,28 @@ namespace ConfigOpcUa
             MemoryStream ms = new MemoryStream(InitialCapacity);
             BinaryWriter bw = new BinaryWriter(ms);
 
+            ushort compiledType = 0;
+            if(items[3] == "Pub")
+            {
+                compiledType = 2;
+            }
+            else
+            {
+                if(items[3] == "Sub")
+                {
+                    compiledType = 3;
+                }
+            }
+            ushort compiledIndex = 0;
+            if(items[4].Contains("Sub") || items[4].Contains("Pub"))
+            {
+                compiledIndex = ushort.Parse(items[4].Remove(0, 3));
+                Debug.Print($"compiledIndex= {compiledIndex}");
+            }
             bw.Write(tc);
             bw.Write(IntelMotorola(-1));
-            bw.Write(IntelMotorola((ushort)2));
-            bw.Write(IntelMotorola((ushort)1));
+            bw.Write(IntelMotorola(compiledType));
+            bw.Write(IntelMotorola(compiledIndex));
             bw.Write((uint)0);
             bw.Write((ushort)0);
             bw.Write(Encoding.ASCII.GetBytes(items[5]));
@@ -147,20 +179,10 @@ namespace ConfigOpcUa
             WpfControlLibrary.PortDialog pd = new WpfControlLibrary.PortDialog();
             if (pd.DataContext is WpfControlLibrary.ViewModelPorts vmp)
             {
-                foreach (WpfControlLibrary.OpcObject oo in _objects)
+                vmp.RootNodes.Clear();
+                foreach(WpfControlLibrary.PortsNode pn in _ports)
                 {
-/*                    if (oo.Pub)
-                    {
-                        WpfControlLibrary.PortsNode outputs = new WpfControlLibrary.PortsNode("Outputs");
-                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
-                        {
-                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
-                            {
-                                outputs.Add($"O.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})");
-                            }
-                        }
-                        vmp.RootNodes.Add(outputs);
-                    }*/
+                    vmp.RootNodes.Add(pn);
                 }
             }
             pd.ShowDialog();
@@ -174,6 +196,7 @@ namespace ConfigOpcUa
 
         public override void LoadConfig(string pName)
         {
+            Debug.Print($"LoadConfig= {pName}");
             if (File.Exists(pName))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
@@ -183,16 +206,27 @@ namespace ConfigOpcUa
 
                     if (pars.UsePublisher)
                     {
+                        _publisherItems.Clear();
                         _publisherId = (int)pars.PublisherId;
-                        string[] ips = pars.Publisher[0].Description.Split(';');
+                        Debug.Print($"_publisherId= {_publisherId}");
+                        string[] ips = pars.Subscriber[0].Description.Split(';');
                         if(ips.Length==2)
                         {
                             _localIpAddress = ips[0];
                             _groupAddress = ips[1];
+                            Debug.Print($"local= {_localIpAddress}, {_groupAddress}");
                         }
+                        foreach(SubscriberType st in pars.Subscriber)
+                        {
+                            _publisherItems.Add(new WpfControlLibrary.PublisherItem(st.PublisherRootType, st.SendPeriod));
+                        }
+                    }
+                    if(pars.UseSubscriber)
+                    {
+                        _subscriberItems.Clear();
                         foreach(PublisherType pt in pars.Publisher)
                         {
-                            _publisherItems.Add(new WpfControlLibrary.PublisherItem(pt.SubscriberRootType, pt.PublisherId));
+                            _subscriberItems.Add(new WpfControlLibrary.SubscriberItem(pt.SubscriberRootType, pt.PublisherId));
                         }
                     }
                     _objects.Clear();
@@ -203,6 +237,7 @@ namespace ConfigOpcUa
                             continue;
                         }
                         WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name);
+                        Debug.Print($"object= {oo.Name}");
                         foreach (VariablesType vt in ott.Variables)
                         {
                             WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name);
@@ -210,11 +245,16 @@ namespace ConfigOpcUa
                             ooi.SelectedAccess = GetAccess(vt.AccessType);
                             ooi.ArraySizeValue = vt.ArraySize;
                             ooi.SelectedRank = (vt.Type == 0) ? "SimpleVariable" : "Array";
+                            Debug.Print($"Item {vt.Name}");
                             oo.AddItem(ooi);
                         }
                         _objects.Add(oo);
                     }
+                    Debug.Print("1");
                 }
+                Debug.Print("2");
+                CreatePorts();
+                Debug.Print("3");
             }
             /*            Debug.Print($"LoadConfig {pName}");
                         if (File.Exists(pName))
@@ -253,18 +293,69 @@ namespace ConfigOpcUa
                         File.WriteAllText("c:\\Workzat11.log", $"LoadConfig end");*/
         }
 
+        private void CreatePorts()
+        {
+            _ports.Clear();
+            WpfControlLibrary.PortsNode outputs = new WpfControlLibrary.PortsNode("Outputs");
+            WpfControlLibrary.PortsNode inputs = new WpfControlLibrary.PortsNode("Inputs");
+            _ports.Add(outputs);
+            _ports.Add(inputs);
+            foreach (WpfControlLibrary.PublisherItem pi in _publisherItems)
+            {
+                foreach(WpfControlLibrary.OpcObject oo in _objects)
+                {
+                    if(pi.ObjectName == oo.Name)
+                    {
+                        WpfControlLibrary.PortsNode obj = outputs.Add(oo.Name);
+                        foreach(WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                        {
+                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                            {
+                                string portText = $"O.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})";
+                                Debug.Print($"porText= {portText}");
+                                obj.Add(portText);
+                                _allPorts[portText.ToUpperInvariant()] = portText;
+                            }
+                        }
+                    }
+                }
+            }
+            foreach (WpfControlLibrary.SubscriberItem si in _subscriberItems)
+            {
+                foreach (WpfControlLibrary.OpcObject oo in _objects)
+                {
+                    if (si.ObjectName == oo.Name)
+                    {
+                        WpfControlLibrary.PortsNode obj = inputs.Add(oo.Name);
+                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                        {
+                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                            {
+                                string portText = $"I.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})";
+                                Debug.Print($"porText= {portText}");
+                                obj.Add(portText);
+                                _allPorts[portText.ToUpperInvariant()] = portText;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
-            //            Debug.Print($"MakeConfig {pName}");
+            Debug.Print($"MakeConfig {pName}");
+            LoadConfig(pName);
             WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
             if (mainWindow.DataContext is WpfControlLibrary.MainViewModel vm)
             {
                 if (!string.IsNullOrEmpty(_localIpAddress))
                 {
+                    Debug.Print("10\n");
                     vm.GroupAddressString = _groupAddress;
                     vm.LocalIpAddressString = _localIpAddress;
                 }
                 vm.Objects.Clear();
+                Debug.Print($"Objects= {_objects.Count}");
                 foreach (WpfControlLibrary.OpcObject oo in _objects)
                 {
                     WpfControlLibrary.OpcObject opcObject = new WpfControlLibrary.OpcObject(oo);
@@ -276,16 +367,30 @@ namespace ConfigOpcUa
                 }
                 if (vm.Objects.Count > 0)
                 {
+                    Debug.Print($"20");
                     vm.SelectedOpcObject = vm.Objects[0];
                 }
                 foreach(WpfControlLibrary.PublisherItem pi in _publisherItems)
                 {
+                    Debug.Print($"21");
                     vm.PublisherObjects.Add(pi);
                 }
                 if(vm.PublisherObjects.Count != 0)
                 {
+                    Debug.Print($"22");
                     vm.SelectedPublisherItem = vm.PublisherObjects[0];
                 }
+                vm.PublisherId = _publisherId;
+
+                foreach(WpfControlLibrary.SubscriberItem si in _subscriberItems)
+                {
+                    vm.SubscriberObjects.Add(si);
+                }
+                if(vm.SubscriberObjects.Count != 0)
+                {
+                    vm.SelectedSubscriberItem = vm.SubscriberObjects[0];
+                }
+                Debug.Print($"23");
             }
 
             if ((bool)mainWindow.ShowDialog())
@@ -362,31 +467,42 @@ namespace ConfigOpcUa
             pars.ObjectTypeCount = (ushort)mvm.Objects.Count;
             pars.UsePublisher = (mvm.PublisherObjects.Count != 0) ? true : false;
             pars.UseSubscriber = (mvm.SubscriberObjects.Count != 0) ? true : false;
-            pars.UseServer = true;
+//            pars.UseServer = true;
             pars.PublisherId = (ushort)mvm.PublisherId;
 
-            List<PublisherType> pts = new List<PublisherType>();
+            List<SubscriberType> sts = new List<SubscriberType>();
             foreach (WpfControlLibrary.PublisherItem publisherItem in mvm.PublisherObjects)
             {
+                SubscriberType st = new SubscriberType();
+                st.SendPeriod = (ushort)publisherItem.PublishingInterval;
+                st.PublisherRootType = publisherItem.ObjectName;
+                st.Description = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString}";
+                sts.Add(st);
+                pars.Subscriber = sts.ToArray();
+            }
+            pars.SubscribersCount = (ushort)mvm.PublisherObjects.Count;
+
+            List<PublisherType> pts = new List<PublisherType>();
+            foreach(WpfControlLibrary.SubscriberItem subscriberItem in mvm.SubscriberObjects)
+            {
                 PublisherType pt = new PublisherType();
-                pt.PublisherId = (ushort)publisherItem.PublishingInterval;
-                pt.SubscriberRootType = publisherItem.ObjectName;
-                pt.Description = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString};";
+                pt.PublisherId = (ushort)subscriberItem.PublisherId;
+                pt.SubscriberRootType = subscriberItem.ObjectName;
+                pt.Description = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString}";
                 pts.Add(pt);
                 pars.Publisher = pts.ToArray();
             }
-            pars.PublishersCount = (ushort)mvm.PublisherObjects.Count;
 
-/*            List<SubscriberType> subscribers = new List<SubscriberType>();
-            SubscriberType st = new SubscriberType();
-            IPAddress ipAddress = IPAddress.Parse(mvm.GroupAddressString);
-            st.IpAddress = IntelMotorola(BitConverter.ToUInt32(ipAddress.GetAddressBytes(), 0));
-            IPAddress localAddress = IPAddress.Parse(mvm.LocalIpAddressString);
-            st.LocalAddress = IntelMotorola(BitConverter.ToUInt32(localAddress.GetAddressBytes(), 0));
-            st.PublisherRootType = "Pertinax";
-            st.SendPeriod = sendPeriod;
-            subscribers.Add(st);
-            pars.Subscriber = subscribers.ToArray();*/
+            /*            List<SubscriberType> subscribers = new List<SubscriberType>();
+                        SubscriberType st = new SubscriberType();
+                        IPAddress ipAddress = IPAddress.Parse(mvm.GroupAddressString);
+                        st.IpAddress = IntelMotorola(BitConverter.ToUInt32(ipAddress.GetAddressBytes(), 0));
+                        IPAddress localAddress = IPAddress.Parse(mvm.LocalIpAddressString);
+                        st.LocalAddress = IntelMotorola(BitConverter.ToUInt32(localAddress.GetAddressBytes(), 0));
+                        st.PublisherRootType = "Pertinax";
+                        st.SendPeriod = sendPeriod;
+                        subscribers.Add(st);
+                        pars.Subscriber = subscribers.ToArray();*/
 
             List<ObjectTypeType> objects = new List<ObjectTypeType>();
             ushort id = 1;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,21 +40,32 @@ namespace WpfControlLibrary
 
         private void ListViewObjects_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-        }
-
-        private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
-        {
             MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
+                if(vm.SelectedOpcObject != null)
+                {
+                }
+            }
+        }
+
+            private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.Print($"ButtonAddItem_Click");
+            MainViewModel vm = DataContext as MainViewModel;
+            if (vm != null)
+            {
+                Debug.Print($"ButtonAddItem_Click 1");
                 if (vm.SelectedOpcObject != null)
                 {
+                    Debug.Print($"ButtonAddItem_Click 2");
+                    vm.NextItemIndex = vm.GetMaxItemIndex() + 1;
+                    Debug.Print($"ButtonAddItem_Click max= {vm.NextItemIndex}");
                     for (int i = 0; i < vm.RepetitionRateValue; ++i)
                     {
-                        vm.SelectedOpcObject.AddItem(vm.ItemName);
-                        ++vm.NextItemIndex;
                         vm.ItemName = $"Item{vm.NextItemIndex}";
+                        ++vm.NextItemIndex;
+                        vm.SelectedOpcObject.AddItem(vm.ItemName);
                     }
                 }
             }
@@ -91,6 +103,17 @@ namespace WpfControlLibrary
                 if(vm.SelectedOpcObject != null)
                 {
                     vm.PublisherObjects.Add(new PublisherItem(vm.SelectedOpcObject.Name, 100));
+                }
+            }
+        }
+
+        private void MenuItemAddSub_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                if (vm.SelectedOpcObject != null)
+                {
+                    vm.SubscriberObjects.Add(new SubscriberItem(vm.SelectedOpcObject.Name, 1));
                 }
             }
         }
