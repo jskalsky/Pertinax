@@ -21,20 +21,20 @@ namespace WpfControlLibrary
         private string _localIpAddressString;
         private string _groupAddressString;
         private int _publisherId;
-        private PublisherItem _selectedPublisherItem;
         private SubscriberItem _selectedSubscriberItem;
+        private string _windowTitle;
 
         private int _nextItemIndex;
         public MainViewModel()
         {
 
             Objects = new ObservableCollection<OpcObject>();
-            PublisherObjects = new ObservableCollection<PublisherItem>();
             SubscriberObjects = new ObservableCollection<SubscriberItem>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
             GroupAddressString = "224.0.0.22";
             LocalIpAddressString = "10.10.13.253";
+            WindowTitle = "Configurator OpcUa";
         }
 
         public int GetMaxItemIndex()
@@ -123,27 +123,25 @@ namespace WpfControlLibrary
             set { _publisherId = value; OnPropertyChanged("PublisherId"); }
         }
 
-        public PublisherItem SelectedPublisherItem
-        {
-            get { return _selectedPublisherItem; }
-            set { _selectedPublisherItem = value; OnPropertyChanged("SelectedPublisherItem"); }
-        }
-
         public SubscriberItem SelectedSubscriberItem
         {
             get { return _selectedSubscriberItem; }
             set { _selectedSubscriberItem = value; OnPropertyChanged("SelectedSubscriberItem"); }
         }
+
+        public string WindowTitle
+        {
+            get { return _windowTitle; }
+            set { _windowTitle = value; OnPropertyChanged("WindowTitle"); }
+        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
-        public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-
-        public OpcObject AddObject(string name)
+        public OpcObject AddObject(string name, int writer, int dataSet)
         {
             foreach (OpcObject opcObject in Objects)
             {
@@ -152,7 +150,7 @@ namespace WpfControlLibrary
                     return null;
                 }
             }
-            OpcObject oo = new OpcObject(name);
+            OpcObject oo = new OpcObject(name, writer, dataSet);
             Objects.Add(oo);
             return oo;
         }

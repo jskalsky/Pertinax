@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="900" WindowStyle="None" ResizeMode="NoResize">
+        Title="MainWindow" Height="500" Width="900" WindowStyle="None">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
-    <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
+    <!--Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1"-->
         <DockPanel LastChildFill="True">
-            <Label DockPanel.Dock="Top" Content="Configurator OpcUa" Background="LightSteelBlue" Foreground="White"/>
+            <Label DockPanel.Dock="Top" Content="{Binding WindowTitle}" Background="LightSteelBlue" Foreground="White"/>
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,5,5">
                 <Button Content="OK" IsDefault="True" Click="ButtonOk_Click" Width="50"/>
                 <Button Content="Cancel" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
@@ -28,54 +28,23 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <DockPanel LastChildFill="True">
-                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
-                            <Button Content="Add" Click="AddObject_Click" Width="50"/>
-                            <Button Content="Remove" Margin="5,0,0,0" Width="50"/>
-                        </StackPanel>
-                        <ListView MinWidth="150" Name="Objects" Grid.Column="0" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" 
-                              SelectionChanged="ListViewObjects_SelectionChanged">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Name" Width="150">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{Binding Name,Mode=TwoWay}"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Remove"/>
-                                    <MenuItem Header="Add to Publisher" Click="MenuItemAddPub_Click"/>
-                                    <MenuItem Header="Add to Subscriber" Click="MenuItemAddSub_Click"/>
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                        </ListView>
-                    </DockPanel>
-                    <StackPanel Grid.Column="1" Orientation="Vertical">
-                        <Label Content="Local Ip address"/>
-                        <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                        <Label Content="Multicast group address"/>
-                        <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                    </StackPanel>
-                    <GroupBox Grid.Column="2" Header="Publisher">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                <Label Content="Id"/>
-                                <local:NumericUpDown Margin="2,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" VerticalAlignment="Top"/>
+                    <GroupBox Header="Objects">
+                        <DockPanel LastChildFill="True">
+                            <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
+                                <Button Content="Add" Click="AddObject_Click" Width="50"/>
                             </StackPanel>
-                            <ListView Grid.Row="1" ItemsSource="{Binding PublisherObjects}" SelectedItem="{Binding SelectedPublisherItem}">
+                            <ListView MinWidth="150" Name="Objects" Grid.Column="0" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" 
+                              SelectionChanged="ListViewObjects_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Object" Width="150" DisplayMemberBinding="{Binding ObjectName}"/>
-                                        <GridViewColumn Header="Interval">
+                                        <GridViewColumn Header="Name">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding Name,Mode=TwoWay}" MinWidth="100"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Publishing Interval">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <local:NumericUpDown  NudMin="0" NudMax="2000" NudIncrement="10" NudValue="{Binding PublishingInterval,Mode=TwoWay}"/>
@@ -84,24 +53,57 @@
                                         </GridViewColumn>
                                     </GridView>
                                 </ListView.View>
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Remove"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
                             </ListView>
-                        </Grid>
+                        </DockPanel>
                     </GroupBox>
-                    <GroupBox Grid.Column="3" Header="Subscriber">
-                        <ListView ItemsSource="{Binding SubscriberObjects}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Object" Width="150" DisplayMemberBinding="{Binding ObjectName}"/>
-                                    <GridViewColumn Header="Id">
+                    <GroupBox Grid.Column="1" Header="Subscriber">
+                        <DockPanel LastChildFill="True">
+                            <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
+                                <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
+                            </StackPanel>
+                            <ListView ItemsSource="{Binding SubscriberObjects}">
+                                <ListView.View>
+                                    <GridView>
+                                    <GridViewColumn Header="Subscribe">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <local:NumericUpDown  NudMin="1" NudMax="512" NudIncrement="1" NudValue="{Binding PublisherId,Mode=TwoWay}"/>
+                                                <CheckBox IsChecked="{Binding Subscribe,Mode=TwoWay}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                                        <GridViewColumn Header="ConfigurationName">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock MinWidth="150"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="ObjectName">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock MinWidth="150"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </DockPanel>
+                    </GroupBox>
+                    <GroupBox Header="Settings" Grid.Column="2">
+                        <StackPanel Grid.Column="1" Orientation="Vertical">
+                            <Label Content="Local Ip address"/>
+                            <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                            <Label Content="Multicast group address"/>
+                            <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                            <Label Content="Publisher Id"/>
+                            <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
+                        </StackPanel>
                     </GroupBox>
                 </Grid>
                 <DockPanel LastChildFill="True" Grid.Row="1">
@@ -151,5 +153,5 @@
                 </DockPanel>
             </Grid>
         </DockPanel>
-    </Border>
+    <!--/Border-->
 </Window>

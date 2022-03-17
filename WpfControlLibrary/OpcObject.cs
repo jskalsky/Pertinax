@@ -12,22 +12,40 @@ namespace WpfControlLibrary
     {
         private readonly ObservableCollection<OpcObjectItem> _items;
         private string _name;
-        public OpcObject(string name)
+        private int _publishingInterval;
+
+        public OpcObject(string name, int writer, int dataSet, int publishingI, bool subscribe = false)
         {
             Name = name;
             _items = new ObservableCollection<OpcObjectItem>();
+            WriterGroupId = writer;
+            DataSetWriterId = dataSet;
+            Subscribe = subscribe;
+            PublishingInterval = publishingI;
         }
 
-        public OpcObject(OpcObject oo)
+        public OpcObject(OpcObject oo, int writer, int dataSet, int publishingI, bool subscribe = false)
         {
             Name = oo.Name;
             _items = new ObservableCollection<OpcObjectItem>();
+            WriterGroupId = writer;
+            DataSetWriterId = dataSet;
+            Subscribe = subscribe;
+            PublishingInterval = publishingI;
         }
         public string Name
         {
             get { return _name; }
             set { _name = value; OnPropertyChanged("Name"); }
         }
+        public int PublishingInterval
+        {
+            get { return _publishingInterval; }
+            set { _publishingInterval = value; OnPropertyChanged("PublishingInterval"); }
+        }
+        public int WriterGroupId { get; }
+        public int DataSetWriterId { get; }
+        public bool Subscribe { get; }
         public ObservableCollection<OpcObjectItem> Items => _items;
 
         public event PropertyChangedEventHandler PropertyChanged;

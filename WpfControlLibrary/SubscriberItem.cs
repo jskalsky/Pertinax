@@ -9,17 +9,19 @@ namespace WpfControlLibrary
 {
     public class SubscriberItem : INotifyPropertyChanged
     {
-        private int _publisherId;
-        public SubscriberItem(string name, int id)
+        private bool _subscribe;
+        public SubscriberItem(string path, string name)
         {
             ObjectName = name;
-            PublisherId = id;
+            Path = path;
         }
+        public string Path { get; }
         public string ObjectName { get; }
-        public int PublisherId
+
+        public bool Subscribe
         {
-            get { return _publisherId; }
-            set { _publisherId = value; OnPropertyChanged("PublisherId"); }
+            get { return _subscribe; }
+            set { _subscribe = value; OnPropertyChanged("Subscribe"); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -25,12 +26,66 @@ namespace WpfControlLibrary
             InitializeComponent();
         }
 
+        private int GetIndex(string text)
+        {
+            int result = 0;
+            if (text.Length > 0)
+            {
+                LinkedList<char> str = new LinkedList<char>();
+                for (int i = text.Length - 1; i >= 0; --i)
+                {
+                    if (char.IsDigit(text[i]))
+                    {
+                        str.AddFirst(text[i]);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (str.Count != 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (char ch in str)
+                    {
+                        sb.Append(ch);
+                    }
+                    if (int.TryParse(sb.ToString(), out int index))
+                    {
+                        result = index;
+                    }
+                }
+            }
+            return result;
+        }
         private void AddObject_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
-                OpcObject oo = vm.AddObject("Pertinax");
+                int maxWriter = 0;
+                int maxDataSet = 0;
+                int maxIndex = 0;
+                foreach (OpcObject opcObject in vm.Objects)
+                {
+                    if (opcObject.WriterGroupId > maxWriter)
+                    {
+                        maxWriter = opcObject.WriterGroupId;
+                    }
+                    if (opcObject.DataSetWriterId > maxDataSet)
+                    {
+                        maxDataSet = opcObject.DataSetWriterId;
+                    }
+                    int index = GetIndex(opcObject.Name);
+                    if(index > maxIndex)
+                    {
+                        maxIndex = index;
+                    }
+                }
+                ++maxWriter;
+                ++maxDataSet;
+                ++maxIndex;
+                OpcObject oo = vm.AddObject($"Pertinax{maxIndex}", maxWriter, maxDataSet);
                 if (oo != null)
                 {
                     vm.SelectedOpcObject = oo;
@@ -43,13 +98,13 @@ namespace WpfControlLibrary
             MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
-                if(vm.SelectedOpcObject != null)
+                if (vm.SelectedOpcObject != null)
                 {
                 }
             }
         }
 
-            private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
+        private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
         {
             Debug.Print($"ButtonAddItem_Click");
             MainViewModel vm = DataContext as MainViewModel;
@@ -92,29 +147,16 @@ namespace WpfControlLibrary
             }
         }
 
-        private void CheckBoxPub_Click(object sender, RoutedEventArgs e)
+        private void AddSubscriber_Click(object sender, RoutedEventArgs e)
         {
-        }
-
-        private void MenuItemAddPub_Click(object sender, RoutedEventArgs e)
-        {
-            if(DataContext is MainViewModel vm)
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Multiselect = false;
+            ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            ofd.FileName = string.Empty;
+            if (ofd.ShowDialog() == true)
             {
-                if(vm.SelectedOpcObject != null)
-                {
-                    vm.PublisherObjects.Add(new PublisherItem(vm.SelectedOpcObject.Name, 100));
-                }
-            }
-        }
 
-        private void MenuItemAddSub_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainViewModel vm)
-            {
-                if (vm.SelectedOpcObject != null)
-                {
-                    vm.SubscriberObjects.Add(new SubscriberItem(vm.SelectedOpcObject.Name, 1));
-                }
             }
         }
     }
