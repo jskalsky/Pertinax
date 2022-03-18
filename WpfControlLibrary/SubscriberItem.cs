@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +14,12 @@ namespace WpfControlLibrary
         public SubscriberItem(string path, string name)
         {
             ObjectName = name;
-            Path = path;
+            ConfigurationPath = path;
+            ConfigurationName = Path.GetFileName(path);
         }
-        public string Path { get; }
+        public string ConfigurationPath { get; }
         public string ObjectName { get; }
+        public string ConfigurationName { get; }
 
         public bool Subscribe
         {

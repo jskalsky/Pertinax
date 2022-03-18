@@ -23,6 +23,7 @@ namespace WpfControlLibrary
         private int _publisherId;
         private SubscriberItem _selectedSubscriberItem;
         private string _windowTitle;
+        private string _subscriberPath;
 
         private int _nextItemIndex;
         public MainViewModel()
@@ -134,6 +135,12 @@ namespace WpfControlLibrary
             get { return _windowTitle; }
             set { _windowTitle = value; OnPropertyChanged("WindowTitle"); }
         }
+
+        public string SubscriberPath
+        {
+            get { return _subscriberPath; }
+            set { _subscriberPath = value; OnPropertyChanged("SubscriberPath"); }
+        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         private void OnPropertyChanged(string name)
@@ -150,9 +157,14 @@ namespace WpfControlLibrary
                     return null;
                 }
             }
-            OpcObject oo = new OpcObject(name, writer, dataSet);
+            OpcObject oo = new OpcObject(name, PublisherId, writer, dataSet, 0, false, false);
             Objects.Add(oo);
             return oo;
+        }
+
+        public void AddSubscriber(string path)
+        {
+            SubscriberPath = path;
         }
     }
 }

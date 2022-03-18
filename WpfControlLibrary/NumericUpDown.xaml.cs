@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,13 +41,21 @@ namespace WpfControlLibrary
             get { return (int)GetValue(NudMaxProperty); }
             set { SetValue(NudMaxProperty, value); }
         }
-        public static readonly DependencyProperty NudValueProperty = DependencyProperty.Register("NudValue", typeof(int), typeof(NumericUpDown));
+        public static readonly DependencyProperty NudValueProperty = DependencyProperty.Register("NudValue", typeof(int), typeof(NumericUpDown), new PropertyMetadata(0,OnNudValuePropertyChanged));
         public int NudValue
         {
             get { return (int)GetValue(NudValueProperty); }
             set { SetValue(NudValueProperty, value); }
         }
 
+        private static void OnNudValuePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            Debug.Print($"NudValuePropertyChanged {dependencyObject}");
+            if(dependencyObject is WpfControlLibrary.NumericUpDown nud)
+            {
+                nud.TextBoxValue.Text = e.NewValue.ToString();
+            }
+        }
         public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown));
         public int NudIncrement
         {
@@ -56,6 +65,7 @@ namespace WpfControlLibrary
 
         private void ButtonUp_Click(object sender, RoutedEventArgs e)
         {
+            Debug.Print($"Up {NudValue}");
             if(NudValue + NudIncrement <= NudMax)
             {
                 NudValue += NudIncrement;

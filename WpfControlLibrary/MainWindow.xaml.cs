@@ -156,7 +156,31 @@ namespace WpfControlLibrary
             ofd.FileName = string.Empty;
             if (ofd.ShowDialog() == true)
             {
+                Debug.Print("AddSubscriber_Click");
+                if (DataContext is MainViewModel vm)
+                {
+                    vm.SubscriberPath = ofd.FileName;
+                }
+            }
+        }
 
+        private void CheckBoxPublish_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                if(vm.SelectedOpcObject != null)
+                {
+                    if (vm.SelectedOpcObject.EnablePublish)
+                    {
+                        vm.SelectedOpcObject.EnableInterval = true;
+                        vm.SelectedOpcObject.PublishingInterval = 100;
+                    }
+                    else
+                    {
+                        vm.SelectedOpcObject.EnableInterval = false;
+                        vm.SelectedOpcObject.PublishingInterval = 0;
+                    }
+                }
             }
         }
     }
