@@ -21,7 +21,7 @@ namespace WpfControlLibrary
         private bool _enablePublish;
         private bool _enableSubscribe;
         private int _publisherId;
-        public OpcObject(string name, int publisherId, int writer, int dataSet, int interval, bool subscribe, bool publish)
+        public OpcObject(string name, int publisherId, int writer, int dataSet, int interval, bool subscribe = false, bool publish = true)
         {
             Name = name;
             _items = new ObservableCollection<OpcObjectItem>();
@@ -32,7 +32,7 @@ namespace WpfControlLibrary
             Publish = publish;
             Subscribe = subscribe;
             EnableInterval = EnableSubscribe = EnablePublish = false;
-            if(!Subscribe)
+            if (!Subscribe)
             {
                 EnablePublish = true;
             }
@@ -116,6 +116,55 @@ namespace WpfControlLibrary
         public void Clear()
         {
             _items.Clear();
+        }
+
+        public static OpcObject Create(string name, string description)
+        {
+            string[] descrItems = description.Split(';');
+            if (descrItems.Length != 6)
+            {
+                return null;
+            }
+            bool subscribe = false;
+            if(!bool.TryParse(descrItems[0],out subscribe))
+            {
+                return null;
+            }
+            bool publish = false;
+            if (!bool.TryParse(descrItems[1], out publish))
+            {
+                return null;
+            }
+            return Create(name, description, subscribe, publish);
+        }
+        public static OpcObject Create(string name, string description, bool subscribe, bool publish)
+        {
+            string[] descrItems = description.Split(';');
+            if (descrItems.Length != 6)
+            {
+                return null;
+            }
+            int publisherId = 0;
+            if (!int.TryParse(descrItems[2], out publisherId))
+            {
+                return null;
+            }
+            int writer = 0;
+            if (!int.TryParse(descrItems[3], out writer))
+            {
+                return null;
+            }
+            int ds = 0;
+            if (!int.TryParse(descrItems[4], out ds))
+            {
+                return null;
+            }
+            int pInterval = 0;
+            if (!int.TryParse(descrItems[5], out pInterval))
+            {
+                return null;
+            }
+            return new OpcObject(name, publisherId, writer, ds, pInterval, subscribe, publish);
         }
     }
 }

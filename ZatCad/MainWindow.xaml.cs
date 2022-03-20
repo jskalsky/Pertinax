@@ -23,7 +23,6 @@ namespace ZatCad
     public partial class MainWindow : Window
     {
         private readonly ConfigOpcUa.ConfigOpcUa configOpcUa;
-        private string FileName = App.AppFolder + "\\" + "test.xml";
         public MainWindow()
         {
             try
@@ -41,8 +40,12 @@ namespace ZatCad
         {
             try
             {
-                configOpcUa.LoadConfig(FileName);
-                configOpcUa.MakeConfig(null, FileName);
+                if(DataContext is MainViewModel mvm)
+                {
+                    string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
+                    configOpcUa.LoadConfig(fileName);
+                    configOpcUa.MakeConfig(null, fileName);
+                }
             }
             catch(Exception exc)
             {
@@ -52,8 +55,12 @@ namespace ZatCad
 
         private void ButtonPort_Click(object sender, RoutedEventArgs e)
         {
-            configOpcUa.LoadConfig(FileName);
-            string port = configOpcUa.CreatePort();
+            if (DataContext is MainViewModel mvm)
+            {
+                string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
+                configOpcUa.LoadConfig(fileName);
+                string port = configOpcUa.CreatePort();
+            }
         }
     }
 }

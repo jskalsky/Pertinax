@@ -17,6 +17,11 @@ namespace WpfControlLibrary
         private string _selectedRank;
         private int _arraySizeValue;
 
+        private bool _enableBasicTypes;
+        private bool _enableAccess;
+        private bool _enableRank;
+        private bool _enableArraySize;
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
         {
@@ -39,6 +44,7 @@ namespace WpfControlLibrary
             SelectedBasicType = ooi.SelectedBasicType;
             SelectedRank = ooi.SelectedRank;
             ArraySizeValue = ooi.ArraySizeValue;
+            EnableBasicTypes = true;
         }
         public string Name { get; }
 
@@ -79,6 +85,27 @@ namespace WpfControlLibrary
         {
             get { return _arraySizeValue; }
             set { _arraySizeValue = value; OnPropertyChanged("ArraySizeValue"); }
+        }
+
+        public bool EnableBasicTypes
+        {
+            get { return _enableBasicTypes; }
+            set { _enableBasicTypes = value; OnPropertyChanged("EnableBasicTypes"); }
+        }
+        public bool EnableAccess
+        {
+            get { return _enableAccess; }
+            set { _enableAccess = value; OnPropertyChanged("EnableAccess"); }
+        }
+        public bool EnableRank
+        {
+            get { return _enableRank; }
+            set { _enableRank = value; OnPropertyChanged("EnableRank"); }
+        }
+        public bool EnableArraySize
+        {
+            get { return _enableArraySize; }
+            set { _enableArraySize = value; OnPropertyChanged("EnableArraySize"); }
         }
     }
 }

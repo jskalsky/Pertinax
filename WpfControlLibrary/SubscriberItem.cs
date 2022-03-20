@@ -11,11 +11,12 @@ namespace WpfControlLibrary
     public class SubscriberItem : INotifyPropertyChanged
     {
         private bool _subscribe;
-        public SubscriberItem(string path, string name)
+        public SubscriberItem(string path, string name, bool sub)
         {
             ObjectName = name;
             ConfigurationPath = path;
             ConfigurationName = Path.GetFileName(path);
+            Subscribe = sub;
         }
         public string ConfigurationPath { get; }
         public string ObjectName { get; }

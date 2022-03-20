@@ -77,7 +77,7 @@ namespace WpfControlLibrary
                         maxDataSet = opcObject.DataSetWriterId;
                     }
                     int index = GetIndex(opcObject.Name);
-                    if(index > maxIndex)
+                    if (index > maxIndex)
                     {
                         maxIndex = index;
                     }
@@ -168,7 +168,7 @@ namespace WpfControlLibrary
         {
             if (DataContext is MainViewModel vm)
             {
-                if(vm.SelectedOpcObject != null)
+                if (vm.SelectedOpcObject != null)
                 {
                     if (vm.SelectedOpcObject.EnablePublish)
                     {
@@ -180,6 +180,17 @@ namespace WpfControlLibrary
                         vm.SelectedOpcObject.EnableInterval = false;
                         vm.SelectedOpcObject.PublishingInterval = 0;
                     }
+                }
+            }
+        }
+
+        private void CheckBoxSubscribe_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                if(vm.SelectedSubscriberItem != null)
+                {
+                    vm.SubscribeClick = vm.Subscribe;
                 }
             }
         }

@@ -83,13 +83,13 @@
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
                             <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
                         </StackPanel>
-                        <ListView ItemsSource="{Binding SubscriberObjects}">
+                        <ListView ItemsSource="{Binding SubscriberObjects}" SelectedItem="{Binding SelectedSubscriberItem}">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Subscribe">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Subscribe,Mode=TwoWay}"/>
+                                                <CheckBox IsChecked="{Binding Subscribe,Mode=TwoWay}" Click="CheckBoxSubscribe_Click"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -139,28 +139,28 @@
                             <GridViewColumn Header="Type">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}"/>
+                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}" IsEnabled="{Binding EnableBasicTypes}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Access">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Access}" SelectedItem="{Binding SelectedAccess,Mode=TwoWay}"/>
+                                        <ComboBox ItemsSource="{Binding Access}" SelectedItem="{Binding SelectedAccess,Mode=TwoWay}" IsEnabled="{Binding EnableAccess}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Rank">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank,Mode=TwoWay}"/>
+                                        <ComboBox ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank,Mode=TwoWay}" IsEnabled="{Binding EnableRank}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="ArraySize">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <local:NumericUpDown NudMin="0" NudMax="2500" NudIncrement="1" NudValue="{Binding ArraySizeValue,Mode=TwoWay}"/>
+                                        <local:NumericUpDown NudMin="0" NudMax="2500" NudIncrement="1" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" IsEnabled="{Binding EnableArraySize}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

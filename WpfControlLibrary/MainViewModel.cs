@@ -24,6 +24,8 @@ namespace WpfControlLibrary
         private SubscriberItem _selectedSubscriberItem;
         private string _windowTitle;
         private string _subscriberPath;
+        private bool _subscribe;
+        private bool _subscribeClick;
 
         private int _nextItemIndex;
         public MainViewModel()
@@ -140,6 +142,17 @@ namespace WpfControlLibrary
         {
             get { return _subscriberPath; }
             set { _subscriberPath = value; OnPropertyChanged("SubscriberPath"); }
+        }
+
+        public bool Subscribe
+        {
+            get { return _subscribe; }
+            set { _subscribe = value; OnPropertyChanged("Subscribe"); }
+        }
+        public bool SubscribeClick
+        {
+            get { return _subscribeClick; }
+            set { _subscribeClick = value; OnPropertyChanged("SubscribeClick"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
