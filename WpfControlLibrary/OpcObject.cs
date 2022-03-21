@@ -21,6 +21,8 @@ namespace WpfControlLibrary
         private bool _enablePublish;
         private bool _enableSubscribe;
         private int _publisherId;
+        private object _checkBoxSubscribe;
+        private object _checkBoxPublish;
         public OpcObject(string name, int publisherId, int writer, int dataSet, int interval, bool subscribe = false, bool publish = true)
         {
             Name = name;
@@ -36,6 +38,8 @@ namespace WpfControlLibrary
             {
                 EnablePublish = true;
             }
+            CheckBoxSubscribe = this;
+            CheckBoxPublish = this;
         }
 
         public string Name
@@ -91,6 +95,17 @@ namespace WpfControlLibrary
         {
             get { return _enableSubscribe; }
             set { _enableSubscribe = value; OnPropertyChanged("EnableSubscribe"); }
+        }
+
+        public object CheckBoxSubscribe
+        {
+            get { return _checkBoxSubscribe; }
+            set { _checkBoxSubscribe = value; OnPropertyChanged("CheckBoxSubscribe"); }
+        }
+        public object CheckBoxPublish
+        {
+            get { return _checkBoxPublish; }
+            set { _checkBoxPublish = value; OnPropertyChanged("CheckBoxPublish"); }
         }
         public ObservableCollection<OpcObjectItem> Items => _items;
 

@@ -47,14 +47,16 @@
                                     <GridViewColumn Header="Pub">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Publish, Mode=TwoWay}" IsEnabled="{Binding EnablePublish}" Click="CheckBoxPublish_Click"/>
+                                                <CheckBox IsChecked="{Binding Publish, Mode=TwoWay}" IsEnabled="{Binding EnablePublish}" 
+                                                          Click="CheckBoxPublish_Click" Tag="{Binding CheckBoxPublish}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn Header="Sub">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Subscribe, Mode=TwoWay}" IsEnabled="{Binding EnableSubscribe}"/>
+                                                <CheckBox IsChecked="{Binding Subscribe, Mode=TwoWay}" IsEnabled="{Binding EnableSubscribe}" 
+                                                          Tag="{Binding CheckBoxSubscribe}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -83,13 +85,13 @@
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
                             <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
                         </StackPanel>
-                        <ListView ItemsSource="{Binding SubscriberObjects}" SelectedItem="{Binding SelectedSubscriberItem}">
+                        <ListView Name="ListViewSubscriber" ItemsSource="{Binding SubscriberObjects}" SelectedItem="{Binding SelectedSubscriberItem}">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Subscribe">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Subscribe,Mode=TwoWay}" Click="CheckBoxSubscribe_Click"/>
+                                                <CheckBox IsChecked="{Binding Subscribe,Mode=TwoWay}" Click="CheckBoxSubscribe_Click" Tag="{Binding CheckBoxtag}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

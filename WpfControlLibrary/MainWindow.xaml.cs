@@ -166,10 +166,11 @@ namespace WpfControlLibrary
 
         private void CheckBoxPublish_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainViewModel vm)
+            if (sender is CheckBox checkBox)
             {
-                if (vm.SelectedOpcObject != null)
+                if (DataContext is MainViewModel vm)
                 {
+                    vm.SelectedOpcObject = (OpcObject)checkBox.Tag;
                     if (vm.SelectedOpcObject.EnablePublish)
                     {
                         vm.SelectedOpcObject.EnableInterval = true;
@@ -186,10 +187,12 @@ namespace WpfControlLibrary
 
         private void CheckBoxSubscribe_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainViewModel vm)
+            Debug.Print($"SubClick {sender}");
+            if (sender is CheckBox checkBox)
             {
-                if(vm.SelectedSubscriberItem != null)
+                if (DataContext is MainViewModel vm)
                 {
+                    vm.SelectedSubscriberItem = (SubscriberItem)checkBox.Tag;
                     vm.SubscribeClick = vm.Subscribe;
                 }
             }
