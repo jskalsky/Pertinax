@@ -435,6 +435,7 @@ namespace ConfigOpcUa
                                 {
                                     if (mvm.SelectedSubscriberItem.ObjectName == ott.Name)
                                     {
+                                        Debug.Print($"ON= mvm.SelectedSubscriberItem.ObjectName");
                                         WpfControlLibrary.OpcObject oo = WpfControlLibrary.OpcObject.Create(ott.Name, ott.Description, true, false);
                                         if (oo != null)
                                         {
