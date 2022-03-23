@@ -11,7 +11,10 @@ namespace BupLst
     {
         const int BufferSize = 1024 * 1024;
         private static Dictionary<ushort, Io> Ios = new Dictionary<ushort, Io>();
-        private static SortedDictionary<ushort, List<string>> Net = new SortedDictionary<ushort, List<string>>();
+
+        public static SortedDictionary<ushort, List<string>> Net { get; set; }
+        public static SortedDictionary<ushort,byte[]> Pars { get; set; }
+        public static SortedDictionary<string,List<ushort>> FbPars { get; set; }
         public static void Read(string fileName)
         {
             Ios.Clear();
@@ -228,6 +231,7 @@ namespace BupLst
                         ++parLength;
                     }
                     par = br.ReadBytes(parLength);
+                    Pars[(ushort)i] = par;
                 }
                 sw.Write($"Par {i}, {sram}, {p}");
                 if (par == null)
@@ -250,11 +254,14 @@ namespace BupLst
             for (int i = 0; i < nrBlocks; ++i)
             {
                 string blockName = ReadString(br);
+                List<ushort> indexList = new List<ushort>();
+                FbPars[blockName] = indexList;
                 ushort nrPars = ReadWord(br);
                 sw.Write($"{blockName} {nrPars}");
                 for (ushort j = 0; j < nrPars; ++j)
                 {
                     ushort parIndex = ReadWord(br);
+                    indexList.Add(parIndex);
                     sw.Write($" {parIndex}");
                 }
                 sw.WriteLine();
@@ -277,6 +284,7 @@ namespace BupLst
 
         private static void Read24(uint length, BinaryReader br, StreamWriter sw)
         {
+            StringBuilder sb = new StringBuilder();
             ushort nrDrvs = ReadWord(br);
             sw.WriteLine($"In {nrDrvs}");
             for (ushort i = 0; i < nrDrvs; ++i)
@@ -293,9 +301,11 @@ namespace BupLst
                     byte[] flag = br.ReadBytes(flagLength);
                     ushort index = ReadWord(br);
                     sw.Write($"{drvName},{index}-");
+                    sb.Clear();
                     foreach(byte b in flag)
                     {
                         sw.Write($"{b:X} ");
+                        sb.Append($"{b:X} ");
                     }
                     sw.WriteLine();
                     if (!Net.TryGetValue(index, out List<string> ios))
@@ -303,7 +313,8 @@ namespace BupLst
                         ios = new List<string>();
                         Net[index] = ios;
                     }
-                    string s = $"{drvName}:{j}";
+                    string s = $"{drvName}:";
+                    s += sb.ToString();
                     ios.Add(s);
                 }
             }
