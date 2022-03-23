@@ -12,8 +12,8 @@ namespace BupLst
         {
             try
             {
-                BupReader.Read("HW_OUTPUT_nove_IDE.bup");
-                BupReader.Read("HW_OUTPUT_stare_IDE.bup"); 
+                BupReader.Read("TNAM_1.bup");
+                BupReader.Read("TNAM_2.bup"); 
             }
             catch(Exception exc)
             {
