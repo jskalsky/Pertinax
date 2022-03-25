@@ -15,6 +15,8 @@ namespace BupLst
         public static SortedDictionary<ushort, List<string>> Net { get; set; }
         public static SortedDictionary<ushort,byte[]> Pars { get; set; }
         public static SortedDictionary<string,List<ushort>> FbPars { get; set; }
+        public static SortedDictionary<string,List<ushort>> Fbs { get; set; }
+        public static List<string> FbOrder { get; set; }
         public static void Read(string fileName)
         {
             Ios.Clear();
@@ -85,6 +87,22 @@ namespace BupLst
                             }
                             sw.WriteLine();
                         }
+                        foreach(KeyValuePair<string,List<ushort>> pair in Fbs)
+                        {
+                            for(int i=0;i<pair.Value.Count;++i)
+                            {
+                                if(!Net.TryGetValue(pair.Value[i],out List<string> net))
+                                {
+                                    Console.WriteLine($"Nenasel {pair.Key}, {i}");
+                                }
+                                sw.Write($"{pair.Key}:{i}-");
+                                foreach(string s in net)
+                                {
+                                    sw.Write($"{s}-");
+                                }
+                                sw.WriteLine();
+                            }
+                        }                      
                     }
                 }
             }
@@ -254,6 +272,9 @@ namespace BupLst
             for (int i = 0; i < nrBlocks; ++i)
             {
                 string blockName = ReadString(br);
+                FbOrder.Add(blockName);
+                List<ushort> pins = new List<ushort>();
+                Fbs[blockName] = pins;
                 List<ushort> indexList = new List<ushort>();
                 FbPars[blockName] = indexList;
                 ushort nrPars = ReadWord(br);
@@ -270,6 +291,7 @@ namespace BupLst
                 for (ushort j = 0; j < nrPins; ++j)
                 {
                     ushort pinIndex = ReadWord(br);
+                    pins.Add(pinIndex);
                     if (!Net.TryGetValue(pinIndex, out List<string> ios))
                     {
                         ios = new List<string>();

@@ -1,0 +1,240 @@
+NODE    REFERENCE                PIN#  PIN NAME  PIN TYPE  PART VALUE
+[00001] N00001
+        PGM.1                    100     .        Output    *
+        XX?                        0     L        Input     O.IO.U.2.MIRRMEM.THIS.76
+
+[00024] N00024
+        PGM.1                      101   .        Output    *
+        XX?                        0     L        Input     O.IP.B.690
+
+[00025] N00025
+        PGM.1                      102   .        Output    *
+        XX?                        0     L        Input     O.IP.B.1563
+
+[00338] I.IP.B.26
+        PGM.1                      2     .        Input     *
+        6.2                        2     .        Input     *
+
+[00339] I.IP.B.25
+        PGM.1                      1     .        Input     *
+        6.2                        1     .        Input     *
+
+[00099] N00099
+        12.2                       8     .        Output    *
+        PGM.6                      3     .        Input     *
+
+[00100] N00100
+        PGM.6                      101   .        Output    *
+        XX?                        0     L        Input     O.IP.B.1536
+
+[00101] N00101
+        PGM.6                      102   .        Output    *
+        XX?                        0     L        Input     O.IP.B.1542
+
+[00102] N00102
+        PGM.6                      103   .        Output    *
+        XX?                        0     L        Input     O.IP.B.1537
+
+[00103] N00103
+        PGM.6                      104   .        Output    *
+        XX?                        0     L        Input     O.IP.B.1538
+
+[00104] I.IP.B.1013
+        12.2                       1     .        Input     *
+
+[00105] I.IP.B.1517
+        PGM.6                      5     .        Input     *
+
+[00109] I.IO.U.2.MIRRMEM.REMOTE.77
+        PGM.6                      61    .        Input     *
+
+[00256] I.IP.B.500
+        PGM.6                      8     .        Input     *
+        PGM.3                      2     .        Input     *
+
+[00111] I.IP.B.691
+        PGM.6                      1     .        Input     *
+
+[00112] I.IP.B.178
+        PGM.6                      2     .        Input     *
+
+[00154] N00154
+        PGM.4                    100     .        Output    *
+        XX?                        0     L        Input     O.IO.U.2.MIRRMEM.THIS.78
+
+[00178] N00178
+        SIMU.1                     5     .        Output    *
+        PGM.4                      1     .        Input     *
+
+[00228] N00228
+        PGM.3                    100     .        Output    *
+        XX?                        0     L        Input     O.IO.U.2.MIRRMEM.THIS.79
+
+[00250] N00250
+        PGM.3                      102   .        Output    *
+        XX?                        0     L        Input     O.IP.B.207
+
+[00253] N00253
+        12.1                       8     .        Output    *
+        PGM.3                      1     .        Input     *
+
+[00254] I.IP.B.182
+        12.1                       1     .        Input     *
+
+[00255] I.IO.U.2.MIRRMEM.REMOTE.79
+        PGM.3                      61    .        Input     *
+
+[00299] N00299
+        PMUL.1                     2     y        Output    *R=-1.0;
+        XX?                        0     L        Input     O.IP.R.1538
+
+[00300] N00300
+        PMUL.2                     2     y        Output    *R=-1.0;
+        XX?                        0     L        Input     O.IP.R.1540
+
+[00303] N00303
+        ABS.1                      2     .        Output    *
+        SUB.1                      2     .        Input     *
+
+[00304] N00304
+        SUB.1                      3     .        Output    *
+        PSUB.1                     1     .        Input     *R=2.0;
+
+[00306] N00306
+        PSUB.1                     2     .        Output    *R=2.0;
+        LFNL2.1                    1     .        Input     *N=5;X0=0.0;Y0=0.0;X1=2.0;Y1=0.0;X2=14.0;Y2=4.0;X3=18.0;Y3=5.5;X4=30.0;Y4=5.5;X5=600.0;Y5=5.5;
+
+[00308] N00308
+        SIMU.2                     5     .        Output    *S=3;D=L;
+        TNAM.1                    21     .        Input     **P_TNAM_1
+
+[00309] N00309
+        20.1                       2     .        Output    *T=120S;
+        XX?                        0     L        Input     O.IP.B.1539
+
+[00310] N00310
+        6.1                        3     .        Output    *
+        20.1                       1     .        Input     *T=120S;
+
+[00311] N00311
+        LFKO1.4                    2     .        Output    *A=2.0;
+        2.2                        2     .        Input     *
+
+[00312] N00312
+        LFKO1.5                    2     .        Output    *CF=1;B=-2.0;
+        2.1                        2     .        Input     *
+
+[00313] N00313
+        2.1                        3     .        Output    *
+        XX?                        0     L        Input     O.IP.B.1541
+
+[00314] N00314
+        2.2                        3     .        Output    *
+        XX?                        0     L        Input     O.IP.B.1540
+
+[00315] N00315
+        65.1                       4     .        Output    *
+        TNAM.1                     1     .        Input     **P_TNAM_1
+        XX?                        0     L        Input     O.IP.R.1553
+
+[00316] N00316
+        6.2                        3     .        Output    *
+        65.1                       3     .        Input     *
+
+[00317] N00317
+        TNAM.1                     8     .        Output    **P_TNAM_1
+        XX?                        0     L        Input     O.IP.R.1541
+        LFKO1.2                    1     .        Input     *CF=3;A=297;H1=3;
+        LFKO1.1                    1     .        Input     *CF=3;A=117;H1=3;
+
+[00318] N00318
+        TNAM.1                     9     .        Output    **P_TNAM_1
+        XX?                        0     L        Input     O.IP.R.1539
+        SUB.1                      1     .        Input     *
+        PMUL.2                     1     x        Input     *R=-1.0;
+
+[00319] N00319
+        TNAM.1                    10     .        Output    **P_TNAM_1
+        ABS.1                      1     .        Input     *
+        XX?                        0     L        Input     O.IP.R.1536
+        LFKO1.4                    1     .        Input     *A=2.0;
+        LFKO1.5                    1     .        Input     *CF=1;B=-2.0;
+
+[00320] N00320
+        TNAM.1                    11     .        Output    **P_TNAM_1
+        XX?                        0     L        Input     O.IP.R.1537
+        PMUL.1                     1     x        Input     *R=-1.0;
+
+[00322] N00322
+        TNAM.1                    13     .        Output    **P_TNAM_1
+        6.1                        1     .        Input     *
+
+[00323] N00323
+        TNAM.1                    14     .        Output    **P_TNAM_1
+        2.1                        1     .        Input     *
+        2.2                        1     .        Input     *
+
+[00327] N00327
+        TNAM.1                    18     .        Output    **P_TNAM_1
+        LFKO1.3                    1     .        Input     *CF=3;A=2.7;H1=0.3;
+
+[00330] N00330
+        LFNL2.1                    2     .        Output    *N=5;X0=0.0;Y0=0.0;X1=2.0;Y1=0.0;X2=14.0;Y2=4.0;X3=18.0;Y3=5.5;X4=30.0;Y4=5.5;X5=600.0;Y5=5.5;
+        XX?                        0     L        Input     O.IP.R.219
+
+[00331] I.IP.B.116
+        TNAM.1                     6     .        Input     **P_TNAM_1
+
+[00336] I.IP.R.25
+        65.1                       1     .        Input     *
+
+[00337] I.IP.R.26
+        65.1                       2     .        Input     *
+
+[00026] N00026
+        PGM.1                      103   .        Output    *
+        PGM.4                      3     .        Input     *
+
+[00072] N00072
+        PGM.6                    100     .        Output    *
+        XX?                        0     L        Input     O.IO.U.2.MIRRMEM.THIS.77
+        TNAM.1                     7     .        Input     **P_TNAM_1
+
+[00179] N00179
+        PGM.4                      101   .        Output    *
+        TNAM.1                     3     .        Input     **P_TNAM_1
+
+[00180] N00180
+        PGM.4                      102   .        Output    *
+        TNAM.1                     4     .        Input     **P_TNAM_1
+
+[00249] N00249
+        PGM.3                      101   .        Output    *
+        6.1                        2     .        Input     *
+
+[00298] N00298
+        LFKO1.3                    2     .        Output    *CF=3;A=2.7;H1=0.3;
+        PGM.6                      4     .        Input     *
+
+[00301] N00301
+        LFKO1.1                    2     .        Output    *CF=3;A=117;H1=3;
+        PGM.6                      6     .        Input     *
+
+[00302] N00302
+        LFKO1.2                    2     .        Output    *CF=3;A=297;H1=3;
+        PGM.6                      7     .        Input     *
+
+[00324] N00324
+        TNAM.1                    15     .        Output    **P_TNAM_1
+        PGM.4                      2     .        Input     *
+
+[00325] N00325
+        TNAM.1                    16     .        Output    **P_TNAM_1
+        PGM.4                      4     .        Input     *
+
+[99999] H
+        PGM.1                      30    .        Input     *
+        PGM.6                      30    .        Input     *
+        PGM.4                      30    .        Input     *
+        PGM.3                      30    .        Input     *
+

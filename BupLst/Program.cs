@@ -14,6 +14,10 @@ namespace BupLst
         private static SortedDictionary<string, List<ushort>> FbPars1 = new SortedDictionary<string, List<ushort>>();
         private static SortedDictionary<ushort, byte[]> Pars2 = new SortedDictionary<ushort, byte[]>();
         private static SortedDictionary<string, List<ushort>> FbPars2 = new SortedDictionary<string, List<ushort>>();
+        private static SortedDictionary<string, List<ushort>> Fbs1 = new SortedDictionary<string, List<ushort>>();
+        private static SortedDictionary<string, List<ushort>> Fbs2 = new SortedDictionary<string, List<ushort>>();
+        private static List<string> FbOrder1 = new List<string>();
+        private static List<string> FbOrder2 = new List<string>();
         static void Main(string[] args)
         {
             try
@@ -23,10 +27,14 @@ namespace BupLst
                 BupReader.Net = Net1;
                 BupReader.Pars = Pars1;
                 BupReader.FbPars = FbPars1;
+                BupReader.Fbs = Fbs1;
+                BupReader.FbOrder = FbOrder1;
                 BupReader.Read(bup1);
                 BupReader.Net = Net2;
                 BupReader.Pars = Pars2;
                 BupReader.FbPars = FbPars2;
+                BupReader.Fbs = Fbs2;
+                BupReader.FbOrder = FbOrder2;
                 BupReader.Read(bup2);
                 int errors = 0;
                 if (Net1.Count != Net2.Count)
@@ -43,6 +51,14 @@ namespace BupLst
                 {
                     Console.WriteLine($"Different parameter count {Pars1.Count}, {Pars2.Count}");
                     ++errors;
+                }
+                for (int i = 0; i < FbOrder1.Count; ++i)
+                {
+                    if (FbOrder1[i] != FbOrder2[i])
+                    {
+                        Console.WriteLine($"Different block order {FbOrder1[i]}, {FbOrder2[i]}");
+                        ++errors;
+                    }
                 }
                 foreach (KeyValuePair<ushort, List<string>> pair in Net1)
                 {
