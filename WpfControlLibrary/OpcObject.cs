@@ -10,47 +10,53 @@ namespace WpfControlLibrary
 {
     public class OpcObject : INotifyPropertyChanged
     {
+        private const string DefaultName = "Pertinax";
         private readonly ObservableCollection<OpcObjectItem> _items;
         private string _name;
-        private int _publishingInterval;
         private int _writerGroupId;
         private int _dataSetWriterId;
-        private bool _subscribe;
         private bool _publish;
-        private bool _enableInterval;
         private bool _enablePublish;
-        private bool _enableSubscribe;
         private int _publisherId;
-        private object _checkBoxSubscribe;
         private object _checkBoxPublish;
-        public OpcObject(string name, int publisherId, int writer, int dataSet, int interval, bool subscribe = false, bool publish = true)
+        private bool _isImported;
+        private static int _nextWriterGroupId = 1;
+        private static int _nextDataSetWriterId = 1;
+        private static int _nextDefaultNameIndex = 1;
+        protected OpcObject()
+        {
+            _items = new ObservableCollection<OpcObjectItem>();
+        }
+        public OpcObject(string name, int publisherId) : this()
         {
             Name = name;
-            _items = new ObservableCollection<OpcObjectItem>();
-            WriterGroupId = writer;
-            DataSetWriterId = dataSet;
-            PublishingInterval = interval;
             PublisherId = publisherId;
-            Publish = publish;
-            Subscribe = subscribe;
-            EnableInterval = EnableSubscribe = EnablePublish = false;
-            if (!Subscribe)
-            {
-                EnablePublish = true;
-            }
-            CheckBoxSubscribe = this;
-            CheckBoxPublish = this;
+            WriterGroupId = _nextWriterGroupId++;
+            DataSetWriterId = _dataSetWriterId++;
+            Publish = true;
+            IsImported = false;
         }
 
+        public OpcObject(string name) : this()
+        {
+            Name = name;
+            Publish = false;
+            IsImported = false;
+        }
+
+        public OpcObject(string name, int publisherId, int writerGroupId, int dataSetWriterId) : this()
+        {
+            Name = name;
+            PublisherId = publisherId;
+            WriterGroupId = writerGroupId;
+            DataSetWriterId = dataSetWriterId;
+            Publish = false;
+            IsImported = true;
+        }
         public string Name
         {
             get { return _name; }
             set { _name = value; OnPropertyChanged("Name"); }
-        }
-        public int PublishingInterval
-        {
-            get { return _publishingInterval; }
-            set { _publishingInterval = value; OnPropertyChanged("PublishingInterval"); }
         }
         public int WriterGroupId
         {
@@ -61,11 +67,6 @@ namespace WpfControlLibrary
         {
             get { return _dataSetWriterId; }
             set { _dataSetWriterId = value; OnPropertyChanged("DataSetWriterId"); }
-        }
-        public bool Subscribe
-        {
-            get { return _subscribe; }
-            set { _subscribe = value; OnPropertyChanged("Subscribe"); }
         }
 
         public bool Publish
@@ -79,11 +80,6 @@ namespace WpfControlLibrary
             get { return _publisherId; }
             set { _publisherId = value; OnPropertyChanged("PublisherId"); }
         }
-        public bool EnableInterval
-        {
-            get { return _enableInterval; }
-            set { _enableInterval = value; OnPropertyChanged("EnableInterval"); }
-        }
 
         public bool EnablePublish
         {
@@ -91,21 +87,16 @@ namespace WpfControlLibrary
             set { _enablePublish = value; OnPropertyChanged("EnablePublish"); }
         }
 
-        public bool EnableSubscribe
-        {
-            get { return _enableSubscribe; }
-            set { _enableSubscribe = value; OnPropertyChanged("EnableSubscribe"); }
-        }
-
-        public object CheckBoxSubscribe
-        {
-            get { return _checkBoxSubscribe; }
-            set { _checkBoxSubscribe = value; OnPropertyChanged("CheckBoxSubscribe"); }
-        }
         public object CheckBoxPublish
         {
             get { return _checkBoxPublish; }
             set { _checkBoxPublish = value; OnPropertyChanged("CheckBoxPublish"); }
+        }
+
+        public bool IsImported
+        {
+            get { return _isImported; }
+            set { _isImported = value; OnPropertyChanged("IsImported"); }
         }
         public ObservableCollection<OpcObjectItem> Items => _items;
 
@@ -133,6 +124,40 @@ namespace WpfControlLibrary
             _items.Clear();
         }
 
+        public string GetDefaultName()
+        {
+            return $"{DefaultName}{_nextDefaultNameIndex++}";
+        }
+
+        public int GetDefaultNameIndex()
+        {
+            LinkedList<char> ll = new LinkedList<char>();
+            string text = string.Empty;
+            for(int i=Name.Length-1;i>= 0;--i)
+            {
+                if(char.IsDigit(Name[i]))
+                {
+                    ll.AddFirst(Name[i]);
+                }
+                else
+                {
+                    text = Name.Substring(0, i + 1);
+                    break;
+                }
+            }
+            if(ll.Count != 0)
+            {
+                if(string.IsNullOrEmpty(text))
+                {
+                    return -1;
+                }
+                if(text == DefaultName)
+                {
+                    return int.Parse(ll.ToString());
+                }
+            }
+            return -1;
+        }
         public static OpcObject Create(string name, string description)
         {
             string[] descrItems = description.Split(';');
@@ -141,7 +166,7 @@ namespace WpfControlLibrary
                 return null;
             }
             bool subscribe = false;
-            if(!bool.TryParse(descrItems[0],out subscribe))
+            if (!bool.TryParse(descrItems[0], out subscribe))
             {
                 return null;
             }

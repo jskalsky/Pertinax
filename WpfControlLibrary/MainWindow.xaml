@@ -28,10 +28,97 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <GroupBox Header="Settings">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Local Ip address"/>
+                        <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                        <Label Content="Multicast group address"/>
+                        <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Column="1" Header="Publisher">
+                    <DockPanel LastChildFill="True">
+                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
+                            <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="Publisher Id"/>
+                            <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
+                            <ListView>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Name">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox></ComboBox>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Interval">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="100" HorizontalAlignment="Left"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </DockPanel>
+                </GroupBox>
+                <GroupBox Header="Subscriber" Grid.Column="2">
+                    <DockPanel LastChildFill="True">
+                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
+                            <Button Content="Add" Width="50"/>
+                        </StackPanel>
+                        <ListView>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Name">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <ComboBox></ComboBox>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </DockPanel>
+                </GroupBox>
+                <GroupBox Grid.Column="3" Header="Client">
+                    <DockPanel LastChildFill="True">
+                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
+                            <Button Content="Add" Width="50"/>
+                        </StackPanel>
+                        <ListView>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Name">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <ComboBox></ComboBox>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </DockPanel>
+                </GroupBox>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <GroupBox Header="Objects">
                     <DockPanel LastChildFill="True">
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
                             <Button Content="Add" Click="AddObject_Click" Width="50"/>
+                            <Button Content="Publish" Click="PublishObject_Click" Width="50" Margin="5,0,0,0"/>
+                            <Button Content="Import" Click="ImportObject_Click" Width="50" Margin="10,0,0,0"/>
                         </StackPanel>
                         <ListView MinWidth="150" Name="Objects" Grid.Column="0" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" 
                               SelectionChanged="ListViewObjects_SelectionChanged">
@@ -44,7 +131,7 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="Pub">
+                                    <GridViewColumn Header="Publish">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <CheckBox IsChecked="{Binding Publish, Mode=TwoWay}" IsEnabled="{Binding EnablePublish}" 
@@ -52,21 +139,10 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="Sub">
+                                    <GridViewColumn Header="Imported">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Subscribe, Mode=TwoWay}" IsEnabled="{Binding EnableSubscribe}" 
-                                                          Tag="{Binding CheckBoxSubscribe}"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="WriterId" DisplayMemberBinding="{Binding WriterGroupId}"/>
-                                    <GridViewColumn Header="DataSetId" DisplayMemberBinding="{Binding DataSetWriterId}"/>
-                                    <GridViewColumn Header="Publishing Interval">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <local:NumericUpDown  NudMin="0" NudMax="2000" NudIncrement="10" 
-                                                                      NudValue="{Binding PublishingInterval,Mode=TwoWay}" IsEnabled="{Binding EnableInterval}"/>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding IsImported}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -80,32 +156,38 @@
                         </ListView>
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Grid.Column="1" Header="Subscriber">
-                    <DockPanel LastChildFill="True">
-                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
-                            <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
+                <GroupBox Header="Items" Grid.Column="1">
+                    <DockPanel LastChildFill="True" Grid.Row="1">
+                        <StackPanel Orientation="Horizontal" Margin="5,5,0,0" DockPanel.Dock="Bottom">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
+                                <Label Content="Count" Margin="5,0,0,0"/>
+                                <local:NumericUpDown NudMin="1" NudMax="2000" NudIncrement="1" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
+                            </StackPanel>
+                            <Button Content="Remove" Margin="30,0,0,0" Width="50"/>
                         </StackPanel>
-                        <ListView Name="ListViewSubscriber" ItemsSource="{Binding SubscriberObjects}" SelectedItem="{Binding SelectedSubscriberItem}">
+                        <ListView Grid.Row="1" ItemsSource="{Binding Path=SelectedOpcObject.Items}" MinHeight="200">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Subscribe">
+                                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="Type">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Subscribe,Mode=TwoWay}" Click="CheckBoxSubscribe_Click" Tag="{Binding CheckBoxtag}"/>
+                                                <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}" IsEnabled="{Binding EnableBasicTypes}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="ConfigurationName">
+                                    <GridViewColumn Header="Rank">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock MinWidth="150" Text="{Binding ConfigurationName}"/>
+                                                <ComboBox ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank,Mode=TwoWay}" IsEnabled="{Binding EnableRank}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="ObjectName">
+                                    <GridViewColumn Header="ArraySize">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock MinWidth="150" Text="{Binding ObjectName}"/>
+                                                <local:NumericUpDown NudMin="0" NudMax="2500" NudIncrement="1" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" IsEnabled="{Binding EnableArraySize}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -114,62 +196,7 @@
                         </ListView>
                     </DockPanel>
                 </GroupBox>
-                <GroupBox Header="Settings" Grid.Column="2">
-                    <StackPanel Grid.Column="1" Orientation="Vertical">
-                        <Label Content="Local Ip address"/>
-                        <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                        <Label Content="Multicast group address"/>
-                        <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                        <Label Content="Publisher Id"/>
-                        <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
-                    </StackPanel>
-                </GroupBox>
             </Grid>
-            <DockPanel LastChildFill="True" Grid.Row="1">
-                <StackPanel Orientation="Horizontal" Margin="5,5,0,0" DockPanel.Dock="Bottom">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Add" Click="ButtonAddItem_Click" Width="50"/>
-                        <Label Content="Count" Margin="5,0,0,0"/>
-                        <local:NumericUpDown NudMin="1" NudMax="2000" NudIncrement="1" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
-                    </StackPanel>
-                    <Button Content="Remove" Margin="30,0,0,0" Width="50"/>
-                </StackPanel>
-                <ListView Grid.Row="1" ItemsSource="{Binding Path=SelectedOpcObject.Items}" MinHeight="200">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-                            <GridViewColumn Header="Type">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}" IsEnabled="{Binding EnableBasicTypes}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Access">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Access}" SelectedItem="{Binding SelectedAccess,Mode=TwoWay}" IsEnabled="{Binding EnableAccess}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Rank">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank,Mode=TwoWay}" IsEnabled="{Binding EnableRank}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="ArraySize">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <local:NumericUpDown NudMin="0" NudMax="2500" NudIncrement="1" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" IsEnabled="{Binding EnableArraySize}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </DockPanel>
         </Grid>
     </DockPanel>
     <!--/Border-->

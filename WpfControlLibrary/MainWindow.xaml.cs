@@ -197,5 +197,15 @@ namespace WpfControlLibrary
                 }
             }
         }
+
+        private void PublishObject_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ImportObject_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
