@@ -27,12 +27,17 @@ namespace WpfControlLibrary
         private bool _subscribe;
         private bool _subscribeClick;
 
+        private bool _enableAddToPublisher;
+        private bool _enableAddToSubscriber;
+        private bool _enableAddToClient;
+
         private int _nextItemIndex;
         public MainViewModel()
         {
 
             Objects = new ObservableCollection<OpcObject>();
             SubscriberObjects = new ObservableCollection<SubscriberItem>();
+            PublisherObjects = new ObservableCollection<PublisherItem>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
             GroupAddressString = "224.0.0.22";
@@ -154,25 +159,32 @@ namespace WpfControlLibrary
             get { return _subscribeClick; }
             set { _subscribeClick = value; OnPropertyChanged("SubscribeClick"); }
         }
+
+        public bool EnableAddToPublisher
+        {
+            get { return _enableAddToPublisher; }
+            set { _enableAddToPublisher = value;OnPropertyChanged("EnableAddToPublisher"); }
+        }
+
+        public bool EnableAddToSubscriber
+        {
+            get { return _enableAddToSubscriber; }
+            set { _enableAddToSubscriber = value; OnPropertyChanged("EnableAddToSubscriber"); }
+        }
+
+        public bool EnableAddToClient
+        {
+            get { return _enableAddToClient; }
+            set { _enableAddToClient = value; OnPropertyChanged("EnableAddToClient"); }
+        }
+
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
+        public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-        public OpcObject AddObject(string name, int writer, int dataSet)
-        {
-            foreach (OpcObject opcObject in Objects)
-            {
-                if (opcObject.Name == name)
-                {
-                    return null;
-                }
-            }
-            OpcObject oo = new OpcObject(name, PublisherId, writer, dataSet, 0, false, false);
-            Objects.Add(oo);
-            return oo;
         }
 
         public void AddSubscriber(string path)

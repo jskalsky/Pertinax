@@ -32,7 +32,7 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
+                File.WriteAllText("e:\\Work\\zat.log", exc.Message);
             }
         }
 
@@ -49,7 +49,7 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
+                File.WriteAllText("e:\\Work\\zat.log", exc.Message);
             }
         }
 

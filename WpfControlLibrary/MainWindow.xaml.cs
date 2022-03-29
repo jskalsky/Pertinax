@@ -63,31 +63,10 @@ namespace WpfControlLibrary
             MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
-                int maxWriter = 0;
-                int maxDataSet = 0;
-                int maxIndex = 0;
-                foreach (OpcObject opcObject in vm.Objects)
-                {
-                    if (opcObject.WriterGroupId > maxWriter)
-                    {
-                        maxWriter = opcObject.WriterGroupId;
-                    }
-                    if (opcObject.DataSetWriterId > maxDataSet)
-                    {
-                        maxDataSet = opcObject.DataSetWriterId;
-                    }
-                    int index = GetIndex(opcObject.Name);
-                    if (index > maxIndex)
-                    {
-                        maxIndex = index;
-                    }
-                }
-                ++maxWriter;
-                ++maxDataSet;
-                ++maxIndex;
-                OpcObject oo = vm.AddObject($"Pertinax{maxIndex}", maxWriter, maxDataSet);
+                OpcObject oo = new OpcObject();
                 if (oo != null)
                 {
+                    vm.Objects.Add(oo);
                     vm.SelectedOpcObject = oo;
                 }
             }
@@ -164,48 +143,57 @@ namespace WpfControlLibrary
             }
         }
 
-        private void CheckBoxPublish_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox checkBox)
-            {
-                if (DataContext is MainViewModel vm)
-                {
-                    vm.SelectedOpcObject = (OpcObject)checkBox.Tag;
-                    if (vm.SelectedOpcObject.EnablePublish)
-                    {
-                        vm.SelectedOpcObject.EnableInterval = true;
-                        vm.SelectedOpcObject.PublishingInterval = 100;
-                    }
-                    else
-                    {
-                        vm.SelectedOpcObject.EnableInterval = false;
-                        vm.SelectedOpcObject.PublishingInterval = 0;
-                    }
-                }
-            }
-        }
-
-        private void CheckBoxSubscribe_Click(object sender, RoutedEventArgs e)
-        {
-            Debug.Print($"SubClick {sender}");
-            if (sender is CheckBox checkBox)
-            {
-                if (DataContext is MainViewModel vm)
-                {
-                    vm.SelectedSubscriberItem = (SubscriberItem)checkBox.Tag;
-                    vm.SubscribeClick = vm.Subscribe;
-                }
-            }
-        }
-
         private void PublishObject_Click(object sender, RoutedEventArgs e)
         {
-
+            MainViewModel vm = DataContext as MainViewModel;
+            if (vm != null)
+            {
+                OpcObject oo = new OpcObject(true, false);
+                if (oo != null)
+                {
+                    vm.Objects.Add(oo);
+                    vm.SelectedOpcObject = oo;
+                }
+            }
         }
 
         private void ImportObject_Click(object sender, RoutedEventArgs e)
         {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Multiselect = false;
+            ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            ofd.FileName = string.Empty;
+            if (ofd.ShowDialog() == true)
+            {
+                Debug.Print("AddSubscriber_Click");
+                if (DataContext is MainViewModel vm)
+                {
+                    vm.SubscriberPath = ofd.FileName;
+                }
+            }
+        }
 
+        private void MenuItemPublish_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.Print($"sender= {sender}");
+            MainViewModel vm = DataContext as MainViewModel;
+            if (vm != null)
+            {
+                Debug.Print($"Selected {vm.SelectedOpcObject}, {vm.SelectedOpcObject.Name}");
+                vm.PublisherObjects.Add(new PublisherItem(vm.SelectedOpcObject, vm.PublisherId));
+            }
+        }
+
+        private void Objects_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            Debug.Print($"1 {sender}");
+            MainViewModel vm = DataContext as MainViewModel;
+            if (vm != null)
+            {
+                Debug.Print($"Selected {vm.SelectedOpcObject}");
+                vm.EnableAddToPublisher = vm.SelectedOpcObject.Publish ? true : false;
+            }
         }
     }
 }

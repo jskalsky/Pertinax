@@ -10,31 +10,23 @@ namespace WpfControlLibrary
 {
     public class SubscriberItem : INotifyPropertyChanged
     {
-        private bool _subscribe;
-        private object _checkBoxTag;
-        public SubscriberItem(string path, string name, bool sub)
+        public SubscriberItem(string path, string name, int publisherId, int writerId, int datasetId)
         {
             ObjectName = name;
             ConfigurationPath = path;
             ConfigurationName = Path.GetFileName(path);
-            Subscribe = sub;
-            CheckBoxtag = this;
+            PublisherId = publisherId;
+            WriterGroupId = writerId;
+            DataSetWriterId = datasetId;
         }
         public string ConfigurationPath { get; }
         public string ObjectName { get; }
         public string ConfigurationName { get; }
 
-        public bool Subscribe
-        {
-            get { return _subscribe; }
-            set { _subscribe = value; OnPropertyChanged("Subscribe"); }
-        }
+        public int PublisherId { get; private set; }
+        public int WriterGroupId { get; private set; }
+        public int DataSetWriterId { get; private set; }
 
-        public object CheckBoxtag
-        {
-            get { return _checkBoxTag; }
-            set { _checkBoxTag = value; OnPropertyChanged("CheckBoxTag"); }
-        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)

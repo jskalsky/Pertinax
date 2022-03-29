@@ -41,30 +41,36 @@
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
                             <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
                         </StackPanel>
-                        <StackPanel Orientation="Vertical">
-                            <Label Content="Publisher Id"/>
-                            <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
-                            <ListView>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Vertical">
+                                <Label Content="Publisher Id"/>
+                                <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                            <ListView Grid.Row="1" ItemsSource="{Binding PublisherObjects}">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Name">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <ComboBox></ComboBox>
+                                                    <TextBlock Text="{Binding Path=OpcObject.Name}"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
                                         <GridViewColumn Header="Interval">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="100" HorizontalAlignment="Left"/>
+                                                    <local:NumericUpDown NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding Interval,Mode=TwoWay}"  HorizontalAlignment="Left"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                        </StackPanel>
+                        </Grid>
                     </DockPanel>
                 </GroupBox>
                 <GroupBox Header="Subscriber" Grid.Column="2">
@@ -121,7 +127,7 @@
                             <Button Content="Import" Click="ImportObject_Click" Width="50" Margin="10,0,0,0"/>
                         </StackPanel>
                         <ListView MinWidth="150" Name="Objects" Grid.Column="0" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" 
-                              SelectionChanged="ListViewObjects_SelectionChanged">
+                              SelectionChanged="ListViewObjects_SelectionChanged" ContextMenuOpening="Objects_ContextMenuOpening" SelectionMode="Single">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Name">
@@ -134,8 +140,7 @@
                                     <GridViewColumn Header="Publish">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Publish, Mode=TwoWay}" IsEnabled="{Binding EnablePublish}" 
-                                                          Click="CheckBoxPublish_Click" Tag="{Binding CheckBoxPublish}"/>
+                                                <CheckBox IsChecked="{Binding Publish}" IsEnabled="False"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -151,6 +156,7 @@
                             <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Remove"/>
+                                    <MenuItem Header="Add to Publisher" Click="MenuItemPublish_Click" IsEnabled="{Binding EnableAddToPublisher}"/>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
