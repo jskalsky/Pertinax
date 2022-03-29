@@ -243,7 +243,7 @@ namespace ConfigOpcUa
                                         bool.TryParse(items[0], out publish);
                                         bool.TryParse(items[1], out isImported);
                                     }
-                                    WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, publish, true);
+                                    WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, false, true);
                                     if (oo != null)
                                     {
                                         AddItemsToObject(ott, oo);
@@ -254,7 +254,7 @@ namespace ConfigOpcUa
                                         }
                                     }
                                     string[] itemsSub = subscriberType.Description.Split(';');
-                                    if(items.Length == 5)
+                                    if(itemsSub.Length == 5)
                                     {
                                         int writerId = 0;
                                         int.TryParse(itemsSub[2], out writerId);
@@ -265,6 +265,7 @@ namespace ConfigOpcUa
                                         if(mvm != null)
                                         {
                                             mvm.SubscriberObjects.Add(si);
+                                            mvm.SelectedSubscriberItem = si;
                                         }
                                         return;
                                     }

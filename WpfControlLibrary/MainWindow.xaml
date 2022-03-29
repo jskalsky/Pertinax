@@ -38,9 +38,6 @@
                 </GroupBox>
                 <GroupBox Grid.Column="1" Header="Publisher">
                     <DockPanel LastChildFill="True">
-                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
-                            <Button Content="Add" Width="50" Click="AddSubscriber_Click"/>
-                        </StackPanel>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -78,13 +75,13 @@
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
                             <Button Content="Add" Width="50"/>
                         </StackPanel>
-                        <ListView>
+                        <ListView ItemsSource="{Binding SubscriberObjects}" SelectedItem="{Binding SelectedSubscriberItem,Mode=TwoWay}">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Name">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <ComboBox></ComboBox>
+                                                <TextBlock Text="{Binding ObjectName}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
