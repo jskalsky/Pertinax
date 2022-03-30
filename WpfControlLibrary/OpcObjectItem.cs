@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,14 +14,18 @@ namespace WpfControlLibrary
         private string _selectedBasicType;
         private readonly string[] _access = new string[] { "Read", "Write", "ReadWrite" };
         private string _selectedAccess;
-        private readonly string[] _rank = new string[] { "SimpleVariable", "Array" };
+        private readonly string[] _rank = new string[] { "Jednoduchá proměnná", "Pole" };
         private string _selectedRank;
         private int _arraySizeValue;
+        private bool _writeOutside;
+        private string _name;
+        private object _rankTag;
 
         private bool _enableBasicTypes;
         private bool _enableAccess;
         private bool _enableRank;
         private bool _enableArraySize;
+        private bool _enableWriteOutside;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
@@ -28,25 +33,20 @@ namespace WpfControlLibrary
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public OpcObjectItem(string name)
+        public OpcObjectItem(string name, bool publish)
         {
+            Debug.Print($"");
             Name = name;
             SelectedAccess = _access[0];
             SelectedRank = _rank[0];
             ArraySizeValue = 0;
             SelectedBasicType = _basicTypes[7];
-        }
-
-        public OpcObjectItem(OpcObjectItem ooi)
-        {
-            Name = ooi.Name;
-            SelectedAccess = ooi.SelectedAccess;
-            SelectedBasicType = ooi.SelectedBasicType;
-            SelectedRank = ooi.SelectedRank;
-            ArraySizeValue = ooi.ArraySizeValue;
             EnableBasicTypes = true;
+            EnableRank = true;
+            WriteOutside = false;
+            EnableWriteOutside = publish ? false : true;
+            RankTag = this;
         }
-        public string Name { get; }
 
         public string[] BasicTypes
         {
@@ -87,6 +87,23 @@ namespace WpfControlLibrary
             set { _arraySizeValue = value; OnPropertyChanged("ArraySizeValue"); }
         }
 
+        public bool WriteOutside
+        {
+            get { return _writeOutside; }
+            set { _writeOutside = value; OnPropertyChanged("WriteOutside"); }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; OnPropertyChanged("Name"); }
+        }
+
+        public object RankTag
+        {
+            get { return _rankTag; }
+            set { _rankTag = value; OnPropertyChanged("RankTag"); }
+        }
         public bool EnableBasicTypes
         {
             get { return _enableBasicTypes; }
@@ -106,6 +123,11 @@ namespace WpfControlLibrary
         {
             get { return _enableArraySize; }
             set { _enableArraySize = value; OnPropertyChanged("EnableArraySize"); }
+        }
+        public bool EnableWriteOutside
+        {
+            get { return _enableWriteOutside; }
+            set { _enableWriteOutside = value; OnPropertyChanged("EnableWriteOutside"); }
         }
     }
 }

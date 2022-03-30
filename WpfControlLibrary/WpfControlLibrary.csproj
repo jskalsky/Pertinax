@@ -67,6 +67,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientItem.cs" />
+    <Compile Include="ImportedItem.cs" />
     <Compile Include="OpcObject.cs" />
     <Compile Include="OpcObjectItem.cs" />
     <Compile Include="PortDialog.xaml.cs">
@@ -74,6 +76,11 @@
     </Compile>
     <Compile Include="PortsNode.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="PublisherItem.cs" />
     <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
@@ -112,6 +119,13 @@
   <ItemGroup>
     <Resource Include="Icons\GlyphDown.png" />
     <Resource Include="Icons\GlyphUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

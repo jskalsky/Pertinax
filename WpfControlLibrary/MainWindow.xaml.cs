@@ -153,23 +153,11 @@ namespace WpfControlLibrary
                 {
                     vm.Objects.Add(oo);
                     vm.SelectedOpcObject = oo;
-                }
-            }
-        }
-
-        private void ImportObject_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Multiselect = false;
-            ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            ofd.FileName = string.Empty;
-            if (ofd.ShowDialog() == true)
-            {
-                Debug.Print("AddSubscriber_Click");
-                if (DataContext is MainViewModel vm)
-                {
-                    vm.SubscriberPath = ofd.FileName;
+                    if (oo.Publish)
+                    {
+                        WpfControlLibrary.PublisherItem pi = new PublisherItem(oo, vm.PublisherId);
+                        vm.PublisherObjects.Add(pi);
+                    }
                 }
             }
         }
@@ -193,6 +181,60 @@ namespace WpfControlLibrary
             {
                 Debug.Print($"Selected {vm.SelectedOpcObject}");
                 vm.EnableAddToPublisher = vm.SelectedOpcObject.Publish ? true : false;
+            }
+        }
+
+        private void Rank_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(e.AddedItems.Count == 1)
+            {
+                string rank = (string)e.AddedItems[0];
+                MainViewModel vm = DataContext as MainViewModel;
+                if (vm != null)
+                {
+                    if(sender is ComboBox cb)
+                    {
+                        if(cb.Tag is OpcObjectItem ooi)
+                        {
+                            if (rank == "Pole")
+                            {
+                                ooi.EnableArraySize = true;
+                                ooi.ArraySizeValue = 0;
+                            }
+                            else
+                            {
+                                ooi.EnableArraySize = false;
+                                ooi.ArraySizeValue = -1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Import_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Multiselect = false;
+            ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
+            if(string.IsNullOrEmpty(WpfControlLibrary.Properties.Settings.Default.LastConfigFolder))
+            {
+                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+            else
+            {
+                ofd.InitialDirectory = Properties.Settings.Default.LastConfigFolder;
+            }
+            ofd.FileName = string.Empty;
+            if (ofd.ShowDialog() == true)
+            {
+                Properties.Settings.Default.LastConfigFolder = System.IO.Path.GetDirectoryName(ofd.FileName);
+                Properties.Settings.Default.Save();
+                Debug.Print("AddSubscriber_Click");
+                if (DataContext is MainViewModel vm)
+                {
+                    vm.SubscriberPath = ofd.FileName;
+                }
             }
         }
     }

@@ -38,11 +38,13 @@ namespace WpfControlLibrary
             Objects = new ObservableCollection<OpcObject>();
             SubscriberObjects = new ObservableCollection<SubscriberItem>();
             PublisherObjects = new ObservableCollection<PublisherItem>();
+            ClientObjects = new ObservableCollection<ClientItem>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
             GroupAddressString = "224.0.0.22";
             LocalIpAddressString = "10.10.13.253";
-            WindowTitle = "Configurator OpcUa";
+            WindowTitle = "OpcUa";
+            RepetitionRateValue = 1;
         }
 
         public int GetMaxItemIndex()
@@ -181,6 +183,7 @@ namespace WpfControlLibrary
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
+        public ObservableCollection<ClientItem> ClientObjects { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

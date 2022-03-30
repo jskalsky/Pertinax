@@ -8,25 +8,24 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary
 {
-    public class SubscriberItem : INotifyPropertyChanged
+    public class SubscriberItem : ImportedItem, INotifyPropertyChanged
     {
-        public SubscriberItem(string path, string name, int publisherId, int writerId, int datasetId)
+        private bool _receive;
+        public SubscriberItem(string path, string name, int publisherId, int writerId, int datasetId) : base(path, name)
         {
-            ObjectName = name;
-            ConfigurationPath = path;
-            ConfigurationName = Path.GetFileName(path);
             PublisherId = publisherId;
             WriterGroupId = writerId;
             DataSetWriterId = datasetId;
         }
-        public string ConfigurationPath { get; }
-        public string ObjectName { get; }
-        public string ConfigurationName { get; }
-
         public int PublisherId { get; private set; }
         public int WriterGroupId { get; private set; }
         public int DataSetWriterId { get; private set; }
 
+        public bool Receive
+        {
+            get { return _receive; }
+            set { _receive = value; OnPropertyChanged("Receive"); }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)

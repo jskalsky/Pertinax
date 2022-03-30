@@ -16,6 +16,7 @@ namespace WpfControlLibrary
         private bool _publish;
         private bool _enablePublish;
         private bool _isImported;
+        private OpcObjectItem _selectedItem;
         private static int _nextDefaultNameIndex = 1;
         public OpcObject()
         {
@@ -59,6 +60,12 @@ namespace WpfControlLibrary
             get { return _isImported; }
             set { _isImported = value; OnPropertyChanged("IsImported"); }
         }
+
+        public OpcObjectItem SelectedItem
+        {
+            get { return _selectedItem; }
+            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
+        }
         public ObservableCollection<OpcObjectItem> Items => _items;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -70,7 +77,7 @@ namespace WpfControlLibrary
         }
         public OpcObjectItem AddItem(string name)
         {
-            OpcObjectItem ooi = new OpcObjectItem(name);
+            OpcObjectItem ooi = new OpcObjectItem(name, Publish);
             _items.Add(ooi);
             return ooi;
         }
