@@ -199,10 +199,11 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="Typ">
+                                    <GridViewColumn Header="Typ" Width="90">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}" IsEnabled="{Binding EnableBasicTypes}"/>
+                                                <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}" 
+                                                          IsEnabled="{Binding EnableBasicTypes}" Width="70"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

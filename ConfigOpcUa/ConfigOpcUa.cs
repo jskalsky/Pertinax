@@ -214,6 +214,7 @@ namespace ConfigOpcUa
                 WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, publish);
                 ooi.SelectedBasicType = GetBasicType(vt.BasicType);
                 ooi.SelectedAccess = GetAccess(vt.AccessType);
+                ooi.WriteOutside = (ooi.SelectedAccess == ooi.Access[0]) ? false : true;
                 ooi.ArraySizeValue = vt.ArraySize;
                 ooi.SelectedRank = (vt.Type == 0) ? ooi.Rank[0] : ooi.Rank[1];
                 Debug.Print($"Item {vt.Name}");
@@ -392,38 +393,70 @@ namespace ConfigOpcUa
             WpfControlLibrary.PortsNode inputs = new WpfControlLibrary.PortsNode("Inputs");
             _ports.Add(outputs);
             _ports.Add(inputs);
+
             foreach (WpfControlLibrary.OpcObject oo in _objects)
             {
-                if (oo.Publish)
+                if (!oo.Publish && !oo.IsImported)
                 {
-                    WpfControlLibrary.PortsNode obj = outputs.Add(oo.Name);
+                    bool ins = false;
+                    bool outs = false;
+                    foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                    {
+                        if(ooi.WriteOutside)
+                        {
+                            ins = true;
+                        }
+                        else
+                        {
+                            outs = true;
+                        }
+                    }
+                    WpfControlLibrary.PortsNode objOuts = null;
+                    WpfControlLibrary.PortsNode objIns = null;
+                    if (outs)
+                    {
+                        objOuts = outputs.Add(oo.Name);
+                    }
+                    if (ins)
+                    {
+                        objIns = inputs.Add(oo.Name);
+                    }
                     foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                     {
                         if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                         {
-                            string portText = $"O.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})";
+                            string portText;
+                            if (ooi.WriteOutside)
+                            {
+                                portText = $"I.OPCUA.{typeChar}.Server.{ooi.Name}({oo.Name})";
+                                objIns.Add(portText);
+                            }
+                            else
+                            {
+                                portText = $"O.OPCUA.{typeChar}.Server.{ooi.Name}({oo.Name})";
+                                objOuts.Add(portText);
+                            }
                             Debug.Print($"porText= {portText}");
-                            obj.Add(portText);
                             _allPorts[portText.ToUpperInvariant()] = portText;
                         }
                     }
                 }
                 else
                 {
-                    /*                    if(oo.Subscribe)
-                                        {
-                                            WpfControlLibrary.PortsNode obj = inputs.Add(oo.Name);
-                                            foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
-                                            {
-                                                if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
-                                                {
-                                                    string portText = $"I.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})";
-                                                    Debug.Print($"porText= {portText}");
-                                                    obj.Add(portText);
-                                                    _allPorts[portText.ToUpperInvariant()] = portText;
-                                                }
-                                            }
-                                        }*/
+                    if(oo.Publish && !oo.IsImported)
+                    {
+                        WpfControlLibrary.PortsNode obj = outputs.Add(oo.Name);
+                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                        {
+                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                            {
+                                string portText = $"O.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})";
+                                Debug.Print($"porText= {portText}");
+                                obj.Add(portText);
+                                _allPorts[portText.ToUpperInvariant()] = portText;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -581,7 +614,7 @@ namespace ConfigOpcUa
                     VariablesType vt = new VariablesType();
                     vt.Name = ooi.Name;
                     vt.BasicType = typeCode;
-                    ooi.SelectedAccess = ooi.WriteOutside ? "Read" : "Write";
+                    ooi.SelectedAccess = ooi.WriteOutside ? ooi.Access[1] : ooi.Access[0];
                     if (_access.TryGetValue(ooi.SelectedAccess, out byte accessCode))
                     {
                         vt.AccessType = accessCode;

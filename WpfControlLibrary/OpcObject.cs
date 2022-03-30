@@ -27,6 +27,11 @@ namespace WpfControlLibrary
         public OpcObject(string name, bool publish, bool imported)
         {
             Name = name;
+            int index = GetDefaultNameIndex();
+            if(index > 0 && index >= _nextDefaultNameIndex)
+            {
+                _nextDefaultNameIndex = index + 1;
+            }
             Publish = publish;
             IsImported = imported;
         }
@@ -101,9 +106,9 @@ namespace WpfControlLibrary
         {
             LinkedList<char> ll = new LinkedList<char>();
             string text = string.Empty;
-            for(int i=Name.Length-1;i>= 0;--i)
+            for (int i = Name.Length - 1; i >= 0; --i)
             {
-                if(char.IsDigit(Name[i]))
+                if (char.IsDigit(Name[i]))
                 {
                     ll.AddFirst(Name[i]);
                 }
@@ -113,15 +118,20 @@ namespace WpfControlLibrary
                     break;
                 }
             }
-            if(ll.Count != 0)
+            if (ll.Count != 0)
             {
-                if(string.IsNullOrEmpty(text))
+                if (string.IsNullOrEmpty(text))
                 {
                     return -1;
                 }
-                if(text == DefaultName)
+                if (text == DefaultName)
                 {
-                    return int.Parse(ll.ToString());
+                    StringBuilder sb = new StringBuilder();
+                    foreach(char ch in ll)
+                    {
+                        sb.Append(ch);
+                    }
+                    return int.Parse(sb.ToString());
                 }
             }
             return -1;
