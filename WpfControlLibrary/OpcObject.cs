@@ -11,6 +11,7 @@ namespace WpfControlLibrary
     public class OpcObject : INotifyPropertyChanged
     {
         private const string DefaultName = "Pertinax";
+        private const string DefaultItemName = "Var";
         private readonly ObservableCollection<OpcObjectItem> _items = new ObservableCollection<OpcObjectItem>();
         private string _name;
         private bool _publish;
@@ -18,6 +19,7 @@ namespace WpfControlLibrary
         private bool _isImported;
         private OpcObjectItem _selectedItem;
         private static int _nextDefaultNameIndex = 1;
+        private int _nextItemIndex = 1;
         public OpcObject()
         {
             Name = $"{DefaultName}{_nextDefaultNameIndex++}";
@@ -27,7 +29,7 @@ namespace WpfControlLibrary
         public OpcObject(string name, bool publish, bool imported)
         {
             Name = name;
-            int index = GetDefaultNameIndex();
+            int index = GetDefaultIndex(name, DefaultName);
             if(index > 0 && index >= _nextDefaultNameIndex)
             {
                 _nextDefaultNameIndex = index + 1;
@@ -80,8 +82,18 @@ namespace WpfControlLibrary
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public OpcObjectItem AddItem()
+        {
+            return AddItem($"{DefaultItemName}{_nextItemIndex}");
+        }
         public OpcObjectItem AddItem(string name)
         {
+            int index = GetDefaultIndex(name,DefaultItemName);
+            if (index > 0 && index >= _nextItemIndex)
+            {
+                _nextItemIndex = index + 1;
+            }
             OpcObjectItem ooi = new OpcObjectItem(name, Publish);
             _items.Add(ooi);
             return ooi;
@@ -102,19 +114,19 @@ namespace WpfControlLibrary
             return $"{DefaultName}{_nextDefaultNameIndex++}";
         }
 
-        public int GetDefaultNameIndex()
+        public int GetDefaultIndex(string name, string defaultName)
         {
             LinkedList<char> ll = new LinkedList<char>();
             string text = string.Empty;
-            for (int i = Name.Length - 1; i >= 0; --i)
+            for (int i = name.Length - 1; i >= 0; --i)
             {
-                if (char.IsDigit(Name[i]))
+                if (char.IsDigit(name[i]))
                 {
-                    ll.AddFirst(Name[i]);
+                    ll.AddFirst(name[i]);
                 }
                 else
                 {
-                    text = Name.Substring(0, i + 1);
+                    text = name.Substring(0, i + 1);
                     break;
                 }
             }
@@ -124,7 +136,7 @@ namespace WpfControlLibrary
                 {
                     return -1;
                 }
-                if (text == DefaultName)
+                if (text == defaultName)
                 {
                     StringBuilder sb = new StringBuilder();
                     foreach(char ch in ll)

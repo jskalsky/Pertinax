@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="1000" WindowStyle="None">
+        Title="MainWindow" Height="500" Width="1100" WindowStyle="None">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -58,7 +58,7 @@
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
-                                        <GridViewColumn Header="Perioda vysílání" Width="90">
+                                        <GridViewColumn Header="Perioda vysílání" Width="120">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <local:NumericUpDown NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding Interval,Mode=TwoWay}"  HorizontalAlignment="Left"/>
@@ -124,7 +124,7 @@
                                     <GridViewColumn Header="Perioda Rx/Tx" Width="120">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <local:NumericUpDown NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding Interval,Mode=TwoWay}"  HorizontalAlignment="Left"/>
+                                                <local:NumericUpDown NudMin="0" NudIncrement="10" NudMax="1000" NudValue="{Binding RxTxPeriod,Mode=TwoWay}"  HorizontalAlignment="Left"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

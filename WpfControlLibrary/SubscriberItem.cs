@@ -11,16 +11,18 @@ namespace WpfControlLibrary
     public class SubscriberItem : ImportedItem, INotifyPropertyChanged
     {
         private bool _receive;
-        public SubscriberItem(string path, string name, int publisherId, int writerId, int datasetId) : base(path, name)
+        public SubscriberItem(string path, string name, int publisherId, int writerId, int datasetId, OpcObject opcObject, bool receive) : base(path, name)
         {
             PublisherId = publisherId;
             WriterGroupId = writerId;
             DataSetWriterId = datasetId;
+            OpcObject = opcObject;
+            Receive = receive;
         }
         public int PublisherId { get; private set; }
         public int WriterGroupId { get; private set; }
         public int DataSetWriterId { get; private set; }
-
+        public OpcObject OpcObject { get; }
         public bool Receive
         {
             get { return _receive; }
