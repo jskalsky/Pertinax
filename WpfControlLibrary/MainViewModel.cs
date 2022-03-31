@@ -26,6 +26,9 @@ namespace WpfControlLibrary
         private string _subscriberPath;
         private bool _subscribe;
         private bool _subscribeClick;
+        private OpcObjectItem _setupObjectItem;
+        private string _selectedSetupItem;
+        private string _selectedSetupRank;
 
         private bool _enableAddToPublisher;
         private bool _enableAddToSubscriber;
@@ -45,6 +48,9 @@ namespace WpfControlLibrary
             LocalIpAddressString = "10.10.13.253";
             WindowTitle = "OpcUa";
             RepetitionRateValue = 1;
+            _setupObjectItem = new OpcObjectItem("Setup", false);
+            SelectedSetupItem = _setupObjectItem.BasicTypes[0];
+            SelectedSetupRank = _setupObjectItem.Rank[0];
         }
 
         public int GetMaxItemIndex()
@@ -79,6 +85,22 @@ namespace WpfControlLibrary
             return maxIndex;
         }
 
+        public OpcObjectItem SetupObjectItem
+        {
+            get { return _setupObjectItem; }
+        }
+
+        public string SelectedSetupItem
+        {
+            get { return _selectedSetupItem; }
+            set { _selectedSetupItem = value;OnPropertyChanged("SelectedSetupItem"); }
+        }
+
+        public string SelectedSetupRank
+        {
+            get { return _selectedSetupRank; }
+            set { _selectedSetupRank = value; OnPropertyChanged("SelectedSetupRank"); }
+        }
         public int RepetitionRateValue
         {
             get { return _repetitionRateValue; }

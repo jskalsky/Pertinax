@@ -415,58 +415,58 @@ namespace ConfigOpcUa
             }
         }
 
+        private string[] ItemToText(string objectName, WpfControlLibrary.OpcObjectItem ooi)
+        {
+            List<string> flags = new List<string>();
+            string flag = $"{ooi.Name}({objectName})";
+            if (ooi.SelectedRank == ooi.Rank[0])
+            {
+                flags.Add(flag);
+            }
+            else
+            {
+                for(int i=0;i<ooi.ArraySizeValue;++i)
+                {
+                    flags.Add($"{flag}.{i}");
+                }
+            }
+            return flags.ToArray();
+        }
         private void CreatePorts()
         {
             _ports.Clear();
-            WpfControlLibrary.PortsNode outputs = new WpfControlLibrary.PortsNode("Outputs");
-            WpfControlLibrary.PortsNode inputs = new WpfControlLibrary.PortsNode("Inputs");
+            WpfControlLibrary.PortsNode outputs = new WpfControlLibrary.PortsNode("Výstupy");
+            WpfControlLibrary.PortsNode inputs = new WpfControlLibrary.PortsNode("Vstupy");
             _ports.Add(outputs);
             _ports.Add(inputs);
 
+            StringBuilder sb = new StringBuilder();
             foreach (WpfControlLibrary.OpcObject oo in _objects)
             {
+                WpfControlLibrary.PortsNode objectNodeIn = inputs.Add(oo.Name);
+                WpfControlLibrary.PortsNode objectNodeOut = outputs.Add(oo.Name);
                 if (!oo.Publish && !oo.IsImported)
                 {
-                    bool ins = false;
-                    bool outs = false;
-                    foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
-                    {
-                        if (ooi.WriteOutside)
-                        {
-                            ins = true;
-                        }
-                        else
-                        {
-                            outs = true;
-                        }
-                    }
-                    WpfControlLibrary.PortsNode objOuts = null;
-                    WpfControlLibrary.PortsNode objIns = null;
-                    if (outs)
-                    {
-                        objOuts = outputs.Add(oo.Name);
-                    }
-                    if (ins)
-                    {
-                        objIns = inputs.Add(oo.Name);
-                    }
                     foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                     {
                         if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                         {
-                            string portText;
-                            if (ooi.WriteOutside)
+                            string[] flags = ItemToText(oo.Name, ooi);
+                            foreach(string flag in flags)
                             {
-                                portText = $"I.OPCUA.{typeChar}.Server.{ooi.Name}({oo.Name})";
-                                objIns.Add(portText);
+                                sb.Clear();
+                                if (ooi.WriteOutside)
+                                {
+                                    sb.Append($"I.OPCUA.{typeChar}.Server.{flag}");
+                                    objectNodeIn.Add(sb.ToString());
+                                }
+                                else
+                                {
+                                    sb.Append($"O.OPCUA.{typeChar}.Server.{flag}");
+                                    objectNodeOut.Add(sb.ToString());
+                                }
+                                _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
                             }
-                            else
-                            {
-                                portText = $"O.OPCUA.{typeChar}.Server.{ooi.Name}({oo.Name})";
-                                objOuts.Add(portText);
-                            }
-                            Debug.Print($"porText= {portText}");
-                            _allPorts[portText.ToUpperInvariant()] = portText;
                         }
                     }
                 }
@@ -474,15 +474,18 @@ namespace ConfigOpcUa
                 {
                     if (oo.Publish && !oo.IsImported)
                     {
-                        WpfControlLibrary.PortsNode obj = outputs.Add(oo.Name);
                         foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                         {
                             if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                             {
-                                string portText = $"O.OPCUA.{typeChar}.Pub.Sub1.{ooi.Name}({oo.Name})";
-                                Debug.Print($"porText= {portText}");
-                                obj.Add(portText);
-                                _allPorts[portText.ToUpperInvariant()] = portText;
+                                string[] flags = ItemToText(oo.Name, ooi);
+                                foreach(string flag in flags)
+                                {
+                                    sb.Clear();
+                                    sb.Append($"O.OPCUA.{typeChar}.Pub.Sub1.{flag}");
+                                    objectNodeOut.Add(sb.ToString());
+                                    _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
+                                }
                             }
                         }
                     }
@@ -497,10 +500,14 @@ namespace ConfigOpcUa
                     {
                         if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                         {
-                            string portText = $"I.OPCUA.{typeChar}.Sub.Pub1.{ooi.Name}({si.OpcObject.Name})";
-                            Debug.Print($"porText= {portText}");
-                            obj.Add(portText);
-                            _allPorts[portText.ToUpperInvariant()] = portText;
+                            string[] flags = ItemToText(si.OpcObject.Name, ooi);
+                            foreach(string flag in flags)
+                            {
+                                sb.Clear();
+                                sb.Append($"I.OPCUA.{typeChar}.Sub.Pub1.{flag}");
+                                obj.Add(sb.ToString());
+                                _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
+                            }
                         }
                     }
                 }
@@ -508,46 +515,28 @@ namespace ConfigOpcUa
             int serverIndex = 1;
             foreach (WpfControlLibrary.ClientItem ci in _clientItems)
             {
-                bool ins = false;
-                bool outs = false;
-                foreach (WpfControlLibrary.OpcObjectItem ooi in ci.OpcObject.Items)
-                {
-                    if (ooi.WriteOutside)
-                    {
-                        outs = true;
-                    }
-                    else
-                    {
-                        ins = true;
-                    }
-                }
-                WpfControlLibrary.PortsNode objOuts = null;
-                WpfControlLibrary.PortsNode objIns = null;
-                if (outs)
-                {
-                    objOuts = outputs.Add(ci.OpcObject.Name);
-                }
-                if (ins)
-                {
-                    objIns = inputs.Add(ci.OpcObject.Name);
-                }
+                WpfControlLibrary.PortsNode objOuts = outputs.Add(ci.OpcObject.Name);
+                WpfControlLibrary.PortsNode objIns = inputs.Add(ci.OpcObject.Name);
                 foreach (WpfControlLibrary.OpcObjectItem ooi in ci.OpcObject.Items)
                 {
                     if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                     {
-                        string portText;
-                        if (ooi.WriteOutside)
+                        string[] flags = ItemToText(ci.OpcObject.Name, ooi);
+                        foreach(string flag in flags)
                         {
-                            portText = $"O.OPCUA.{typeChar}.Client.Server{serverIndex}.{ooi.Name}({ci.OpcObject.Name})";
-                            objOuts.Add(portText);
+                            sb.Clear();
+                            if (ooi.WriteOutside)
+                            {
+                                sb.Append($"O.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
+                                objOuts.Add(sb.ToString());
+                            }
+                            else
+                            {
+                                sb.Append($"I.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
+                                objIns.Add(sb.ToString());
+                            }
+                            _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
                         }
-                        else
-                        {
-                            portText = $"I.OPCUA.{typeChar}.Client.Server{serverIndex}.{ooi.Name}({ci.OpcObject.Name})";
-                            objIns.Add(portText);
-                        }
-                        Debug.Print($"porText= {portText}");
-                        _allPorts[portText.ToUpperInvariant()] = portText;
                     }
                 }
                 ++serverIndex;

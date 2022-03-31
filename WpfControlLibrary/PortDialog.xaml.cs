@@ -59,5 +59,15 @@ namespace WpfControlLibrary
                 }
             }
         }
+
+        private void TreePorts_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            Debug.Print($"ItemChanged {sender}, {e.NewValue}");
+            if(e.NewValue is PortsNode pn)
+            {
+                SelectedPort = pn.Text;
+            }
+            e.Handled = true;
+        }
     }
 }

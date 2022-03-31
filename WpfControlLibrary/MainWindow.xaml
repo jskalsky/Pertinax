@@ -184,10 +184,11 @@
                 <GroupBox Header="Seznam položek" Grid.Column="1">
                     <DockPanel LastChildFill="True">
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,0" DockPanel.Dock="Bottom">
-                            <Button Content="Přidat" Click="ButtonAddItem_Click" Width="50"/>
                             <Label Content="Počet" Margin="5,0,0,0"/>
                             <local:NumericUpDown NudMin="1" NudMax="2000" NudIncrement="1" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
-                            <Button Content="Odstranit" Margin="30,0,0,0" Width="50"/>
+                            <ComboBox ItemsSource="{Binding SetupObjectItem.BasicTypes}" SelectedItem="{Binding SelectedSetupItem}" Width="70" Margin="5,0,0,0"/>
+                            <ComboBox ItemsSource="{Binding SetupObjectItem.Rank}" Width="170" Margin="5,0,0,0" SelectedItem="{Binding SelectedSetupRank}"/>
+                            <Button Content="Přidat" Click="ButtonAddItem_Click" Width="50" Margin="10,0,0,0"/>
                         </StackPanel>
                         <ListView ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectedItem="{Binding SelectedOpcObject.SelectedItem, Mode=TwoWay}">
                             <ListView.View>

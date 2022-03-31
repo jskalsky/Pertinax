@@ -92,7 +92,9 @@ namespace WpfControlLibrary
                 {
                     for (int i = 0; i < vm.RepetitionRateValue; ++i)
                     {
-                        vm.SelectedOpcObject.AddItem();
+                        OpcObjectItem ooi = vm.SelectedOpcObject.AddItem();
+                        ooi.SelectedBasicType = vm.SelectedSetupItem;
+                        ooi.SelectedRank = vm.SelectedSetupRank;
                     }
                 }
             }

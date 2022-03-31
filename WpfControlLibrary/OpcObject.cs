@@ -101,6 +101,11 @@ namespace WpfControlLibrary
 
         public void AddItem(OpcObjectItem ooi)
         {
+            int index = GetDefaultIndex(ooi.Name, DefaultItemName);
+            if (index > 0 && index >= _nextItemIndex)
+            {
+                _nextItemIndex = index + 1;
+            }
             _items.Add(ooi);
         }
 

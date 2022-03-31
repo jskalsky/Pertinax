@@ -16,7 +16,7 @@
                 <Button Content="OK" IsDefault="True" Click="ButtonOk_Click" Width="50"/>
                 <Button Content="Cancel" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
             </StackPanel>
-            <TreeView Loaded="TreeView_Loaded" Name="TreePorts" ItemsSource="{Binding RootNodes}">
+            <TreeView Loaded="TreeView_Loaded" Name="TreePorts" ItemsSource="{Binding RootNodes}" SelectedItemChanged="TreePorts_SelectedItemChanged">
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
