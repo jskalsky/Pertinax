@@ -406,6 +406,7 @@ namespace ConfigOpcUa
                                 string path = items[0];
                                 string objectName = items[1];
                                 bool.TryParse(items[3], out receive);
+                                Debug.Print($"pred Import {st.QueryPeriod}");
                                 Import(path, objectName, receive, st.QueryPeriod);
                             }
                         }
@@ -780,7 +781,8 @@ namespace ConfigOpcUa
             foreach (WpfControlLibrary.ClientItem clientItem in mvm.ClientObjects)
             {
                 ServerType st = new ServerType();
-                st.Description = $"{clientItem.ConfigurationPath};{clientItem.ObjectName};{clientItem.IpAddress};{clientItem.Validity}";
+                st.Description = $"{clientItem.ConfigurationPath};{clientItem.ObjectName};{clientItem.IpAddress};{clientItem.Validity};{clientItem.OpcObject.Name}";
+                Debug.Print($"Server {clientItem.RxTxPeriod}");
                 st.QueryPeriod = (ushort)clientItem.RxTxPeriod;
                 listSt.Add(st);
                 ObjectTypeType objectTypeType = CreateObjectTypeType(clientItem.OpcObject, id++);
@@ -800,6 +802,7 @@ namespace ConfigOpcUa
             using (TextWriter tw = new StreamWriter(fileName))
             {
                 serializer.Serialize(tw, pars);
+                Debug.Print("Po serialize");
             }
         }
     }

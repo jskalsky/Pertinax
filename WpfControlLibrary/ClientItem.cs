@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace WpfControlLibrary
         private bool _validity;
         public ClientItem(string path, string name, string ipAddress, OpcObject opcObject, bool validity, int rxtxPeriod) : base(path,name)
         {
+            Debug.Print($"Constructor ClientItem {rxtxPeriod}");
             IpAddress = ipAddress;
             RxTxPeriod = rxtxPeriod;
             Validity = validity;
