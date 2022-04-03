@@ -151,6 +151,7 @@
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
                             <Button Content="Přidat(Server)" Click="AddObject_Click" Width="80"/>
                             <Button Content="Přidat(Publisher)" Click="PublishObject_Click" Width="90" Margin="5,0,0,0"/>
+                            <Button Content="Zrušit" Width="50" Margin="5,0,0,0" Click="ButtonObjectDelete_Click"/>
                         </StackPanel>
                         <ListView MinWidth="150" Name="Objects" Grid.Column="0" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" 
                               SelectionChanged="ListViewObjects_SelectionChanged" ContextMenuOpening="Objects_ContextMenuOpening" SelectionMode="Single">
@@ -172,12 +173,6 @@
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Remove"/>
-                                    <MenuItem Header="Add to Publisher" Click="MenuItemPublish_Click" IsEnabled="{Binding EnableAddToPublisher}"/>
-                                </ContextMenu>
-                            </ListView.ContextMenu>
                         </ListView>
                     </DockPanel>
                 </GroupBox>
@@ -190,6 +185,7 @@
                             <ComboBox ItemsSource="{Binding SetupObjectItem.Rank}" Width="170" Margin="5,0,0,0" SelectedItem="{Binding SelectedSetupRank}"/>
                             <Button Content="Přidat" Click="ButtonAddItem_Click" Width="50" Margin="10,0,0,0"/>
                             <Button Content="Upravit" Click="MenuItemChange_Click" Width="50" Margin="5,0,0,0"/>
+                            <Button Content="Zrušit" Click="ButtonDelete_Click" Width="50" Margin="5,0,0,0"/>
                         </StackPanel>
                         <ListView ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectionMode="Multiple">
                             <ListView.ItemContainerStyle>
@@ -202,37 +198,37 @@
                                     <GridViewColumn Header="Jméno" Width="100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBox Text="{Binding Name, Mode=TwoWay}" TextAlignment="Left"  Width="80" HorizontalAlignment="Right"/>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay}" TextAlignment="Right"  Width="80"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn Header="Typ" Width="90">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding BasicTypes}" SelectedItem="{Binding SelectedBasicType,Mode=TwoWay}" 
-                                                          IsEnabled="{Binding EnableBasicTypes}" Width="70"/>
+                                                <TextBlock Text="{Binding SelectedBasicType,Mode=TwoWay}" Width="70" TextAlignment="Right"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn Header="Kategorie" Width="190">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank,Mode=TwoWay}" IsEnabled="{Binding EnableRank}" SelectionChanged="Rank_SelectionChanged"
-                                                          Tag="{Binding RankTag}" Width="170"/>
+                                                <TextBlock Text="{Binding SelectedRank,Mode=TwoWay}" Width="170" TextAlignment="Right"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn Header="Velikost pole" Width="120">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <local:NumericUpDown NudMin="0" NudMax="2500" NudIncrement="1" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" IsEnabled="{Binding EnableArraySize}"/>
+                                                <TextBlock Text="{Binding ArraySizeValue,Mode=TwoWay}" TextAlignment="Right" Width="100"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn Header="Zápis zvenku" Width="80">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox HorizontalAlignment="Center" IsEnabled="{Binding EnableWriteOutside}" IsChecked="{Binding WriteOutside}"/>
+                                                <Grid Width="80">
+                                                    <CheckBox HorizontalAlignment="Center" IsEnabled="{Binding EnableWriteOutside}" IsChecked="{Binding WriteOutside}"/>
+                                                </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

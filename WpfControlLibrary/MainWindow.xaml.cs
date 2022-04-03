@@ -259,5 +259,40 @@ namespace WpfControlLibrary
             }
             e.Handled = true;
         }
+
+        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult mbr = MessageBox.Show("Opravdu zrušit vybranou položku(položky) ?", "OpcUa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if(mbr == MessageBoxResult.Yes)
+            {
+                List<OpcObjectItem> erase = new List<OpcObjectItem>();
+                if(DataContext is MainViewModel mvm)
+                {
+                    foreach(OpcObjectItem ooi in mvm.SelectedOpcObject.Items)
+                    {
+                        if(ooi.Selected)
+                        {
+                            erase.Add(ooi);
+                        }
+                    }
+                    foreach(OpcObjectItem ooi in erase)
+                    {
+                        mvm.SelectedOpcObject.Items.Remove(ooi);
+                    }
+                }
+            }
+        }
+
+        private void ButtonObjectDelete_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult mbr = MessageBox.Show("Opravdu zrušit vybraný objekt ?", "OpcUa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if(mbr == MessageBoxResult.Yes)
+            {
+                if(DataContext is MainViewModel mvm)
+                {
+                    mvm.Objects.Remove(mvm.SelectedOpcObject);
+                }
+            }
+        }
     }
 }

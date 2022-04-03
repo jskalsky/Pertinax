@@ -14,7 +14,7 @@
             <Label DockPanel.Dock="Top" Content="Změna položek objektu" Background="LightSteelBlue" Foreground="White"/>
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,5,5">
                 <Button Content="Ok" IsDefault="True" Click="ButtonOk_Click" Width="50"/>
-                <Button Content="Cancel" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
+                <Button Content="Zrušit" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
             </StackPanel>
             <GroupBox Header="Nové hodnoty položek">
                 <Grid Margin="0,5,0,0">
@@ -36,7 +36,9 @@
                     <local:NumericUpDown NudMin="0" NudMax="2000" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" Grid.Row="2" Grid.Column="1" 
                                          HorizontalAlignment="Left" IsEnabled="True"/>
                     <Label Grid.Row="3" Content="Zápis zvenku"/>
-                    <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding WriteOutside}"/>
+                    <Grid Grid.Row="3" Grid.Column="1" Width="60" HorizontalAlignment="Left">
+                        <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding WriteOutside}"/>
+                    </Grid>
                 </Grid>
             </GroupBox>
         </DockPanel>

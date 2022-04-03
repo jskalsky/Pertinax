@@ -1,6 +1,7 @@
 ﻿using ConfigOpcUa;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,7 @@ namespace ZatCad
                 string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
                 configOpcUa.LoadConfig(fileName);
                 string port = configOpcUa.CreatePort();
+                Debug.Print($"port= {port}");
             }
         }
     }
