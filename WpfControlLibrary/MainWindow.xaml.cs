@@ -181,15 +181,15 @@ namespace WpfControlLibrary
 
         private void Rank_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(e.AddedItems.Count == 1)
+            if (e.AddedItems.Count == 1)
             {
                 string rank = (string)e.AddedItems[0];
                 MainViewModel vm = DataContext as MainViewModel;
                 if (vm != null)
                 {
-                    if(sender is ComboBox cb)
+                    if (sender is ComboBox cb)
                     {
-                        if(cb.Tag is OpcObjectItem ooi)
+                        if (cb.Tag is OpcObjectItem ooi)
                         {
                             if (rank == "Pole")
                             {
@@ -212,7 +212,7 @@ namespace WpfControlLibrary
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Multiselect = false;
             ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
-            if(string.IsNullOrEmpty(WpfControlLibrary.Properties.Settings.Default.LastConfigFolder))
+            if (string.IsNullOrEmpty(WpfControlLibrary.Properties.Settings.Default.LastConfigFolder))
             {
                 ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             }
@@ -231,6 +231,33 @@ namespace WpfControlLibrary
                     vm.SubscriberPath = ofd.FileName;
                 }
             }
+        }
+
+        private void MenuItemChange_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModel vm = DataContext as MainViewModel;
+            if (vm != null)
+            {
+                EditObjectItemDialog editObjectItemDialog = new EditObjectItemDialog();
+                if(editObjectItemDialog.ShowDialog()==true)
+                {
+                    if(editObjectItemDialog.DataContext is ViewModelEditItems vmei)
+                    {
+                        foreach (OpcObjectItem ooi in vm.SelectedOpcObject.Items)
+                        {
+                            if (ooi.Selected)
+                            {
+                                ooi.SelectedBasicType = vmei.SelectedBasicType;
+                                ooi.SelectedRank = vmei.SelectedRank;
+                                ooi.WriteOutside = vmei.WriteOutside;
+                                ooi.ArraySizeValue = vmei.ArraySizeValue;
+                                ooi.Selected = false;
+                            }
+                        }
+                    }
+                }
+            }
+            e.Handled = true;
         }
     }
 }

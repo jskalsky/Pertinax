@@ -26,6 +26,10 @@ namespace WpfControlLibrary
         {
             InitializeComponent();
             //            DataContext = this;
+            NudIncrement = 1;
+            NudMin = 0;
+            NudMax = 100;
+            NudValue = 0;
         }
 
         public static readonly DependencyProperty NudMinProperty = DependencyProperty.Register("NudMin", typeof(int), typeof(NumericUpDown));
@@ -65,7 +69,7 @@ namespace WpfControlLibrary
 
         private void ButtonUp_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Print($"Up {NudValue}");
+            Debug.Print($"Up {NudValue}, {NudIncrement}, {NudMax}");
             if(NudValue + NudIncrement <= NudMax)
             {
                 NudValue += NudIncrement;

@@ -20,6 +20,7 @@ namespace WpfControlLibrary
         private bool _writeOutside;
         private string _name;
         private object _rankTag;
+        private bool _selected;
 
         private bool _enableBasicTypes;
         private bool _enableAccess;
@@ -56,7 +57,7 @@ namespace WpfControlLibrary
         public string SelectedBasicType
         {
             get { return _selectedBasicType; }
-            set { _selectedBasicType = value; }
+            set { _selectedBasicType = value; OnPropertyChanged("SelectedBasicType"); }
         }
 
         public string[] Access
@@ -78,7 +79,7 @@ namespace WpfControlLibrary
         public string SelectedRank
         {
             get { return _selectedRank; }
-            set { _selectedRank = value; }
+            set { _selectedRank = value; OnPropertyChanged("SelectedRank"); }
         }
 
         public int ArraySizeValue
@@ -128,6 +129,12 @@ namespace WpfControlLibrary
         {
             get { return _enableWriteOutside; }
             set { _enableWriteOutside = value; OnPropertyChanged("EnableWriteOutside"); }
+        }
+
+        public bool Selected
+        {
+            get { return _selected; }
+            set { _selected = value; OnPropertyChanged("Selected"); }
         }
     }
 }

@@ -189,8 +189,14 @@
                             <ComboBox ItemsSource="{Binding SetupObjectItem.BasicTypes}" SelectedItem="{Binding SelectedSetupItem}" Width="70" Margin="5,0,0,0"/>
                             <ComboBox ItemsSource="{Binding SetupObjectItem.Rank}" Width="170" Margin="5,0,0,0" SelectedItem="{Binding SelectedSetupRank}"/>
                             <Button Content="Přidat" Click="ButtonAddItem_Click" Width="50" Margin="10,0,0,0"/>
+                            <Button Content="Upravit" Click="MenuItemChange_Click" Width="50" Margin="5,0,0,0"/>
                         </StackPanel>
-                        <ListView ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectedItem="{Binding SelectedOpcObject.SelectedItem, Mode=TwoWay}">
+                        <ListView ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectionMode="Multiple">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="IsSelected" Value="{Binding Selected,Mode=TwoWay}"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Jméno" Width="100">

@@ -68,9 +68,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientItem.cs" />
+    <Compile Include="EditObjectItemDialog.xaml.cs">
+      <DependentUpon>EditObjectItemDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImportedItem.cs" />
+    <Compile Include="ViewModelEditItems.cs" />
     <Compile Include="OpcObject.cs" />
     <Compile Include="OpcObjectItem.cs" />
+    <Compile Include="OpcObjectItemBase.cs" />
     <Compile Include="PortDialog.xaml.cs">
       <DependentUpon>PortDialog.xaml</DependentUpon>
     </Compile>
@@ -84,6 +89,10 @@
     <Compile Include="PublisherItem.cs" />
     <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
+    <Page Include="EditObjectItemDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="IpAddressBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
