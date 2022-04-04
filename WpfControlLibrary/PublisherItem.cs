@@ -11,7 +11,7 @@ namespace WpfControlLibrary
     public class PublisherItem : INotifyPropertyChanged
     {
         private OpcObject _opcObject;
-        private int _interval;
+        private int _sendingPeriod;
         private static int _nextWriterGroupId = 0;
         private static int _nextDataSetWriterId = 0;
 
@@ -21,14 +21,14 @@ namespace WpfControlLibrary
             PublisherId = publisherId;
             WriterGroupId = ++_nextWriterGroupId;
             DataSetWriterId = ++_nextDataSetWriterId;
-            Interval = 100;
+            SendingPeriod = 100;
             Debug.Print($"OpcObject= {OpcObject.Name}");
         }
 
         public PublisherItem(OpcObject oo, int publisherId, int writerId, int datasetWriter, int interval)
         {
             OpcObject = oo;
-            Interval = interval;
+            SendingPeriod = interval;
             PublisherId = publisherId;
             WriterGroupId = writerId;
             DataSetWriterId = datasetWriter;
@@ -47,10 +47,10 @@ namespace WpfControlLibrary
             set { _opcObject = value; OnPropertyChanged("OpcObject"); }
         }
 
-        public int Interval
+        public int SendingPeriod
         {
-            get { return _interval; }
-            set { _interval = value; OnPropertyChanged("Interval"); }
+            get { return _sendingPeriod; }
+            set { _sendingPeriod = value; OnPropertyChanged("SendingPeriod"); }
         }
 
         public int WriterGroupId { get; private set; }

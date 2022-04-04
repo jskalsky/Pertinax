@@ -140,6 +140,7 @@ namespace WpfControlLibrary
 
         private void PublishObject_Click(object sender, RoutedEventArgs e)
         {
+            Debug.Print("Publish");
             MainViewModel vm = DataContext as MainViewModel;
             if (vm != null)
             {
@@ -147,11 +148,14 @@ namespace WpfControlLibrary
                 if (oo != null)
                 {
                     vm.Objects.Add(oo);
+                    Debug.Print("Object added");
                     vm.SelectedOpcObject = oo;
                     if (oo.Publish)
                     {
+                        Debug.Print("Je to publish");
                         WpfControlLibrary.PublisherItem pi = new PublisherItem(oo, vm.PublisherId);
                         vm.PublisherObjects.Add(pi);
+                        Debug.Print("Pridano");
                     }
                 }
             }

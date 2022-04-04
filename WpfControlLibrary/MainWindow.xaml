@@ -61,7 +61,7 @@
                                         <GridViewColumn Header="Perioda vysílání" Width="120">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <local:NumericUpDown NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding Interval,Mode=TwoWay}"  HorizontalAlignment="Left"/>
+                                                    <local:NumericUpDown NudMin="1" NudIncrement="10" NudMax="512" NudValue="{Binding SendingPeriod,Mode=TwoWay}"  HorizontalAlignment="Left"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>

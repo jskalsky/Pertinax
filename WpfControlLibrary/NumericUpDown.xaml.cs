@@ -26,20 +26,17 @@ namespace WpfControlLibrary
         {
             InitializeComponent();
             //            DataContext = this;
-            NudIncrement = 1;
-            NudMin = 0;
-            NudMax = 100;
-            NudValue = 0;
+            Debug.Print("Numeric konstruktor");
         }
 
-        public static readonly DependencyProperty NudMinProperty = DependencyProperty.Register("NudMin", typeof(int), typeof(NumericUpDown));
+        public static readonly DependencyProperty NudMinProperty = DependencyProperty.Register("NudMin", typeof(int), typeof(NumericUpDown), new PropertyMetadata(0, OnNudValuePropertyChanged));
         public int NudMin
         {
             get { return (int)GetValue(NudMinProperty); }
             set { SetValue(NudMinProperty, value); }
         }
 
-        public static readonly DependencyProperty NudMaxProperty = DependencyProperty.Register("NudMax", typeof(int), typeof(NumericUpDown));
+        public static readonly DependencyProperty NudMaxProperty = DependencyProperty.Register("NudMax", typeof(int), typeof(NumericUpDown), new PropertyMetadata(100, OnNudValuePropertyChanged));
         public int NudMax
         {
             get { return (int)GetValue(NudMaxProperty); }
@@ -49,18 +46,18 @@ namespace WpfControlLibrary
         public int NudValue
         {
             get { return (int)GetValue(NudValueProperty); }
-            set { SetValue(NudValueProperty, value); }
+            set { SetValue(NudValueProperty, value); TextBoxValue.Text = NudValue.ToString(); Debug.Print($"Set {value}"); }
         }
 
         private static void OnNudValuePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            Debug.Print($"NudValuePropertyChanged {dependencyObject}");
+            Debug.Print($"NudValuePropertyChanged {dependencyObject}, {e.NewValue}");
             if(dependencyObject is WpfControlLibrary.NumericUpDown nud)
             {
                 nud.TextBoxValue.Text = e.NewValue.ToString();
             }
         }
-        public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown));
+        public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown), new PropertyMetadata(1, OnNudValuePropertyChanged));
         public int NudIncrement
         {
             get { return (int)GetValue(NudIncrementProperty); }

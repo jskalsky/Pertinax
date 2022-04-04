@@ -426,7 +426,7 @@ namespace ConfigOpcUa
             }
             else
             {
-                for(int i=0;i<ooi.ArraySizeValue;++i)
+                for (int i = 0; i < ooi.ArraySizeValue; ++i)
                 {
                     flags.Add($"{flag}.{i}");
                 }
@@ -453,7 +453,7 @@ namespace ConfigOpcUa
                         if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                         {
                             string[] flags = ItemToText(oo.Name, ooi);
-                            foreach(string flag in flags)
+                            foreach (string flag in flags)
                             {
                                 sb.Clear();
                                 if (ooi.WriteOutside)
@@ -480,7 +480,7 @@ namespace ConfigOpcUa
                             if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                             {
                                 string[] flags = ItemToText(oo.Name, ooi);
-                                foreach(string flag in flags)
+                                foreach (string flag in flags)
                                 {
                                     sb.Clear();
                                     sb.Append($"O.OPCUA.{typeChar}.Pub.Sub1.{flag}");
@@ -502,7 +502,7 @@ namespace ConfigOpcUa
                         if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                         {
                             string[] flags = ItemToText(si.OpcObject.Name, ooi);
-                            foreach(string flag in flags)
+                            foreach (string flag in flags)
                             {
                                 sb.Clear();
                                 sb.Append($"I.OPCUA.{typeChar}.Sub.Pub1.{flag}");
@@ -523,7 +523,7 @@ namespace ConfigOpcUa
                     if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                     {
                         string[] flags = ItemToText(ci.OpcObject.Name, ooi);
-                        foreach(string flag in flags)
+                        foreach (string flag in flags)
                         {
                             sb.Clear();
                             if (ooi.WriteOutside)
@@ -758,7 +758,7 @@ namespace ConfigOpcUa
             {
                 SubscriberType st = new SubscriberType();
                 st.PublisherRootType = pi.OpcObject.Name;
-                st.SendPeriod = (ushort)pi.Interval;
+                st.SendPeriod = (ushort)pi.SendingPeriod;
                 st.Description = $"{pi.WriterGroupId};{pi.DataSetWriterId};{pi.OpcObject.Name}";
                 sts.Add(st);
             }
