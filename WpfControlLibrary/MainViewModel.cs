@@ -29,10 +29,12 @@ namespace WpfControlLibrary
         private OpcObjectItem _setupObjectItem;
         private string _selectedSetupItem;
         private string _selectedSetupRank;
+        private int _selectedSetupLength;
 
         private bool _enableAddToPublisher;
         private bool _enableAddToSubscriber;
         private bool _enableAddToClient;
+        private bool _enableSetupLength;
 
         private int _nextItemIndex;
         public MainViewModel()
@@ -51,6 +53,8 @@ namespace WpfControlLibrary
             _setupObjectItem = new OpcObjectItem("Setup", false);
             SelectedSetupItem = _setupObjectItem.BasicTypes[0];
             SelectedSetupRank = _setupObjectItem.Rank[0];
+            SelectedSetupLength = 0;
+            EnableSetupLength = false;
         }
 
         public int GetMaxItemIndex()
@@ -100,6 +104,12 @@ namespace WpfControlLibrary
         {
             get { return _selectedSetupRank; }
             set { _selectedSetupRank = value; OnPropertyChanged("SelectedSetupRank"); }
+        }
+
+        public int SelectedSetupLength
+        {
+            get { return _selectedSetupLength; }
+            set { _selectedSetupLength = value; OnPropertyChanged("SelectedSetupLength"); }
         }
         public int RepetitionRateValue
         {
@@ -202,6 +212,11 @@ namespace WpfControlLibrary
             set { _enableAddToClient = value; OnPropertyChanged("EnableAddToClient"); }
         }
 
+        public bool EnableSetupLength
+        {
+            get { return _enableSetupLength; }
+            set { _enableSetupLength = value; OnPropertyChanged("EnableSetupLength"); }
+        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }

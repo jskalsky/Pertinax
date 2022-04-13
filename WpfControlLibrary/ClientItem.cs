@@ -13,6 +13,7 @@ namespace WpfControlLibrary
         public event PropertyChangedEventHandler PropertyChanged;
         private int _rxtxPeriod;
         private bool _validity;
+        private string _ipAddress;
         public ClientItem(string path, string name, string ipAddress, OpcObject opcObject, bool validity, int rxtxPeriod) : base(path,name)
         {
             Debug.Print($"Constructor ClientItem {rxtxPeriod}");
@@ -22,7 +23,6 @@ namespace WpfControlLibrary
             OpcObject = opcObject;
         }
 
-        public string IpAddress { get; }
         public OpcObject OpcObject { get; }
 
         public int RxTxPeriod
@@ -35,6 +35,12 @@ namespace WpfControlLibrary
         {
             get { return _validity; }
             set { _validity = value; OnPropertyChanged("Validity"); }
+        }
+
+        public string IpAddress
+        {
+            get { return _ipAddress; }
+            set { _ipAddress = value; OnPropertyChanged("IpAddress"); }
         }
         private void OnPropertyChanged(string name)
         {

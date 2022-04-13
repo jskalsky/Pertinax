@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using WpfControlLibrary;
 
 namespace ConfigOpcUa
 {
@@ -131,10 +132,10 @@ namespace ConfigOpcUa
                 throw new ApplicationException($"Unknown label {pLabel}");
             }
             string[] items = port.Split('.');
-            for (int i = 0; i < items.Length; ++i)
-            {
-                Debug.Print($"item {i}, {items[i]}");
-            }
+            //            for (int i = 0; i < items.Length; ++i)
+            //            {
+            //                Debug.Print($"item {i}, {items[i]}");
+            //            }
             if (!_ptxTypeCode.TryGetValue(items[2][0], out byte tc))
             {
                 throw new ApplicationException($"Bad type {pLabel}");
@@ -218,34 +219,56 @@ namespace ConfigOpcUa
         }
         private void AddItemsToObject(ObjectTypeType ott, WpfControlLibrary.OpcObject oo, bool publish)
         {
-            foreach (VariablesType vt in ott.Variables)
+            try
             {
-                WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, publish);
-                ooi.SelectedBasicType = GetBasicType(vt.BasicType);
-                ooi.SelectedAccess = GetAccess(vt.AccessType);
-                ooi.WriteOutside = (ooi.SelectedAccess == ooi.Access[0]) ? false : true;
-                ooi.ArraySizeValue = vt.ArraySize;
-                ooi.SelectedRank = (vt.Type == 0) ? ooi.Rank[0] : ooi.Rank[1];
-                Debug.Print($"Item {vt.Name}");
-                oo.AddItem(ooi);
+                if(ott.Variables == null)
+                {
+                    return;
+                }
+                foreach (VariablesType vt in ott.Variables)
+                {
+                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, publish);
+                    ooi.SelectedBasicType = GetBasicType(vt.BasicType);
+                    ooi.SelectedAccess = GetAccess(vt.AccessType);
+                    ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
+                    ooi.ArraySizeValue = vt.ArraySize;
+                    ooi.SelectedRank = (vt.Type == 0) ? ooi.Rank[0] : ooi.Rank[1];
+                    WpfControlLibrary.NodeId.SetId(vt.Description);
+                    ooi.Id = vt.Description;
+                    //                                    Debug.Print($"Item {vt.Name}");
+                    oo.AddItem(ooi);
+                    //                                    Debug.Print($"Po add item {vt.Name}");
+                }
             }
+            catch (Exception e)
+            {
+                Debug.Print($"Exc= {e.Message}");
+            }
+            Debug.Print("AddItemsToObject End");
         }
 
         private WpfControlLibrary.OpcObject ImportObject(OPCUAParametersType pars, string name, string cfgName, bool publish)
         {
             foreach (ObjectTypeType ott in pars.ObjectType)
             {
+                Debug.Print($"ImportObject {ott.Name}");
                 string[] items = ott.Description.Split(';');
+                Debug.Print($"items= {items.Length}");
                 if (items.Length == 2)
                 {
                     bool pub = false;
                     bool.TryParse(items[0], out pub);
+                    Debug.Print($"pub= {pub}, {items[0]}, {publish}");
                     if (ott.Name == name && pub == publish)
                     {
+                        Debug.Print("300");
                         WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject($"{cfgName}_{name}", false, true);
+                        Debug.Print("301");
                         if (oo != null)
                         {
+                            Debug.Print("302");
                             AddItemsToObject(ott, oo, publish);
+                            Debug.Print("303");
                             return oo;
                         }
                     }
@@ -256,6 +279,7 @@ namespace ConfigOpcUa
 
         private void Import(string path, string objectName, bool receive, int period, WpfControlLibrary.MainViewModel mvm = null)
         {
+            Debug.Print("Import");
             if (File.Exists(path))
             {
                 XmlSerializer serializerOpc = new XmlSerializer(typeof(OPCUAParametersType));
@@ -292,9 +316,12 @@ namespace ConfigOpcUa
                         }
                     }
                     string[] ips = parsOpc.ServerRootType.Split(';');
+                    Debug.Print($"ips= {ips.Length}");
                     if (ips.Length == 2)
                     {
+                        Debug.Print("200");
                         WpfControlLibrary.OpcObject oo = ImportObject(parsOpc, objectName, Path.GetFileNameWithoutExtension(path), false);
+                        Debug.Print("201");
                         if (oo != null)
                         {
                             WpfControlLibrary.ClientItem ci = new WpfControlLibrary.ClientItem(path, objectName, ips[0], oo, receive, period);
@@ -333,7 +360,6 @@ namespace ConfigOpcUa
                         _localIpAddress = ips[0];
                         _groupAddress = ips[1];
                     }
-
                     foreach (ObjectTypeType ott in pars.ObjectType)
                     {
                         string[] objectItems = ott.Description.Split(';');
@@ -346,8 +372,8 @@ namespace ConfigOpcUa
                         }
                         if (!isImported)
                         {
-                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, publish, isImported);
-                            Debug.Print($"object= {oo.Name}");
+                            WpfControlLibrary.NodeId.SetId(ott.BaseType);
+                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, publish, isImported, ott.BaseType);
                             if (oo == null)
                             {
                                 continue;
@@ -401,13 +427,27 @@ namespace ConfigOpcUa
                         {
                             string[] items = st.Description.Split(';');
                             bool receive = false;
-                            if (items.Length >= 4)
+                            if (items.Length >= 5)
                             {
                                 string path = items[0];
                                 string objectName = items[1];
                                 bool.TryParse(items[3], out receive);
-                                Debug.Print($"pred Import {st.QueryPeriod}");
-                                Import(path, objectName, receive, st.QueryPeriod);
+                                if (string.IsNullOrEmpty(path))
+                                {
+                                    foreach (WpfControlLibrary.OpcObject oo in _objects)
+                                    {
+                                        if (oo.Name == items[4])
+                                        {
+                                            WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod);
+                                            _clientItems.Add(ci);
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Import(path, objectName, receive, st.QueryPeriod);
+                                }
                             }
                         }
                     }
@@ -420,6 +460,7 @@ namespace ConfigOpcUa
         {
             List<string> flags = new List<string>();
             string flag = $"{ooi.Name}({objectName})";
+            Debug.Print($"ItemToText {objectName}, {ooi.Name}, {ooi.SelectedRank}");
             if (ooi.SelectedRank == ooi.Rank[0])
             {
                 flags.Add(flag);
@@ -547,9 +588,12 @@ namespace ConfigOpcUa
         {
             Debug.Print($"MakeConfig {pName}");
             LoadConfig(pName);
+            Debug.Print("10");
             WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
+            Debug.Print($"11 {mainWindow.DataContext}");
             if (mainWindow.DataContext is WpfControlLibrary.MainViewModel vm)
             {
+                Debug.Print("12");
                 vm.PropertyChanged += Vm_PropertyChanged;
                 if (!string.IsNullOrEmpty(_localIpAddress))
                 {
@@ -590,11 +634,15 @@ namespace ConfigOpcUa
                 vm.WindowTitle = $"OpcUa - {pName}";
             }
 
+            Debug.Print("1");
             if ((bool)mainWindow.ShowDialog())
             {
+                Debug.Print("2");
                 if (mainWindow.DataContext is WpfControlLibrary.MainViewModel mvm)
                 {
+                    Debug.Print("3");
                     SaveConfiguration(pName, mvm);
+                    Debug.Print("4");
                 }
             }
         }
@@ -694,19 +742,25 @@ namespace ConfigOpcUa
             ott.Name = opcObject.Name;
             ott.Description = $"{opcObject.Publish};{opcObject.IsImported}";
             ott.VariablesCount = (ushort)opcObject.Items.Count;
+            ott.BaseType = $"{opcObject.Id}";
             foreach (WpfControlLibrary.OpcObjectItem ooi in opcObject.Items)
             {
                 if (_basicTypes.TryGetValue(ooi.SelectedBasicType, out byte typeCode))
                 {
-                    VariablesType vt = new VariablesType();
-                    vt.Name = ooi.Name;
-                    vt.BasicType = typeCode;
+                    VariablesType vt = new VariablesType
+                    {
+                        Name = ooi.Name,
+                        BasicType = typeCode,
+                        Description = $"{ooi.Id}"
+                    };
                     ooi.SelectedAccess = ooi.WriteOutside ? ooi.Access[1] : ooi.Access[0];
                     if (_access.TryGetValue(ooi.SelectedAccess, out byte accessCode))
                     {
                         vt.AccessType = accessCode;
                         vt.ArraySize = (ushort)ooi.ArraySizeValue;
                         vt.Type = (ooi.SelectedRank == ooi.Rank[0]) ? (byte)0 : (byte)1;
+                        Debug.Print($"Object= {opcObject.Name}, Item= {vt.Name}, Type={vt.Type}");
+                        Debug.Flush();
                         variables.Add(vt);
                     }
                 }
@@ -742,6 +796,7 @@ namespace ConfigOpcUa
         }
         private void SaveConfiguration(string fileName, WpfControlLibrary.MainViewModel mvm)
         {
+            Debug.Print($"SaveConfiguration {fileName}");
             OPCUAParametersType pars = new OPCUAParametersType();
             pars.ObjectTypeCount = (ushort)mvm.Objects.Count;
             pars.UsePublisher = (mvm.PublisherObjects.Count != 0) ? true : false;
@@ -756,10 +811,12 @@ namespace ConfigOpcUa
             List<SubscriberType> sts = new List<SubscriberType>();
             foreach (WpfControlLibrary.PublisherItem pi in mvm.PublisherObjects)
             {
-                SubscriberType st = new SubscriberType();
-                st.PublisherRootType = pi.OpcObject.Name;
-                st.SendPeriod = (ushort)pi.SendingPeriod;
-                st.Description = $"{pi.WriterGroupId};{pi.DataSetWriterId};{pi.OpcObject.Name}";
+                SubscriberType st = new SubscriberType
+                {
+                    PublisherRootType = pi.OpcObject.Name,
+                    SendPeriod = (ushort)pi.SendingPeriod,
+                    Description = $"{pi.WriterGroupId};{pi.DataSetWriterId};{pi.OpcObject.Name}"
+                };
                 sts.Add(st);
             }
             pars.Subscriber = sts.ToArray();
@@ -785,8 +842,11 @@ namespace ConfigOpcUa
                 Debug.Print($"Server {clientItem.RxTxPeriod}");
                 st.QueryPeriod = (ushort)clientItem.RxTxPeriod;
                 listSt.Add(st);
-                ObjectTypeType objectTypeType = CreateObjectTypeType(clientItem.OpcObject, id++);
-                objects.Add(objectTypeType);
+                if (clientItem.OpcObject.IsImported)
+                {
+                    ObjectTypeType objectTypeType = CreateObjectTypeType(clientItem.OpcObject, id++);
+                    objects.Add(objectTypeType);
+                }
             }
             pars.Server = listSt.ToArray();
             pars.ServersCount = (ushort)listSt.Count();
@@ -803,6 +863,21 @@ namespace ConfigOpcUa
             {
                 serializer.Serialize(tw, pars);
                 Debug.Print("Po serialize");
+            }
+
+            string fileCsv = Path.ChangeExtension(fileName, ".csv");
+            using (TextWriter tw = new StreamWriter(fileCsv))
+            {
+                foreach (WpfControlLibrary.OpcObject oo in mvm.Objects)
+                {
+                    if (!oo.IsImported && !oo.Publish)
+                    {
+                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                        {
+                            tw.WriteLine($"{ooi.Name};{ooi.SelectedBasicType};{ooi.Id}");
+                        }
+                    }
+                }
             }
         }
     }

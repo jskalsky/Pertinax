@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:WpfControlLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border BorderBrush="DarkGray" BorderThickness="1" Width="100" Height="22">
+    <Border Name="BorderControl" BorderBrush="DarkGray" BorderThickness="1" Height="22">
         <Grid Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

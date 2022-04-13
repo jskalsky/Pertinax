@@ -14,7 +14,7 @@
         <Label DockPanel.Dock="Top" Content="{Binding WindowTitle}" Background="LightSteelBlue" Foreground="White"/>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,5,5">
             <Button Content="Importovat" Width="100" Click="Import_Click" Margin="0,0,30,0"/>
-            <Button Content="OK" IsDefault="True" Click="ButtonOk_Click" Width="50"/>
+            <Button Content="OK" Click="ButtonOk_Click" Width="50"/>
             <Button Content="Zrušit" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
         </StackPanel>
         <Grid>
@@ -124,14 +124,26 @@
                                     <GridViewColumn Header="Perioda Rx/Tx" Width="120">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <local:NumericUpDown NudMin="0" NudIncrement="10" NudMax="1000" NudValue="{Binding RxTxPeriod,Mode=TwoWay}"  HorizontalAlignment="Left"/>
+                                                <Grid Width="120">
+                                                    <local:NumericUpDown NudMin="0" NudIncrement="10" NudMax="1000" NudValue="{Binding RxTxPeriod,Mode=TwoWay}"  HorizontalAlignment="Center"/>
+                                                </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="Platnost" Width="60">
+                                    <GridViewColumn Header="Ip adresa" Width="100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Validity}"/>
+                                                <TextBox Text="{Binding IpAddress,Mode=TwoWay}" TextAlignment="Right" Width="90" LostFocus="Ip_LostFocus"
+                                                         GotFocus="Ip_GotFocus"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Povolit" Width="60">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Width="60">
+                                                    <CheckBox IsChecked="{Binding Validity}" HorizontalAlignment="Center"/>
+                                                </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -148,11 +160,28 @@
                 </Grid.ColumnDefinitions>
                 <GroupBox Header="Seznam objektů">
                     <DockPanel LastChildFill="True">
-                        <StackPanel Orientation="Horizontal" Margin="5,5,0,5" DockPanel.Dock="Bottom">
-                            <Button Content="Přidat(Server)" Click="AddObject_Click" Width="80"/>
-                            <Button Content="Přidat(Publisher)" Click="PublishObject_Click" Width="90" Margin="5,0,0,0"/>
-                            <Button Content="Zrušit" Width="50" Margin="5,0,0,0" Click="ButtonObjectDelete_Click"/>
-                        </StackPanel>
+                        <Grid DockPanel.Dock="Bottom">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <GroupBox Header="Přidat">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Server" Click="AddObject_Click" Width="60"/>
+                                    <Button Grid.Column="1" Content="Publisher" Click="PublishObject_Click" Width="60"/>
+                                    <Button Grid.Row="1" Content="Client" Width="60" Margin="0,5,0,0" Click="ButtonObjectToClientClick"/>
+                                </Grid>
+                            </GroupBox>
+                            <Button Grid.Column="1" Content="Zrušit" Width="50" Margin="5,5,5,5" Click="ButtonObjectDelete_Click"/>
+                        </Grid>
                         <ListView MinWidth="150" Name="Objects" Grid.Column="0" ItemsSource="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedOpcObject}" 
                               SelectionChanged="ListViewObjects_SelectionChanged" ContextMenuOpening="Objects_ContextMenuOpening" SelectionMode="Single">
                             <ListView.View>
@@ -182,12 +211,14 @@
                             <Label Content="Počet" Margin="5,0,0,0"/>
                             <local:NumericUpDown NudMin="1" NudMax="2000" NudIncrement="1" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
                             <ComboBox ItemsSource="{Binding SetupObjectItem.BasicTypes}" SelectedItem="{Binding SelectedSetupItem}" Width="70" Margin="5,0,0,0"/>
-                            <ComboBox ItemsSource="{Binding SetupObjectItem.Rank}" Width="170" Margin="5,0,0,0" SelectedItem="{Binding SelectedSetupRank}"/>
+                            <ComboBox ItemsSource="{Binding SetupObjectItem.Rank}" Width="170" Margin="5,0,0,0" SelectedItem="{Binding SelectedSetupRank}" SelectionChanged="RankSetup_SelectionChanged"/>
+                            <Label Content="Velikost pole" Margin="5,0,0,0"/>
+                            <local:NumericUpDown NudMin="0" NudMax="2000" NudIncrement="1" Margin="5,0,0,0" NudValue="{Binding SelectedSetupLength, Mode=TwoWay}" IsEnabled="{Binding EnableSetupLength}"/>
                             <Button Content="Přidat" Click="ButtonAddItem_Click" Width="50" Margin="10,0,0,0"/>
                             <Button Content="Upravit" Click="MenuItemChange_Click" Width="50" Margin="5,0,0,0"/>
                             <Button Content="Zrušit" Click="ButtonDelete_Click" Width="50" Margin="5,0,0,0"/>
                         </StackPanel>
-                        <ListView ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectionMode="Multiple">
+                        <ListView Name="ListViewItems" ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectionMode="Multiple" >
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <Setter Property="IsSelected" Value="{Binding Selected,Mode=TwoWay}"/>
@@ -229,6 +260,13 @@
                                                 <Grid Width="80">
                                                     <CheckBox HorizontalAlignment="Center" IsEnabled="{Binding EnableWriteOutside}" IsChecked="{Binding WriteOutside}"/>
                                                 </Grid>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Id" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding Id, Mode=TwoWay}" TextAlignment="Right"  Width="80"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

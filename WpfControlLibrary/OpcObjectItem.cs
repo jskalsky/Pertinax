@@ -28,13 +28,15 @@ namespace WpfControlLibrary
         private bool _enableArraySize;
         private bool _enableWriteOutside;
 
+        private string _id;
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public OpcObjectItem(string name, bool publish)
+        public OpcObjectItem(string name, bool publish, string id = "")
         {
             Debug.Print($"");
             Name = name;
@@ -45,10 +47,16 @@ namespace WpfControlLibrary
             EnableBasicTypes = true;
             EnableRank = true;
             WriteOutside = false;
-            EnableWriteOutside = publish ? false : true;
+            EnableWriteOutside = !publish;
             RankTag = this;
+            Id = id;
         }
 
+        public string Id
+        {
+            get { return _id;}
+            set { _id = value;OnPropertyChanged("Id"); }
+        }
         public string[] BasicTypes
         {
             get { return _basicTypes; }

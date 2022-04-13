@@ -19,31 +19,34 @@ namespace WpfControlLibrary
         private bool _isImported;
         private OpcObjectItem _selectedItem;
         private static int _nextDefaultNameIndex = 1;
-        private int _nextItemIndex = 1;
-        public OpcObject()
+        public OpcObject(string id = "")
         {
             Name = $"{DefaultName}{_nextDefaultNameIndex++}";
             Publish = false;
             IsImported = false;
+            Id = id;
         }
-        public OpcObject(string name, bool publish, bool imported)
+        public OpcObject(string name, bool publish, bool imported, string id = "")
         {
             Name = name;
             int index = GetDefaultIndex(name, DefaultName);
-            if(index > 0 && index >= _nextDefaultNameIndex)
+            if (index > 0 && index >= _nextDefaultNameIndex)
             {
                 _nextDefaultNameIndex = index + 1;
             }
             Publish = publish;
             IsImported = imported;
+            Id = id;
         }
 
-        public OpcObject(bool publish, bool imported) : this()
+        public OpcObject(bool publish, bool imported, string id = "") : this(id)
         {
             Publish = publish;
             IsImported = imported;
         }
 
+        public string Id { get; }
+        public int NextItemIndex { get; set; } = 1;
         public string Name
         {
             get { return _name; }
@@ -83,18 +86,18 @@ namespace WpfControlLibrary
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public OpcObjectItem AddItem()
+        public OpcObjectItem AddItem(string id = "")
         {
-            return AddItem($"{DefaultItemName}{_nextItemIndex}");
+            return AddItem($"{DefaultItemName}{NextItemIndex}", id);
         }
-        public OpcObjectItem AddItem(string name)
+        public OpcObjectItem AddItem(string name, string id = "")
         {
-            int index = GetDefaultIndex(name,DefaultItemName);
-            if (index > 0 && index >= _nextItemIndex)
+            int index = GetDefaultIndex(name, DefaultItemName);
+            if (index > 0 && index >= NextItemIndex)
             {
-                _nextItemIndex = index + 1;
+                NextItemIndex = index + 1;
             }
-            OpcObjectItem ooi = new OpcObjectItem(name, Publish);
+            OpcObjectItem ooi = new OpcObjectItem(name, Publish, id);
             _items.Add(ooi);
             return ooi;
         }
@@ -102,9 +105,9 @@ namespace WpfControlLibrary
         public void AddItem(OpcObjectItem ooi)
         {
             int index = GetDefaultIndex(ooi.Name, DefaultItemName);
-            if (index > 0 && index >= _nextItemIndex)
+            if (index > 0 && index >= NextItemIndex)
             {
-                _nextItemIndex = index + 1;
+                NextItemIndex = index + 1;
             }
             _items.Add(ooi);
         }
@@ -144,7 +147,7 @@ namespace WpfControlLibrary
                 if (text == defaultName)
                 {
                     StringBuilder sb = new StringBuilder();
-                    foreach(char ch in ll)
+                    foreach (char ch in ll)
                     {
                         sb.Append(ch);
                     }

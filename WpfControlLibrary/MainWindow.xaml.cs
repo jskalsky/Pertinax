@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -60,22 +61,18 @@ namespace WpfControlLibrary
         }
         private void AddObject_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
-                OpcObject oo = new OpcObject();
-                if (oo != null)
-                {
-                    vm.Objects.Add(oo);
-                    vm.SelectedOpcObject = oo;
-                }
+                OpcObject oo = new OpcObject(NodeId.NextId());
+                vm.Objects.Add(oo);
+                vm.SelectedOpcObject = oo;
+                Objects.ScrollIntoView(oo);
             }
         }
 
         private void ListViewObjects_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
                 if (vm.SelectedOpcObject != null)
                 {
@@ -85,16 +82,17 @@ namespace WpfControlLibrary
 
         private void ButtonAddItem_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
                 if (vm.SelectedOpcObject != null)
                 {
                     for (int i = 0; i < vm.RepetitionRateValue; ++i)
                     {
-                        OpcObjectItem ooi = vm.SelectedOpcObject.AddItem();
+                        OpcObjectItem ooi = (vm.SelectedOpcObject.Id != "") ? vm.SelectedOpcObject.AddItem(NodeId.NextId()) : vm.SelectedOpcObject.AddItem();
                         ooi.SelectedBasicType = vm.SelectedSetupItem;
                         ooi.SelectedRank = vm.SelectedSetupRank;
+                        ooi.ArraySizeValue = vm.SelectedSetupLength;
+                        ListViewItems.ScrollIntoView(ooi);
                     }
                 }
             }
@@ -102,7 +100,21 @@ namespace WpfControlLibrary
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
+            if(DataContext is MainViewModel mvm)
+            {
+                foreach(ClientItem ci in mvm.ClientObjects)
+                {
+                    if(!IPAddress.TryParse(ci.IpAddress, out IPAddress ip))
+                    {
+                        MessageBox.Show($"Chybně zadaná Ip adresa {ci.IpAddress}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                        e.Handled = true;
+                        return;
+                    }
+                }
+            }
+            e.Handled = true;
             DialogResult = true;
+            Close();
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
@@ -123,40 +135,37 @@ namespace WpfControlLibrary
 
         private void AddSubscriber_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Multiselect = false;
-            ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            ofd.FileName = string.Empty;
-            if (ofd.ShowDialog() == true)
+            OpenFileDialog ofd = new OpenFileDialog
             {
-                Debug.Print("AddSubscriber_Click");
-                if (DataContext is MainViewModel vm)
-                {
-                    vm.SubscriberPath = ofd.FileName;
-                }
+                Multiselect = false,
+                Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                FileName = string.Empty
+            };
+            if (ofd.ShowDialog() != true) return;
+            Debug.Print("AddSubscriber_Click");
+            if (DataContext is MainViewModel vm)
+            {
+                vm.SubscriberPath = ofd.FileName;
             }
         }
 
         private void PublishObject_Click(object sender, RoutedEventArgs e)
         {
             Debug.Print("Publish");
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
                 OpcObject oo = new OpcObject(true, false);
-                if (oo != null)
+                vm.Objects.Add(oo);
+                Objects.ScrollIntoView(oo);
+                Debug.Print("Object added");
+                vm.SelectedOpcObject = oo;
+                if (oo.Publish)
                 {
-                    vm.Objects.Add(oo);
-                    Debug.Print("Object added");
-                    vm.SelectedOpcObject = oo;
-                    if (oo.Publish)
-                    {
-                        Debug.Print("Je to publish");
-                        WpfControlLibrary.PublisherItem pi = new PublisherItem(oo, vm.PublisherId);
-                        vm.PublisherObjects.Add(pi);
-                        Debug.Print("Pridano");
-                    }
+                    Debug.Print("Je to publish");
+                    WpfControlLibrary.PublisherItem pi = new PublisherItem(oo, vm.PublisherId);
+                    vm.PublisherObjects.Add(pi);
+                    Debug.Print("Pridano");
                 }
             }
         }
@@ -164,8 +173,7 @@ namespace WpfControlLibrary
         private void MenuItemPublish_Click(object sender, RoutedEventArgs e)
         {
             Debug.Print($"sender= {sender}");
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
                 Debug.Print($"Selected {vm.SelectedOpcObject}, {vm.SelectedOpcObject.Name}");
                 vm.PublisherObjects.Add(new PublisherItem(vm.SelectedOpcObject, vm.PublisherId));
@@ -175,8 +183,7 @@ namespace WpfControlLibrary
         private void Objects_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             Debug.Print($"1 {sender}");
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
                 Debug.Print($"Selected {vm.SelectedOpcObject}");
                 vm.EnableAddToPublisher = vm.SelectedOpcObject.Publish ? true : false;
@@ -188,8 +195,7 @@ namespace WpfControlLibrary
             if (e.AddedItems.Count == 1)
             {
                 string rank = (string)e.AddedItems[0];
-                MainViewModel vm = DataContext as MainViewModel;
-                if (vm != null)
+                if (DataContext is MainViewModel vm)
                 {
                     if (sender is ComboBox cb)
                     {
@@ -213,39 +219,56 @@ namespace WpfControlLibrary
 
         private void Import_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Multiselect = false;
-            ofd.Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*";
-            if (string.IsNullOrEmpty(WpfControlLibrary.Properties.Settings.Default.LastConfigFolder))
+            OpenFileDialog ofd = new OpenFileDialog
             {
-                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            }
-            else
+                Multiselect = false,
+                Filter = "OpcUa cfg files(*.OPCUA)|*.OPCUA|All files(*.*)|*.*",
+                InitialDirectory = string.IsNullOrEmpty(WpfControlLibrary.Properties.Settings.Default.LastConfigFolder)
+                    ? Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+                    : Properties.Settings.Default.LastConfigFolder,
+                FileName = string.Empty
+            };
+            if (ofd.ShowDialog() != true) return;
+            Properties.Settings.Default.LastConfigFolder = System.IO.Path.GetDirectoryName(ofd.FileName);
+            Properties.Settings.Default.Save();
+            Debug.Print("AddSubscriber_Click");
+            if (DataContext is MainViewModel vm)
             {
-                ofd.InitialDirectory = Properties.Settings.Default.LastConfigFolder;
-            }
-            ofd.FileName = string.Empty;
-            if (ofd.ShowDialog() == true)
-            {
-                Properties.Settings.Default.LastConfigFolder = System.IO.Path.GetDirectoryName(ofd.FileName);
-                Properties.Settings.Default.Save();
-                Debug.Print("AddSubscriber_Click");
-                if (DataContext is MainViewModel vm)
-                {
-                    vm.SubscriberPath = ofd.FileName;
-                }
+                vm.SubscriberPath = ofd.FileName;
             }
         }
 
         private void MenuItemChange_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel vm = DataContext as MainViewModel;
-            if (vm != null)
+            if (DataContext is MainViewModel vm)
             {
                 EditObjectItemDialog editObjectItemDialog = new EditObjectItemDialog();
-                if(editObjectItemDialog.ShowDialog()==true)
+                Debug.Print($"vmei= {editObjectItemDialog.DataContext}");
+                Debug.Flush();
+                if (editObjectItemDialog.DataContext is ViewModelEditItems vmei)
                 {
-                    if(editObjectItemDialog.DataContext is ViewModelEditItems vmei)
+                    int selectedCount = 0;
+                    OpcObjectItem selectedItem = null;
+                    foreach (OpcObjectItem ooi in vm.SelectedOpcObject.Items)
+                    {
+                        if (ooi.Selected)
+                        {
+                            ++selectedCount;
+                            selectedItem = ooi;
+                        }
+                    }
+                    Debug.Print($"Sel= {selectedCount}");
+                    Debug.Flush();
+                    if (selectedCount == 1)
+                    {
+                        if (selectedItem != null) vmei.SelectedBasicType = selectedItem.SelectedBasicType;
+                        Debug.Print($"s {vmei.SelectedBasicType}, {selectedItem.SelectedBasicType}");
+                        if(selectedItem!=null) vmei.SelectedRank = selectedItem.SelectedRank;
+                        Debug.Print($"s {vmei.SelectedRank}, {selectedItem.SelectedRank}");
+                        if (selectedItem!=null) vmei.WriteOutside = selectedItem.WriteOutside;
+                        if (selectedItem != null) vmei.ArraySizeValue = selectedItem.ArraySizeValue;
+                    }
+                    if (editObjectItemDialog.ShowDialog() == true)
                     {
                         foreach (OpcObjectItem ooi in vm.SelectedOpcObject.Items)
                         {
@@ -267,21 +290,26 @@ namespace WpfControlLibrary
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult mbr = MessageBox.Show("Opravdu zrušit vybranou položku(položky) ?", "OpcUa", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if(mbr == MessageBoxResult.Yes)
+            if (mbr == MessageBoxResult.Yes)
             {
                 List<OpcObjectItem> erase = new List<OpcObjectItem>();
-                if(DataContext is MainViewModel mvm)
+                if (DataContext is MainViewModel mvm)
                 {
-                    foreach(OpcObjectItem ooi in mvm.SelectedOpcObject.Items)
+                    foreach (OpcObjectItem ooi in mvm.SelectedOpcObject.Items)
                     {
-                        if(ooi.Selected)
+                        if (ooi.Selected)
                         {
                             erase.Add(ooi);
                         }
                     }
-                    foreach(OpcObjectItem ooi in erase)
+                    foreach (OpcObjectItem ooi in erase)
                     {
                         mvm.SelectedOpcObject.Items.Remove(ooi);
+                    }
+
+                    if (mvm.SelectedOpcObject.Items.Count == 0)
+                    {
+                        mvm.SelectedOpcObject.NextItemIndex = 1;
                     }
                 }
             }
@@ -290,12 +318,69 @@ namespace WpfControlLibrary
         private void ButtonObjectDelete_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult mbr = MessageBox.Show("Opravdu zrušit vybraný objekt ?", "OpcUa", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if(mbr == MessageBoxResult.Yes)
+            if (mbr == MessageBoxResult.Yes)
             {
-                if(DataContext is MainViewModel mvm)
+                if (DataContext is MainViewModel mvm)
                 {
                     mvm.Objects.Remove(mvm.SelectedOpcObject);
                 }
+            }
+        }
+
+        private void RankSetup_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                if (e.AddedItems.Count == 1)
+                {
+                    if (e.AddedItems[0] is string s)
+                    {
+                        if (s == "Pole")
+                        {
+                            vm.EnableSetupLength = true;
+                        }
+                        else
+                        {
+                            vm.EnableSetupLength = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ButtonObjectToClientClick(object sender, RoutedEventArgs e)
+        {
+            Debug.Print($"ButtonObjectToClientClick");
+            if (DataContext is MainViewModel vm)
+            {
+                OpcObject oo = new OpcObject(NodeId.NextId());
+                vm.Objects.Add(oo);
+                vm.SelectedOpcObject = oo;
+                Objects.ScrollIntoView(oo);
+
+                Debug.Print($"Selected {vm.SelectedOpcObject}, {vm.SelectedOpcObject.Name}");
+                vm.ClientObjects.Add(new ClientItem(string.Empty,vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject,true,100));
+            }
+        }
+
+        private void Ip_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(sender is TextBox tb)
+            {
+                if(!IPAddress.TryParse(tb.Text, out IPAddress ip))
+                {
+                    MessageBox.Show($"Chybně zadaná Ip adresa {tb.Text}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void Ip_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(sender is TextBox tb)
+            {
+                tb.SelectAll();
+                e.Handled = true;
             }
         }
     }

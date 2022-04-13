@@ -72,6 +72,7 @@
       <DependentUpon>EditObjectItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImportedItem.cs" />
+    <Compile Include="NodeId.cs" />
     <Compile Include="ViewModelEditItems.cs" />
     <Compile Include="OpcObject.cs" />
     <Compile Include="OpcObjectItem.cs" />
