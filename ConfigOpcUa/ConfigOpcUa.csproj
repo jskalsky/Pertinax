@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigOpcUa.cs" />
+    <Compile Include="Flag.cs" />
     <Compile Include="OpcUaCfg.cs" />
     <Compile Include="OpcUaPars.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

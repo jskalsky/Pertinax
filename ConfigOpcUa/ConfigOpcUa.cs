@@ -33,7 +33,7 @@ namespace ConfigOpcUa
         private readonly List<WpfControlLibrary.ClientItem> _clientItems;
 
         private readonly List<WpfControlLibrary.PortsNode> _ports;
-        private readonly Dictionary<string, string> _allPorts;
+        private readonly Dictionary<string, Flag> _allPorts;
         public ConfigOpcUa()
         {
             lName = "OpcUa";
@@ -53,7 +53,7 @@ namespace ConfigOpcUa
             _publisherItems = new List<WpfControlLibrary.PublisherItem>();
             _clientItems = new List<WpfControlLibrary.ClientItem>();
             _ports = new List<WpfControlLibrary.PortsNode>();
-            _allPorts = new Dictionary<string, string>();
+            _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
         }
 
@@ -127,11 +127,11 @@ namespace ConfigOpcUa
         public override byte[] CheCoLabel(int mod, string pLabel)
         {
             Debug.Print($"CheCoLabel {mod}, {pLabel}");
-            if (!_allPorts.TryGetValue(pLabel, out string port))
+            if (!_allPorts.TryGetValue(pLabel, out Flag flag))
             {
                 throw new ApplicationException($"Unknown label {pLabel}");
             }
-            string[] items = port.Split('.');
+            string[] items = flag.Text.Split('.');
             //            for (int i = 0; i < items.Length; ++i)
             //            {
             //                Debug.Print($"item {i}, {items[i]}");
@@ -179,7 +179,7 @@ namespace ConfigOpcUa
             bw.Write(IntelMotorola(compiledType));
             bw.Write(IntelMotorola(compiledIndex));
             bw.Write((uint)0);
-            bw.Write((ushort)0);
+            bw.Write(IntelMotorola(flag.ArrayIndex));
             bw.Write(Encoding.ASCII.GetBytes(items[flagIndex]));
             bw.Close();
             return ms.ToArray();
@@ -233,7 +233,7 @@ namespace ConfigOpcUa
                     ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
                     ooi.ArraySizeValue = vt.ArraySize;
                     ooi.SelectedRank = (vt.Type == 0) ? ooi.Rank[0] : ooi.Rank[1];
-                    WpfControlLibrary.NodeId.SetId(vt.Description);
+                    WpfControlLibrary.NodeId.CorrectNumericId(vt.Description);
                     ooi.Id = vt.Description;
                     //                                    Debug.Print($"Item {vt.Name}");
                     oo.AddItem(ooi);
@@ -249,7 +249,7 @@ namespace ConfigOpcUa
 
         private WpfControlLibrary.OpcObject ImportObject(OPCUAParametersType pars, string name, string cfgName, bool publish)
         {
-            foreach (ObjectTypeType ott in pars.ObjectType)
+/*            foreach (ObjectTypeType ott in pars.ObjectType)
             {
                 Debug.Print($"ImportObject {ott.Name}");
                 string[] items = ott.Description.Split(';');
@@ -273,7 +273,7 @@ namespace ConfigOpcUa
                         }
                     }
                 }
-            }
+            }*/
             return null;
         }
 
@@ -363,22 +363,29 @@ namespace ConfigOpcUa
                     foreach (ObjectTypeType ott in pars.ObjectType)
                     {
                         string[] objectItems = ott.Description.Split(';');
-                        bool publish = false;
+                        bool serverObject = false;
+                        bool clientObject = false;
+                        bool publisherObject = false;
+                        bool subscriberObject = false;
                         bool isImported = false;
-                        if (objectItems.Length == 2)
+                        if (objectItems.Length == 5)
                         {
-                            bool.TryParse(objectItems[0], out publish);
-                            bool.TryParse(objectItems[1], out isImported);
+                            bool.TryParse(objectItems[0], out serverObject);
+                            bool.TryParse(objectItems[1], out clientObject);
+                            bool.TryParse(objectItems[2], out publisherObject);
+                            bool.TryParse(objectItems[3], out subscriberObject);
+                            bool.TryParse(objectItems[4], out isImported);
                         }
                         if (!isImported)
                         {
-                            WpfControlLibrary.NodeId.SetId(ott.BaseType);
-                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, publish, isImported, ott.BaseType);
+                            WpfControlLibrary.NodeId.CorrectNumericId(ott.BaseType);
+                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name,serverObject,clientObject,
+                                publisherObject,subscriberObject,isImported, ott.BaseType);
                             if (oo == null)
                             {
                                 continue;
                             }
-                            AddItemsToObject(ott, oo, publish);
+                            AddItemsToObject(ott, oo, publisherObject);
                             _objects.Add(oo);
                         }
                     }
@@ -474,6 +481,23 @@ namespace ConfigOpcUa
             }
             return flags.ToArray();
         }
+
+        private ushort GetArrayIndex(string text)
+        {
+            int i = text.LastIndexOf('.');
+            if (i < 0)
+            {
+                return 0;
+            }
+
+            string index = text.Substring(i + 1);
+            if (ushort.TryParse(index, out ushort result))
+            {
+                return result;
+            }
+
+            return 0;
+        }
         private void CreatePorts()
         {
             _ports.Clear();
@@ -487,34 +511,47 @@ namespace ConfigOpcUa
             {
                 WpfControlLibrary.PortsNode objectNodeIn = inputs.Add(oo.Name);
                 WpfControlLibrary.PortsNode objectNodeOut = outputs.Add(oo.Name);
-                if (!oo.Publish && !oo.IsImported)
+                if (!oo.PublisherObject && !oo.IsImported)
                 {
-                    foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                    bool founded = false;
+                    foreach (WpfControlLibrary.ClientItem ci in _clientItems)
                     {
-                        if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                        if (ci.OpcObject.Name == oo.Name)
                         {
-                            string[] flags = ItemToText(oo.Name, ooi);
-                            foreach (string flag in flags)
+                            founded = true;
+                            break;
+                        }
+                    }
+
+                    if (!founded)
+                    {
+                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                        {
+                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
                             {
-                                sb.Clear();
-                                if (ooi.WriteOutside)
+                                string[] flags = ItemToText(oo.Name, ooi);
+                                foreach (string flag in flags)
                                 {
-                                    sb.Append($"I.OPCUA.{typeChar}.Server.{flag}");
-                                    objectNodeIn.Add(sb.ToString());
+                                    sb.Clear();
+                                    if (ooi.WriteOutside)
+                                    {
+                                        sb.Append($"I.OPCUA.{typeChar}.Server.{flag}");
+                                        objectNodeIn.Add(sb.ToString());
+                                    }
+                                    else
+                                    {
+                                        sb.Append($"O.OPCUA.{typeChar}.Server.{flag}");
+                                        objectNodeOut.Add(sb.ToString());
+                                    }
+                                    _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
                                 }
-                                else
-                                {
-                                    sb.Append($"O.OPCUA.{typeChar}.Server.{flag}");
-                                    objectNodeOut.Add(sb.ToString());
-                                }
-                                _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (oo.Publish && !oo.IsImported)
+                    if (oo.PublisherObject && !oo.IsImported)
                     {
                         foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                         {
@@ -526,7 +563,7 @@ namespace ConfigOpcUa
                                     sb.Clear();
                                     sb.Append($"O.OPCUA.{typeChar}.Pub.Sub1.{flag}");
                                     objectNodeOut.Add(sb.ToString());
-                                    _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
+                                    _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
                                 }
                             }
                         }
@@ -548,7 +585,7 @@ namespace ConfigOpcUa
                                 sb.Clear();
                                 sb.Append($"I.OPCUA.{typeChar}.Sub.Pub1.{flag}");
                                 obj.Add(sb.ToString());
-                                _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
+                                _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
                             }
                         }
                     }
@@ -577,7 +614,7 @@ namespace ConfigOpcUa
                                 sb.Append($"I.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
                                 objIns.Add(sb.ToString());
                             }
-                            _allPorts[sb.ToString().ToUpperInvariant()] = sb.ToString();
+                            _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
                         }
                     }
                 }
@@ -740,7 +777,7 @@ namespace ConfigOpcUa
             ObjectTypeType ott = new ObjectTypeType();
             ott.Id = id;
             ott.Name = opcObject.Name;
-            ott.Description = $"{opcObject.Publish};{opcObject.IsImported}";
+            ott.Description = $"{opcObject.ServerObject};{opcObject.ClientObject};{opcObject.PublisherObject};{opcObject.SubscriberObject};{opcObject.IsImported}";
             ott.VariablesCount = (ushort)opcObject.Items.Count;
             ott.BaseType = $"{opcObject.Id}";
             foreach (WpfControlLibrary.OpcObjectItem ooi in opcObject.Items)
@@ -802,7 +839,7 @@ namespace ConfigOpcUa
             pars.UsePublisher = (mvm.PublisherObjects.Count != 0) ? true : false;
             pars.UseSubscriber = (mvm.SubscriberObjects.Count != 0) ? true : false;
             pars.UseClient = (mvm.ClientObjects.Count != 0) ? true : false;
-            pars.UseServer = true;
+            pars.UseServer = (mvm.ServerObjects.Count != 0) ? true : false;
             pars.PublisherId = (ushort)mvm.PublisherId;
             pars.ServerRootType = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString}";
 
@@ -870,7 +907,7 @@ namespace ConfigOpcUa
             {
                 foreach (WpfControlLibrary.OpcObject oo in mvm.Objects)
                 {
-                    if (!oo.IsImported && !oo.Publish)
+                    if (!oo.IsImported && oo.ServerObject)
                     {
                         foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                         {

@@ -44,6 +44,7 @@ namespace WpfControlLibrary
             SubscriberObjects = new ObservableCollection<SubscriberItem>();
             PublisherObjects = new ObservableCollection<PublisherItem>();
             ClientObjects = new ObservableCollection<ClientItem>();
+            ServerObjects = new ObservableCollection<ServerItem>();
             _nextItemIndex = GetMaxItemIndex() + 1;
             ItemName = $"Item{_nextItemIndex}";
             GroupAddressString = "224.0.0.22";
@@ -97,7 +98,7 @@ namespace WpfControlLibrary
         public string SelectedSetupItem
         {
             get { return _selectedSetupItem; }
-            set { _selectedSetupItem = value;OnPropertyChanged("SelectedSetupItem"); }
+            set { _selectedSetupItem = value; OnPropertyChanged("SelectedSetupItem"); }
         }
 
         public string SelectedSetupRank
@@ -197,7 +198,7 @@ namespace WpfControlLibrary
         public bool EnableAddToPublisher
         {
             get { return _enableAddToPublisher; }
-            set { _enableAddToPublisher = value;OnPropertyChanged("EnableAddToPublisher"); }
+            set { _enableAddToPublisher = value; OnPropertyChanged("EnableAddToPublisher"); }
         }
 
         public bool EnableAddToSubscriber
@@ -221,6 +222,7 @@ namespace WpfControlLibrary
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
         public ObservableCollection<ClientItem> ClientObjects { get; private set; }
+        public ObservableCollection<ServerItem> ServerObjects { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

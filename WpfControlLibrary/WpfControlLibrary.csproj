@@ -73,6 +73,7 @@
     </Compile>
     <Compile Include="ImportedItem.cs" />
     <Compile Include="NodeId.cs" />
+    <Compile Include="ServerItem.cs" />
     <Compile Include="ViewModelEditItems.cs" />
     <Compile Include="OpcObject.cs" />
     <Compile Include="OpcObjectItem.cs" />

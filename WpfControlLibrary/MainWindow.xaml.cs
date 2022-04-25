@@ -63,10 +63,12 @@ namespace WpfControlLibrary
         {
             if (DataContext is MainViewModel vm)
             {
-                OpcObject oo = new OpcObject(NodeId.NextId());
+                OpcObject oo = new OpcObject(true, false, false, false, false);
                 vm.Objects.Add(oo);
                 vm.SelectedOpcObject = oo;
                 Objects.ScrollIntoView(oo);
+                ServerItem si = new ServerItem(vm.SelectedOpcObject);
+                vm.ServerObjects.Add(si);
             }
         }
 
@@ -88,7 +90,7 @@ namespace WpfControlLibrary
                 {
                     for (int i = 0; i < vm.RepetitionRateValue; ++i)
                     {
-                        OpcObjectItem ooi = (vm.SelectedOpcObject.Id != "") ? vm.SelectedOpcObject.AddItem(NodeId.NextId()) : vm.SelectedOpcObject.AddItem();
+                        OpcObjectItem ooi = (vm.SelectedOpcObject.Id != "") ? vm.SelectedOpcObject.AddItem(NodeId.GetNextNumericId()) : vm.SelectedOpcObject.AddItem();
                         ooi.SelectedBasicType = vm.SelectedSetupItem;
                         ooi.SelectedRank = vm.SelectedSetupRank;
                         ooi.ArraySizeValue = vm.SelectedSetupLength;
@@ -100,11 +102,11 @@ namespace WpfControlLibrary
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            if(DataContext is MainViewModel mvm)
+            if (DataContext is MainViewModel mvm)
             {
-                foreach(ClientItem ci in mvm.ClientObjects)
+                foreach (ClientItem ci in mvm.ClientObjects)
                 {
-                    if(!IPAddress.TryParse(ci.IpAddress, out IPAddress ip))
+                    if (!IPAddress.TryParse(ci.IpAddress, out IPAddress ip))
                     {
                         MessageBox.Show($"Chybně zadaná Ip adresa {ci.IpAddress}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                         e.Handled = true;
@@ -155,18 +157,15 @@ namespace WpfControlLibrary
             Debug.Print("Publish");
             if (DataContext is MainViewModel vm)
             {
-                OpcObject oo = new OpcObject(true, false);
+                OpcObject oo = new OpcObject(false, false, true, false, false);
                 vm.Objects.Add(oo);
                 Objects.ScrollIntoView(oo);
                 Debug.Print("Object added");
                 vm.SelectedOpcObject = oo;
-                if (oo.Publish)
-                {
-                    Debug.Print("Je to publish");
-                    WpfControlLibrary.PublisherItem pi = new PublisherItem(oo, vm.PublisherId);
-                    vm.PublisherObjects.Add(pi);
-                    Debug.Print("Pridano");
-                }
+                Debug.Print("Je to publish");
+                WpfControlLibrary.PublisherItem pi = new PublisherItem(oo, vm.PublisherId);
+                vm.PublisherObjects.Add(pi);
+                Debug.Print("Pridano");
             }
         }
 
@@ -183,11 +182,6 @@ namespace WpfControlLibrary
         private void Objects_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             Debug.Print($"1 {sender}");
-            if (DataContext is MainViewModel vm)
-            {
-                Debug.Print($"Selected {vm.SelectedOpcObject}");
-                vm.EnableAddToPublisher = vm.SelectedOpcObject.Publish ? true : false;
-            }
         }
 
         private void Rank_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -263,9 +257,9 @@ namespace WpfControlLibrary
                     {
                         if (selectedItem != null) vmei.SelectedBasicType = selectedItem.SelectedBasicType;
                         Debug.Print($"s {vmei.SelectedBasicType}, {selectedItem.SelectedBasicType}");
-                        if(selectedItem!=null) vmei.SelectedRank = selectedItem.SelectedRank;
+                        if (selectedItem != null) vmei.SelectedRank = selectedItem.SelectedRank;
                         Debug.Print($"s {vmei.SelectedRank}, {selectedItem.SelectedRank}");
-                        if (selectedItem!=null) vmei.WriteOutside = selectedItem.WriteOutside;
+                        if (selectedItem != null) vmei.WriteOutside = selectedItem.WriteOutside;
                         if (selectedItem != null) vmei.ArraySizeValue = selectedItem.ArraySizeValue;
                     }
                     if (editObjectItemDialog.ShowDialog() == true)
@@ -353,21 +347,21 @@ namespace WpfControlLibrary
             Debug.Print($"ButtonObjectToClientClick");
             if (DataContext is MainViewModel vm)
             {
-                OpcObject oo = new OpcObject(NodeId.NextId());
+                OpcObject oo = new OpcObject(false,true,false,false,false);
                 vm.Objects.Add(oo);
                 vm.SelectedOpcObject = oo;
                 Objects.ScrollIntoView(oo);
 
                 Debug.Print($"Selected {vm.SelectedOpcObject}, {vm.SelectedOpcObject.Name}");
-                vm.ClientObjects.Add(new ClientItem(string.Empty,vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject,true,100));
+                vm.ClientObjects.Add(new ClientItem(string.Empty, vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject, true, 100));
             }
         }
 
         private void Ip_LostFocus(object sender, RoutedEventArgs e)
         {
-            if(sender is TextBox tb)
+            if (sender is TextBox tb)
             {
-                if(!IPAddress.TryParse(tb.Text, out IPAddress ip))
+                if (!IPAddress.TryParse(tb.Text, out IPAddress ip))
                 {
                     MessageBox.Show($"Chybně zadaná Ip adresa {tb.Text}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -377,10 +371,38 @@ namespace WpfControlLibrary
 
         private void Ip_GotFocus(object sender, RoutedEventArgs e)
         {
-            if(sender is TextBox tb)
+            if (sender is TextBox tb)
             {
                 tb.SelectAll();
                 e.Handled = true;
+            }
+        }
+
+        private void SelectAddress(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void KeyboardSelectAddress(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void SelectivelyIgnoreMouseButton(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                if (!tb.IsKeyboardFocusWithin)
+                {
+                    e.Handled = true;
+                    tb.Focus();
+                }
             }
         }
     }

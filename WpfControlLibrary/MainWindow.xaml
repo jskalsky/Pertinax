@@ -29,14 +29,37 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <GroupBox Header="Nastavení">
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Lokální Ip adresa"/>
-                        <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                        <Label Content="Skupinová Ip adresa(Multicast)"/>
-                        <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                    </StackPanel>
-                </GroupBox>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="Nastavení">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="Lokální Ip adresa"/>
+                            <TextBox Text="{Binding LocalIpAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                     PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                            <Label Content="Skupinová Ip adresa(Multicast)"/>
+                            <TextBox Text="{Binding GroupAddressString,Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                     PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1" Header="Server">
+                        <ListView ItemsSource="{Binding ServerObjects}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Jméno" Width="80">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Path=OpcObject.Name}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </GroupBox>
+                </Grid>
                 <GroupBox Grid.Column="1" Header="Publisher">
                     <DockPanel LastChildFill="True">
                         <Grid>
@@ -134,7 +157,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBox Text="{Binding IpAddress,Mode=TwoWay}" TextAlignment="Right" Width="90" LostFocus="Ip_LostFocus"
-                                                         GotFocus="Ip_GotFocus"/>
+                                                         MouseDoubleClick="SelectAddress" GotKeyboardFocus="KeyboardSelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -176,8 +199,8 @@
                                         <ColumnDefinition Width="70"/>
                                     </Grid.ColumnDefinitions>
                                     <Button Content="Server" Click="AddObject_Click" Width="60"/>
-                                    <Button Grid.Column="1" Content="Publisher" Click="PublishObject_Click" Width="60"/>
-                                    <Button Grid.Row="1" Content="Client" Width="60" Margin="0,5,0,0" Click="ButtonObjectToClientClick"/>
+                                    <Button Grid.Row="0" Grid.Column="1" Content="Publisher" Click="PublishObject_Click" Width="60"/>
+                                    <Button Grid.Row="1" Grid.Column="0" Content="Client" Width="60" Margin="0,5,0,0" Click="ButtonObjectToClientClick"/>
                                 </Grid>
                             </GroupBox>
                             <Button Grid.Column="1" Content="Zrušit" Width="50" Margin="5,5,5,5" Click="ButtonObjectDelete_Click"/>
@@ -189,14 +212,8 @@
                                     <GridViewColumn Header="Jméno" Width="100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBox Text="{Binding Name,Mode=TwoWay}" Width="80"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Publikovat" Width="60">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <CheckBox IsChecked="{Binding Publish}" IsEnabled="False"/>
+                                                <TextBox Text="{Binding Name,Mode=TwoWay}" Width="80" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress" 
+                                                         PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -229,7 +246,8 @@
                                     <GridViewColumn Header="Jméno" Width="100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBox Text="{Binding Name, Mode=TwoWay}" TextAlignment="Right"  Width="80"/>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay}" TextAlignment="Right"  Width="80" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                         PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -266,7 +284,8 @@
                                     <GridViewColumn Header="Id" Width="100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBox Text="{Binding Id, Mode=TwoWay}" TextAlignment="Right"  Width="80"/>
+                                                <TextBox Text="{Binding Id, Mode=TwoWay}" TextAlignment="Right"  Width="80" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"
+                                                         MouseDoubleClick="SelectAddress" GotKeyboardFocus="KeyboardSelectAddress"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

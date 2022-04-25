@@ -14,19 +14,11 @@ namespace WpfControlLibrary
         private const string DefaultItemName = "Var";
         private readonly ObservableCollection<OpcObjectItem> _items = new ObservableCollection<OpcObjectItem>();
         private string _name;
-        private bool _publish;
-        private bool _enablePublish;
-        private bool _isImported;
         private OpcObjectItem _selectedItem;
         private static int _nextDefaultNameIndex = 1;
-        public OpcObject(string id = "")
-        {
-            Name = $"{DefaultName}{_nextDefaultNameIndex++}";
-            Publish = false;
-            IsImported = false;
-            Id = id;
-        }
-        public OpcObject(string name, bool publish, bool imported, string id = "")
+
+        public OpcObject(string name, bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported,
+            string nodeId)
         {
             Name = name;
             int index = GetDefaultIndex(name, DefaultName);
@@ -34,41 +26,33 @@ namespace WpfControlLibrary
             {
                 _nextDefaultNameIndex = index + 1;
             }
-            Publish = publish;
-            IsImported = imported;
-            Id = id;
+
+            ServerObject = serverObject;
+            ClientObject = clientObject;
+            PublisherObject = publisherObject;
+            SubscriberObject = subscriberObject;
+            IsImported = isImported;
+            Id = nodeId;
         }
 
-        public OpcObject(bool publish, bool imported, string id = "") : this(id)
+        public OpcObject(bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported) :
+            this(string.Empty, serverObject, clientObject, publisherObject, subscriberObject, isImported, string.Empty)
         {
-            Publish = publish;
-            IsImported = imported;
+            Name = $"{DefaultName}{_nextDefaultNameIndex++}";
+            Id = NodeId.GetNextNumericId();
         }
 
         public string Id { get; }
         public int NextItemIndex { get; set; } = 1;
+        public bool ServerObject { get; private set; }
+        public bool ClientObject { get; private set; }
+        public bool PublisherObject { get; private set; }
+        public bool SubscriberObject { get; private set; }
+        public bool IsImported { get; private set; }
         public string Name
         {
             get { return _name; }
             set { _name = value; OnPropertyChanged("Name"); }
-        }
-
-        public bool Publish
-        {
-            get { return _publish; }
-            set { _publish = value; OnPropertyChanged("Publish"); }
-        }
-
-        public bool EnablePublish
-        {
-            get { return _enablePublish; }
-            set { _enablePublish = value; OnPropertyChanged("EnablePublish"); }
-        }
-
-        public bool IsImported
-        {
-            get { return _isImported; }
-            set { _isImported = value; OnPropertyChanged("IsImported"); }
         }
 
         public OpcObjectItem SelectedItem
@@ -97,7 +81,7 @@ namespace WpfControlLibrary
             {
                 NextItemIndex = index + 1;
             }
-            OpcObjectItem ooi = new OpcObjectItem(name, Publish, id);
+            OpcObjectItem ooi = new OpcObjectItem(name, PublisherObject, id);
             _items.Add(ooi);
             return ooi;
         }
