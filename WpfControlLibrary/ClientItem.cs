@@ -13,14 +13,16 @@ namespace WpfControlLibrary
         public event PropertyChangedEventHandler PropertyChanged;
         private int _rxtxPeriod;
         private bool _validity;
+        private bool _monitoring;
         private string _ipAddress;
-        public ClientItem(string path, string name, string ipAddress, OpcObject opcObject, bool validity, int rxtxPeriod) : base(path,name)
+        public ClientItem(string path, string name, string ipAddress, OpcObject opcObject, bool validity, int rxtxPeriod, bool monitoring) : base(path,name)
         {
             Debug.Print($"Constructor ClientItem {rxtxPeriod}");
             IpAddress = ipAddress;
             RxTxPeriod = rxtxPeriod;
             Validity = validity;
             OpcObject = opcObject;
+            Monitoring = monitoring;
         }
 
         public OpcObject OpcObject { get; }
@@ -37,6 +39,11 @@ namespace WpfControlLibrary
             set { _validity = value; OnPropertyChanged("Validity"); }
         }
 
+        public bool Monitoring
+        {
+            get { return _monitoring; }
+            set { _monitoring = value;OnPropertyChanged("Monitoring"); }
+        }
         public string IpAddress
         {
             get { return _ipAddress; }

@@ -31,6 +31,7 @@ namespace ConfigOpcUa
         private readonly List<WpfControlLibrary.SubscriberItem> _subscriberItems;
         private readonly List<WpfControlLibrary.PublisherItem> _publisherItems;
         private readonly List<WpfControlLibrary.ClientItem> _clientItems;
+        private readonly List<WpfControlLibrary.ServerItem> _serverItems;
 
         private readonly List<WpfControlLibrary.PortsNode> _ports;
         private readonly Dictionary<string, Flag> _allPorts;
@@ -52,6 +53,7 @@ namespace ConfigOpcUa
             _subscriberItems = new List<WpfControlLibrary.SubscriberItem>();
             _publisherItems = new List<WpfControlLibrary.PublisherItem>();
             _clientItems = new List<WpfControlLibrary.ClientItem>();
+            _serverItems = new List<WpfControlLibrary.ServerItem>();
             _ports = new List<WpfControlLibrary.PortsNode>();
             _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
@@ -221,23 +223,34 @@ namespace ConfigOpcUa
         {
             try
             {
-                if(ott.Variables == null)
+                if (ott.Variables == null)
                 {
                     return;
                 }
                 foreach (VariablesType vt in ott.Variables)
                 {
-                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, publish);
+                    string[] iitems = vt.Description.Split(';');
+                    ushort ns = 0;
+                    string id = string.Empty;
+                    if (iitems.Length == 2)
+                    {
+                        ushort.TryParse(iitems[0], out ns);
+                        id = iitems[1];
+                    }
+                    else
+                    {
+                        if (iitems.Length == 1)
+                        {
+                            id = iitems[0];
+                        }
+                    }
+                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, ns, id);
                     ooi.SelectedBasicType = GetBasicType(vt.BasicType);
                     ooi.SelectedAccess = GetAccess(vt.AccessType);
                     ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
                     ooi.ArraySizeValue = vt.ArraySize;
                     ooi.SelectedRank = (vt.Type == 0) ? ooi.Rank[0] : ooi.Rank[1];
-                    WpfControlLibrary.NodeId.CorrectNumericId(vt.Description);
-                    ooi.Id = vt.Description;
-                    //                                    Debug.Print($"Item {vt.Name}");
                     oo.AddItem(ooi);
-                    //                                    Debug.Print($"Po add item {vt.Name}");
                 }
             }
             catch (Exception e)
@@ -249,35 +262,35 @@ namespace ConfigOpcUa
 
         private WpfControlLibrary.OpcObject ImportObject(OPCUAParametersType pars, string name, string cfgName, bool publish)
         {
-/*            foreach (ObjectTypeType ott in pars.ObjectType)
-            {
-                Debug.Print($"ImportObject {ott.Name}");
-                string[] items = ott.Description.Split(';');
-                Debug.Print($"items= {items.Length}");
-                if (items.Length == 2)
-                {
-                    bool pub = false;
-                    bool.TryParse(items[0], out pub);
-                    Debug.Print($"pub= {pub}, {items[0]}, {publish}");
-                    if (ott.Name == name && pub == publish)
-                    {
-                        Debug.Print("300");
-                        WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject($"{cfgName}_{name}", false, true);
-                        Debug.Print("301");
-                        if (oo != null)
+            /*            foreach (ObjectTypeType ott in pars.ObjectType)
                         {
-                            Debug.Print("302");
-                            AddItemsToObject(ott, oo, publish);
-                            Debug.Print("303");
-                            return oo;
-                        }
-                    }
-                }
-            }*/
+                            Debug.Print($"ImportObject {ott.Name}");
+                            string[] items = ott.Description.Split(';');
+                            Debug.Print($"items= {items.Length}");
+                            if (items.Length == 2)
+                            {
+                                bool pub = false;
+                                bool.TryParse(items[0], out pub);
+                                Debug.Print($"pub= {pub}, {items[0]}, {publish}");
+                                if (ott.Name == name && pub == publish)
+                                {
+                                    Debug.Print("300");
+                                    WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject($"{cfgName}_{name}", false, true);
+                                    Debug.Print("301");
+                                    if (oo != null)
+                                    {
+                                        Debug.Print("302");
+                                        AddItemsToObject(ott, oo, publish);
+                                        Debug.Print("303");
+                                        return oo;
+                                    }
+                                }
+                            }
+                        }*/
             return null;
         }
 
-        private void Import(string path, string objectName, bool receive, int period, WpfControlLibrary.MainViewModel mvm = null)
+        private void Import(string path, string objectName, bool receive, bool monitoring, int period, WpfControlLibrary.MainViewModel mvm = null)
         {
             Debug.Print("Import");
             if (File.Exists(path))
@@ -324,7 +337,7 @@ namespace ConfigOpcUa
                         Debug.Print("201");
                         if (oo != null)
                         {
-                            WpfControlLibrary.ClientItem ci = new WpfControlLibrary.ClientItem(path, objectName, ips[0], oo, receive, period);
+                            WpfControlLibrary.ClientItem ci = new WpfControlLibrary.ClientItem(path, objectName, ips[0], oo, receive, period, monitoring);
                             _clientItems.Add(ci);
                             if (mvm != null)
                             {
@@ -346,6 +359,7 @@ namespace ConfigOpcUa
             _subscriberItems.Clear();
             _publisherItems.Clear();
             _clientItems.Clear();
+            _serverItems.Clear();
             _ports.Clear();
             _allPorts.Clear();
             if (File.Exists(pName))
@@ -378,15 +392,14 @@ namespace ConfigOpcUa
                         }
                         if (!isImported)
                         {
-                            WpfControlLibrary.NodeId.CorrectNumericId(ott.BaseType);
-                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name,serverObject,clientObject,
-                                publisherObject,subscriberObject,isImported, ott.BaseType);
-                            if (oo == null)
-                            {
-                                continue;
-                            }
+                            WpfControlLibrary.NodeId.AddId(ott.BaseType);
+                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, serverObject, clientObject, publisherObject, subscriberObject, isImported, 0, ott.BaseType);
                             AddItemsToObject(ott, oo, publisherObject);
                             _objects.Add(oo);
+                            if (serverObject)
+                            {
+                                _serverItems.Add(new ServerItem(oo));
+                            }
                         }
                     }
 
@@ -424,7 +437,7 @@ namespace ConfigOpcUa
                                 string path = items[0];
                                 string objectName = items[1];
                                 bool.TryParse(items[2], out receive);
-                                Import(path, objectName, receive, 0);
+                                Import(path, objectName, receive, false, 0);
                             }
                         }
                     }
@@ -433,19 +446,21 @@ namespace ConfigOpcUa
                         foreach (ServerType st in pars.Server)
                         {
                             string[] items = st.Description.Split(';');
-                            bool receive = false;
-                            if (items.Length >= 5)
+                            if (items.Length == 6)
                             {
+                                bool receive = false;
+                                bool monitoring = false;
                                 string path = items[0];
                                 string objectName = items[1];
                                 bool.TryParse(items[3], out receive);
+                                bool.TryParse(items[5], out monitoring);
                                 if (string.IsNullOrEmpty(path))
                                 {
                                     foreach (WpfControlLibrary.OpcObject oo in _objects)
                                     {
                                         if (oo.Name == items[4])
                                         {
-                                            WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod);
+                                            WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod, monitoring);
                                             _clientItems.Add(ci);
                                             break;
                                         }
@@ -453,7 +468,7 @@ namespace ConfigOpcUa
                                 }
                                 else
                                 {
-                                    Import(path, objectName, receive, st.QueryPeriod);
+                                    Import(path, objectName, receive, monitoring, st.QueryPeriod);
                                 }
                             }
                         }
@@ -668,6 +683,11 @@ namespace ConfigOpcUa
                 {
                     vm.ClientObjects.Add(ci);
                 }
+
+                foreach (ServerItem si in _serverItems)
+                {
+                    vm.ServerObjects.Add(si);
+                }
                 vm.WindowTitle = $"OpcUa - {pName}";
             }
 
@@ -706,7 +726,7 @@ namespace ConfigOpcUa
                     }
                     foreach (string objectName in objectNames)
                     {
-                        Import(mvm.SubscriberPath, objectName, false, 100, mvm);
+                        Import(mvm.SubscriberPath, objectName, false, false, 100, mvm);
                     }
                 }
             }
@@ -788,7 +808,7 @@ namespace ConfigOpcUa
                     {
                         Name = ooi.Name,
                         BasicType = typeCode,
-                        Description = $"{ooi.Id}"
+                        Description = $"{ooi.Ns};{ooi.Id}"
                     };
                     ooi.SelectedAccess = ooi.WriteOutside ? ooi.Access[1] : ooi.Access[0];
                     if (_access.TryGetValue(ooi.SelectedAccess, out byte accessCode))
@@ -875,7 +895,7 @@ namespace ConfigOpcUa
             foreach (WpfControlLibrary.ClientItem clientItem in mvm.ClientObjects)
             {
                 ServerType st = new ServerType();
-                st.Description = $"{clientItem.ConfigurationPath};{clientItem.ObjectName};{clientItem.IpAddress};{clientItem.Validity};{clientItem.OpcObject.Name}";
+                st.Description = $"{clientItem.ConfigurationPath};{clientItem.ObjectName};{clientItem.IpAddress};{clientItem.Validity};{clientItem.OpcObject.Name};{clientItem.Monitoring}";
                 Debug.Print($"Server {clientItem.RxTxPeriod}");
                 st.QueryPeriod = (ushort)clientItem.RxTxPeriod;
                 listSt.Add(st);

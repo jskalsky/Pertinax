@@ -90,7 +90,7 @@ namespace WpfControlLibrary
                 {
                     for (int i = 0; i < vm.RepetitionRateValue; ++i)
                     {
-                        OpcObjectItem ooi = (vm.SelectedOpcObject.Id != "") ? vm.SelectedOpcObject.AddItem(NodeId.GetNextNumericId()) : vm.SelectedOpcObject.AddItem();
+                        OpcObjectItem ooi = vm.SelectedOpcObject.AddItem();
                         ooi.SelectedBasicType = vm.SelectedSetupItem;
                         ooi.SelectedRank = vm.SelectedSetupRank;
                         ooi.ArraySizeValue = vm.SelectedSetupLength;
@@ -300,11 +300,6 @@ namespace WpfControlLibrary
                     {
                         mvm.SelectedOpcObject.Items.Remove(ooi);
                     }
-
-                    if (mvm.SelectedOpcObject.Items.Count == 0)
-                    {
-                        mvm.SelectedOpcObject.NextItemIndex = 1;
-                    }
                 }
             }
         }
@@ -353,7 +348,7 @@ namespace WpfControlLibrary
                 Objects.ScrollIntoView(oo);
 
                 Debug.Print($"Selected {vm.SelectedOpcObject}, {vm.SelectedOpcObject.Name}");
-                vm.ClientObjects.Add(new ClientItem(string.Empty, vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject, true, 100));
+                vm.ClientObjects.Add(new ClientItem(string.Empty, vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject, true, 100, true));
             }
         }
 
@@ -404,6 +399,11 @@ namespace WpfControlLibrary
                     tb.Focus();
                 }
             }
+        }
+
+        private void TextBox_LostFocus()
+        {
+
         }
     }
 }

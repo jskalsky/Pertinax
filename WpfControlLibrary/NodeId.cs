@@ -10,51 +10,82 @@ namespace WpfControlLibrary
     public enum NodeIdType { Unknown, Numeric, String }
     public static class NodeId
     {
-        public const string DefaultNodeIdName = "NodeId";
-        public static string NodeIdString { get; private set; }
-        public static uint NodeIdNumeric { get; private set; } = 80000;
+        public const int NumericIdObjectBase = 80000;
+        public const int NumericIdBase = 85000;
+        private static HashSet<string> _idsString = new HashSet<string>();
+        private static readonly SortedSet<uint> _idsNumeric = new SortedSet<uint>();
+        private static readonly SortedSet<uint> _idsNumericObjects = new SortedSet<uint>();
         public static NodeIdType NodeIdType { get; private set; } = NodeIdType.Unknown;
-        public static int NextNodeIdIndex { get; private set; } = 1;
         public static string GetNextNumericId()
         {
-            return $"{NodeIdNumeric++}";
-        }
-
-        public static string GetNextStringId()
-        {
-            return $"{DefaultNodeIdName}{NextNodeIdIndex++}";
-        }
-
-        public static void CorrectNumericId(string idS)
-        {
-            uint id = 0;
-            if(uint.TryParse(idS, out id))
+            uint id = NumericIdBase;
+            foreach (uint numeric in _idsNumeric)
             {
-                if(id > NodeIdNumeric)
+                if (id != numeric)
                 {
-                    NodeIdNumeric = id + 1;
+                    break;
                 }
+
+                ++id;
             }
+
+            if (!_idsNumeric.Add(id))
+            {
+                return string.Empty;
+            }
+
+            return $"{id}";
         }
 
-        public static void CorrectStringId(string idS)
+        public static string GetNextObjectNumericId()
         {
-            int index = idS.IndexOf(DefaultNodeIdName);
-            if(index >= 0 && index + DefaultNodeIdName.Length  < idS.Length)
+            uint id = NumericIdObjectBase;
+            foreach (uint numeric in _idsNumericObjects)
             {
-                string nr = idS.Substring(index + 1);
-                if(!string.IsNullOrEmpty(nr))
+                if (id != numeric)
                 {
-                    int nnii = 0;
-                    if(int.TryParse(nr, out nnii))
-                    {
-                        if(nnii >  NextNodeIdIndex)
-                        {
-                            NextNodeIdIndex = nnii + 1;
-                        }
-                    }
+                    break;
                 }
+
+                ++id;
             }
+
+            if (!_idsNumericObjects.Add(id))
+            {
+                return string.Empty;
+            }
+
+            return $"{id}";
+        }
+
+        public static bool AddNumericId(string idS)
+        {
+            if(uint.TryParse(idS, out var id))
+            {
+                return _idsNumeric.Add(id);
+            }
+
+            return false;
+        }
+
+        public static bool AddObjectNumericId(string idS)
+        {
+            if (uint.TryParse(idS, out var id))
+            {
+                return _idsNumericObjects.Add(id);
+            }
+
+            return false;
+        }
+
+        public static bool AddId(string idS)
+        {
+            if (uint.TryParse(idS, out uint id))
+            {
+                return _idsNumeric.Add(id);
+            }
+
+            return _idsString.Add(idS);
         }
     }
 }

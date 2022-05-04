@@ -21,6 +21,7 @@ namespace WpfControlLibrary
         private string _name;
         private object _rankTag;
         private bool _selected;
+        private ushort _ns;
 
         private bool _enableBasicTypes;
         private bool _enableAccess;
@@ -36,7 +37,7 @@ namespace WpfControlLibrary
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public OpcObjectItem(string name, bool publish, string id = "")
+        public OpcObjectItem(string name, ushort ns, string id)
         {
             Debug.Print($"");
             Name = name;
@@ -47,15 +48,22 @@ namespace WpfControlLibrary
             EnableBasicTypes = true;
             EnableRank = true;
             WriteOutside = false;
-            EnableWriteOutside = !publish;
+            EnableWriteOutside = false;
             RankTag = this;
             Id = id;
+            NodeId.AddId(id);
+            Ns = ns;
         }
 
+        public ushort Ns
+        {
+            get { return _ns; }
+            set { _ns = value; OnPropertyChanged("Ns"); }
+        }
         public string Id
         {
-            get { return _id;}
-            set { _id = value;OnPropertyChanged("Id"); }
+            get { return _id; }
+            set { _id = value; OnPropertyChanged("Id"); }
         }
         public string[] BasicTypes
         {

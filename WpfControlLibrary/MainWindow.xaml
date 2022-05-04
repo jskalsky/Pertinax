@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="1100" WindowStyle="None">
+        Title="MainWindow" Height="500" Width="1200" WindowStyle="None">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -133,7 +133,7 @@
                                     <GridViewColumn Header="Jméno" Width="80">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding ObjectName}"/>
+                                                <TextBlock Text="{Binding OpcObject.Name}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -158,6 +158,15 @@
                                             <DataTemplate>
                                                 <TextBox Text="{Binding IpAddress,Mode=TwoWay}" TextAlignment="Right" Width="90" LostFocus="Ip_LostFocus"
                                                          MouseDoubleClick="SelectAddress" GotKeyboardFocus="KeyboardSelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Monitoring" Width="70">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Width="60">
+                                                    <CheckBox IsChecked="{Binding Monitoring}" HorizontalAlignment="Center"/>
+                                                </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -277,6 +286,15 @@
                                             <DataTemplate>
                                                 <Grid Width="80">
                                                     <CheckBox HorizontalAlignment="Center" IsEnabled="{Binding EnableWriteOutside}" IsChecked="{Binding WriteOutside}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="NS" Width="120">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Width="120">
+                                                    <local:NumericUpDown NudMin="0" NudIncrement="1" NudMax="255" NudValue="{Binding Ns,Mode=TwoWay}"  HorizontalAlignment="Center"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>

@@ -51,7 +51,7 @@ namespace WpfControlLibrary
             LocalIpAddressString = "10.10.13.253";
             WindowTitle = "OpcUa";
             RepetitionRateValue = 1;
-            _setupObjectItem = new OpcObjectItem("Setup", false);
+            _setupObjectItem = new OpcObjectItem("Setup", 0, "");
             SelectedSetupItem = _setupObjectItem.BasicTypes[0];
             SelectedSetupRank = _setupObjectItem.Rank[0];
             SelectedSetupLength = 0;

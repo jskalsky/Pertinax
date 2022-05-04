@@ -22,7 +22,37 @@ int main()
     signal(SIGTERM, stopHandler);
 
     UA_Server* server = UA_Server_new();
-    UA_ServerConfig_setDefault(UA_Server_getConfig(server));
+    UA_ServerConfig* pConfig = UA_Server_getConfig(server);
+    UA_ServerConfig_setDefault(pConfig);
+
+    if (pConfig->endpointsSize != 0)
+    {
+        printf("end= %u\n", pConfig->endpointsSize);
+        std::string endPoint((char*)pConfig->endpoints[0].endpointUrl.data, pConfig->endpoints[0].endpointUrl.length);
+        printf("endPoint= %s\n", endPoint.c_str());
+    }
+    std::string appUri((char*)pConfig->applicationDescription.applicationUri.data, pConfig->applicationDescription.applicationUri.length);
+    std::string productUri((char*)pConfig->applicationDescription.productUri.data, pConfig->applicationDescription.applicationUri.length);
+    std::string gat((char*)pConfig->applicationDescription.gatewayServerUri.data, pConfig->applicationDescription.gatewayServerUri.length);
+    std::string prof((char*)pConfig->applicationDescription.discoveryProfileUri.data, pConfig->applicationDescription.discoveryProfileUri.length);
+    printf("appUri= %s, prUri= %s, gat= %s, prof= %s\n", appUri.c_str(), productUri.c_str(), gat.c_str(), prof.c_str());
+    if (pConfig->applicationDescription.discoveryUrlsSize != 0)
+    {
+        printf("dis= %u\n", pConfig->applicationDescription.discoveryUrlsSize);
+        for (size_t i = 0; i < pConfig->applicationDescription.discoveryUrlsSize; ++i)
+        {
+            std::string disUrl((char*)pConfig->applicationDescription.discoveryUrls[i].data, pConfig->applicationDescription.discoveryUrls[i].length);
+        }
+    }
+    if (pConfig->serverUrlsSize != 0)
+    {
+        printf("ser %u\n", pConfig->serverUrlsSize);
+        for (size_t i = 0; i < pConfig->serverUrlsSize; ++i)
+        {
+            std::string url((char*)pConfig->serverUrls[i].data, pConfig->serverUrls[i].length);
+            printf("url= %s\n", url.c_str());
+        }
+    }
 
     UA_StatusCode retval = UA_Server_run(server, &running);
 

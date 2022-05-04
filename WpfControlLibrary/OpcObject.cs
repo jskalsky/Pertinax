@@ -12,38 +12,43 @@ namespace WpfControlLibrary
     {
         private const string DefaultName = "Pertinax";
         private const string DefaultItemName = "Var";
+        private const int IndexBase = 1;
         private readonly ObservableCollection<OpcObjectItem> _items = new ObservableCollection<OpcObjectItem>();
         private string _name;
         private OpcObjectItem _selectedItem;
-        private static int _nextDefaultNameIndex = 1;
 
-        public OpcObject(string name, bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported,
-            string nodeId)
+        private static HashSet<string> _objectNames = new HashSet<string>();
+        private HashSet<string> _itemNames = new HashSet<string>();
+
+        public OpcObject(bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported)
+        {
+            ServerObject = serverObject;
+            ClientObject = clientObject;
+            PublisherObject = publisherObject;
+            SubscriberObject = subscriberObject;
+            IsImported = isImported;
+            Name = GetNewName(_objectNames, DefaultName);
+            Id = NodeId.GetNextObjectNumericId();
+            Namespace = 0;
+        }
+        public OpcObject(string name, bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported, ushort ns, string nodeId)
         {
             Name = name;
-            int index = GetDefaultIndex(name, DefaultName);
-            if (index > 0 && index >= _nextDefaultNameIndex)
-            {
-                _nextDefaultNameIndex = index + 1;
-            }
+            _objectNames.Add(name);
+            Namespace = ns;
+            Id = nodeId;
+            NodeId.AddId(nodeId);
 
             ServerObject = serverObject;
             ClientObject = clientObject;
             PublisherObject = publisherObject;
             SubscriberObject = subscriberObject;
             IsImported = isImported;
-            Id = nodeId;
+            Id = NodeId.GetNextObjectNumericId();
         }
 
-        public OpcObject(bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported) :
-            this(string.Empty, serverObject, clientObject, publisherObject, subscriberObject, isImported, string.Empty)
-        {
-            Name = $"{DefaultName}{_nextDefaultNameIndex++}";
-            Id = NodeId.GetNextNumericId();
-        }
-
+        public ushort Namespace { get; }
         public string Id { get; }
-        public int NextItemIndex { get; set; } = 1;
         public bool ServerObject { get; private set; }
         public bool ClientObject { get; private set; }
         public bool PublisherObject { get; private set; }
@@ -70,29 +75,18 @@ namespace WpfControlLibrary
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public OpcObjectItem AddItem(string id = "")
+        public OpcObjectItem AddItem()
         {
-            return AddItem($"{DefaultItemName}{NextItemIndex}", id);
-        }
-        public OpcObjectItem AddItem(string name, string id = "")
-        {
-            int index = GetDefaultIndex(name, DefaultItemName);
-            if (index > 0 && index >= NextItemIndex)
-            {
-                NextItemIndex = index + 1;
-            }
-            OpcObjectItem ooi = new OpcObjectItem(name, PublisherObject, id);
+            string itemName = GetNewName(_itemNames, DefaultItemName);
+            string nodeId = NodeId.GetNextNumericId();
+            OpcObjectItem ooi = new OpcObjectItem(itemName,0,nodeId);
             _items.Add(ooi);
             return ooi;
         }
-
         public void AddItem(OpcObjectItem ooi)
         {
-            int index = GetDefaultIndex(ooi.Name, DefaultItemName);
-            if (index > 0 && index >= NextItemIndex)
-            {
-                NextItemIndex = index + 1;
-            }
+            _itemNames.Add(ooi.Name);
+            NodeId.AddId(ooi.Id);
             _items.Add(ooi);
         }
 
@@ -101,44 +95,36 @@ namespace WpfControlLibrary
             _items.Clear();
         }
 
-        public string GetDefaultName()
+        private string GetNewName(HashSet<string> names, string defaultName)
         {
-            return $"{DefaultName}{_nextDefaultNameIndex++}";
-        }
-
-        public int GetDefaultIndex(string name, string defaultName)
-        {
-            LinkedList<char> ll = new LinkedList<char>();
-            string text = string.Empty;
-            for (int i = name.Length - 1; i >= 0; --i)
+            SortedSet<int> idxs = new SortedSet<int>();
+            foreach (string oname in names)
             {
-                if (char.IsDigit(name[i]))
+                int index = oname.IndexOf(defaultName);
+                if (index >= 0)
                 {
-                    ll.AddFirst(name[i]);
+                    string es = oname.Remove(index, defaultName.Length);
+                    if (int.TryParse(es, out int idx))
+                    {
+                        idxs.Add(idx);
+                    }
                 }
-                else
+            }
+
+            int newIndex = IndexBase;
+            foreach (int i in idxs)
+            {
+                if (newIndex != i)
                 {
-                    text = name.Substring(0, i + 1);
                     break;
                 }
+
+                ++newIndex;
             }
-            if (ll.Count != 0)
-            {
-                if (string.IsNullOrEmpty(text))
-                {
-                    return -1;
-                }
-                if (text == defaultName)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (char ch in ll)
-                    {
-                        sb.Append(ch);
-                    }
-                    return int.Parse(sb.ToString());
-                }
-            }
-            return -1;
+
+            string newName = $"{defaultName}{newIndex}";
+            names.Add(newName);
+            return newName;
         }
     }
 }
