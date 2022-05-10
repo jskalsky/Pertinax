@@ -8,6 +8,11 @@
 #include <signal.h>
 #include <stdlib.h>
 
+extern UA_Byte PrivateKey[];
+extern int PrivateKeyLength;
+extern UA_Byte Certificate[];
+extern int CertificateLength;
+
 static volatile UA_Boolean running = true;
 static void stopHandler(int sig) 
 {
@@ -23,8 +28,20 @@ int main()
 
     UA_Server* server = UA_Server_new();
     UA_ServerConfig* pConfig = UA_Server_getConfig(server);
-    UA_ServerConfig_setDefault(pConfig);
 
+    UA_ByteString privateKey;
+    privateKey.length = PrivateKeyLength;
+    privateKey.data = PrivateKey;
+    UA_ByteString certificate;
+    certificate.length = CertificateLength;
+    certificate.data = Certificate;
+
+    size_t trustListSize = 0;
+    UA_STACKARRAY(UA_ByteString, trustList, trustListSize);
+    UA_StatusCode retval = UA_ServerConfig_setDefaultWithSecurityPolicies(pConfig, 4840, &certificate, &privateKey, trustList, trustListSize, NULL, 0, NULL, 0);
+    printf("setDefaultWithSecurityPolicies= %x\n", retval);
+
+    UA_ServerConfig_setDefault(pConfig);
     if (pConfig->endpointsSize != 0)
     {
         printf("end= %u\n", pConfig->endpointsSize);
@@ -54,7 +71,7 @@ int main()
         }
     }
 
-    UA_StatusCode retval = UA_Server_run(server, &running);
+    retval = UA_Server_run(server, &running);
 
     UA_Server_delete(server);
     return retval == UA_STATUSCODE_GOOD ? EXIT_SUCCESS : EXIT_FAILURE;
