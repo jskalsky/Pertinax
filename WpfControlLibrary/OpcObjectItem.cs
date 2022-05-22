@@ -21,7 +21,6 @@ namespace WpfControlLibrary
         private string _name;
         private object _rankTag;
         private bool _selected;
-        private ushort _ns;
 
         private bool _enableBasicTypes;
         private bool _enableAccess;
@@ -29,7 +28,7 @@ namespace WpfControlLibrary
         private bool _enableArraySize;
         private bool _enableWriteOutside;
 
-        private string _id;
+        private NodeIdBase _nodeId;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
@@ -37,7 +36,7 @@ namespace WpfControlLibrary
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public OpcObjectItem(string name, ushort ns, string id)
+        public OpcObjectItem(string name)
         {
             Debug.Print($"");
             Name = name;
@@ -50,20 +49,30 @@ namespace WpfControlLibrary
             WriteOutside = false;
             EnableWriteOutside = false;
             RankTag = this;
-            Id = id;
-            NodeId.AddId(id);
-            Ns = ns;
+            NodeId = NodeIdNumeric.GetNextNodeIdNumeric(1, false);
         }
 
-        public ushort Ns
+        public OpcObjectItem(string name, string access, string rank, int arraySizeValue, string basicType,
+            bool writeOutside, string nodeId)
         {
-            get { return _ns; }
-            set { _ns = value; OnPropertyChanged("Ns"); }
+            Debug.Print($"Construktor {nodeId}");
+            Name = name;
+            SelectedAccess = access;
+            SelectedRank = rank;
+            ArraySizeValue = arraySizeValue;
+            SelectedBasicType = basicType;
+            EnableBasicTypes = true;
+            EnableRank = true;
+            WriteOutside = writeOutside;
+            EnableWriteOutside = false;
+            RankTag = this;
+            NodeId = NodeIdBase.GetNodeIdBase(nodeId);
         }
-        public string Id
+
+        public NodeIdBase NodeId
         {
-            get { return _id; }
-            set { _id = value; OnPropertyChanged("Id"); }
+            get { return _nodeId; }
+            set { _nodeId = value; OnPropertyChanged("NodeId"); }
         }
         public string[] BasicTypes
         {

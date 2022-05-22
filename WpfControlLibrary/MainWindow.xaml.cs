@@ -348,7 +348,7 @@ namespace WpfControlLibrary
                 Objects.ScrollIntoView(oo);
 
                 Debug.Print($"Selected {vm.SelectedOpcObject}, {vm.SelectedOpcObject.Name}");
-                vm.ClientObjects.Add(new ClientItem(string.Empty, vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject, true, 100, true));
+                vm.ClientObjects.Add(new ClientItem(string.Empty, vm.SelectedOpcObject.Name, "XXX.XXX.XXX.XXX", vm.SelectedOpcObject, true, 100, false, true));
             }
         }
 
@@ -399,11 +399,6 @@ namespace WpfControlLibrary
                     tb.Focus();
                 }
             }
-        }
-
-        private void TextBox_LostFocus()
-        {
-
         }
     }
 }

@@ -15,7 +15,9 @@ namespace WpfControlLibrary
         private bool _validity;
         private bool _monitoring;
         private string _ipAddress;
-        public ClientItem(string path, string name, string ipAddress, OpcObject opcObject, bool validity, int rxtxPeriod, bool monitoring) : base(path,name)
+        private bool _encryptClient;
+
+        public ClientItem(string path, string name, string ipAddress, OpcObject opcObject, bool validity, int rxtxPeriod, bool monitoring, bool encrypt) : base(path,name)
         {
             Debug.Print($"Constructor ClientItem {rxtxPeriod}");
             IpAddress = ipAddress;
@@ -23,6 +25,7 @@ namespace WpfControlLibrary
             Validity = validity;
             OpcObject = opcObject;
             Monitoring = monitoring;
+            EncryptClient = encrypt;
         }
 
         public OpcObject OpcObject { get; }
@@ -49,6 +52,13 @@ namespace WpfControlLibrary
             get { return _ipAddress; }
             set { _ipAddress = value; OnPropertyChanged("IpAddress"); }
         }
+
+        public bool EncryptClient
+        {
+            get { return _encryptClient; }
+            set { _encryptClient = value; OnPropertyChanged("EncryptClient"); }
+        }
+
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

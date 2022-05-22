@@ -73,6 +73,13 @@
     </Compile>
     <Compile Include="ImportedItem.cs" />
     <Compile Include="NodeId.cs" />
+    <Compile Include="NodeIdBase.cs" />
+    <Compile Include="NodeIdControl.xaml.cs">
+      <DependentUpon>NodeIdControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NodeIdNumeric.cs" />
+    <Compile Include="NodeIdString.cs" />
+    <Compile Include="SecondaryViewModel.cs" />
     <Compile Include="ServerItem.cs" />
     <Compile Include="ViewModelEditItems.cs" />
     <Compile Include="OpcObject.cs" />
@@ -102,6 +109,10 @@
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NodeIdControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="NumericUpDown.xaml">
       <Generator>MSBuild:Compile</Generator>

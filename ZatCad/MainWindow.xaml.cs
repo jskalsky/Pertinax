@@ -44,7 +44,7 @@ namespace ZatCad
                 if(DataContext is MainViewModel mvm)
                 {
                     string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
-                    configOpcUa.LoadConfig(fileName);
+//                    configOpcUa.LoadConfig(fileName);
                     configOpcUa.MakeConfig(null, fileName);
                 }
             }

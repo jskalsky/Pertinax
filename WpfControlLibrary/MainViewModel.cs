@@ -36,6 +36,8 @@ namespace WpfControlLibrary
         private bool _enableAddToClient;
         private bool _enableSetupLength;
 
+        private bool _encryptServer;
+
         private int _nextItemIndex;
         public MainViewModel()
         {
@@ -51,11 +53,12 @@ namespace WpfControlLibrary
             LocalIpAddressString = "10.10.13.253";
             WindowTitle = "OpcUa";
             RepetitionRateValue = 1;
-            _setupObjectItem = new OpcObjectItem("Setup", 0, "");
+            _setupObjectItem = new OpcObjectItem("Setup");
             SelectedSetupItem = _setupObjectItem.BasicTypes[0];
             SelectedSetupRank = _setupObjectItem.Rank[0];
             SelectedSetupLength = 0;
             EnableSetupLength = false;
+            EncryptServer = false;
         }
 
         public int GetMaxItemIndex()
@@ -217,6 +220,12 @@ namespace WpfControlLibrary
         {
             get { return _enableSetupLength; }
             set { _enableSetupLength = value; OnPropertyChanged("EnableSetupLength"); }
+        }
+
+        public bool EncryptServer
+        {
+            get { return _encryptServer; }
+            set { _encryptServer = value;OnPropertyChanged("EncryptServer"); }
         }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
