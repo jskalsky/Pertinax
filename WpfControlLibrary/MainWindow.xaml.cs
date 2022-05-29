@@ -94,7 +94,7 @@ namespace WpfControlLibrary
                         ooi.SelectedBasicType = vm.SelectedSetupItem;
                         ooi.SelectedRank = vm.SelectedSetupRank;
                         ooi.ArraySizeValue = vm.SelectedSetupLength;
-                        ListViewItems.ScrollIntoView(ooi);
+//                        ListViewItems.ScrollIntoView(ooi);
                     }
                 }
             }

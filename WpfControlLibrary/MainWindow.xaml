@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="1300" WindowStyle="None">
+        Title="MainWindow" Height="700" Width="1300" WindowStyle="None">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -317,68 +317,23 @@
                             <Button Content="Upravit" Click="MenuItemChange_Click" Width="50" Margin="5,0,0,0"/>
                             <Button Content="Zrušit" Click="ButtonDelete_Click" Width="50" Margin="5,0,0,0"/>
                         </StackPanel>
-                        <ListView Name="ListViewItems" ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectionMode="Multiple" >
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListViewItem}">
-                                    <Setter Property="IsSelected" Value="{Binding Selected,Mode=TwoWay}"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Jméno" Width="100">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBox Text="{Binding Name, Mode=TwoWay}" TextAlignment="Right"  Width="80" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                         PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Typ" Width="90">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding SelectedBasicType,Mode=TwoWay}" Width="70" TextAlignment="Right"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Kategorie" Width="190">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding SelectedRank,Mode=TwoWay}" Width="170" TextAlignment="Right"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Velikost pole" Width="120">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding ArraySizeValue,Mode=TwoWay}" TextAlignment="Right" Width="100"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Zápis zvenku" Width="80">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Grid Width="80">
-                                                    <CheckBox HorizontalAlignment="Center" IsEnabled="{Binding EnableWriteOutside}" IsChecked="{Binding WriteOutside}"/>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Id" Width="90">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Grid Width="60">
-                                                    <TextBox Style="{StaticResource ToolTipError}"
-                                                             Text="{Binding NodeIdString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                             TextAlignment="Right" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton">
-                                                    </TextBox>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                        <TreeView ItemsSource="{Binding DataModelNodes}">
+                            <TreeView.Resources>
+                                <ResourceDictionary>
+                                    <Image x:Key="ImageNs" Source="Icons/Namespace-Sealed_655_24.bmp"/>
+                                    <Image x:Key="ImageObject" Source="Icons/Object_554_24.bmp"/>
+                                    <Image x:Key="ImageItem" Source="Icons/ValueType_547_24.bmp"/>
+                                </ResourceDictionary>
+                            </TreeView.Resources>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Stretch="Fill" Width="16" Height="16" Source="{StaticResource {Binding ImageKey}}"/>
+                                        <TextBlock Margin="5,0,0,0" Text="{Binding Name}"/>
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
                     </DockPanel>
                 </GroupBox>
             </Grid>

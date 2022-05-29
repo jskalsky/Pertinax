@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientItem.cs" />
+    <Compile Include="DataModelNode.cs" />
     <Compile Include="EditObjectItemDialog.xaml.cs">
       <DependentUpon>EditObjectItemDialog.xaml</DependentUpon>
     </Compile>
@@ -141,6 +142,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Namespace-Sealed_655_24.bmp" />
+    <Resource Include="Icons\Object_554_24.bmp" />
+    <Resource Include="Icons\ValueType_547_24.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -60,6 +60,10 @@ namespace WpfControlLibrary
             SelectedSetupLength = 0;
             EnableSetupLength = false;
             EncryptServer = false;
+
+            DataModelNodes = new ObservableCollection<DataModelNode>();
+            DataModelNodes.Add(new DataModelNode("Namespace 0", null, "ImageNs"));
+            DataModelNodes.Add(new DataModelNode("Namespace 1", null, "ImageNs"));
         }
 
         public int GetMaxItemIndex()
@@ -235,6 +239,7 @@ namespace WpfControlLibrary
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
         public ObservableCollection<ClientItem> ClientObjects { get; private set; }
         public ObservableCollection<ServerItem> ServerObjects { get; private set; }
+        public ObservableCollection<DataModelNode> DataModelNodes { get; private set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
