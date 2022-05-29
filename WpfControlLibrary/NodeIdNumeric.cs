@@ -11,10 +11,9 @@ namespace WpfControlLibrary
     {
         public NodeIdNumeric(ushort namespaceIndex, uint identifier) : base(namespaceIndex, IdentifierType.Numeric)
         {
-            Debug.Print($"Constr NodeIdNumeric {namespaceIndex}:{identifier}");
             IdentifierNumeric = identifier;
-            string id = $"{namespaceIndex}:{identifier}";
-            Add(id);
+            Guid = Guid.NewGuid();
+            Debug.Print($"NodeIdNumeric {namespaceIndex}:{identifier}:{Guid}");
         }
         public uint IdentifierNumeric { get; }
 
@@ -25,9 +24,9 @@ namespace WpfControlLibrary
                 for (uint i = BaseObjectsId; i < BaseVarsId; ++i)
                 {
                     string id = $"{namespaceIndex}:{i}";
-                    if(!ExistsNodeId(id))
+                    if (!ExistsNodeId(id))
                     {
-                        return new NodeIdNumeric(namespaceIndex, i);
+                        return new NodeIdNumeric(namespaceIndex,i);
                     }
                 }
 

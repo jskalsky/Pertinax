@@ -18,7 +18,8 @@ namespace WpfControlLibrary
         private readonly ObservableCollection<OpcObjectItem> _items = new ObservableCollection<OpcObjectItem>();
         private string _name;
         private OpcObjectItem _selectedItem;
-        private NodeIdBase _nodeId;
+        private string _nodeIdString;
+        private NodeIdBase _lastNodeId = null;
 
         private static HashSet<string> _objectNames = new HashSet<string>();
         private HashSet<string> _itemNames = new HashSet<string>();
@@ -32,13 +33,14 @@ namespace WpfControlLibrary
             IsImported = isImported;
             Name = GetNewName(_objectNames, DefaultName);
             NodeId = NodeIdNumeric.GetNextNodeIdNumeric(0);
+            NodeIdString = NodeId.NodeIdString;
         }
         public OpcObject(string name, bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported, string nodeId)
         {
             Name = name;
             _objectNames.Add(name);
-            Debug.Print($"OpcObject construktor {nodeId}");
             NodeId = NodeIdBase.GetNodeIdBase(nodeId);
+            NodeIdString = NodeId.NodeIdString;
             ServerObject = serverObject;
             ClientObject = clientObject;
             PublisherObject = publisherObject;
@@ -46,10 +48,15 @@ namespace WpfControlLibrary
             IsImported = isImported;
         }
 
-        public NodeIdBase NodeId
+        public NodeIdBase NodeId { get; private set; }
+        public string NodeIdString
         {
-            get { return _nodeId; }
-            set { _nodeId = value;OnPropertyChanged("NodeId"); Debug.Print($"Set NodeId= {value.NamespaceIndex}:{value.GetIdentifier()}"); }
+            get { return _nodeIdString; }
+            set
+            {
+                _nodeIdString = value;
+                OnPropertyChanged("NodeIdString");
+            }
         }
         public bool ServerObject { get; private set; }
         public bool ClientObject { get; private set; }
@@ -76,6 +83,144 @@ namespace WpfControlLibrary
             get { return Validate(columnName); }
         }
 
+        public static string ValidateNodeId(string nodeId)
+        {
+            Debug.Print($"ValidateNodeId {nodeId}");
+            int status = 0;
+            string error = string.Empty;
+            StringBuilder sbNs = new StringBuilder();
+            StringBuilder sbId = new StringBuilder();
+            foreach (char ch in nodeId)
+            {
+                switch (status)
+                {
+                    case 0:
+                        if (char.IsDigit(ch))
+                        {
+                            sbNs.Append(ch);
+                        }
+                        else
+                        {
+                            if (ch == ' ')
+                            {
+                                status = 1;
+                            }
+                            else
+                            {
+                                if (ch == ':')
+                                {
+                                    status = 2;
+                                }
+                                else
+                                {
+                                    error = $"Chybný formát Id uzlu";
+                                    return error;
+                                }
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (ch == ' ')
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            if (ch == ':')
+                            {
+                                status = 2;
+                            }
+                            else
+                            {
+                                if (char.IsLetterOrDigit(ch) || ch == '_')
+                                {
+                                    sbId.Append(ch);
+                                    status = 3;
+                                }
+                                else
+                                {
+                                    error = $"Chybný formát Id uzlu";
+                                    return error;
+                                }
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (ch == ' ')
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            if (char.IsLetterOrDigit(ch) || ch == '_')
+                            {
+                                sbId.Append(ch);
+                                status = 3;
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (char.IsLetterOrDigit(ch) || ch == '_')
+                        {
+                            sbId.Append(ch);
+                        }
+                        else
+                        {
+                            error = $"Chybný formát Id uzlu";
+                            return error;
+                        }
+                        break;
+                }
+            }
+
+            string ns = sbNs.ToString();
+            string id = sbId.ToString();
+            if (string.IsNullOrEmpty(ns) || string.IsNullOrEmpty(id))
+            {
+                error = $"Chybný formát Id uzlu";
+                return error;
+            }
+
+            string ni = $"{ns}:{id}";
+            Debug.Print($"ni= {ni}");
+            if (NodeIdBase.ExistsNodeId(ni))
+            {
+                error = $"Identifikátor uzlu {ni} již existuje";
+            }
+
+            return error;
+        }
+        private string Validate(string propertyName)
+        {
+            string error = string.Empty;
+            switch (propertyName)
+            {
+                case "NodeIdString":
+                    if (_lastNodeId != null && _lastNodeId.NodeIdString == NodeIdString)
+                    {
+                        return error;
+                    }
+
+                    error = ValidateNodeId(NodeIdString);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        MainViewModel.IsError = true;
+                        return error;
+                    }
+
+                    if (_lastNodeId != null)
+                    {
+                        NodeIdBase.Remove(_lastNodeId);
+                    }
+                    _lastNodeId = NodeId;
+                    NodeId = NodeIdBase.GetNodeIdBase(NodeIdString);
+                    MainViewModel.IsError = false;
+                    break;
+            }
+
+            return error;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)
@@ -84,33 +229,10 @@ namespace WpfControlLibrary
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private string Validate(string propertyNane)
-        {
-            Debug.Print($"Validate {propertyNane}");
-            string error = string.Empty;
-            switch (propertyNane)
-            {
-                case "NodeId":
-                    if(NodeId.NamespaceIndex > 5)
-                    {
-                        error = $"Index jmenného prostoru mimo rozsah, 0 - 5";
-                    }
-/*                    else
-                    {
-                        string ni = $"{NodeId.NamespaceIndex}:{NodeId.GetIdentifier()}";
-                        if(NodeIdBase.ExistsNodeId(ni))
-                        {
-                            error = $"Identifikátor uzlu {ni} již existuje";
-                        }
-                    }*/
-                    break;
-            }
-            return error;
-        }
         public OpcObjectItem AddItem()
         {
             string itemName = GetNewName(_itemNames, DefaultItemName);
-            OpcObjectItem ooi = new OpcObjectItem(itemName);
+            OpcObjectItem ooi = new OpcObjectItem(itemName, this);
             _items.Add(ooi);
             return ooi;
         }

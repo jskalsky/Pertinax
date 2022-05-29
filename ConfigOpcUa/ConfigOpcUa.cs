@@ -247,7 +247,7 @@ namespace ConfigOpcUa
                         }
                     }
                     WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, GetAccess(vt.AccessType), string.Empty,vt.ArraySize, GetBasicType(vt.BasicType),
-                        false,$"{ns}:{id}");
+                        false,$"{ns}:{id}", oo);
                     ooi.SelectedBasicType = GetBasicType(vt.BasicType);
                     ooi.SelectedAccess = GetAccess(vt.AccessType);
                     ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
@@ -366,6 +366,7 @@ namespace ConfigOpcUa
             _ports.Clear();
             _allPorts.Clear();
             NodeIdBase.Clear();
+
             if (File.Exists(pName))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
@@ -662,10 +663,10 @@ namespace ConfigOpcUa
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
             Debug.Print($"MakeConfig {pName}");
-            WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
-            Debug.Print($"11 {mainWindow.DataContext}");
             LoadConfig(pName);
             Debug.Print("10");
+            WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
+            Debug.Print($"11 {mainWindow.DataContext}");
             if (mainWindow.DataContext is WpfControlLibrary.MainViewModel vm)
             {
                 Debug.Print("12");

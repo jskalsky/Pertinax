@@ -104,6 +104,11 @@ namespace WpfControlLibrary
         {
             if (DataContext is MainViewModel mvm)
             {
+                if (MainViewModel.IsError)
+                {
+                    MessageBox.Show("Opravte chybu nebo stiskněte Zrušit", "OpcUa", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
+                }
                 foreach (ClientItem ci in mvm.ClientObjects)
                 {
                     if (!IPAddress.TryParse(ci.IpAddress, out IPAddress ip))

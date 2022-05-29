@@ -10,7 +10,7 @@
         <local:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <Style TargetType="{x:Type local:NodeIdControl}" x:Key="ToolTipError">
+        <Style TargetType="{x:Type TextBox}" x:Key="ToolTipError">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
                     <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)/ErrorContent}"/>
@@ -38,7 +38,7 @@
                 </Border>
             </Grid>
         </ControlTemplate>
-        <ControlTemplate x:Key="validationTemplate">
+        <ControlTemplate x:Key="ValidationTemplate">
             <Grid>
                 <Polygon Fill="Red"
 							 Margin="0,2,2,0"
@@ -62,7 +62,7 @@
         <Label DockPanel.Dock="Top" Content="{Binding WindowTitle}" Background="LightSteelBlue" Foreground="White"/>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,5,5">
             <Button Content="Importovat" Width="100" Click="Import_Click" Margin="0,0,30,0"/>
-            <Button Content="OK" Click="ButtonOk_Click" Width="50"/>
+            <Button Name="ButtonOk" Content="OK" Click="ButtonOk_Click" Width="50"/>
             <Button Content="Zrušit" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
         </StackPanel>
         <Grid>
@@ -227,7 +227,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Grid Width="60">
-                                                    <CheckBox IsChecked="{Binding Monitoring}" HorizontalAlignment="Center"/>
+                                                    <CheckBox IsChecked="{Binding EncryptClient}" HorizontalAlignment="Center"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
@@ -288,14 +288,13 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="Id" Width="90">
+                                    <GridViewColumn Header="Id" Width="70">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Grid Width="90">
-                                                    <local:NodeIdControl Style="{StaticResource ToolTipError}" 
-                                                                         NodeId="{Binding NodeId,Mode=TwoWay,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True}"
-                                                                         Validation.ErrorTemplate="{StaticResource validationTemplate}">
-                                                    </local:NodeIdControl>
+                                                <Grid Width="60">
+                                                    <TextBox Style="{StaticResource ToolTipError}" Text="{Binding NodeIdString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                             TextAlignment="Right" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
@@ -367,8 +366,12 @@
                                     <GridViewColumn Header="Id" Width="90">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Grid Width="90">
-                                                    <local:NodeIdControl NodeId="{Binding NodeId,Mode=TwoWay}"/>
+                                                <Grid Width="60">
+                                                    <TextBox Style="{StaticResource ToolTipError}"
+                                                             Text="{Binding NodeIdString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                             TextAlignment="Right" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton">
+                                                    </TextBox>
                                                 </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>

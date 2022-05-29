@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,8 @@ namespace WpfControlLibrary
         public NodeIdString(ushort namespaceIndex, string id) : base(namespaceIndex, IdentifierType.String)
         {
             IdentifierString = id;
-            Add($"{namespaceIndex}:{id}");
+            Guid = Guid.NewGuid();
+            Debug.Print($"NodeIdString {namespaceIndex}:{id}:{Guid}");
         }
         public string IdentifierString { get; }
 
@@ -22,7 +24,7 @@ namespace WpfControlLibrary
                 string id = $"{namespaceIndex}:NodeIdString{i}";
                 if (!ExistsNodeId(id))
                 {
-                    return new NodeIdString(namespaceIndex, id);
+                    return new NodeIdString(namespaceIndex,$"NodeIdString{i}");
                 }
             }
 

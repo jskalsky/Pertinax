@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary
 {
-    public class OpcObjectItem : INotifyPropertyChanged
+    public class OpcObjectItem : INotifyPropertyChanged, IDataErrorInfo
     {
         private readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
         private string _selectedBasicType;
@@ -28,7 +28,8 @@ namespace WpfControlLibrary
         private bool _enableArraySize;
         private bool _enableWriteOutside;
 
-        private NodeIdBase _nodeId;
+        private string _nodeIdString;
+        private NodeIdBase _lastNodeId = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
@@ -36,7 +37,7 @@ namespace WpfControlLibrary
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public OpcObjectItem(string name)
+        public OpcObjectItem(string name, OpcObject parent)
         {
             Debug.Print($"");
             Name = name;
@@ -50,10 +51,14 @@ namespace WpfControlLibrary
             EnableWriteOutside = false;
             RankTag = this;
             NodeId = NodeIdNumeric.GetNextNodeIdNumeric(1, false);
+            _lastNodeId = NodeId;
+            NodeIdBase.Add(NodeId);
+            NodeIdString = NodeId.NodeIdString;
+            Parent = parent;
         }
 
         public OpcObjectItem(string name, string access, string rank, int arraySizeValue, string basicType,
-            bool writeOutside, string nodeId)
+            bool writeOutside, string nodeId, OpcObject parent)
         {
             Debug.Print($"Construktor {nodeId}");
             Name = name;
@@ -67,12 +72,23 @@ namespace WpfControlLibrary
             EnableWriteOutside = false;
             RankTag = this;
             NodeId = NodeIdBase.GetNodeIdBase(nodeId);
+            _lastNodeId = NodeId;
+            NodeIdBase.Add(NodeId);
+            NodeIdString = NodeId.NodeIdString;
+            Parent = parent;
         }
 
-        public NodeIdBase NodeId
+        public OpcObject Parent { get; }
+        public NodeIdBase NodeId { get; private set; }
+        public string NodeIdString
         {
-            get { return _nodeId; }
-            set { _nodeId = value; OnPropertyChanged("NodeId"); }
+            get { return _nodeIdString; }
+            set
+            {
+                Debug.Print($"set NodeIdString _nodeIdString= {_nodeIdString}, value= {value}");
+                _nodeIdString = value;
+                OnPropertyChanged("NodeIdString");
+            }
         }
         public string[] BasicTypes
         {
@@ -160,6 +176,63 @@ namespace WpfControlLibrary
         {
             get { return _selected; }
             set { _selected = value; OnPropertyChanged("Selected"); }
+        }
+
+        public string Error => throw new NotImplementedException();
+
+        private string Validate(string propertyName)
+        {
+            Debug.Print($"OpcObjectItem Validate {propertyName}");
+            string error = string.Empty;
+            switch (propertyName)
+            {
+                case "NodeIdString":
+                    Debug.Print($"NodeIdString= {NodeIdString}, _nodeIdString= {_nodeIdString}");
+                    if (_lastNodeId != null)
+                    {
+                        Debug.Print($"_lastNodeId= {_lastNodeId.NodeIdString}, {_lastNodeId.Guid}");
+                    }
+                    if (_lastNodeId != null && NodeIdString == _lastNodeId.NodeIdString)
+                    {
+                        Debug.Print($"==");
+                        return error;
+                    }
+
+                    error = OpcObject.ValidateNodeId(NodeIdString);
+                    if (error.Contains("formát"))
+                    {
+                        return error;
+                    }
+                    if (_lastNodeId != null)
+                    {
+                        NodeIdBase.Remove(_lastNodeId);
+                    }
+                    NodeId = NodeIdBase.GetNodeIdBase(NodeIdString);
+                    _lastNodeId = NodeId;
+                    Debug.Print($"Novy _lastNodeId= {_lastNodeId.NodeIdString}");
+                    NodeIdBase.Add(NodeId);
+                    NodeIdBase.PrintIds();
+                    MainViewModel.IsError = (!string.IsNullOrEmpty(error));
+                    Debug.Print($"Validate result= {MainViewModel.IsError}, error= {error}");
+                    int nr = NodeIdBase.GetNrOfErrors();
+                    if(nr == 0)
+                    {
+                        foreach(OpcObjectItem ooi in Parent.Items)
+                        {
+                            ooi.NodeIdString = ooi.NodeIdString;
+                        }
+                    }
+                    break;
+            }
+
+            return error;
+        }
+        public string this[string columnName]
+        {
+            get
+            {
+                return Validate(columnName);
+            }
         }
     }
 }

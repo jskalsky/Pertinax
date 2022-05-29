@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace WpfControlLibrary
 {
@@ -53,7 +54,7 @@ namespace WpfControlLibrary
             LocalIpAddressString = "10.10.13.253";
             WindowTitle = "OpcUa";
             RepetitionRateValue = 1;
-            _setupObjectItem = new OpcObjectItem("Setup");
+            _setupObjectItem = new OpcObjectItem("Setup", null);
             SelectedSetupItem = _setupObjectItem.BasicTypes[0];
             SelectedSetupRank = _setupObjectItem.Rank[0];
             SelectedSetupLength = 0;
@@ -92,6 +93,8 @@ namespace WpfControlLibrary
             }
             return maxIndex;
         }
+
+        public static bool IsError { get; set; } = false;
 
         public OpcObjectItem SetupObjectItem
         {
