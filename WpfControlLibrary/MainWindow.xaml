@@ -4,58 +4,62 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
+        xmlns:dm="clr-namespace:WpfControlLibrary.DataModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1300" WindowStyle="None">
+        Title="MainWindow" Height="500" Width="1300" WindowStyle="None">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <Style TargetType="{x:Type TextBox}" x:Key="ToolTipError">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)/ErrorContent}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <ControlTemplate x:Key="ToolTipTemplate" TargetType="ToolTip">
-            <Grid Opacity="0.93" MaxWidth="200">
-                <Border BorderBrush="Black" BorderThickness="1,1,1,1" CornerRadius="2">
-                    <Border.Background>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FFF5FAFE" Offset="0"/>
-                            <GradientStop Color="#FFE5EFF9" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.Effect>
-                        <DropShadowEffect Color="DarkBlue" />
-                    </Border.Effect>
-                    <TextBlock Margin="10,10,10,10"
+        <ResourceDictionary>
+            <Image x:Key="FolderIcon" Source="Icons/Folder_6222.png"/>
+            <Style TargetType="{x:Type TextBox}" x:Key="ToolTipError">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)/ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <ControlTemplate x:Key="ToolTipTemplate" TargetType="ToolTip">
+                <Grid Opacity="0.93" MaxWidth="200">
+                    <Border BorderBrush="Black" BorderThickness="1,1,1,1" CornerRadius="2">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFF5FAFE" Offset="0"/>
+                                <GradientStop Color="#FFE5EFF9" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect Color="DarkBlue" />
+                        </Border.Effect>
+                        <TextBlock Margin="10,10,10,10"
                     VerticalAlignment="Top"
                     TextWrapping="Wrap"
                     HorizontalAlignment="Left"  
                     Text="{TemplateBinding Content}" Foreground="DarkBlue">
-                    </TextBlock>
-                </Border>
-            </Grid>
-        </ControlTemplate>
-        <ControlTemplate x:Key="ValidationTemplate">
-            <Grid>
-                <Polygon Fill="Red"
+                        </TextBlock>
+                    </Border>
+                </Grid>
+            </ControlTemplate>
+            <ControlTemplate x:Key="ValidationTemplate">
+                <Grid>
+                    <Polygon Fill="Red"
 							 Margin="0,2,2,0"
 							 Points="10,10 10,0 0,0"
 							 VerticalAlignment="Top"
 							 HorizontalAlignment="Right">
-                    <Polygon.ToolTip>
-                        <ToolTip  Content="{Binding Path=[0].ErrorContent}"
+                        <Polygon.ToolTip>
+                            <ToolTip  Content="{Binding Path=[0].ErrorContent}"
 									 BorderThickness="1"
 									 Foreground="White"
 									 Background="Red" Template="{StaticResource ToolTipTemplate}"   >
-                        </ToolTip>
-                    </Polygon.ToolTip>
-                </Polygon>
-                <AdornedElementPlaceholder x:Name="adorner" />
-            </Grid>
-        </ControlTemplate>
+                            </ToolTip>
+                        </Polygon.ToolTip>
+                    </Polygon>
+                    <AdornedElementPlaceholder x:Name="adorner" />
+                </Grid>
+            </ControlTemplate>
+        </ResourceDictionary>
     </Window.Resources>
     <!--Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1"-->
     <DockPanel LastChildFill="True">
@@ -251,6 +255,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <GroupBox Header="Seznam objektů">
                     <DockPanel LastChildFill="True">
@@ -283,7 +288,9 @@
                                     <GridViewColumn Header="Jméno" Width="100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBox Text="{Binding Name,Mode=TwoWay}" Width="80" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress" 
+                                                <TextBox Style="{StaticResource ToolTipError}"
+                                                         Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                                         Width="80" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress" 
                                                          PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
@@ -317,25 +324,92 @@
                             <Button Content="Upravit" Click="MenuItemChange_Click" Width="50" Margin="5,0,0,0"/>
                             <Button Content="Zrušit" Click="ButtonDelete_Click" Width="50" Margin="5,0,0,0"/>
                         </StackPanel>
-                        <TreeView ItemsSource="{Binding DataModelNodes}">
-                            <TreeView.Resources>
-                                <ResourceDictionary>
-                                    <Image x:Key="ImageNs" Source="Icons/Namespace-Sealed_655_24.bmp"/>
-                                    <Image x:Key="ImageObject" Source="Icons/Object_554_24.bmp"/>
-                                    <Image x:Key="ImageItem" Source="Icons/ValueType_547_24.bmp"/>
-                                </ResourceDictionary>
-                            </TreeView.Resources>
-                            <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Stretch="Fill" Width="16" Height="16" Source="{StaticResource {Binding ImageKey}}"/>
-                                        <TextBlock Margin="5,0,0,0" Text="{Binding Name}"/>
-                                    </StackPanel>
-                                </HierarchicalDataTemplate>
-                            </TreeView.ItemTemplate>
-                        </TreeView>
+                        <ListView Name="ListViewItems" ItemsSource="{Binding Path=SelectedOpcObject.Items}" SelectionMode="Multiple" >
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="IsSelected" Value="{Binding Selected,Mode=TwoWay}"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Jméno" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox Style="{StaticResource ToolTipError}"
+                                                         Text="{Binding Name, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                                         TextAlignment="Right"  Width="80" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                         PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Typ" Width="90">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding SelectedBasicType,Mode=TwoWay}" Width="70" TextAlignment="Right"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Kategorie" Width="190">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding SelectedRank,Mode=TwoWay}" Width="170" TextAlignment="Right"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Velikost pole" Width="120">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ArraySizeValue,Mode=TwoWay}" TextAlignment="Right" Width="100"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Zápis zvenku" Width="80">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Width="80">
+                                                    <CheckBox HorizontalAlignment="Center" IsEnabled="{Binding EnableWriteOutside}" IsChecked="{Binding WriteOutside}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Id">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid MinWidth="240">
+                                                    <TextBox Style="{StaticResource ToolTipError}"
+                                                             Text="{Binding NodeIdString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                             TextAlignment="Right" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton">
+                                                    </TextBox>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </DockPanel>
                 </GroupBox>
+                <TreeView Grid.Column="2" ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                    <TreeView.ContextMenu>
+                        <ContextMenu  Opened="ContextMenu_Opened">
+                            <MenuItem Header="Pridat Namespace" Name="MiAddNs"/>
+                            <MenuItem Header="Pridat zalozku" Name="MiAddFolder"/>
+                            <MenuItem Header="Pridat promennou" Name="MiAddVar"/>
+                            <MenuItem Header="Pridat typ objekt" Name="MiAddObjectType"/>
+                            <Separator/>
+                            <MenuItem Header="Zrusit" Name="MiRemove"/>
+                        </ContextMenu>
+                    </TreeView.ContextMenu>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding Name}"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
             </Grid>
         </Grid>
     </DockPanel>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfControlLibrary
+namespace WpfControlLibrary.DataModel
 {
     public class NodeIdString : NodeIdBase
     {
@@ -24,7 +24,7 @@ namespace WpfControlLibrary
                 string id = $"{namespaceIndex}:NodeIdString{i}";
                 if (!ExistsNodeId(id))
                 {
-                    return new NodeIdString(namespaceIndex,$"NodeIdString{i}");
+                    return new NodeIdString(namespaceIndex, $"NodeIdString{i}");
                 }
             }
 

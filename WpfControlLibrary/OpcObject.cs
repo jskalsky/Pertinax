@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfControlLibrary.DataModel;
 
 namespace WpfControlLibrary
 {
@@ -17,28 +18,33 @@ namespace WpfControlLibrary
         private const int IndexBase = 1;
         private readonly ObservableCollection<OpcObjectItem> _items = new ObservableCollection<OpcObjectItem>();
         private string _name;
+        private string _lastName = string.Empty;
         private OpcObjectItem _selectedItem;
         private string _nodeIdString;
         private NodeIdBase _lastNodeId = null;
 
-        private static HashSet<string> _objectNames = new HashSet<string>();
-        private HashSet<string> _itemNames = new HashSet<string>();
+        public static Dictionary<string, int> _objectNames = new Dictionary<string, int>();
+        public Dictionary<string, int> _itemNames = new Dictionary<string, int>();
 
         public OpcObject(bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported)
         {
+            Debug.Print($"OpcObject Constr");
             ServerObject = serverObject;
             ClientObject = clientObject;
             PublisherObject = publisherObject;
             SubscriberObject = subscriberObject;
             IsImported = isImported;
-            Name = GetNewName(_objectNames, DefaultName);
+            string name = GetNewName(_objectNames, DefaultName);
+            AddName(_objectNames, name);
+            Name = name;
             NodeId = NodeIdNumeric.GetNextNodeIdNumeric(0);
             NodeIdString = NodeId.NodeIdString;
         }
         public OpcObject(string name, bool serverObject, bool clientObject, bool publisherObject, bool subscriberObject, bool isImported, string nodeId)
         {
+            string n = name;
+            AddName(_objectNames, n);
             Name = name;
-            _objectNames.Add(name);
             NodeId = NodeIdBase.GetNodeIdBase(nodeId);
             NodeIdString = NodeId.NodeIdString;
             ServerObject = serverObject;
@@ -132,7 +138,7 @@ namespace WpfControlLibrary
                             }
                             else
                             {
-                                if (char.IsLetterOrDigit(ch) || ch == '_')
+                                if (char.IsLetterOrDigit(ch) || ch == '_' || ch == '.')
                                 {
                                     sbId.Append(ch);
                                     status = 3;
@@ -152,7 +158,7 @@ namespace WpfControlLibrary
                         }
                         else
                         {
-                            if (char.IsLetterOrDigit(ch) || ch == '_')
+                            if (char.IsLetterOrDigit(ch) || ch == '_' || ch == '.')
                             {
                                 sbId.Append(ch);
                                 status = 3;
@@ -160,7 +166,7 @@ namespace WpfControlLibrary
                         }
                         break;
                     case 3:
-                        if (char.IsLetterOrDigit(ch) || ch == '_')
+                        if (char.IsLetterOrDigit(ch) || ch == '_' || ch == '.')
                         {
                             sbId.Append(ch);
                         }
@@ -196,25 +202,77 @@ namespace WpfControlLibrary
             switch (propertyName)
             {
                 case "NodeIdString":
-                    if (_lastNodeId != null && _lastNodeId.NodeIdString == NodeIdString)
+                    Debug.Print($"Validate Object NodeIdString= {NodeIdString}, _nodeIdString= {_nodeIdString}");
+                    if (_lastNodeId != null)
                     {
+                        Debug.Print($"_lastNodeId= {_lastNodeId.NodeIdString}, {_lastNodeId.Guid}");
+                    }
+                    if (_lastNodeId != null && NodeIdString == _lastNodeId.NodeIdString)
+                    {
+                        Debug.Print($"==");
                         return error;
                     }
 
                     error = ValidateNodeId(NodeIdString);
-                    if (!string.IsNullOrEmpty(error))
+                    if (error.Contains("formát"))
                     {
-                        MainViewModel.IsError = true;
                         return error;
                     }
-
                     if (_lastNodeId != null)
                     {
                         NodeIdBase.Remove(_lastNodeId);
                     }
-                    _lastNodeId = NodeId;
                     NodeId = NodeIdBase.GetNodeIdBase(NodeIdString);
-                    MainViewModel.IsError = false;
+                    _lastNodeId = NodeId;
+                    Debug.Print($"Novy _lastNodeId= {_lastNodeId.NodeIdString}");
+                    NodeIdBase.Add(NodeId);
+                    NodeIdBase.PrintIds();
+                    Debug.Print($"Validate result= {MainViewModel.IsError}, error= {error}");
+                    int nr = NodeIdBase.GetNrOfErrors();
+                    if (nr == 0)
+                    {
+                        foreach (OpcObject oo in MainViewModel.GetObjects())
+                        {
+                            oo.NodeIdString = oo.NodeIdString;
+                        }
+                        MainViewModel.IsError = false;
+                    }
+                    else
+                    {
+                        MainViewModel.IsError = true;
+                    }
+                    break;
+                case "Name":
+                    Debug.Print($"Validate Object Name {Name}, _lastName= {_lastName}");
+                    if (string.IsNullOrEmpty(_lastName))
+                    {
+                        _lastName = Name;
+                        Debug.Print($"Empty");
+                        return error;
+                    }
+                    if (_lastName == Name)
+                    {
+                        Debug.Print($"== {Name}, {_lastName}");
+                        return error;
+                    }
+
+                    DecrementNames(_objectNames, _lastName);
+                    _lastName = Name;
+                    if (AddName(_objectNames, Name))
+                    {
+                        error = $"Jméno proměnné {Name} již existuje";
+                    }
+                    else
+                    {
+                        if (GetNrOfNamesErrors(_objectNames) == 0)
+                        {
+                            foreach (OpcObject oo in MainViewModel.GetObjects())
+                            {
+                                oo.Name = oo.Name;
+                            }
+                        }
+                    }
+                    MainViewModel.IsError = (!string.IsNullOrEmpty(error));
                     break;
             }
 
@@ -238,7 +296,7 @@ namespace WpfControlLibrary
         }
         public void AddItem(OpcObjectItem ooi)
         {
-            _itemNames.Add(ooi.Name);
+            AddName(_itemNames, ooi.Name);
             _items.Add(ooi);
         }
 
@@ -247,10 +305,10 @@ namespace WpfControlLibrary
             _items.Clear();
         }
 
-        private string GetNewName(HashSet<string> names, string defaultName)
+        private string GetNewName(Dictionary<string, int> names, string defaultName)
         {
             SortedSet<int> idxs = new SortedSet<int>();
-            foreach (string oname in names)
+            foreach (string oname in names.Keys)
             {
                 int index = oname.IndexOf(defaultName);
                 if (index >= 0)
@@ -275,8 +333,76 @@ namespace WpfControlLibrary
             }
 
             string newName = $"{defaultName}{newIndex}";
-            names.Add(newName);
             return newName;
+        }
+
+        public bool AddName(Dictionary<string, int> names, string name)
+        {
+            Debug.Print($"AddName {name}");
+            foreach (KeyValuePair<string, int> pair in names)
+            {
+                Debug.Print($"A {pair.Key}-{pair.Value}");
+            }
+            if (names.TryGetValue(name, out int nr))
+            {
+                names.Remove(name);
+                names[name] = nr + 1;
+                foreach (KeyValuePair<string, int> pair in names)
+                {
+                    Debug.Print($"A1 {pair.Key}-{pair.Value}");
+                }
+                return true;
+            }
+
+            names[name] = 1;
+            foreach (KeyValuePair<string, int> pair in names)
+            {
+                Debug.Print($"A2 {pair.Key}-{pair.Value}");
+            }
+            return false;
+        }
+
+        public bool DecrementNames(Dictionary<string, int> names, string name)
+        {
+            Debug.Print($"DecrementNames {name}");
+            foreach (KeyValuePair<string, int> pair in names)
+            {
+                Debug.Print($"D {pair.Key}-{pair.Value}");
+            }
+            if (names.TryGetValue(name, out int nr))
+            {
+                names.Remove(name);
+                if (nr - 1 > 0)
+                {
+                    names[name] = nr - 1;
+                }
+                foreach (KeyValuePair<string, int> pair in names)
+                {
+                    Debug.Print($"D1 {pair.Key}-{pair.Value}");
+                }
+
+                return true;
+            }
+            foreach (KeyValuePair<string, int> pair in names)
+            {
+                Debug.Print($"D2 {pair.Key}-{pair.Value}");
+            }
+
+            return false;
+        }
+
+        public int GetNrOfNamesErrors(Dictionary<string, int> names)
+        {
+            int nr = 0;
+            foreach (KeyValuePair<string, int> pair in names)
+            {
+                if (pair.Value > 1)
+                {
+                    ++nr;
+                }
+            }
+
+            return nr;
         }
     }
 }

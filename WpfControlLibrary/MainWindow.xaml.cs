@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfControlLibrary.DataModel;
 
 namespace WpfControlLibrary
 {
@@ -63,7 +64,9 @@ namespace WpfControlLibrary
         {
             if (DataContext is MainViewModel vm)
             {
+                Debug.Print($"AddObject_Click");
                 OpcObject oo = new OpcObject(true, false, false, false, false);
+                Debug.Print($"End");
                 vm.Objects.Add(oo);
                 vm.SelectedOpcObject = oo;
                 Objects.ScrollIntoView(oo);
@@ -94,7 +97,7 @@ namespace WpfControlLibrary
                         ooi.SelectedBasicType = vm.SelectedSetupItem;
                         ooi.SelectedRank = vm.SelectedSetupRank;
                         ooi.ArraySizeValue = vm.SelectedSetupLength;
-//                        ListViewItems.ScrollIntoView(ooi);
+                        ListViewItems.ScrollIntoView(ooi);
                     }
                 }
             }
@@ -303,7 +306,13 @@ namespace WpfControlLibrary
                     }
                     foreach (OpcObjectItem ooi in erase)
                     {
+                        NodeIdBase.Remove(ooi.NodeId);
                         mvm.SelectedOpcObject.Items.Remove(ooi);
+                    }
+
+                    if (NodeIdBase.GetNrOfErrors() == 0)
+                    {
+                        MainViewModel.IsError = false;
                     }
                 }
             }
@@ -347,7 +356,7 @@ namespace WpfControlLibrary
             Debug.Print($"ButtonObjectToClientClick");
             if (DataContext is MainViewModel vm)
             {
-                OpcObject oo = new OpcObject(false,true,false,false,false);
+                OpcObject oo = new OpcObject(false, true, false, false, false);
                 vm.Objects.Add(oo);
                 vm.SelectedOpcObject = oo;
                 Objects.ScrollIntoView(oo);
@@ -403,6 +412,72 @@ namespace WpfControlLibrary
                     e.Handled = true;
                     tb.Focus();
                 }
+            }
+        }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            if (sender is ContextMenu menu)
+            {
+                if (DataContext is MainViewModel vm)
+                {
+                    if (vm.SelectedDataModelNode != null)
+                    {
+                        if (vm.SelectedDataModelNode is DataModelNamespace dmns)
+                        {
+                            foreach (MenuItem mi in menu.Items)
+                            {
+                                switch(mi.Name)
+                                {
+                                    case "MiAddNs":
+                                        mi.IsEnabled = false;
+                                        break;
+                                    case "MiAddFolder":
+                                        if(dmns.Namespace == 0)
+                                        {
+                                            mi.IsEnabled = false;
+                                        }
+                                        break;
+                                    case "MiAddVar":
+                                        if (dmns.Namespace == 0)
+                                        {
+                                            mi.IsEnabled = false;
+                                        }
+                                        break;
+                                    case "MiAddObjectType":
+                                        if (dmns.Namespace == 0)
+                                        {
+                                            mi.IsEnabled = false;
+                                        }
+                                        break;
+                                    case "MiRemove":
+                                        if (dmns.Namespace == 0)
+                                        {
+                                            mi.IsEnabled = false;
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if(vm.SelectedDataModelNode is DataModelFolder dmf)
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.SelectedDataModelNode = e.NewValue as DataModelNode;
+                e.Handled = true;
             }
         }
     }

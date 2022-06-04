@@ -68,15 +68,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientItem.cs" />
-    <Compile Include="DataModelNode.cs" />
+    <Compile Include="DataModel\DataModelArrayVariable.cs" />
+    <Compile Include="DataModel\DataModelFolder.cs" />
+    <Compile Include="DataModel\DataModelNamespace.cs" />
+    <Compile Include="DataModel\DataModelNode.cs" />
+    <Compile Include="DataModel\DataModelObjectType.cs" />
+    <Compile Include="DataModel\DataModelObjectVariable.cs" />
+    <Compile Include="DataModel\DataModelSimpleVariable.cs" />
     <Compile Include="EditObjectItemDialog.xaml.cs">
       <DependentUpon>EditObjectItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImportedItem.cs" />
     <Compile Include="NodeId.cs" />
-    <Compile Include="NodeIdBase.cs" />
-    <Compile Include="NodeIdNumeric.cs" />
-    <Compile Include="NodeIdString.cs" />
+    <Compile Include="DataModel\NodeIdBase.cs" />
+    <Compile Include="DataModel\NodeIdNumeric.cs" />
+    <Compile Include="DataModel\NodeIdString.cs" />
     <Compile Include="SecondaryViewModel.cs" />
     <Compile Include="ServerItem.cs" />
     <Compile Include="ViewModelEditItems.cs" />
@@ -144,9 +150,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Namespace-Sealed_655_24.bmp" />
-    <Resource Include="Icons\Object_554_24.bmp" />
-    <Resource Include="Icons\ValueType_547_24.bmp" />
+    <Resource Include="Icons\Folder_6222.png" />
+    <Resource Include="Icons\MultiView_6035.png" />
+    <Resource Include="Icons\Namespace.png" />
+    <Resource Include="Icons\Object_554.png" />
+    <Resource Include="Icons\Type_527.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ClassIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Constant_495.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfControlLibrary
+namespace WpfControlLibrary.DataModel
 {
     public enum IdentifierType { Unknown, Numeric, String }
     public abstract class NodeIdBase
@@ -113,9 +113,9 @@ namespace WpfControlLibrary
         public static int GetNrOfErrors()
         {
             int nr = 0;
-            foreach(KeyValuePair<string,List<NodeIdBase>> kv in _ids)
+            foreach (KeyValuePair<string, List<NodeIdBase>> kv in _ids)
             {
-                if(kv.Value.Count > 1)
+                if (kv.Value.Count > 1)
                 {
                     ++nr;
                 }

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using WpfControlLibrary;
+using WpfControlLibrary.DataModel;
 
 namespace ConfigOpcUa
 {

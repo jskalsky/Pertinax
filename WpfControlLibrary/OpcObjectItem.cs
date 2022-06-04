@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfControlLibrary.DataModel;
 
 namespace WpfControlLibrary
 {
@@ -30,6 +31,7 @@ namespace WpfControlLibrary
 
         private string _nodeIdString;
         private NodeIdBase _lastNodeId = null;
+        private string _lastName = string.Empty;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
@@ -212,16 +214,52 @@ namespace WpfControlLibrary
                     Debug.Print($"Novy _lastNodeId= {_lastNodeId.NodeIdString}");
                     NodeIdBase.Add(NodeId);
                     NodeIdBase.PrintIds();
-                    MainViewModel.IsError = (!string.IsNullOrEmpty(error));
                     Debug.Print($"Validate result= {MainViewModel.IsError}, error= {error}");
                     int nr = NodeIdBase.GetNrOfErrors();
-                    if(nr == 0)
+                    if (nr == 0)
                     {
-                        foreach(OpcObjectItem ooi in Parent.Items)
+                        foreach (OpcObjectItem ooi in Parent.Items)
                         {
                             ooi.NodeIdString = ooi.NodeIdString;
                         }
+                        MainViewModel.IsError = false;
                     }
+                    else
+                    {
+                        MainViewModel.IsError = true;
+                    }
+                    break;
+                case "Name":
+                    Debug.Print($"Validate Name {Name}, _lastName= {_lastName}");
+                    if (_lastName == string.Empty)
+                    {
+                        _lastName = Name;
+                        Debug.Print($"Empty");
+                        return error;
+                    }
+                    if (_lastName == Name)
+                    {
+                        Debug.Print($"== {Name}, {_lastName}");
+                        return error;
+                    }
+
+                    Parent.DecrementNames(Parent._itemNames, _lastName);
+                    _lastName = Name;
+                    if (Parent.AddName(Parent._itemNames, Name))
+                    {
+                        error = $"Jméno proměnné {Name} již existuje";
+                    }
+                    else
+                    {
+                        if (Parent.GetNrOfNamesErrors(Parent._itemNames) == 0)
+                        {
+                            foreach (OpcObjectItem ooi in Parent.Items)
+                            {
+                                ooi.Name = ooi.Name;
+                            }
+                        }
+                    }
+                    MainViewModel.IsError = (!string.IsNullOrEmpty(error));
                     break;
             }
 
