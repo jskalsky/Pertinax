@@ -75,6 +75,7 @@
     <Compile Include="DataModel\DataModelObjectType.cs" />
     <Compile Include="DataModel\DataModelObjectVariable.cs" />
     <Compile Include="DataModel\DataModelSimpleVariable.cs" />
+    <Compile Include="DataModel\IdFactory.cs" />
     <Compile Include="EditObjectItemDialog.xaml.cs">
       <DependentUpon>EditObjectItemDialog.xaml</DependentUpon>
     </Compile>

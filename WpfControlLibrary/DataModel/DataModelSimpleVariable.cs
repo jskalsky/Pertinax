@@ -8,10 +8,11 @@ namespace WpfControlLibrary.DataModel
 {
     public class DataModelSimpleVariable : DataModelNode
     {
-        public DataModelSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess) : base(name, "Icons/Constant_495.png", nodeId)
+        public DataModelSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, DataModelNode parent) : base(name, "Icons/Constant_495.png", nodeId, parent)
         {
             BasicType = basicType;
             VarAccess = varAccess;
+            DataModelType = DataModelType.SimpleVariable;
         }
 
         public string BasicType { get; }

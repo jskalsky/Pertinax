@@ -8,9 +8,10 @@ namespace WpfControlLibrary.DataModel
 {
     public class DataModelObjectVariable : DataModelNode
     {
-        public DataModelObjectVariable(string name, NodeIdBase nodeId, string objectTypeName):base(name, "Icons/Object_554.png", nodeId)
+        public DataModelObjectVariable(string name, NodeIdBase nodeId, string objectTypeName, DataModelNode parent) : base(name, "Icons/Object_554.png", nodeId, parent)
         {
             ObjectTypeName = objectTypeName;
+            DataModelType = DataModelType.ObjectVariable;
         }
 
         public string ObjectTypeName { get; }

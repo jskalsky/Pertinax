@@ -69,7 +69,7 @@ namespace WpfControlLibrary
             DataModelNamespace1 = new DataModelNamespace(1);
             DataModel.Add(DataModelNamespace0);
             DataModel.Add(DataModelNamespace1);
-            DataModelFolderPertinax = DataModelNode.GetFolder("Pertinax");
+            DataModelFolderPertinax = DataModelNode.GetFolder("Pertinax", DataModelNamespace1);
             DataModelFolderPertinax.AddChildren(DataModelFolderPertinax);
             DataModelNamespace1.AddChildren(DataModelFolderPertinax);
             SelectedDataModelNode = null;

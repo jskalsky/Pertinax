@@ -393,12 +393,11 @@
                 <TreeView Grid.Column="2" ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged">
                     <TreeView.ContextMenu>
                         <ContextMenu  Opened="ContextMenu_Opened">
-                            <MenuItem Header="Pridat Namespace" Name="MiAddNs"/>
-                            <MenuItem Header="Pridat zalozku" Name="MiAddFolder"/>
-                            <MenuItem Header="Pridat promennou" Name="MiAddVar"/>
-                            <MenuItem Header="Pridat typ objekt" Name="MiAddObjectType"/>
+                            <MenuItem Header="Pridat zalozku" Name="MiAddFolder" Click="MiAddFolder_Click"/>
+                            <MenuItem Header="Pridat promennou" Name="MiAddVar" Click="MiAddVar_Click"/>
+                            <MenuItem Header="Pridat typ objekt" Name="MiAddObjectType" Click="MiAddObjectType_Click"/>
                             <Separator/>
-                            <MenuItem Header="Zrusit" Name="MiRemove"/>
+                            <MenuItem Header="Zrusit" Name="MiRemove" Click="MiRemove_Click"/>
                         </ContextMenu>
                     </TreeView.ContextMenu>
                     <TreeView.ItemTemplate>

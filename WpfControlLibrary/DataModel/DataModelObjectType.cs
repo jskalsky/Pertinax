@@ -8,9 +8,9 @@ namespace WpfControlLibrary.DataModel
 {
     public class DataModelObjectType : DataModelNode
     {
-        public DataModelObjectType(string name, NodeIdBase nodeId) : base(name, "Icons/ClassIcon.png", nodeId)
+        public DataModelObjectType(string name, NodeIdBase nodeId, DataModelNode parent) : base(name, "Icons/ClassIcon.png", nodeId, parent)
         {
-
+            DataModelType = DataModelType.ObjectType;
         }
     }
 }

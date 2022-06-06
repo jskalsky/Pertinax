@@ -23,6 +23,16 @@ namespace WpfControlLibrary
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly Dictionary<DataModelType, List<DataModelType>> _DataModelTypes = new Dictionary<DataModelType, List<DataModelType>>()
+        {
+            { DataModelType.Namespace, new List<DataModelType>(){DataModelType.Folder, DataModelType.ObjectVariable, DataModelType.SimpleVariable, DataModelType.ArrayVariable} },
+            { DataModelType.Folder, new List<DataModelType>(){DataModelType.Folder, DataModelType.ObjectType, DataModelType.SimpleVariable, DataModelType.ArrayVariable,
+                DataModelType.ObjectVariable} },
+            { DataModelType.SimpleVariable, new List<DataModelType>()},
+            { DataModelType.ArrayVariable, new List<DataModelType>()},
+            { DataModelType.ObjectVariable, new List<DataModelType>()},
+            { DataModelType.ObjectType, new List<DataModelType>(){DataModelType.SimpleVariable, DataModelType.ArrayVariable, DataModelType.ObjectVariable} }
+        };
         public MainWindow()
         {
             InitializeComponent();
@@ -423,47 +433,39 @@ namespace WpfControlLibrary
                 {
                     if (vm.SelectedDataModelNode != null)
                     {
-                        if (vm.SelectedDataModelNode is DataModelNamespace dmns)
+                        DataModelNamespace ns = vm.SelectedDataModelNode.GetNamespace();
+                        if (ns != null)
                         {
-                            foreach (MenuItem mi in menu.Items)
+                            if (ns.Namespace == 0)
                             {
-                                switch(mi.Name)
+                                foreach (MenuItem mi in menu.Items)
                                 {
-                                    case "MiAddNs":
-                                        mi.IsEnabled = false;
-                                        break;
-                                    case "MiAddFolder":
-                                        if(dmns.Namespace == 0)
-                                        {
-                                            mi.IsEnabled = false;
-                                        }
-                                        break;
-                                    case "MiAddVar":
-                                        if (dmns.Namespace == 0)
-                                        {
-                                            mi.IsEnabled = false;
-                                        }
-                                        break;
-                                    case "MiAddObjectType":
-                                        if (dmns.Namespace == 0)
-                                        {
-                                            mi.IsEnabled = false;
-                                        }
-                                        break;
-                                    case "MiRemove":
-                                        if (dmns.Namespace == 0)
-                                        {
-                                            mi.IsEnabled = false;
-                                        }
-                                        break;
+                                    mi.IsEnabled = false;
                                 }
                             }
-                        }
-                        else
-                        {
-                            if(vm.SelectedDataModelNode is DataModelFolder dmf)
+                            else
                             {
-
+                                if (_DataModelTypes.TryGetValue(vm.SelectedDataModelNode.DataModelType, out List<DataModelType> enabledTypes))
+                                {
+                                    foreach (DataModelType type in enabledTypes)
+                                    {
+                                        foreach (MenuItem mi in menu.Items)
+                                        {
+                                            switch (mi.Name)
+                                            {
+                                                case "MiAddFolder":
+                                                    mi.IsEnabled = (type == DataModelType.Folder) ? true : false;
+                                                    break;
+                                                case "MiAddVar":
+                                                    mi.IsEnabled = (type == DataModelType.SimpleVariable || type == DataModelType.ObjectVariable || type == DataModelType.ArrayVariable) ? true : false;
+                                                    break;
+                                                case "MiAddObjectType":
+                                                    mi.IsEnabled = (type == DataModelType.Folder) ? true : false;
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -479,6 +481,32 @@ namespace WpfControlLibrary
                 vm.SelectedDataModelNode = e.NewValue as DataModelNode;
                 e.Handled = true;
             }
+        }
+
+        private void MiAddFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                if(vm.SelectedDataModelNode != null)
+                {
+
+                }
+            }
+        }
+
+        private void MiAddVar_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MiAddObjectType_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MiRemove_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
