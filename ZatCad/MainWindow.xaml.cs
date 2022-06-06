@@ -33,7 +33,7 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("e:\\Work\\zat.log", exc.Message);
+                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
             }
         }
 
@@ -44,13 +44,13 @@ namespace ZatCad
                 if(DataContext is MainViewModel mvm)
                 {
                     string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
-                    configOpcUa.LoadConfig(fileName);
+//                    configOpcUa.LoadConfig(fileName);
                     configOpcUa.MakeConfig(null, fileName);
                 }
             }
             catch(Exception exc)
             {
-                File.WriteAllText("e:\\Work\\zat.log", exc.Message);
+                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
             }
         }
 

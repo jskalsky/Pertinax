@@ -41,7 +41,7 @@ namespace WpfControlLibrary
         public int NudMax
         {
             get { return (int)GetValue(NudMaxProperty); }
-            set { SetValue(NudMaxProperty, value); }
+            set { SetValue(NudMaxProperty, value); Debug.Print($"Set NudMax {value}");}
         }
         public static readonly DependencyProperty NudValueProperty = DependencyProperty.Register("NudValue", typeof(int), typeof(NumericUpDown), new PropertyMetadata(0, OnNudValuePropertyChanged));
         public int NudValue

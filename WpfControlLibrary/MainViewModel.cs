@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using WpfControlLibrary.DataModel;
 
 namespace WpfControlLibrary
 {
@@ -36,7 +38,11 @@ namespace WpfControlLibrary
         private bool _enableAddToClient;
         private bool _enableSetupLength;
 
+        private bool _encryptServer;
+
         private int _nextItemIndex;
+        private static MainViewModel _instance;
+
         public MainViewModel()
         {
 
@@ -51,13 +57,28 @@ namespace WpfControlLibrary
             LocalIpAddressString = "10.10.13.253";
             WindowTitle = "OpcUa";
             RepetitionRateValue = 1;
-            _setupObjectItem = new OpcObjectItem("Setup", 0, "");
+            _setupObjectItem = new OpcObjectItem("Setup", null);
             SelectedSetupItem = _setupObjectItem.BasicTypes[0];
             SelectedSetupRank = _setupObjectItem.Rank[0];
             SelectedSetupLength = 0;
             EnableSetupLength = false;
+            EncryptServer = false;
+            _instance = this;
+            DataModel = new ObservableCollection<DataModelNode>();
+            DataModelNamespace0 = new DataModelNamespace(0);
+            DataModelNamespace1 = new DataModelNamespace(1);
+            DataModel.Add(DataModelNamespace0);
+            DataModel.Add(DataModelNamespace1);
+            DataModelFolderPertinax = DataModelNode.GetFolder("Pertinax");
+            DataModelFolderPertinax.AddChildren(DataModelFolderPertinax);
+            DataModelNamespace1.AddChildren(DataModelFolderPertinax);
+            SelectedDataModelNode = null;
         }
 
+        public static ObservableCollection<OpcObject> GetObjects()
+        {
+            return _instance.Objects;
+        }
         public int GetMaxItemIndex()
         {
             int maxIndex = 0;
@@ -90,6 +111,11 @@ namespace WpfControlLibrary
             return maxIndex;
         }
 
+        public static bool IsError { get; set; } = false;
+        public DataModelNamespace DataModelNamespace0 { get; }
+        public DataModelNamespace DataModelNamespace1 { get; }
+        public DataModelFolder DataModelFolderPertinax { get; }
+        public DataModelNode SelectedDataModelNode { get; set; }
         public OpcObjectItem SetupObjectItem
         {
             get { return _setupObjectItem; }
@@ -218,11 +244,18 @@ namespace WpfControlLibrary
             get { return _enableSetupLength; }
             set { _enableSetupLength = value; OnPropertyChanged("EnableSetupLength"); }
         }
+
+        public bool EncryptServer
+        {
+            get { return _encryptServer; }
+            set { _encryptServer = value; OnPropertyChanged("EncryptServer"); }
+        }
         public ObservableCollection<OpcObject> Objects { get; private set; }
         public ObservableCollection<SubscriberItem> SubscriberObjects { get; private set; }
         public ObservableCollection<PublisherItem> PublisherObjects { get; private set; }
         public ObservableCollection<ClientItem> ClientObjects { get; private set; }
         public ObservableCollection<ServerItem> ServerObjects { get; private set; }
+        public ObservableCollection<DataModelNode> DataModel { get; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

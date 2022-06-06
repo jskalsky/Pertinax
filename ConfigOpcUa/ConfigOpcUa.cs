@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using WpfControlLibrary;
+using WpfControlLibrary.DataModel;
 
 namespace ConfigOpcUa
 {
@@ -28,6 +29,7 @@ namespace ConfigOpcUa
         private string _localIpAddress;
         private string _groupAddress;
         private int _publisherId;
+        private bool _serverEncryption;
         private readonly List<WpfControlLibrary.SubscriberItem> _subscriberItems;
         private readonly List<WpfControlLibrary.PublisherItem> _publisherItems;
         private readonly List<WpfControlLibrary.ClientItem> _clientItems;
@@ -57,6 +59,7 @@ namespace ConfigOpcUa
             _ports = new List<WpfControlLibrary.PortsNode>();
             _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
+            _serverEncryption = false;
         }
 
         public static void IntelMotorola(byte[] bytes, int start, int length)
@@ -244,7 +247,8 @@ namespace ConfigOpcUa
                             id = iitems[0];
                         }
                     }
-                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, ns, id);
+                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, GetAccess(vt.AccessType), string.Empty,vt.ArraySize, GetBasicType(vt.BasicType),
+                        false,$"{ns}:{id}", oo);
                     ooi.SelectedBasicType = GetBasicType(vt.BasicType);
                     ooi.SelectedAccess = GetAccess(vt.AccessType);
                     ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
@@ -290,7 +294,7 @@ namespace ConfigOpcUa
             return null;
         }
 
-        private void Import(string path, string objectName, bool receive, bool monitoring, int period, WpfControlLibrary.MainViewModel mvm = null)
+        private void Import(string path, string objectName, bool receive, bool monitoring, int period, bool encrypt, WpfControlLibrary.MainViewModel mvm = null)
         {
             Debug.Print("Import");
             if (File.Exists(path))
@@ -337,7 +341,7 @@ namespace ConfigOpcUa
                         Debug.Print("201");
                         if (oo != null)
                         {
-                            WpfControlLibrary.ClientItem ci = new WpfControlLibrary.ClientItem(path, objectName, ips[0], oo, receive, period, monitoring);
+                            WpfControlLibrary.ClientItem ci = new WpfControlLibrary.ClientItem(path, objectName, ips[0], oo, receive, period, encrypt, monitoring);
                             _clientItems.Add(ci);
                             if (mvm != null)
                             {
@@ -362,6 +366,8 @@ namespace ConfigOpcUa
             _serverItems.Clear();
             _ports.Clear();
             _allPorts.Clear();
+            NodeIdBase.Clear();
+
             if (File.Exists(pName))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
@@ -374,6 +380,7 @@ namespace ConfigOpcUa
                         _localIpAddress = ips[0];
                         _groupAddress = ips[1];
                     }
+                    _serverEncryption = pars.ServerEncryption;
                     foreach (ObjectTypeType ott in pars.ObjectType)
                     {
                         string[] objectItems = ott.Description.Split(';');
@@ -390,10 +397,28 @@ namespace ConfigOpcUa
                             bool.TryParse(objectItems[3], out subscriberObject);
                             bool.TryParse(objectItems[4], out isImported);
                         }
+
+                        string[] nodeIdItems = ott.BaseType.Split(';');
+                        ushort namespaceIndex = 0;
+                        string nodeId = string.Empty;
+                        Debug.Print($"nodeIdItems= {nodeIdItems.Length}");
+                        if (nodeIdItems.Length == 2)
+                        {
+                            if (ushort.TryParse(nodeIdItems[0], out ushort ns))
+                            {
+                                namespaceIndex = ns;
+                            }
+
+                            nodeId = $"{namespaceIndex}:{nodeIdItems[1]}";
+                        }
+                        else
+                        {
+                            nodeId = $"{namespaceIndex}:{nodeIdItems[0]}";
+                        }
                         if (!isImported)
                         {
-                            WpfControlLibrary.NodeId.AddId(ott.BaseType);
-                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, serverObject, clientObject, publisherObject, subscriberObject, isImported, 0, ott.BaseType);
+                            Debug.Print($"nodeId= {nodeId}");
+                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, serverObject, clientObject, publisherObject, subscriberObject, isImported, nodeId);
                             AddItemsToObject(ott, oo, publisherObject);
                             _objects.Add(oo);
                             if (serverObject)
@@ -437,7 +462,7 @@ namespace ConfigOpcUa
                                 string path = items[0];
                                 string objectName = items[1];
                                 bool.TryParse(items[2], out receive);
-                                Import(path, objectName, receive, false, 0);
+                                Import(path, objectName, receive, false, 0, false);
                             }
                         }
                     }
@@ -460,7 +485,7 @@ namespace ConfigOpcUa
                                     {
                                         if (oo.Name == items[4])
                                         {
-                                            WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod, monitoring);
+                                            WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod, monitoring, st.ClientEncryption);
                                             _clientItems.Add(ci);
                                             break;
                                         }
@@ -468,7 +493,7 @@ namespace ConfigOpcUa
                                 }
                                 else
                                 {
-                                    Import(path, objectName, receive, monitoring, st.QueryPeriod);
+                                    Import(path, objectName, receive, monitoring, st.QueryPeriod, st.ClientEncryption);
                                 }
                             }
                         }
@@ -689,6 +714,7 @@ namespace ConfigOpcUa
                     vm.ServerObjects.Add(si);
                 }
                 vm.WindowTitle = $"OpcUa - {pName}";
+                vm.EncryptServer = _serverEncryption;
             }
 
             Debug.Print("1");
@@ -726,7 +752,7 @@ namespace ConfigOpcUa
                     }
                     foreach (string objectName in objectNames)
                     {
-                        Import(mvm.SubscriberPath, objectName, false, false, 100, mvm);
+                        Import(mvm.SubscriberPath, objectName, false, false, 100, false, mvm);
                     }
                 }
             }
@@ -799,7 +825,7 @@ namespace ConfigOpcUa
             ott.Name = opcObject.Name;
             ott.Description = $"{opcObject.ServerObject};{opcObject.ClientObject};{opcObject.PublisherObject};{opcObject.SubscriberObject};{opcObject.IsImported}";
             ott.VariablesCount = (ushort)opcObject.Items.Count;
-            ott.BaseType = $"{opcObject.Id}";
+            ott.BaseType = $"{opcObject.NodeId.NamespaceIndex};{opcObject.NodeId.GetIdentifier()}";
             foreach (WpfControlLibrary.OpcObjectItem ooi in opcObject.Items)
             {
                 if (_basicTypes.TryGetValue(ooi.SelectedBasicType, out byte typeCode))
@@ -808,7 +834,7 @@ namespace ConfigOpcUa
                     {
                         Name = ooi.Name,
                         BasicType = typeCode,
-                        Description = $"{ooi.Ns};{ooi.Id}"
+                        Description = $"{ooi.NodeId.NamespaceIndex};{ooi.NodeId.GetIdentifier()}"
                     };
                     ooi.SelectedAccess = ooi.WriteOutside ? ooi.Access[1] : ooi.Access[0];
                     if (_access.TryGetValue(ooi.SelectedAccess, out byte accessCode))
@@ -863,6 +889,8 @@ namespace ConfigOpcUa
             pars.PublisherId = (ushort)mvm.PublisherId;
             pars.ServerRootType = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString}";
 
+            pars.ServerEncryption = mvm.EncryptServer;
+
             List<ObjectTypeType> objects = new List<ObjectTypeType>();
             ushort id = 1;
             List<SubscriberType> sts = new List<SubscriberType>();
@@ -904,6 +932,8 @@ namespace ConfigOpcUa
                     ObjectTypeType objectTypeType = CreateObjectTypeType(clientItem.OpcObject, id++);
                     objects.Add(objectTypeType);
                 }
+
+                st.ClientEncryption = clientItem.EncryptClient;
             }
             pars.Server = listSt.ToArray();
             pars.ServersCount = (ushort)listSt.Count();
@@ -931,7 +961,7 @@ namespace ConfigOpcUa
                     {
                         foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                         {
-                            tw.WriteLine($"{ooi.Name};{ooi.SelectedBasicType};{ooi.Id}");
+                            tw.WriteLine($"{ooi.Name};{ooi.SelectedBasicType};{ooi.NodeId.NamespaceIndex};{ooi.NodeId.GetIdentifier()}");
                         }
                     }
                 }
