@@ -103,6 +103,9 @@
     <Compile Include="PublisherItem.cs" />
     <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
+    <Compile Include="View\DialogAddVariable.xaml.cs">
+      <DependentUpon>DialogAddVariable.xaml</DependentUpon>
+    </Compile>
     <Page Include="EditObjectItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -115,7 +118,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NumericUpDown.xaml">
+    <Page Include="View\NumericUpDown.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -125,11 +128,15 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NumericUpDown.xaml.cs">
+    <Compile Include="View\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PortDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogAddVariable.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,25 @@
+﻿<Window x:Class="WpfControlLibrary.View.DialogAddVariable"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfControlLibrary.View"
+        mc:Ignorable="d"
+        Title="Add variable" Height="450" Width="800" ResizeMode="NoResize" WindowStyle="None">
+    <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
+        <DockPanel LastChildFill="True">
+            <Label DockPanel.Dock="Top" Content="Přidat proměnné" Background="LightSteelBlue" Foreground="White"/>
+            <Grid DockPanel.Dock="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <GroupBox Header="Přidat">
+                    <StackPanel Orientation="Horizontal">
+                        <local:NumericUpDown NudMin="1" NudMax="30000"/>
+                    </StackPanel>
+                </GroupBox>
+            </Grid>
+        </DockPanel> 
+    </Border>
+</Window>
