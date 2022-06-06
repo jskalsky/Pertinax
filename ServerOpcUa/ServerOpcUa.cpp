@@ -7,6 +7,7 @@
 #include <open62541/server_config_default.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <conio.h>
 
 extern UA_Byte PrivateKey[];
 extern int PrivateKeyLength;
@@ -26,22 +27,24 @@ int main()
     signal(SIGINT, stopHandler);
     signal(SIGTERM, stopHandler);
 
-    UA_Server* server = UA_Server_new();
-    UA_ServerConfig* pConfig = UA_Server_getConfig(server);
-
     UA_ByteString privateKey;
     privateKey.length = PrivateKeyLength;
     privateKey.data = PrivateKey;
     UA_ByteString certificate;
     certificate.length = CertificateLength;
     certificate.data = Certificate;
-
     size_t trustListSize = 0;
     UA_STACKARRAY(UA_ByteString, trustList, trustListSize);
-    UA_StatusCode retval = UA_ServerConfig_setDefaultWithSecurityPolicies(pConfig, 4840, &certificate, &privateKey, trustList, trustListSize, NULL, 0, NULL, 0);
-    printf("setDefaultWithSecurityPolicies= %x\n", retval);
 
-    UA_ServerConfig_setDefault(pConfig);
+    UA_Server* server = UA_Server_new();
+    UA_ServerConfig* pConfig = UA_Server_getConfig(server);
+
+    UA_StatusCode retval =
+        UA_ServerConfig_setDefaultWithSecurityPolicies(pConfig, 4841, &certificate, &privateKey, trustList, trustListSize, NULL, 0, NULL, 0);
+    printf("setDefault= %x\n", retval);
+
+//    UA_ServerConfig_setDefault(pConfig);
+
     if (pConfig->endpointsSize != 0)
     {
         printf("end= %u\n", pConfig->endpointsSize);
@@ -61,18 +64,24 @@ int main()
             std::string disUrl((char*)pConfig->applicationDescription.discoveryUrls[i].data, pConfig->applicationDescription.discoveryUrls[i].length);
         }
     }
-    if (pConfig->serverUrlsSize != 0)
+    pConfig->customHostname = UA_String_fromChars("localhost");
+    retval = UA_Server_run_startup(server);
+    if (retval != UA_STATUSCODE_GOOD)
     {
-        printf("ser %u\n", pConfig->serverUrlsSize);
-        for (size_t i = 0; i < pConfig->serverUrlsSize; ++i)
+        printf("Run startup %x\n", retval);
+    }
+    else
+    {
+        while (running)
         {
-            std::string url((char*)pConfig->serverUrls[i].data, pConfig->serverUrls[i].length);
-            printf("url= %s\n", url.c_str());
+            UA_Server_run_iterate(server, true);
+            if (_kbhit())
+            {
+                break;
+            }
         }
     }
-
-    retval = UA_Server_run(server, &running);
-
+    
     UA_Server_delete(server);
     return retval == UA_STATUSCODE_GOOD ? EXIT_SUCCESS : EXIT_FAILURE;
 }

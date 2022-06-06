@@ -6,6 +6,11 @@
 #include <open62541/client_highlevel.h>
 #include <open62541/plugin/log_stdout.h>
 
+extern UA_Byte PrivateKey[];
+extern int PrivateKeyLength;
+extern UA_Byte Certificate[];
+extern int CertificateLength;
+
 UA_NodeId idFloats1, idFloats2, idFloats3, idFloats4;
 UA_NodeId Resistance;
 UA_NodeId idCounter;
@@ -59,18 +64,31 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest)
 
 int main()
 {
+    UA_ByteString privateKey;
+    privateKey.length = PrivateKeyLength;
+    privateKey.data = PrivateKey;
+    UA_ByteString certificate;
+    certificate.length = CertificateLength;
+    certificate.data = Certificate;
+    size_t trustListSize = 0;
+
+    UA_STACKARRAY(UA_ByteString, trustList, trustListSize);
     UA_Client* client = UA_Client_new();
     UA_ClientConfig* pConfig = UA_Client_getConfig(client);
-    UA_ClientConfig_setDefault(pConfig);
+
+    pConfig->securityMode = UA_MESSAGESECURITYMODE_SIGNANDENCRYPT;
+    UA_StatusCode retval = UA_ClientConfig_setDefaultEncryption(pConfig, certificate, privateKey,  trustList, trustListSize, NULL, 0);
+
+//    UA_ClientConfig_setDefault(pConfig);
     pConfig->timeout = 10000;
-    UA_Client_newWithConfig(pConfig);
+    pConfig->securityMode = UA_MESSAGESECURITYMODE_SIGNANDENCRYPT;
+    //    UA_Client_newWithConfig(pConfig);
 
-    UA_ClientConfig_setDefault(UA_Client_getConfig(client));
+//    UA_ClientConfig_setDefault(UA_Client_getConfig(client));
 
-    UA_StatusCode retval;
     for (int i = 0; i < 5; ++i)
     {
-        retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
+        retval = UA_Client_connect(client, "opc.tcp://localhost:4840");
         if (retval != UA_STATUSCODE_GOOD)
         {
             printf("Connect %x\n", retval);
