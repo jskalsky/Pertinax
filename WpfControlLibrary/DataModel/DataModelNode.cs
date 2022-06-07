@@ -33,6 +33,11 @@ namespace WpfControlLibrary.DataModel
             return node;
         }
 
+        public static DataModelSimpleVariable GetSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, DataModelNode parent)
+        {
+            DataModelSimpleVariable node = new DataModelSimpleVariable(name, nodeId, basicType, varAccess, parent);
+            return node;
+        }
         public void AddChildren(DataModelNode node)
         {
             Children.Add(node);

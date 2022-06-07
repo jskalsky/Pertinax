@@ -28,6 +28,11 @@ namespace WpfControlLibrary.DataModel
             return GetFreeN(ns, _freeIndexes, _names, nameBase, count, ref _nameIndexesCount);
         }
 
+        public static IList<string> GetNextIndex(ushort ns, int count = 1)
+        {
+            return GetFreeN(ns, _freeIndexes, _names, null, count, ref _nameIndexesCount);
+        }
+
         public static void ReturnNames(IList<string> names, string baseName)
         {
 
@@ -40,7 +45,7 @@ namespace WpfControlLibrary.DataModel
                 ll = new LinkedList<int>();
                 for (int i = 1; i < IndexesAmountPlus; i++)
                 {
-                    ll.AddFirst(i);
+                    ll.AddLast(i);
                 }
                 indexesCount = IndexesAmountPlus;
             }

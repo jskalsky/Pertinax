@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfControlLibrary.ViewModel;
+using WpfControlLibrary.DataModel;
 
 namespace WpfControlLibrary.View
 {
@@ -36,49 +37,47 @@ namespace WpfControlLibrary.View
         private void Kind_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.Print($"Kind_SelectionChanged {sender}, {e.AddedItems.Count}");
-            if(e.AddedItems.Count == 1)
+            if (e.AddedItems.Count == 1)
             {
                 if (e.AddedItems[0] is string selectedKind)
                 {
                     Debug.Print($"selectedKind= {selectedKind}");
-                    if(DataContext is AddVariableViewModel vm)
+                    if (DataContext is AddVariableViewModel vm)
                     {
-                        vm.EnableBasicType= false;
-                        vm.EnableAccess = false;
-                        vm.EnableArrayLength = false;
-                        vm.EnableObjectName = false;
-                        vm.EnableVarName = false;
-                        vm.EnableVarId = false;
+                        vm.VisSimple = Visibility.Collapsed;
+                        vm.VisArray = Visibility.Collapsed;
+                        vm.VisObject = Visibility.Collapsed;
+                        vm.VisId = Visibility.Collapsed;
 
                         if (selectedKind == vm.Kind[0])
                         {
-                            vm.EnableBasicType = true;
-                            vm.EnableAccess = true;
+                            vm.VisSimple = Visibility.Visible;
                             if (vm.VarCount == 1)
                             {
-                                vm.EnableVarName= true;
-                                vm.EnableVarId = true;
+                                vm.VisId = Visibility.Visible;
                             }
                         }
                         else
                         {
-                            if(selectedKind == vm.Kind[1])
+                            if (selectedKind == vm.Kind[1])
                             {
-                                vm.EnableBasicType = true;
-                                vm.EnableAccess = true;
-                                vm.EnableArrayLength = true;
+                                vm.VisSimple = Visibility.Visible;
+                                vm.VisArray = Visibility.Visible;
                                 if (vm.VarCount == 1)
                                 {
-                                    vm.EnableVarName = true;
-                                    vm.EnableVarId = true;
+                                    vm.VisId = Visibility.Visible;
                                 }
 
                             }
                             else
                             {
-                                if(selectedKind == vm.Kind[2])
+                                if (selectedKind == vm.Kind[2])
                                 {
-                                    vm.EnableObjectName = true;
+                                    vm.VisObject = Visibility.Visible;
+                                    if(vm.VarCount == 1)
+                                    {
+                                        vm.VisId = Visibility.Visible;
+                                    }
                                 }
                             }
                         }
@@ -86,6 +85,40 @@ namespace WpfControlLibrary.View
                 }
             }
             e.Handled = true;
+        }
+
+        private void NumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            if (sender is NumericUpDown nud)
+            {
+                if (DataContext is AddVariableViewModel vm)
+                {
+                    if (nud.NudValue == 1)
+                    {
+                        vm.VisId = Visibility.Visible;
+                    }
+                    else
+                    {
+                        vm.VisId = Visibility.Collapsed;
+                    }
+                }
+            }
+        }
+
+        private void Write_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AddVariableViewModel vm)
+            {
+                for (int i = 0; i < vm.VarCount; i++)
+                {
+                    if(vm.SelectedKind == vm.Kind[0])
+                    {
+                        DataModelSimpleVariable node = DataModelNode.GetSimpleVariable(vm.VarName, NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{vm.VarId}"),
+                            vm.SelectedBasicType, vm.SelectedAccess, vm.ParentNode);
+                        vm.ParentNode.AddChildren(node);
+                    }
+                }
+            }
         }
     }
 }

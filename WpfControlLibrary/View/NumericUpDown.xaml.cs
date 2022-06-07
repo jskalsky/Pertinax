@@ -22,6 +22,7 @@ namespace WpfControlLibrary.View
     /// </summary>
     public partial class NumericUpDown : UserControl
     {
+        public event EventHandler ValueChanged;
         public NumericUpDown()
         {
             Debug.Print("Numeric konstruktor");
@@ -66,6 +67,10 @@ namespace WpfControlLibrary.View
             if (dependencyObject is NumericUpDown nud)
             {
                 nud.TextBoxValue.Text = e.NewValue.ToString();
+                if(nud.ValueChanged != null)
+                {
+                    nud.ValueChanged(nud, EventArgs.Empty);
+                }
             }
         }
         public static readonly DependencyProperty NudIncrementProperty = DependencyProperty.Register("NudIncrement", typeof(int), typeof(NumericUpDown), new PropertyMetadata(1, OnNudValuePropertyChanged));

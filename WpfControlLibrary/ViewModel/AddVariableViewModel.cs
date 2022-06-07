@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfControlLibrary.DataModel;
 
 namespace WpfControlLibrary.ViewModel
 {
@@ -29,6 +30,11 @@ namespace WpfControlLibrary.ViewModel
         private bool _enableVarId;
         private bool _enableBasicType;
         private bool _enableAccess;
+
+        private Visibility _visSimple;
+        private Visibility _visArray;
+        private Visibility _visObject;
+        private Visibility _visId;
         public AddVariableViewModel()
         {
             SelectedBasicType = _basicTypes[0];
@@ -130,6 +136,31 @@ namespace WpfControlLibrary.ViewModel
                 _arrayLength = value;
             }
         }
+
+        public Visibility VisSimple
+        {
+            get { return _visSimple; }
+            set { _visSimple = value; OnPropertyChanged("VisSimple"); }
+        }
+
+        public Visibility VisArray
+        {
+            get { return _visArray; }
+            set { _visArray = value; OnPropertyChanged("VisArray"); }
+        }
+        public Visibility VisObject
+        {
+            get { return _visObject; }
+            set { _visObject = value; OnPropertyChanged("VisObject"); }
+        }
+        public Visibility VisId
+        {
+            get { return _visId; }
+            set { _visId = value; OnPropertyChanged("VisId"); }
+        }
+
+        public DataModelNode ParentNode { get; set; }
+        public ushort Namespace { get; set; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

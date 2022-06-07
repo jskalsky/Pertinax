@@ -443,7 +443,7 @@ namespace WpfControlLibrary
                                 foreach (object mi in menu.Items)
                                 {
                                     Debug.Print($"mi= {mi}");
-                                    if(mi is MenuItem menuItem)
+                                    if (mi is MenuItem menuItem)
                                     {
                                         menuItem.IsEnabled = false;
                                     }
@@ -457,7 +457,7 @@ namespace WpfControlLibrary
                                     {
                                         foreach (object mi in menu.Items)
                                         {
-                                            if(mi is MenuItem menuItem)
+                                            if (mi is MenuItem menuItem)
                                             {
                                                 switch (menuItem.Name)
                                                 {
@@ -496,7 +496,7 @@ namespace WpfControlLibrary
         {
             if (DataContext is MainViewModel vm)
             {
-                if(vm.SelectedDataModelNode != null)
+                if (vm.SelectedDataModelNode != null)
                 {
 
                 }
@@ -506,8 +506,27 @@ namespace WpfControlLibrary
         private void MiAddVar_Click(object sender, RoutedEventArgs e)
         {
             DialogAddVariable dialogAddVariable = new DialogAddVariable();
-            if(dialogAddVariable.DataContext is AddVariableViewModel vm)
+            if (dialogAddVariable.DataContext is AddVariableViewModel vm)
             {
+                if (DataContext is MainViewModel mvm)
+                {
+                    DataModelNamespace ns = mvm.SelectedDataModelNode.GetNamespace();
+                    if (ns != null)
+                    {
+                        vm.ParentNode = mvm.SelectedDataModelNode;
+                        vm.Namespace = ns.Namespace;
+                        IList<string> names = IdFactory.GetNextName(ns.Namespace, IdFactory.NameSimpleVar);
+                        if (names != null && names.Count == 1)
+                        {
+                            vm.VarName = names[0];
+                        }
+                        names = IdFactory.GetNextIndex(ns.Namespace);
+                        if(names != null && names.Count == 1)
+                        {
+                            vm.VarId = names[0];
+                        }
+                    }
+                }
                 bool? result = dialogAddVariable.ShowDialog();
             }
         }
