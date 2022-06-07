@@ -4,22 +4,67 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary.View"
+        xmlns:vm="clr-namespace:WpfControlLibrary.ViewModel"
         mc:Ignorable="d"
-        Title="Add variable" Height="450" Width="800" ResizeMode="NoResize" WindowStyle="None">
+        Title="Add variable" Height="300" Width="500" ResizeMode="NoResize" WindowStyle="None">
+    <Window.DataContext>
+        <vm:AddVariableViewModel/>
+    </Window.DataContext>
     <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Přidat proměnné" Background="LightSteelBlue" Foreground="White"/>
-            <Grid DockPanel.Dock="Bottom">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <GroupBox Header="Přidat">
+            <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+                <GroupBox DockPanel.Dock="Left" Header="Přidat">
                     <StackPanel Orientation="Horizontal">
-                        <local:NumericUpDown NudMin="1" NudMax="30000"/>
+                        <Label Content="Počet proměnných"/>
+                        <local:NumericUpDown NudMin="1" NudMax="30000" NudValue="{Binding VarCount}" NudIncrement="1"/>
+                        <Button Content="Zapsat" Margin="10,0,0,0"/>
                     </StackPanel>
                 </GroupBox>
-            </Grid>
-        </DockPanel> 
+                <Button DockPanel.Dock="Right" Content="Ok" Width="50" Height="22" HorizontalAlignment="Right" Margin="0,0,5,0" IsDefault="True" Click="Button_Click"/>
+            </DockPanel>
+            <GroupBox Header="Vlastnosti">
+                <StackPanel Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Druh proměnné"/>
+                        <Label Grid.Row="1" Content="Typ proměnné"/>
+                        <Label Grid.Row="2" Content="Přístup zvenku"/>
+                        <Label Grid.Row="3" Content="Jméno objektu"/>
+                        <Label Grid.Column="2" Content="Počet položek"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Kind}" SelectedValue="{Binding SelectedKind}" SelectionChanged="Kind_SelectionChanged"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType}" IsEnabled="{Binding EnableBasicType}"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Access}" SelectedValue="{Binding SelectedAccess}" IsEnabled="{Binding EnableAccess}"/>
+                        <ComboBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding EnableObjectName}"/>
+                        <local:NumericUpDown Grid.Column="3" NudIncrement="1" NudMin="1" NudMax="30000" NudValue="{Binding ArrayLength}" IsEnabled="{Binding EnableArrayLength}"/>
+                    </Grid>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="105"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Jméno"/>
+                        <Label Grid.Row="1" Content="Identifikátor uzlu"/>
+                        <TextBox Grid.Column="1" Text="{Binding VarName,Mode=TwoWay}" IsEnabled="{Binding EnableVarName}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding VarId,Mode=TwoWay}" IsEnabled="{Binding EnableVarId}"/>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </DockPanel>
     </Border>
 </Window>

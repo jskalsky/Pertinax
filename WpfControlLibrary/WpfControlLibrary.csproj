@@ -103,6 +103,7 @@
     <Compile Include="PublisherItem.cs" />
     <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
+    <Compile Include="ViewModel\AddVariableViewModel.cs" />
     <Compile Include="View\DialogAddVariable.xaml.cs">
       <DependentUpon>DialogAddVariable.xaml</DependentUpon>
     </Compile>

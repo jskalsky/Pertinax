@@ -33,10 +33,9 @@ namespace WpfControlLibrary.DataModel
             return node;
         }
 
-        public void AddChildren(DataModelNode node, DataModelNode parent)
+        public void AddChildren(DataModelNode node)
         {
             Children.Add(node);
-            Parent = parent;
         }
 
         public DataModelNamespace GetNamespace()

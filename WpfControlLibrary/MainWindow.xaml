@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
+        xmlns:view="clr-namespace:WpfControlLibrary.View"
         xmlns:dm="clr-namespace:WpfControlLibrary.DataModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="1300" WindowStyle="None">
@@ -126,7 +127,7 @@
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Vertical">
                                 <Label Content="Publisher Id"/>
-                                <local:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
+                                <view:NumericUpDown Margin="5,0,0,0" NudMin="1" NudIncrement="1" NudMax="512" NudValue="{Binding PublisherId,Mode=TwoWay}" HorizontalAlignment="Left"/>
                             </StackPanel>
                             <ListView Grid.Row="1" ItemsSource="{Binding PublisherObjects}" Margin="0,5,0,0">
                                 <ListView.View>
@@ -141,7 +142,7 @@
                                         <GridViewColumn Header="Perioda vysílání" Width="120">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <local:NumericUpDown NudMin="1" NudIncrement="10" NudMax="512" NudValue="{Binding SendingPeriod,Mode=TwoWay}"  HorizontalAlignment="Left"/>
+                                                    <view:NumericUpDown NudMin="1" NudIncrement="10" NudMax="512" NudValue="{Binding SendingPeriod,Mode=TwoWay}"  HorizontalAlignment="Left"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
@@ -205,7 +206,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Grid Width="120">
-                                                    <local:NumericUpDown NudMin="0" NudIncrement="10" NudMax="1000" NudValue="{Binding RxTxPeriod,Mode=TwoWay}"  HorizontalAlignment="Center"/>
+                                                    <view:NumericUpDown NudMin="0" NudIncrement="10" NudMax="1000" NudValue="{Binding RxTxPeriod,Mode=TwoWay}"  HorizontalAlignment="Center"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
@@ -315,11 +316,11 @@
                     <DockPanel LastChildFill="True">
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,0" DockPanel.Dock="Bottom">
                             <Label Content="Počet" Margin="5,0,0,0"/>
-                            <local:NumericUpDown NudMin="1" NudMax="10000" NudIncrement="1" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
+                            <view:NumericUpDown NudMin="1" NudMax="10000" NudIncrement="1" NudValue="{Binding RepetitionRateValue,Mode=TwoWay}" Margin="5,0,0,0"/>
                             <ComboBox ItemsSource="{Binding SetupObjectItem.BasicTypes}" SelectedItem="{Binding SelectedSetupItem}" Width="70" Margin="5,0,0,0"/>
                             <ComboBox ItemsSource="{Binding SetupObjectItem.Rank}" Width="170" Margin="5,0,0,0" SelectedItem="{Binding SelectedSetupRank}" SelectionChanged="RankSetup_SelectionChanged"/>
                             <Label Content="Velikost pole" Margin="5,0,0,0"/>
-                            <local:NumericUpDown NudMin="0" NudMax="10000" NudIncrement="1" Margin="5,0,0,0" NudValue="{Binding SelectedSetupLength, Mode=TwoWay}" IsEnabled="{Binding EnableSetupLength}"/>
+                            <view:NumericUpDown NudMin="0" NudMax="10000" NudIncrement="1" Margin="5,0,0,0" NudValue="{Binding SelectedSetupLength, Mode=TwoWay}" IsEnabled="{Binding EnableSetupLength}"/>
                             <Button Content="Přidat" Click="ButtonAddItem_Click" Width="50" Margin="10,0,0,0"/>
                             <Button Content="Upravit" Click="MenuItemChange_Click" Width="50" Margin="5,0,0,0"/>
                             <Button Content="Zrušit" Click="ButtonDelete_Click" Width="50" Margin="5,0,0,0"/>

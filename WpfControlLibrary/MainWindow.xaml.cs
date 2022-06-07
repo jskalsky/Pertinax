@@ -15,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfControlLibrary.DataModel;
+using WpfControlLibrary.View;
+using WpfControlLibrary.ViewModel;
 
 namespace WpfControlLibrary
 {
@@ -438,9 +440,13 @@ namespace WpfControlLibrary
                         {
                             if (ns.Namespace == 0)
                             {
-                                foreach (MenuItem mi in menu.Items)
+                                foreach (object mi in menu.Items)
                                 {
-                                    mi.IsEnabled = false;
+                                    Debug.Print($"mi= {mi}");
+                                    if(mi is MenuItem menuItem)
+                                    {
+                                        menuItem.IsEnabled = false;
+                                    }
                                 }
                             }
                             else
@@ -449,19 +455,22 @@ namespace WpfControlLibrary
                                 {
                                     foreach (DataModelType type in enabledTypes)
                                     {
-                                        foreach (MenuItem mi in menu.Items)
+                                        foreach (object mi in menu.Items)
                                         {
-                                            switch (mi.Name)
+                                            if(mi is MenuItem menuItem)
                                             {
-                                                case "MiAddFolder":
-                                                    mi.IsEnabled = (type == DataModelType.Folder) ? true : false;
-                                                    break;
-                                                case "MiAddVar":
-                                                    mi.IsEnabled = (type == DataModelType.SimpleVariable || type == DataModelType.ObjectVariable || type == DataModelType.ArrayVariable) ? true : false;
-                                                    break;
-                                                case "MiAddObjectType":
-                                                    mi.IsEnabled = (type == DataModelType.Folder) ? true : false;
-                                                    break;
+                                                switch (menuItem.Name)
+                                                {
+                                                    case "MiAddFolder":
+                                                        menuItem.IsEnabled = (type == DataModelType.Folder) ? true : false;
+                                                        break;
+                                                    case "MiAddVar":
+                                                        menuItem.IsEnabled = (type == DataModelType.SimpleVariable || type == DataModelType.ObjectVariable || type == DataModelType.ArrayVariable) ? true : false;
+                                                        break;
+                                                    case "MiAddObjectType":
+                                                        menuItem.IsEnabled = (type == DataModelType.Folder) ? true : false;
+                                                        break;
+                                                }
                                             }
                                         }
                                     }
@@ -496,7 +505,11 @@ namespace WpfControlLibrary
 
         private void MiAddVar_Click(object sender, RoutedEventArgs e)
         {
-
+            DialogAddVariable dialogAddVariable = new DialogAddVariable();
+            if(dialogAddVariable.DataContext is AddVariableViewModel vm)
+            {
+                bool? result = dialogAddVariable.ShowDialog();
+            }
         }
 
         private void MiAddObjectType_Click(object sender, RoutedEventArgs e)

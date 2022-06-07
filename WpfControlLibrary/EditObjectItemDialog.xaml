@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
+        xmlns:view="clr-namespace:WpfControlLibrary.View"
         mc:Ignorable="d"
         Title="EditObjectItemDialog" Height="300" Width="500" ResizeMode="NoResize" WindowStyle="None">
     <Window.DataContext>
@@ -33,7 +34,7 @@
                     <Label Grid.Row="1" Content="Kategorie"/>
                     <ComboBox Grid.Row="1" Grid.Column="1" Width="170" Height="20" HorizontalAlignment="Left" ItemsSource="{Binding Rank}" SelectedItem="{Binding SelectedRank}"/>
                     <Label Grid.Row="2" Content="Velikost pole"/>
-                    <local:NumericUpDown NudMin="0" NudMax="10000" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" Grid.Row="2" Grid.Column="1" 
+                    <view:NumericUpDown NudMin="0" NudMax="10000" NudValue="{Binding ArraySizeValue,Mode=TwoWay}" Grid.Row="2" Grid.Column="1" 
                                          HorizontalAlignment="Left" IsEnabled="True"/>
                     <Label Grid.Row="3" Content="Zápis zvenku"/>
                     <Grid Grid.Row="3" Grid.Column="1" Width="60" HorizontalAlignment="Left">
