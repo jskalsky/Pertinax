@@ -23,51 +23,8 @@
                 </GroupBox>
                 <Button DockPanel.Dock="Right" Content="Zpět" Width="50" Height="22" HorizontalAlignment="Right" Margin="0,0,5,0" IsDefault="True" Click="Button_Click"/>
             </DockPanel>
-            <GroupBox Header="Vlastnosti">
-                <StackPanel Orientation="Vertical">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Label Content="Druh proměnné"/>
-                        <Label Grid.Row="1" Content="Typ proměnné" Visibility="{Binding VisSimple}"/>
-                        <Label Grid.Row="2" Content="Přístup zvenku" Visibility="{Binding VisSimple}"/>
-                        <Label Grid.Row="3" Content="Jméno objektu" Visibility="{Binding VisObject}"/>
-                        <Label Grid.Column="2" Content="Počet položek" Visibility="{Binding VisArray}"/>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding Kind}" SelectedValue="{Binding SelectedKind}" SelectionChanged="Kind_SelectionChanged"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType}"
-                                  Visibility="{Binding VisSimple}" Margin="0,2,0,0"/>
-                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Access}" SelectedValue="{Binding SelectedAccess}" 
-                                  Visibility="{Binding VisSimple}" Margin="0,2,0,0"/>
-                        <ComboBox Grid.Row="3" Grid.Column="1" Visibility="{Binding VisObject}" Margin="0,2,0,0"/>
-                        <local:NumericUpDown Grid.Column="3" NudIncrement="1" NudMin="1" NudMax="30000" NudValue="{Binding ArrayLength}"
-                                             Visibility="{Binding VisArray}"/>
-                    </Grid>
-                    <Grid Margin="0,10,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="105"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Label Content="Jméno" Visibility="{Binding VisId}"/>
-                        <Label Grid.Row="1" Content="Identifikátor uzlu" Visibility="{Binding VisId}"/>
-                        <TextBox Grid.Column="1" Text="{Binding VarName,Mode=TwoWay}" Visibility="{Binding VisId}"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding VarId,Mode=TwoWay}" Visibility="{Binding VisId}"/>
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
+            <local:VariableProperties VarKind="{Binding SelectedKind}" VarBasicType="{Binding SelectedBasicType}" VarAccess="{Binding SelectedAccess}" VarName="{Binding VarName}"
+                                      VarId="{Binding VarId}"/>
         </DockPanel>
     </Border>
 </Window>

@@ -104,8 +104,15 @@
     <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
     <Compile Include="ViewModel\AddVariableViewModel.cs" />
+    <Compile Include="ViewModel\OpcUaViewModel.cs" />
     <Compile Include="View\DialogAddVariable.xaml.cs">
       <DependentUpon>DialogAddVariable.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\OpcUaMainWindow.xaml.cs">
+      <DependentUpon>OpcUaMainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\VariableProperties.xaml.cs">
+      <DependentUpon>VariableProperties.xaml</DependentUpon>
     </Compile>
     <Page Include="EditObjectItemDialog.xaml">
       <SubType>Designer</SubType>
@@ -141,6 +148,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\OpcUaMainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\VariableProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -170,6 +185,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\Constant_495.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Enum_582.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

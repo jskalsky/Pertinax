@@ -505,7 +505,9 @@ namespace WpfControlLibrary
 
         private void MiAddVar_Click(object sender, RoutedEventArgs e)
         {
+            Debug.Print("500");
             DialogAddVariable dialogAddVariable = new DialogAddVariable();
+            Debug.Print("501");
             if (dialogAddVariable.DataContext is AddVariableViewModel vm)
             {
                 if (DataContext is MainViewModel mvm)
@@ -525,9 +527,14 @@ namespace WpfControlLibrary
                         {
                             vm.VarId = names[0];
                         }
+                        Debug.Print("502");
+                        vm.SelectedKind = vm.Kind[2];
+                        Debug.Print("503");
                     }
                 }
+                Debug.Print("504");
                 bool? result = dialogAddVariable.ShowDialog();
+                Debug.Print("505");
             }
         }
 

@@ -8,7 +8,8 @@ namespace WpfControlLibrary.DataModel
 {
     public class DataModelSimpleVariable : DataModelNode
     {
-        public DataModelSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, DataModelNode parent) : base(name, "Icons/Constant_495.png", nodeId, parent)
+        public DataModelSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, DataModelNode parent) : base(name, 
+            "pack://application:,,,/WpfControlLibrary;component/Icons/Constant_495.png", nodeId, parent)
         {
             BasicType = basicType;
             VarAccess = varAccess;

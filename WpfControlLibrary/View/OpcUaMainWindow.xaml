@@ -1,0 +1,74 @@
+﻿<Window x:Class="WpfControlLibrary.View.OpcUaMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfControlLibrary.View"
+        xmlns:vm="clr-namespace:WpfControlLibrary.ViewModel"
+        xmlns:dm="clr-namespace:WpfControlLibrary.DataModel"
+        mc:Ignorable="d"
+        Title="OpcUaMainWindow" Height="450" Width="800" ResizeMode="CanResize"  WindowStyle="None">
+    <Window.DataContext>
+        <vm:OpcUaViewModel/>
+    </Window.DataContext>
+    <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
+        <DockPanel LastChildFill="True">
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
+                <Label Content="Opc Ua" Background="LightSteelBlue" Foreground="Black"/>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Content="Lokální Ip adresa"/>
+                    <TextBox Width="100"/>
+                    <Label Content="Skupinová Ip adresa(Multicast)"/>
+                    <TextBox Width="100"/>
+                </StackPanel>
+            </StackPanel>
+            <StatusBar DockPanel.Dock="Bottom" Background="LightSteelBlue" Margin="0,5,0,0">
+                <StatusBarItem HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Ok" Width="50" Margin="0,0,5,0" IsDefault="True"/>
+                        <Button Content="Cancel" Width="50" IsCancel="True"/>
+                    </StackPanel>
+                </StatusBarItem>
+            </StatusBar>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="4"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="Datový model">
+                        <TreeView ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                            <TreeView.ContextMenu>
+                                <ContextMenu  Opened="ContextMenu_Opened">
+                                    <MenuItem Header="Přidat záložku" Name="MiAddFolder" Click="MiAddFolder_Click"/>
+                                    <MenuItem Header="Přidat proměnnou" Name="MiAddVar" Click="MiAddVar_Click"/>
+                                    <MenuItem Header="Přidat typ objekt" Name="MiAddObjectType" Click="MiAddObjectType_Click"/>
+                                    <Separator/>
+                                    <MenuItem Header="Zrušit" Name="MiRemove" Click="MiRemove_Click"/>
+                                </ContextMenu>
+                            </TreeView.ContextMenu>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                        <TextBlock Margin="5,0,0,0" Text="{Binding Name}"/>
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </GroupBox>
+                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" ResizeDirection="Rows"
+                              ResizeBehavior="PreviousAndNext"/>
+                    <local:VariableProperties Grid.Row="2"/>
+                </Grid>
+                <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
+            </Grid>
+        </DockPanel>
+    </Border>
+</Window>

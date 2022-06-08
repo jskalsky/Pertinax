@@ -9,7 +9,7 @@ namespace WpfControlLibrary.DataModel
     public class DataModelArrayVariable : DataModelNode
     {
         public DataModelArrayVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, int arrayLength, DataModelNode parent) :
-            base(name, "Icons/Type_527.png", nodeId, parent)
+            base(name, "pack://application:,,,/WpfControlLibrary;component/Icons/Type_527.png", nodeId, parent)
         {
             BasicType = basicType;
             VarAccess = varAccess;

@@ -405,7 +405,7 @@
                         <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                <TextBlock Margin="5,0,0,0" Text="{Binding Name}"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding ImagePath}"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>

@@ -661,7 +661,16 @@ namespace ConfigOpcUa
                 ++serverIndex;
             }
         }
+
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
+        {
+            WpfControlLibrary.View.OpcUaMainWindow mainWindow = new WpfControlLibrary.View.OpcUaMainWindow();
+            if ((bool)mainWindow.ShowDialog())
+            {
+                Debug.Print("2");
+            }
+        }
+/*        public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
             Debug.Print($"MakeConfig {pName}");
             LoadConfig(pName);
@@ -728,7 +737,7 @@ namespace ConfigOpcUa
                     Debug.Print("4");
                 }
             }
-        }
+        }*/
 
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

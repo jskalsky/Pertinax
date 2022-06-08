@@ -8,7 +8,7 @@ namespace WpfControlLibrary.DataModel
 {
     public class DataModelFolder : DataModelNode
     {
-        public DataModelFolder(string name, NodeIdBase nodeId, DataModelNode parent) : base(name, "Icons/Folder_6222.png", nodeId, parent)
+        public DataModelFolder(string name, NodeIdBase nodeId, DataModelNode parent) : base(name, "pack://application:,,,/WpfControlLibrary;component/Icons/Folder_6222.png", nodeId, parent)
         { 
             DataModelType = DataModelType.Folder;
         }

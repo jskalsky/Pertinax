@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="WpfControlLibrary.View.VariableProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfControlLibrary.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="500">
+    <GroupBox Header="Vlastnosti proměnné">
+        <StackPanel Orientation="Vertical">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="Druh proměnné"/>
+                <Label Grid.Row="1" Content="Typ proměnné" Name="LabelType"/>
+                <Label Grid.Row="2" Content="Přístup zvenku" Name="LabelAccess"/>
+                <Label Grid.Row="3" Content="Jméno objektu" Name="LabelObjectName"/>
+                <Label Grid.Column="2" Content="Počet položek" Name="LabelArrayLength"/>
+                <ComboBox Grid.Column="1" Name="ComboKind" SelectionChanged="Kind_SelectionChanged"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Name="ComboType" Margin="0,2,0,0"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Name="ComboAccess" Margin="0,2,0,0"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Name="ComboObject" Margin="0,2,0,0"/>
+                <local:NumericUpDown Grid.Column="3" NudIncrement="1" NudMin="1" NudMax="30000" x:Name="NudArrayLength"/>
+            </Grid>
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="105"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="Jméno" Name="LabelName"/>
+                <Label Grid.Row="1" Content="Identifikátor uzlu" Name="LabelId"/>
+                <TextBox Grid.Column="1" Name="TextBoxName"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Name="TextBoxId" Margin="0,2,0,0"/>
+            </Grid>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,9 +38,9 @@ namespace WpfControlLibrary.ViewModel
         private Visibility _visId;
         public AddVariableViewModel()
         {
-            SelectedBasicType = _basicTypes[0];
+            SelectedBasicType = _basicTypes[1];
             SelectedAccess = _access[0];
-            SelectedKind = _kind[0];
+            SelectedKind = _kind[1];
             ArrayLength = 0;
             VarCount = 1;
         }
@@ -67,8 +68,8 @@ namespace WpfControlLibrary.ViewModel
         }
         public string SelectedKind
         {
-            get { return _selectedKind; }
-            set { _selectedKind = value; OnPropertyChanged("SelectedKind"); }
+            get { Debug.Print($"Get SelectedKind {_selectedKind}"); return _selectedKind; }
+            set { _selectedKind = value; Debug.Print($"Set SelectedKind {value}"); OnPropertyChanged("SelectedKind"); }
         }
 
         public bool EnableArrayLength
