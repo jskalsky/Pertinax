@@ -139,6 +139,25 @@ namespace WpfControlLibrary.View
             }
         }
 
+        public static readonly DependencyProperty VisibleIdProperty = DependencyProperty.Register("VisibleId", typeof(Visibility), typeof(VariableProperties),
+            new PropertyMetadata(Visibility.Visible, OnVisibleIdPropertyChanged));
+        public Visibility VisibleId
+        {
+            get { return (Visibility)GetValue(VisibleIdProperty); }
+            set { SetValue(VisibleIdProperty, value); }
+        }
+        private static void OnVisibleIdPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            Debug.Print($"VisibleIdPropertyChanged {dependencyObject}, {e.NewValue}");
+            if (dependencyObject is VariableProperties varp)
+            {
+                varp.LabelId.Visibility = (Visibility)e.NewValue;
+                varp.TextBoxId.Visibility = (Visibility)e.NewValue;
+                varp.LabelName.Visibility = (Visibility)e.NewValue;
+                varp.TextBoxName.Visibility = (Visibility)e.NewValue;
+            }
+        }
+
         public string[] BasicTypes
         {
             get { return _basicTypes; }

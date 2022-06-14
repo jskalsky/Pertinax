@@ -36,6 +36,8 @@ namespace WpfControlLibrary.ViewModel
         private Visibility _visArray;
         private Visibility _visObject;
         private Visibility _visId;
+
+        private int _varWritten;
         public AddVariableViewModel()
         {
             SelectedBasicType = _basicTypes[1];
@@ -43,6 +45,7 @@ namespace WpfControlLibrary.ViewModel
             SelectedKind = _kind[1];
             ArrayLength = 0;
             VarCount = 1;
+            VarWritten = 0;
         }
         public string[] BasicTypes
         {
@@ -160,6 +163,11 @@ namespace WpfControlLibrary.ViewModel
             set { _visId = value; OnPropertyChanged("VisId"); }
         }
 
+        public int VarWritten
+        {
+            get { return _varWritten; }
+            set { _varWritten = value; OnPropertyChanged("VarWritten"); }
+        }
         public DataModelNode ParentNode { get; set; }
         public ushort Namespace { get; set; }
         private void OnPropertyChanged(string name)

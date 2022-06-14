@@ -109,6 +109,7 @@ namespace WpfControlLibrary.View
         {
             if (DataContext is AddVariableViewModel vm)
             {
+                vm.VarWritten = 0;
                 for (int i = 0; i < vm.VarCount; i++)
                 {
                     if(vm.SelectedKind == vm.Kind[0])
@@ -116,6 +117,7 @@ namespace WpfControlLibrary.View
                         DataModelSimpleVariable node = DataModelNode.GetSimpleVariable(vm.VarName, NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{vm.VarId}"),
                             vm.SelectedBasicType, vm.SelectedAccess, vm.ParentNode);
                         vm.ParentNode.AddChildren(node);
+                        ++vm.VarWritten;
                     }
                 }
             }
