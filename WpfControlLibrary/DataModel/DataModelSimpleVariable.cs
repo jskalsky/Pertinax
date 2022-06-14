@@ -14,6 +14,7 @@ namespace WpfControlLibrary.DataModel
             BasicType = basicType;
             VarAccess = varAccess;
             DataModelType = DataModelType.SimpleVariable;
+            TreeNodeText = $"{Name},{NodeId.ToString()}";
         }
 
         public string BasicType { get; }

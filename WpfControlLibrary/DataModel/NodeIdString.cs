@@ -35,5 +35,10 @@ namespace WpfControlLibrary.DataModel
         {
             return IdentifierString;
         }
+
+        public override string ToString()
+        {
+            return $"{NamespaceIndex}:{IdentifierString}";
+        }
     }
 }

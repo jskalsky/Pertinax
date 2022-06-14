@@ -23,14 +23,15 @@ namespace WpfControlLibrary.DataModel
         private const int IndexesAmountPlus = 10000;
 
         private static int _nameIndexesCount = 0;
-        public static IList<string> GetNextName(ushort ns, string nameBase, int count = 1)
+        private static int _numericIdsCount = 0;
+        public static string[] GetNames(ushort ns, string nameBase, int count = 1)
         {
-            return GetFreeN(ns, _freeIndexes, _names, nameBase, count, ref _nameIndexesCount);
+            return GetFreeN(ns, _freeIndexes, _names, nameBase, count, ref _nameIndexesCount).ToArray();
         }
 
-        public static IList<string> GetNextIndex(ushort ns, int count = 1)
+        public static string[] GetNumericIds(ushort ns, int count = 1)
         {
-            return GetFreeN(ns, _freeIndexes, _names, null, count, ref _nameIndexesCount);
+            return GetFreeN(ns, _freeNumericIds, _ids, null, count, ref _numericIdsCount).ToArray();
         }
 
         public static void ReturnNames(IList<string> names, string baseName)

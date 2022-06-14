@@ -517,15 +517,15 @@ namespace WpfControlLibrary
                     {
                         vm.ParentNode = mvm.SelectedDataModelNode;
                         vm.Namespace = ns.Namespace;
-                        IList<string> names = IdFactory.GetNextName(ns.Namespace, IdFactory.NameSimpleVar);
-                        if (names != null && names.Count == 1)
+                        string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameSimpleVar);
+                        if (names != null && names.Length == 1)
                         {
                             vm.VarName = names[0];
                         }
-                        names = IdFactory.GetNextIndex(ns.Namespace);
-                        if(names != null && names.Count == 1)
+                        string[] ids = IdFactory.GetNumericIds(ns.Namespace);
+                        if(names != null && names.Length == 1)
                         {
-                            vm.VarId = names[0];
+                            vm.VarId = ids[0];
                         }
                         Debug.Print("502");
                         vm.SelectedKind = vm.Kind[2];

@@ -49,5 +49,10 @@ namespace WpfControlLibrary.DataModel
         {
             return $"{IdentifierNumeric}";
         }
+
+        public override string ToString()
+        {
+            return $"{NamespaceIndex}:{IdentifierNumeric}";
+        }
     }
 }

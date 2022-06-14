@@ -110,14 +110,26 @@ namespace WpfControlLibrary.View
             if (DataContext is AddVariableViewModel vm)
             {
                 vm.VarWritten = 0;
-                for (int i = 0; i < vm.VarCount; i++)
+                if (vm.SelectedKind == vm.Kind[0])
                 {
-                    if(vm.SelectedKind == vm.Kind[0])
+                    if (vm.VarCount == 1)
                     {
                         DataModelSimpleVariable node = DataModelNode.GetSimpleVariable(vm.VarName, NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{vm.VarId}"),
                             vm.SelectedBasicType, vm.SelectedAccess, vm.ParentNode);
                         vm.ParentNode.AddChildren(node);
                         ++vm.VarWritten;
+                    }
+                    else
+                    {
+                        string[] names = IdFactory.GetNames(vm.Namespace,IdFactory.NameSimpleVar,vm.VarCount);
+                        string[] ids = IdFactory.GetNumericIds(vm.Namespace,vm.VarCount);
+                        for (int i = 0; i < vm.VarCount; i++)
+                        {
+                            DataModelSimpleVariable node = DataModelNode.GetSimpleVariable(names[i], NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{ids[i]}"),
+                                vm.SelectedBasicType, vm.SelectedAccess, vm.ParentNode);
+                            vm.ParentNode.AddChildren(node);
+                            ++vm.VarWritten;
+                        }
                     }
                 }
             }

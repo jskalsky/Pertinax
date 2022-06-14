@@ -16,11 +16,13 @@ namespace WpfControlLibrary.DataModel
         protected DataModelNode(string name, string imagePath, NodeIdBase nodeId, DataModelNode parent)
         {
             Name = name;
+            TreeNodeText = name;
             ImagePath = imagePath;
             NodeId = nodeId;
             Children = new ObservableCollection<DataModelNode>();
             Parent = parent;
         }
+        public string TreeNodeText { get; protected set; }
         public string Name { get; }
         public string ImagePath { get; }
         public NodeIdBase NodeId { get; }
