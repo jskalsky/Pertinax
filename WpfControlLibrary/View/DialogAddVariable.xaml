@@ -17,7 +17,7 @@
                 <GroupBox DockPanel.Dock="Left" Header="Přidat">
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Počet proměnných" Visibility="{Binding VisVarCount}"/>
-                        <local:NumericUpDown NudMin="1" NudMax="30000" NudValue="{Binding VarCount,Mode=TwoWay}" NudIncrement="1" ValueChanged="NumericUpDown_ValueChanged" 
+                        <local:NumericUpDown NudMin="1" NudMax="30000" NudValue="{Binding VarCount,Mode=TwoWay}" NudIncrement="1" ValueChanged="NumericUpDown_ValueChanged"
                                              Visibility="{Binding VisVarCount}"/>
                         <Button Content="Zapsat" Margin="10,0,0,0" Click="Write_Click"/>
                         <Label Content="Zapsáno" Margin="10,0,0,0"/>

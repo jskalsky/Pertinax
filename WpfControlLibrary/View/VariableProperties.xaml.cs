@@ -232,7 +232,7 @@ namespace WpfControlLibrary.View
         private void ServiceVisible(string kind)
         {
             Debug.Print($"selectedKind= {kind}, {Kind[0]}, {Kind[1]}, {Kind[2]}");
-            if(string.IsNullOrEmpty(kind))
+            if (string.IsNullOrEmpty(kind))
             {
                 return;
             }
@@ -260,7 +260,7 @@ namespace WpfControlLibrary.View
                 LabelName.Visibility = Visibility.Visible;
                 TextBoxName.Visibility = Visibility.Visible;
                 LabelId.Visibility = Visibility.Visible;
-                TextBoxId.Visibility=Visibility.Visible;    
+                TextBoxId.Visibility = Visibility.Visible;
                 if (kind == Kind[1])
                 {
                     Debug.Print("602");
@@ -274,8 +274,8 @@ namespace WpfControlLibrary.View
                 if (kind == Kind[2])
                 {
                     Debug.Print("604");
-                    LabelObjectName.Visibility= Visibility.Visible;
-                    ComboObject.Visibility= Visibility.Visible;
+                    LabelObjectName.Visibility = Visibility.Visible;
+                    ComboObject.Visibility = Visibility.Visible;
                     LabelName.Visibility = Visibility.Visible;
                     TextBoxName.Visibility = Visibility.Visible;
                     LabelId.Visibility = Visibility.Visible;
@@ -292,6 +292,7 @@ namespace WpfControlLibrary.View
                 if (e.AddedItems[0] is string selectedKind)
                 {
                     ServiceVisible(selectedKind);
+                    VarKind = selectedKind;
                 }
             }
             e.Handled = true;

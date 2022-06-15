@@ -43,7 +43,7 @@ namespace WpfControlLibrary.ViewModel
         {
             SelectedBasicType = _basicTypes[1];
             SelectedAccess = _access[0];
-            SelectedKind = _kind[1];
+            SelectedKind = _kind[0];
             ArrayLength = 0;
             VarCount = 1;
             VarWritten = 0;
@@ -167,7 +167,7 @@ namespace WpfControlLibrary.ViewModel
         public Visibility VisVarCount
         {
             get { return _visVarCount; }
-            set { _visVarCount = value; OnPropertyChanged("VisVarCount"); }
+            set { _visVarCount = value; Debug.Print($"_visVarCount= {_visVarCount}"); OnPropertyChanged("VisVarCount"); }
         }
         public int VarWritten
         {

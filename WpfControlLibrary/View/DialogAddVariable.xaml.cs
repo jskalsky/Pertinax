@@ -165,7 +165,9 @@ namespace WpfControlLibrary.View
                 else
                 {
                     vm.VisVarCount = Visibility.Collapsed;
+                    Debug.Print($"vm.VisVarCount= {vm.VisVarCount}");
                 }
+                vm.VarCount = 1;
             }
         }
     }
