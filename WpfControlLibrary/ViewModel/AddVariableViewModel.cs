@@ -36,6 +36,7 @@ namespace WpfControlLibrary.ViewModel
         private Visibility _visArray;
         private Visibility _visObject;
         private Visibility _visId;
+        private Visibility _visVarCount;
 
         private int _varWritten;
         public AddVariableViewModel()
@@ -163,6 +164,11 @@ namespace WpfControlLibrary.ViewModel
             set { _visId = value; OnPropertyChanged("VisId"); }
         }
 
+        public Visibility VisVarCount
+        {
+            get { return _visVarCount; }
+            set { _visVarCount = value; OnPropertyChanged("VisVarCount"); }
+        }
         public int VarWritten
         {
             get { return _varWritten; }

@@ -46,6 +46,7 @@ namespace WpfControlLibrary.View
         private Visibility _visId;
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler KindChanged;
 
         public VariableProperties()
         {
@@ -72,6 +73,7 @@ namespace WpfControlLibrary.View
             {
                 varp.ComboKind.SelectedItem = (string)e.NewValue;
                 varp.ServiceVisible(varp.SelectedKind);
+                varp.KindChanged?.Invoke(varp, new PropertyChangedEventArgs("KindProperty"));
             }
         }
 

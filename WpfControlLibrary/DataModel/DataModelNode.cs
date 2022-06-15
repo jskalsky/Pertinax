@@ -29,15 +29,27 @@ namespace WpfControlLibrary.DataModel
         public DataModelNode Parent { get; private set; }
         public ObservableCollection<DataModelNode> Children { get; }
         public DataModelType DataModelType { get; protected set; }
-        public static DataModelFolder GetFolder(string name, DataModelNode parent)
+        public static DataModelFolder GetFolder(string name, NodeIdBase nodeId, DataModelNode parent)
         {
-            DataModelFolder node = new DataModelFolder(name, NodeIdNumeric.GetNextNodeIdNumeric(DefaultNamespaceIndex, false), parent);
+            DataModelFolder node = new DataModelFolder(name, nodeId, parent);
             return node;
         }
 
         public static DataModelSimpleVariable GetSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, DataModelNode parent)
         {
             DataModelSimpleVariable node = new DataModelSimpleVariable(name, nodeId, basicType, varAccess, parent);
+            return node;
+        }
+
+        public static DataModelObjectType GetObjectType(string name, NodeIdBase nodeId, DataModelNode parent)
+        {
+            DataModelObjectType node = new DataModelObjectType(name, nodeId, parent);
+            return node;
+        }
+
+        public static DataModelArrayVariable GetArrayVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, int arrayLength, DataModelNode parent)
+        {
+            DataModelArrayVariable node = new DataModelArrayVariable(name, nodeId, basicType, varAccess, arrayLength, parent);
             return node;
         }
         public void AddChildren(DataModelNode node)

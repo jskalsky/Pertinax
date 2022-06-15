@@ -104,11 +104,20 @@ namespace WpfControlLibrary.View
         }
         private void MiAddFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainViewModel vm)
+            if (DataContext is OpcUaViewModel mvm)
             {
-                if (vm.SelectedDataModelNode != null)
+                DataModelNamespace ns = mvm.SelectedNode.GetNamespace();
+                if(ns != null)
                 {
-
+                    string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameFolder);
+                    string[] ids = IdFactory.GetNumericIds(ns.Namespace);
+                    if(names != null && names.Length == 1 && ids != null && ids.Length == 1)
+                    {
+                        DataModelFolder dmf = DataModelNode.GetFolder(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
+                        mvm.SelectedNode.AddChildren(dmf);
+                        IdFactory.RemoveAllPublishedNames(ns.Namespace);
+                        IdFactory.RemoveAllPublishedIds(ns.Namespace);
+                    }
                 }
             }
         }
@@ -133,9 +142,9 @@ namespace WpfControlLibrary.View
                             vm.VarName = names[0];
                         }
                         string[] ids = IdFactory.GetNumericIds(ns.Namespace);
-                        if (names != null && names.Length == 1)
+                        if (ids != null && ids.Length == 1)
                         {
-                            vm.VarId = names[0];
+                            vm.VarId = ids[0];
                         }
                         Debug.Print("502");
                         vm.SelectedKind = vm.Kind[0];
@@ -151,7 +160,22 @@ namespace WpfControlLibrary.View
 
         private void MiAddObjectType_Click(object sender, RoutedEventArgs e)
         {
-
+            if (DataContext is OpcUaViewModel mvm)
+            {
+                DataModelNamespace ns = mvm.SelectedNode.GetNamespace();
+                if (ns != null)
+                {
+                    string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameObjectType);
+                    string[] ids = IdFactory.GetNumericIds(ns.Namespace);
+                    if (names != null && names.Length == 1 && ids != null && ids.Length == 1)
+                    {
+                        DataModelObjectType dmot = DataModelNode.GetObjectType(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
+                        mvm.SelectedNode.AddChildren(dmot);
+                        IdFactory.RemoveAllPublishedNames(ns.Namespace);
+                        IdFactory.RemoveAllPublishedIds(ns.Namespace);
+                    }
+                }
+            }
         }
         private void MiRemove_Click(object sender, RoutedEventArgs e)
         {

@@ -16,8 +16,9 @@
             <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
                 <GroupBox DockPanel.Dock="Left" Header="Přidat">
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Počet proměnných"/>
-                        <local:NumericUpDown NudMin="1" NudMax="30000" NudValue="{Binding VarCount,Mode=TwoWay}" NudIncrement="1" ValueChanged="NumericUpDown_ValueChanged"/>
+                        <Label Content="Počet proměnných" Visibility="{Binding VisVarCount}"/>
+                        <local:NumericUpDown NudMin="1" NudMax="30000" NudValue="{Binding VarCount,Mode=TwoWay}" NudIncrement="1" ValueChanged="NumericUpDown_ValueChanged" 
+                                             Visibility="{Binding VisVarCount}"/>
                         <Button Content="Zapsat" Margin="10,0,0,0" Click="Write_Click"/>
                         <Label Content="Zapsáno" Margin="10,0,0,0"/>
                         <TextBlock Margin="5,0,0,0" Width="50" Text="{Binding VarWritten}" TextAlignment="Right" VerticalAlignment="Center"/>
@@ -25,8 +26,8 @@
                 </GroupBox>
                 <Button DockPanel.Dock="Right" Content="Zpět" Width="50" Height="22" HorizontalAlignment="Right" Margin="0,0,5,0" IsDefault="True" Click="Button_Click"/>
             </DockPanel>
-            <local:VariableProperties VarKind="{Binding SelectedKind}" VarBasicType="{Binding SelectedBasicType}" VarAccess="{Binding SelectedAccess}" VarName="{Binding VarName}"
-                                      VarId="{Binding VarId}" VisibleId="{Binding VisId}"/>
+            <local:VariableProperties VarKind="{Binding SelectedKind,Mode=TwoWay}" VarBasicType="{Binding SelectedBasicType}" VarAccess="{Binding SelectedAccess}" VarName="{Binding VarName}"
+                                      VarId="{Binding VarId}" VisibleId="{Binding VisId}" KindChanged="VariableProperties_KindChanged"/>
         </DockPanel>
     </Border>
 </Window>

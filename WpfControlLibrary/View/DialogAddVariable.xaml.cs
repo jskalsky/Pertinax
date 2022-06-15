@@ -74,7 +74,7 @@ namespace WpfControlLibrary.View
                                 if (selectedKind == vm.Kind[2])
                                 {
                                     vm.VisObject = Visibility.Visible;
-                                    if(vm.VarCount == 1)
+                                    if (vm.VarCount == 1)
                                     {
                                         vm.VisId = Visibility.Visible;
                                     }
@@ -101,6 +101,8 @@ namespace WpfControlLibrary.View
                     {
                         vm.VisId = Visibility.Collapsed;
                     }
+                    IdFactory.RemoveAllPublishedNames(vm.Namespace);
+                    IdFactory.RemoveAllPublishedIds(vm.Namespace);
                 }
             }
         }
@@ -121,8 +123,8 @@ namespace WpfControlLibrary.View
                     }
                     else
                     {
-                        string[] names = IdFactory.GetNames(vm.Namespace,IdFactory.NameSimpleVar,vm.VarCount);
-                        string[] ids = IdFactory.GetNumericIds(vm.Namespace,vm.VarCount);
+                        string[] names = IdFactory.GetNames(vm.Namespace, IdFactory.NameSimpleVar, vm.VarCount);
+                        string[] ids = IdFactory.GetNumericIds(vm.Namespace, vm.VarCount);
                         for (int i = 0; i < vm.VarCount; i++)
                         {
                             DataModelSimpleVariable node = DataModelNode.GetSimpleVariable(names[i], NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{ids[i]}"),
@@ -130,7 +132,39 @@ namespace WpfControlLibrary.View
                             vm.ParentNode.AddChildren(node);
                             ++vm.VarWritten;
                         }
+                        IdFactory.RemovePublishedNames(vm.Namespace, names);
+                        IdFactory.RemovePublishedIds(vm.Namespace, ids);
                     }
+                }
+                else
+                {
+                    if (vm.SelectedKind == vm.Kind[1])
+                    {
+                        if (vm.VarCount == 1)
+                        {
+                            DataModelArrayVariable node = DataModelNode.GetArrayVariable(vm.VarName, NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{vm.VarId}"),
+                                vm.SelectedBasicType, vm.SelectedAccess, vm.ArrayLength, vm.ParentNode);
+                            vm.ParentNode.AddChildren(node);
+                            ++vm.VarWritten;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void VariableProperties_KindChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Debug.Print($"VariableProperties_KindChanged {e.PropertyName}");
+            if (DataContext is AddVariableViewModel vm)
+            {
+                Debug.Print($"vm.SelectedKind = {vm.SelectedKind}");
+                if(vm.SelectedKind == vm.Kind[0])
+                {
+                    vm.VisVarCount = Visibility.Visible;
+                }
+                else
+                {
+                    vm.VisVarCount = Visibility.Collapsed;
                 }
             }
         }
