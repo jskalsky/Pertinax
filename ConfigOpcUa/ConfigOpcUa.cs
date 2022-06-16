@@ -886,9 +886,24 @@ namespace ConfigOpcUa
             }
             return null;
         }
-        private void SaveConfiguration(string fileName, WpfControlLibrary.MainViewModel mvm)
+        private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
             Debug.Print($"SaveConfiguration {fileName}");
+
+            OpcUaCfg.tree tree = new OpcUaCfg.tree();
+            List<OpcUaCfg.tree_node> nodes = new List<OpcUaCfg.tree_node>();
+            foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
+            {
+                OpcUaCfg.tree_node tn = new OpcUaCfg.tree_node();
+                tn.node = new OpcUaCfg.node();
+                if (modelNode is DataModelNamespace dmNs)
+                {
+                    OpcUaCfg.@namespace objNamespace = new OpcUaCfg.@namespace();
+                    objNamespace.index = dmNs.Namespace;
+                    objNamespace.node_type = OpcUaCfg.node_type.Namespace;
+                    tn.node.Item = objNamespace;
+                }
+            }
             OPCUAParametersType pars = new OPCUAParametersType();
             pars.ObjectTypeCount = (ushort)mvm.Objects.Count;
             pars.UsePublisher = (mvm.PublisherObjects.Count != 0) ? true : false;
