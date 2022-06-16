@@ -115,6 +115,8 @@ namespace OpcUaCfg {
         
         private uint lengthField;
         
+        private node_id node_idField;
+        
         public array_var() {
             this.node_typeField = node_type.ArrayVariable;
             this.kindField = kind.Pole;
@@ -169,6 +171,16 @@ namespace OpcUaCfg {
                 this.lengthField = value;
             }
         }
+        
+        /// <remarks/>
+        public node_id node_id {
+            get {
+                return this.node_idField;
+            }
+            set {
+                this.node_idField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -176,6 +188,9 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public enum node_type {
+        
+        /// <remarks/>
+        Unknown,
         
         /// <remarks/>
         Namespace,
@@ -201,6 +216,9 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public enum basic_type {
+        
+        /// <remarks/>
+        Unknown,
         
         /// <remarks/>
         Boolean,
@@ -237,6 +255,9 @@ namespace OpcUaCfg {
     public enum access {
         
         /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
         Read,
         
         /// <remarks/>
@@ -251,6 +272,9 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public enum kind {
+        
+        /// <remarks/>
+        Unknown,
         
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Jednoduchá proměnná")]
@@ -269,6 +293,43 @@ namespace OpcUaCfg {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class node_id {
+        
+        private ushort namespace_indexField;
+        
+        private string idField;
+        
+        public node_id() {
+            this.namespace_indexField = ((ushort)(1));
+        }
+        
+        /// <remarks/>
+        public ushort namespace_index {
+            get {
+                return this.namespace_indexField;
+            }
+            set {
+                this.namespace_indexField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public partial class simple_var {
         
         private node_type node_typeField;
@@ -278,6 +339,8 @@ namespace OpcUaCfg {
         private access accessField;
         
         private kind kindField;
+        
+        private node_id node_idField;
         
         public simple_var() {
             this.node_typeField = node_type.SimpleVariable;
@@ -323,41 +386,14 @@ namespace OpcUaCfg {
                 this.kindField = value;
             }
         }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class node_id {
-        
-        private ushort namespace_indexField;
-        
-        private string idField;
-        
-        public node_id() {
-            this.namespace_indexField = ((ushort)(1));
-        }
         
         /// <remarks/>
-        public ushort namespace_index {
+        public node_id node_id {
             get {
-                return this.namespace_indexField;
+                return this.node_idField;
             }
             set {
-                this.namespace_indexField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
+                this.node_idField = value;
             }
         }
     }

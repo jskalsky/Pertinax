@@ -247,8 +247,8 @@ namespace ConfigOpcUa
                             id = iitems[0];
                         }
                     }
-                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, GetAccess(vt.AccessType), string.Empty,vt.ArraySize, GetBasicType(vt.BasicType),
-                        false,$"{ns}:{id}", oo);
+                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, GetAccess(vt.AccessType), string.Empty, vt.ArraySize, GetBasicType(vt.BasicType),
+                        false, $"{ns}:{id}", oo);
                     ooi.SelectedBasicType = GetBasicType(vt.BasicType);
                     ooi.SelectedAccess = GetAccess(vt.AccessType);
                     ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
@@ -667,77 +667,82 @@ namespace ConfigOpcUa
             WpfControlLibrary.View.OpcUaMainWindow mainWindow = new WpfControlLibrary.View.OpcUaMainWindow();
             if ((bool)mainWindow.ShowDialog())
             {
-                Debug.Print("2");
-            }
-        }
-/*        public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
-        {
-            Debug.Print($"MakeConfig {pName}");
-            LoadConfig(pName);
-            Debug.Print("10");
-            WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
-            Debug.Print($"11 {mainWindow.DataContext}");
-            if (mainWindow.DataContext is WpfControlLibrary.MainViewModel vm)
-            {
-                Debug.Print("12");
-                vm.PropertyChanged += Vm_PropertyChanged;
-                if (!string.IsNullOrEmpty(_localIpAddress))
-                {
-                    vm.LocalIpAddressString = _localIpAddress;
-                }
-                if (!string.IsNullOrEmpty(_groupAddress))
-                {
-                    vm.GroupAddressString = _groupAddress;
-                }
-                vm.Objects.Clear();
-                Debug.Print($"Objects= {_objects.Count}");
-                foreach (WpfControlLibrary.OpcObject oo in _objects)
-                {
-                    vm.Objects.Add(oo);
-                }
-                if (vm.Objects.Count > 0)
-                {
-                    vm.SelectedOpcObject = vm.Objects[0];
-                }
-                vm.PublisherId = _publisherId;
-
-                foreach (WpfControlLibrary.SubscriberItem si in _subscriberItems)
-                {
-                    vm.SubscriberObjects.Add(si);
-                }
-                if (vm.SubscriberObjects.Count != 0)
-                {
-                    vm.SelectedSubscriberItem = vm.SubscriberObjects[0];
-                }
-                foreach (WpfControlLibrary.PublisherItem pi in _publisherItems)
-                {
-                    vm.PublisherObjects.Add(pi);
-                }
-                foreach (WpfControlLibrary.ClientItem ci in _clientItems)
-                {
-                    vm.ClientObjects.Add(ci);
-                }
-
-                foreach (ServerItem si in _serverItems)
-                {
-                    vm.ServerObjects.Add(si);
-                }
-                vm.WindowTitle = $"OpcUa - {pName}";
-                vm.EncryptServer = _serverEncryption;
-            }
-
-            Debug.Print("1");
-            if ((bool)mainWindow.ShowDialog())
-            {
-                Debug.Print("2");
-                if (mainWindow.DataContext is WpfControlLibrary.MainViewModel mvm)
+                if (mainWindow.DataContext is WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
                 {
                     Debug.Print("3");
                     SaveConfiguration(pName, mvm);
                     Debug.Print("4");
                 }
             }
-        }*/
+        }
+        /*        public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
+                {
+                    Debug.Print($"MakeConfig {pName}");
+                    LoadConfig(pName);
+                    Debug.Print("10");
+                    WpfControlLibrary.MainWindow mainWindow = new WpfControlLibrary.MainWindow();
+                    Debug.Print($"11 {mainWindow.DataContext}");
+                    if (mainWindow.DataContext is WpfControlLibrary.MainViewModel vm)
+                    {
+                        Debug.Print("12");
+                        vm.PropertyChanged += Vm_PropertyChanged;
+                        if (!string.IsNullOrEmpty(_localIpAddress))
+                        {
+                            vm.LocalIpAddressString = _localIpAddress;
+                        }
+                        if (!string.IsNullOrEmpty(_groupAddress))
+                        {
+                            vm.GroupAddressString = _groupAddress;
+                        }
+                        vm.Objects.Clear();
+                        Debug.Print($"Objects= {_objects.Count}");
+                        foreach (WpfControlLibrary.OpcObject oo in _objects)
+                        {
+                            vm.Objects.Add(oo);
+                        }
+                        if (vm.Objects.Count > 0)
+                        {
+                            vm.SelectedOpcObject = vm.Objects[0];
+                        }
+                        vm.PublisherId = _publisherId;
+
+                        foreach (WpfControlLibrary.SubscriberItem si in _subscriberItems)
+                        {
+                            vm.SubscriberObjects.Add(si);
+                        }
+                        if (vm.SubscriberObjects.Count != 0)
+                        {
+                            vm.SelectedSubscriberItem = vm.SubscriberObjects[0];
+                        }
+                        foreach (WpfControlLibrary.PublisherItem pi in _publisherItems)
+                        {
+                            vm.PublisherObjects.Add(pi);
+                        }
+                        foreach (WpfControlLibrary.ClientItem ci in _clientItems)
+                        {
+                            vm.ClientObjects.Add(ci);
+                        }
+
+                        foreach (ServerItem si in _serverItems)
+                        {
+                            vm.ServerObjects.Add(si);
+                        }
+                        vm.WindowTitle = $"OpcUa - {pName}";
+                        vm.EncryptServer = _serverEncryption;
+                    }
+
+                    Debug.Print("1");
+                    if ((bool)mainWindow.ShowDialog())
+                    {
+                        Debug.Print("2");
+                        if (mainWindow.DataContext is WpfControlLibrary.MainViewModel mvm)
+                        {
+                            Debug.Print("3");
+                            SaveConfiguration(pName, mvm);
+                            Debug.Print("4");
+                        }
+                    }
+                }*/
 
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -886,6 +891,147 @@ namespace ConfigOpcUa
             }
             return null;
         }
+
+        private static OpcUaCfg.node_id GetNodeId(ushort ns, string id)
+        {
+            OpcUaCfg.node_id nodeId = new OpcUaCfg.node_id();
+            nodeId.namespace_index = ns;
+            nodeId.id = id;
+            return nodeId;
+        }
+
+        private static OpcUaCfg.access GetAccess(string s)
+        {
+            switch (s)
+            {
+                case "Read":
+                    return OpcUaCfg.access.Read;
+                case "Write":
+                    return OpcUaCfg.access.Write;
+                case "ReadWrite":
+                    return OpcUaCfg.access.ReadWrite;
+            }
+            return OpcUaCfg.access.Unknown;        
+        }
+
+        private static OpcUaCfg.basic_type GetBasicType(string s)
+        {
+            switch(s)
+            {
+                case "Boolean":
+                    return OpcUaCfg.basic_type.Boolean;
+                case "UInt8":
+                    return OpcUaCfg.basic_type.UInt8;
+                case "Int8":
+                    return OpcUaCfg.basic_type.Int8;
+                case "UInt16":
+                    return OpcUaCfg.basic_type.UInt16;
+                case "Int16":
+                    return OpcUaCfg.basic_type.Int16;
+                case "UInt32":
+                    return OpcUaCfg.basic_type.UInt32;
+                case "Int32":
+                    return OpcUaCfg.basic_type.Int32;
+                case "Float":
+                    return OpcUaCfg.basic_type.Float;
+                case "Double":
+                    return OpcUaCfg.basic_type.Double;
+            }
+            return OpcUaCfg.basic_type.Unknown;
+        }
+
+        private static OpcUaCfg.kind GetKind(string s)
+        {
+            switch(s)
+            {
+                case "Jednoduchá proměnná":
+                    return OpcUaCfg.kind.Jednoducháproměnná;
+                case "Pole":
+                    return OpcUaCfg.kind.Pole;
+                case "Objekt":
+                    return OpcUaCfg.kind.Objekt;
+            }
+            return OpcUaCfg.kind.Unknown;
+        }
+
+        private static OpcUaCfg.folder GetFolder(DataModelFolder dmFolder)
+        {
+            OpcUaCfg.folder folder = new OpcUaCfg.folder();
+            folder.name = dmFolder.Name;
+            folder.node_id = GetNodeId(dmFolder.NodeId.NamespaceIndex, dmFolder.NodeId.GetIdentifier());
+            folder.node_type = OpcUaCfg.node_type.Folder;
+            return folder;
+        }
+
+        private static OpcUaCfg.simple_var GetSimpleVar(DataModelSimpleVariable dmSimple)
+        {
+            OpcUaCfg.simple_var simple = new OpcUaCfg.simple_var();
+            simple.access = GetAccess(dmSimple.VarAccess);
+            simple.basic_type = GetBasicType(dmSimple.BasicType);
+            simple.node_id = GetNodeId(dmSimple.NodeId.NamespaceIndex, dmSimple.NodeId.GetIdentifier());
+            simple.node_type = OpcUaCfg.node_type.SimpleVariable;
+            simple.kind = OpcUaCfg.kind.Jednoducháproměnná;
+            return simple;
+        }
+
+        private static OpcUaCfg.array_var GetArrayVar(DataModelArrayVariable dmArray)
+        {
+            OpcUaCfg.array_var array = new OpcUaCfg.array_var();
+            array.access = GetAccess(dmArray.VarAccess);
+            array.basic_type = GetBasicType(dmArray.BasicType);
+            array.node_id = GetNodeId(dmArray.NodeId.NamespaceIndex, dmArray.NodeId.GetIdentifier());
+            array.node_type = OpcUaCfg.node_type.ArrayVariable;
+            array.kind = OpcUaCfg.kind.Pole;
+            array.length = (uint)dmArray.ArrayLength;
+            return array;
+        }
+
+        private static void SaveTreeNode(DataModelNode node, OpcUaCfg.tree_node tn)
+        {
+            tn.node = new OpcUaCfg.node();
+            if (node is DataModelNamespace dmNs)
+            {
+                OpcUaCfg.@namespace objNamespace = new OpcUaCfg.@namespace();
+                objNamespace.index = dmNs.Namespace;
+                objNamespace.node_type = OpcUaCfg.node_type.Namespace;
+                tn.node.Item = objNamespace;
+            }
+            else
+            {
+                if (node is DataModelFolder dmFolder)
+                {
+                    tn.node.Item = GetFolder(dmFolder);
+                }
+                else
+                {
+                    if (node is DataModelSimpleVariable dmSimple)
+                    {
+                        tn.node.Item = GetSimpleVar(dmSimple);
+                    }
+                    else
+                    {
+                        if (node is DataModelArrayVariable dmArray)
+                        {
+                            tn.node.Item = GetArrayVar(dmArray);
+                        }
+                    }
+                }
+            }
+            foreach(DataModelNode child in node.Children)
+            {
+                OpcUaCfg.tree_node tree_Node = new OpcUaCfg.tree_node();
+                if(tn.children == null)
+                {
+                    tn.children=new OpcUaCfg.tree_node[] {tree_Node};
+                }
+                else
+                {
+                    OpcUaCfg.tree_node[] tree_Nodes = tn.children;
+                    Array.Resize<OpcUaCfg.tree_node>(ref tree_Nodes, tn.children.Length + 1);
+                }
+                SaveTreeNode(child, tn.children[tn.children.Length - 1]);
+            }
+        }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
             Debug.Print($"SaveConfiguration {fileName}");
@@ -895,100 +1041,15 @@ namespace ConfigOpcUa
             foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
             {
                 OpcUaCfg.tree_node tn = new OpcUaCfg.tree_node();
-                tn.node = new OpcUaCfg.node();
-                if (modelNode is DataModelNamespace dmNs)
-                {
-                    OpcUaCfg.@namespace objNamespace = new OpcUaCfg.@namespace();
-                    objNamespace.index = dmNs.Namespace;
-                    objNamespace.node_type = OpcUaCfg.node_type.Namespace;
-                    tn.node.Item = objNamespace;
-                }
+                SaveTreeNode(modelNode, tn);
+                nodes.Add(tn);
             }
-            OPCUAParametersType pars = new OPCUAParametersType();
-            pars.ObjectTypeCount = (ushort)mvm.Objects.Count;
-            pars.UsePublisher = (mvm.PublisherObjects.Count != 0) ? true : false;
-            pars.UseSubscriber = (mvm.SubscriberObjects.Count != 0) ? true : false;
-            pars.UseClient = (mvm.ClientObjects.Count != 0) ? true : false;
-            pars.UseServer = (mvm.ServerObjects.Count != 0) ? true : false;
-            pars.PublisherId = (ushort)mvm.PublisherId;
-            pars.ServerRootType = $"{mvm.LocalIpAddressString};{mvm.GroupAddressString}";
-
-            pars.ServerEncryption = mvm.EncryptServer;
-
-            List<ObjectTypeType> objects = new List<ObjectTypeType>();
-            ushort id = 1;
-            List<SubscriberType> sts = new List<SubscriberType>();
-            foreach (WpfControlLibrary.PublisherItem pi in mvm.PublisherObjects)
-            {
-                SubscriberType st = new SubscriberType
-                {
-                    PublisherRootType = pi.OpcObject.Name,
-                    SendPeriod = (ushort)pi.SendingPeriod,
-                    Description = $"{pi.WriterGroupId};{pi.DataSetWriterId};{pi.OpcObject.Name}"
-                };
-                sts.Add(st);
-            }
-            pars.Subscriber = sts.ToArray();
-            pars.SubscribersCount = (ushort)mvm.PublisherObjects.Count;
-
-            List<PublisherType> pts = new List<PublisherType>();
-            foreach (WpfControlLibrary.SubscriberItem subscriberItem in mvm.SubscriberObjects)
-            {
-                PublisherType pt = new PublisherType();
-                pt.Description = $"{subscriberItem.ConfigurationPath};{subscriberItem.ObjectName};{subscriberItem.Receive};{subscriberItem.OpcObject.Name};{subscriberItem.PublisherId};{subscriberItem.WriterGroupId};{subscriberItem.DataSetWriterId}";
-                pts.Add(pt);
-                ObjectTypeType objectTypeType = CreateObjectTypeType(subscriberItem.OpcObject, id++);
-                objects.Add(objectTypeType);
-            }
-            pars.Publisher = pts.ToArray();
-            pars.PublishersCount = (ushort)mvm.SubscriberObjects.Count;
-
-            List<ServerType> listSt = new List<ServerType>();
-            foreach (WpfControlLibrary.ClientItem clientItem in mvm.ClientObjects)
-            {
-                ServerType st = new ServerType();
-                st.Description = $"{clientItem.ConfigurationPath};{clientItem.ObjectName};{clientItem.IpAddress};{clientItem.Validity};{clientItem.OpcObject.Name};{clientItem.Monitoring}";
-                Debug.Print($"Server {clientItem.RxTxPeriod}");
-                st.QueryPeriod = (ushort)clientItem.RxTxPeriod;
-                listSt.Add(st);
-                if (clientItem.OpcObject.IsImported)
-                {
-                    ObjectTypeType objectTypeType = CreateObjectTypeType(clientItem.OpcObject, id++);
-                    objects.Add(objectTypeType);
-                }
-
-                st.ClientEncryption = clientItem.EncryptClient;
-            }
-            pars.Server = listSt.ToArray();
-            pars.ServersCount = (ushort)listSt.Count();
-
-            foreach (WpfControlLibrary.OpcObject oo in mvm.Objects)
-            {
-                ObjectTypeType objectTypeType = CreateObjectTypeType(oo, id++);
-                objects.Add(objectTypeType);
-            }
-            pars.ObjectType = objects.ToArray();
-
-            XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
+            tree.tree1=nodes.ToArray();
+            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.tree));
             using (TextWriter tw = new StreamWriter(fileName))
             {
-                serializer.Serialize(tw, pars);
+                serializer.Serialize(tw, tree);
                 Debug.Print("Po serialize");
-            }
-
-            string fileCsv = Path.ChangeExtension(fileName, ".csv");
-            using (TextWriter tw = new StreamWriter(fileCsv))
-            {
-                foreach (WpfControlLibrary.OpcObject oo in mvm.Objects)
-                {
-                    if (!oo.IsImported && oo.ServerObject)
-                    {
-                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
-                        {
-                            tw.WriteLine($"{ooi.Name};{ooi.SelectedBasicType};{ooi.NodeId.NamespaceIndex};{ooi.NodeId.GetIdentifier()}");
-                        }
-                    }
-                }
             }
         }
     }

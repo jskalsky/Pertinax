@@ -8,6 +8,7 @@
 >
 	<xs:simpleType name="basic_type">
 		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unknown"/>
 			<xs:enumeration value="Boolean"/>
 			<xs:enumeration value="UInt8"/>
 			<xs:enumeration value="Int8"/>
@@ -21,6 +22,7 @@
 	</xs:simpleType>
 	<xs:simpleType name="access">
 		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unknown"/>
 			<xs:enumeration value="Read"/>
 			<xs:enumeration value="Write"/>
 			<xs:enumeration value="ReadWrite"/>
@@ -28,6 +30,7 @@
 	</xs:simpleType>
 	<xs:simpleType name="kind">
 		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unknown"/>
 			<xs:enumeration value="Jednoduchá proměnná"/>
 			<xs:enumeration value="Pole"/>
 			<xs:enumeration value="Objekt"/>
@@ -35,6 +38,7 @@
 	</xs:simpleType>
 	<xs:simpleType name="node_type">
 		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unknown"/>
 			<xs:enumeration value="Namespace"/>
 			<xs:enumeration value="Folder"/>
 			<xs:enumeration value="ObjectType"/>
@@ -68,6 +72,7 @@
 			<xs:element name="basic_type" type="basic_type"/>
 			<xs:element name="access" type="access"/>
 			<xs:element name="kind" type="kind" fixed="Jednoduchá proměnná"/>
+			<xs:element name="node_id" type="node_id"/>
 		</xs:all>
 	</xs:complexType>
 	<xs:complexType name="array_var">
@@ -77,6 +82,7 @@
 			<xs:element name="access" type="access"/>
 			<xs:element name="kind" type="kind" fixed="Pole"/>
 			<xs:element name="length" type="xs:unsignedInt"/>
+			<xs:element name="node_id" type="node_id"/>
 		</xs:all>
 	</xs:complexType>
 	<xs:complexType name="node">

@@ -181,5 +181,12 @@ namespace WpfControlLibrary.View
         {
 
         }
+
+        private void ButtonOk_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            DialogResult = true;
+            Close();
+        }
     }
 }

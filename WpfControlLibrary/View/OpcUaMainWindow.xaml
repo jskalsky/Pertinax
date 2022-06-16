@@ -25,7 +25,7 @@
             <StatusBar DockPanel.Dock="Bottom" Background="LightSteelBlue" Margin="0,5,0,0">
                 <StatusBarItem HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Ok" Width="50" Margin="0,0,5,0" IsDefault="True"/>
+                        <Button Content="Ok" Width="50" Margin="0,0,5,0" IsDefault="True" Click="ButtonOk_Click"/>
                         <Button Content="Cancel" Width="50" IsCancel="True"/>
                     </StackPanel>
                 </StatusBarItem>
