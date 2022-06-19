@@ -21,53 +21,19 @@ namespace OpcUaCfg {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute("cfg", Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    [System.Xml.Serialization.XmlRootAttribute("opc_cfg", Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
     public partial class tree {
         
-        private tree_node[] tree1Field;
+        private node[] tree_nodeField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("tree")]
-        public tree_node[] tree1 {
+        [System.Xml.Serialization.XmlElementAttribute("tree_node")]
+        public node[] tree_node {
             get {
-                return this.tree1Field;
+                return this.tree_nodeField;
             }
             set {
-                this.tree1Field = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class tree_node {
-        
-        private node nodeField;
-        
-        private tree_node[] childrenField;
-        
-        /// <remarks/>
-        public node node {
-            get {
-                return this.nodeField;
-            }
-            set {
-                this.nodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("children")]
-        public tree_node[] children {
-            get {
-                return this.childrenField;
-            }
-            set {
-                this.childrenField = value;
+                this.tree_nodeField = value;
             }
         }
     }
@@ -82,17 +48,30 @@ namespace OpcUaCfg {
         
         private object itemField;
         
+        private node[] childrenField;
+        
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("array_var", typeof(array_var))]
-        [System.Xml.Serialization.XmlElementAttribute("folder", typeof(folder))]
-        [System.Xml.Serialization.XmlElementAttribute("namespace", typeof(@namespace))]
-        [System.Xml.Serialization.XmlElementAttribute("simple_var", typeof(simple_var))]
+        [System.Xml.Serialization.XmlElementAttribute("array_var", typeof(nodeArray_var))]
+        [System.Xml.Serialization.XmlElementAttribute("folder", typeof(nodeFolder))]
+        [System.Xml.Serialization.XmlElementAttribute("namespace", typeof(nodeNamespace))]
+        [System.Xml.Serialization.XmlElementAttribute("simple_var", typeof(nodeSimple_var))]
         public object Item {
             get {
                 return this.itemField;
             }
             set {
                 this.itemField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("child", IsNullable=false)]
+        public node[] children {
+            get {
+                return this.childrenField;
+            }
+            set {
+                this.childrenField = value;
             }
         }
     }
@@ -102,37 +81,25 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class array_var {
-        
-        private node_type node_typeField;
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class nodeArray_var {
         
         private basic_type basic_typeField;
         
+        private bool basic_typeFieldSpecified;
+        
         private access accessField;
         
-        private kind kindField;
+        private bool accessFieldSpecified;
+        
+        private string idField;
         
         private uint lengthField;
         
-        private node_id node_idField;
-        
-        public array_var() {
-            this.node_typeField = node_type.ArrayVariable;
-            this.kindField = kind.Pole;
-        }
+        private bool lengthFieldSpecified;
         
         /// <remarks/>
-        public node_type node_type {
-            get {
-                return this.node_typeField;
-            }
-            set {
-                this.node_typeField = value;
-            }
-        }
-        
-        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public basic_type basic_type {
             get {
                 return this.basic_typeField;
@@ -143,6 +110,18 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool basic_typeSpecified {
+            get {
+                return this.basic_typeFieldSpecified;
+            }
+            set {
+                this.basic_typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public access access {
             get {
                 return this.accessField;
@@ -153,16 +132,29 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        public kind kind {
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool accessSpecified {
             get {
-                return this.kindField;
+                return this.accessFieldSpecified;
             }
             set {
-                this.kindField = value;
+                this.accessFieldSpecified = value;
             }
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public uint length {
             get {
                 return this.lengthField;
@@ -173,42 +165,15 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        public node_id node_id {
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool lengthSpecified {
             get {
-                return this.node_idField;
+                return this.lengthFieldSpecified;
             }
             set {
-                this.node_idField = value;
+                this.lengthFieldSpecified = value;
             }
         }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public enum node_type {
-        
-        /// <remarks/>
-        Unknown,
-        
-        /// <remarks/>
-        Namespace,
-        
-        /// <remarks/>
-        Folder,
-        
-        /// <remarks/>
-        ObjectType,
-        
-        /// <remarks/>
-        ObjectVariable,
-        
-        /// <remarks/>
-        SimpleVariable,
-        
-        /// <remarks/>
-        ArrayVariable,
     }
     
     /// <remarks/>
@@ -270,50 +235,28 @@ namespace OpcUaCfg {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public enum kind {
-        
-        /// <remarks/>
-        Unknown,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("Jednoduchá proměnná")]
-        Jednoducháproměnná,
-        
-        /// <remarks/>
-        Pole,
-        
-        /// <remarks/>
-        Objekt,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class node_id {
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class nodeFolder {
         
-        private ushort namespace_indexField;
+        private string nameField;
         
         private string idField;
         
-        public node_id() {
-            this.namespace_indexField = ((ushort)(1));
-        }
-        
         /// <remarks/>
-        public ushort namespace_index {
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name {
             get {
-                return this.namespace_indexField;
+                return this.nameField;
             }
             set {
-                this.namespace_indexField = value;
+                this.nameField = value;
             }
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
@@ -329,35 +272,56 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class simple_var {
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class nodeNamespace {
         
-        private node_type node_typeField;
+        private ushort indexField;
+        
+        private bool indexFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public ushort index {
+            get {
+                return this.indexField;
+            }
+            set {
+                this.indexField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool indexSpecified {
+            get {
+                return this.indexFieldSpecified;
+            }
+            set {
+                this.indexFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class nodeSimple_var {
         
         private basic_type basic_typeField;
         
+        private bool basic_typeFieldSpecified;
+        
         private access accessField;
         
-        private kind kindField;
+        private bool accessFieldSpecified;
         
-        private node_id node_idField;
-        
-        public simple_var() {
-            this.node_typeField = node_type.SimpleVariable;
-            this.kindField = kind.Jednoducháproměnná;
-        }
+        private string idField;
         
         /// <remarks/>
-        public node_type node_type {
-            get {
-                return this.node_typeField;
-            }
-            set {
-                this.node_typeField = value;
-            }
-        }
-        
-        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public basic_type basic_type {
             get {
                 return this.basic_typeField;
@@ -368,6 +332,18 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool basic_typeSpecified {
+            get {
+                return this.basic_typeFieldSpecified;
+            }
+            set {
+                this.basic_typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public access access {
             get {
                 return this.accessField;
@@ -378,108 +354,24 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        public kind kind {
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool accessSpecified {
             get {
-                return this.kindField;
+                return this.accessFieldSpecified;
             }
             set {
-                this.kindField = value;
+                this.accessFieldSpecified = value;
             }
         }
         
         /// <remarks/>
-        public node_id node_id {
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
             get {
-                return this.node_idField;
+                return this.idField;
             }
             set {
-                this.node_idField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class folder {
-        
-        private node_type node_typeField;
-        
-        private string nameField;
-        
-        private node_id node_idField;
-        
-        public folder() {
-            this.node_typeField = node_type.Folder;
-        }
-        
-        /// <remarks/>
-        public node_type node_type {
-            get {
-                return this.node_typeField;
-            }
-            set {
-                this.node_typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public node_id node_id {
-            get {
-                return this.node_idField;
-            }
-            set {
-                this.node_idField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class @namespace {
-        
-        private node_type node_typeField;
-        
-        private ushort indexField;
-        
-        public @namespace() {
-            this.node_typeField = node_type.Namespace;
-        }
-        
-        /// <remarks/>
-        public node_type node_type {
-            get {
-                return this.node_typeField;
-            }
-            set {
-                this.node_typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public ushort index {
-            get {
-                return this.indexField;
-            }
-            set {
-                this.indexField = value;
+                this.idField = value;
             }
         }
     }

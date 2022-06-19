@@ -892,14 +892,6 @@ namespace ConfigOpcUa
             return null;
         }
 
-        private static OpcUaCfg.node_id GetNodeId(ushort ns, string id)
-        {
-            OpcUaCfg.node_id nodeId = new OpcUaCfg.node_id();
-            nodeId.namespace_index = ns;
-            nodeId.id = id;
-            return nodeId;
-        }
-
         private static OpcUaCfg.access GetAccess(string s)
         {
             switch (s)
@@ -911,12 +903,12 @@ namespace ConfigOpcUa
                 case "ReadWrite":
                     return OpcUaCfg.access.ReadWrite;
             }
-            return OpcUaCfg.access.Unknown;        
+            return OpcUaCfg.access.Unknown;
         }
 
         private static OpcUaCfg.basic_type GetBasicType(string s)
         {
-            switch(s)
+            switch (s)
             {
                 case "Boolean":
                     return OpcUaCfg.basic_type.Boolean;
@@ -940,96 +932,79 @@ namespace ConfigOpcUa
             return OpcUaCfg.basic_type.Unknown;
         }
 
-        private static OpcUaCfg.kind GetKind(string s)
+        private static OpcUaCfg.nodeFolder GetFolder(DataModelFolder dmFolder)
         {
-            switch(s)
-            {
-                case "Jednoduchá proměnná":
-                    return OpcUaCfg.kind.Jednoducháproměnná;
-                case "Pole":
-                    return OpcUaCfg.kind.Pole;
-                case "Objekt":
-                    return OpcUaCfg.kind.Objekt;
-            }
-            return OpcUaCfg.kind.Unknown;
-        }
-
-        private static OpcUaCfg.folder GetFolder(DataModelFolder dmFolder)
-        {
-            OpcUaCfg.folder folder = new OpcUaCfg.folder();
+            OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
             folder.name = dmFolder.Name;
-            folder.node_id = GetNodeId(dmFolder.NodeId.NamespaceIndex, dmFolder.NodeId.GetIdentifier());
-            folder.node_type = OpcUaCfg.node_type.Folder;
+            folder.id = dmFolder.NodeId.GetIdentifier();
             return folder;
         }
 
-        private static OpcUaCfg.simple_var GetSimpleVar(DataModelSimpleVariable dmSimple)
+        private static OpcUaCfg.nodeSimple_var GetSimpleVar(DataModelSimpleVariable dmSimple)
         {
-            OpcUaCfg.simple_var simple = new OpcUaCfg.simple_var();
+            OpcUaCfg.nodeSimple_var simple = new OpcUaCfg.nodeSimple_var();
             simple.access = GetAccess(dmSimple.VarAccess);
+            simple.accessSpecified = true;
             simple.basic_type = GetBasicType(dmSimple.BasicType);
-            simple.node_id = GetNodeId(dmSimple.NodeId.NamespaceIndex, dmSimple.NodeId.GetIdentifier());
-            simple.node_type = OpcUaCfg.node_type.SimpleVariable;
-            simple.kind = OpcUaCfg.kind.Jednoducháproměnná;
+            simple.basic_typeSpecified = true;
+            simple.id = dmSimple.NodeId.GetIdentifier();
             return simple;
         }
 
-        private static OpcUaCfg.array_var GetArrayVar(DataModelArrayVariable dmArray)
+        private static OpcUaCfg.nodeArray_var GetArrayVar(DataModelArrayVariable dmArray)
         {
-            OpcUaCfg.array_var array = new OpcUaCfg.array_var();
+            OpcUaCfg.nodeArray_var array = new OpcUaCfg.nodeArray_var();
             array.access = GetAccess(dmArray.VarAccess);
+            array.accessSpecified = true;
             array.basic_type = GetBasicType(dmArray.BasicType);
-            array.node_id = GetNodeId(dmArray.NodeId.NamespaceIndex, dmArray.NodeId.GetIdentifier());
-            array.node_type = OpcUaCfg.node_type.ArrayVariable;
-            array.kind = OpcUaCfg.kind.Pole;
+            array.basic_typeSpecified = true;
+            array.id = dmArray.NodeId.GetIdentifier();
             array.length = (uint)dmArray.ArrayLength;
+            array.lengthSpecified = true;
             return array;
         }
 
-        private static void SaveTreeNode(DataModelNode node, OpcUaCfg.tree_node tn)
+        private static void SaveTreeNode(DataModelNode node, OpcUaCfg.node tn)
         {
-            tn.node = new OpcUaCfg.node();
+            Debug.Print($"SaveTreeNode {node}");
             if (node is DataModelNamespace dmNs)
             {
-                OpcUaCfg.@namespace objNamespace = new OpcUaCfg.@namespace();
+                OpcUaCfg.nodeNamespace objNamespace = new OpcUaCfg.nodeNamespace();
                 objNamespace.index = dmNs.Namespace;
-                objNamespace.node_type = OpcUaCfg.node_type.Namespace;
-                tn.node.Item = objNamespace;
+                objNamespace.indexSpecified = true;
+                tn.Item = objNamespace;
             }
             else
             {
                 if (node is DataModelFolder dmFolder)
                 {
-                    tn.node.Item = GetFolder(dmFolder);
+                    tn.Item = GetFolder(dmFolder);
                 }
                 else
                 {
                     if (node is DataModelSimpleVariable dmSimple)
                     {
-                        tn.node.Item = GetSimpleVar(dmSimple);
+                        tn.Item = GetSimpleVar(dmSimple);
                     }
                     else
                     {
                         if (node is DataModelArrayVariable dmArray)
                         {
-                            tn.node.Item = GetArrayVar(dmArray);
+                            tn.Item = GetArrayVar(dmArray);
                         }
                     }
                 }
             }
-            foreach(DataModelNode child in node.Children)
+            if (node.Children.Count != 0)
             {
-                OpcUaCfg.tree_node tree_Node = new OpcUaCfg.tree_node();
-                if(tn.children == null)
+                tn.children = new OpcUaCfg.node[node.Children.Count];
+                int index = 0;
+                foreach (DataModelNode child in node.Children)
                 {
-                    tn.children=new OpcUaCfg.tree_node[] {tree_Node};
+                    tn.children[index] = new OpcUaCfg.node();
+                    SaveTreeNode(child, tn.children[index]);
+                    ++index;
                 }
-                else
-                {
-                    OpcUaCfg.tree_node[] tree_Nodes = tn.children;
-                    Array.Resize<OpcUaCfg.tree_node>(ref tree_Nodes, tn.children.Length + 1);
-                }
-                SaveTreeNode(child, tn.children[tn.children.Length - 1]);
             }
         }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
@@ -1037,14 +1012,14 @@ namespace ConfigOpcUa
             Debug.Print($"SaveConfiguration {fileName}");
 
             OpcUaCfg.tree tree = new OpcUaCfg.tree();
-            List<OpcUaCfg.tree_node> nodes = new List<OpcUaCfg.tree_node>();
+            List<OpcUaCfg.node> nodes = new List<OpcUaCfg.node>();
             foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
             {
-                OpcUaCfg.tree_node tn = new OpcUaCfg.tree_node();
+                OpcUaCfg.node tn = new OpcUaCfg.node();
                 SaveTreeNode(modelNode, tn);
                 nodes.Add(tn);
             }
-            tree.tree1=nodes.ToArray();
+            tree.tree_node = nodes.ToArray();
             XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.tree));
             using (TextWriter tw = new StreamWriter(fileName))
             {

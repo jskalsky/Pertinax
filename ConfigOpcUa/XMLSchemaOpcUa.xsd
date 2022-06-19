@@ -47,62 +47,49 @@
 			<xs:enumeration value="ArrayVariable"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="node_id">
-		<xs:all>
-			<xs:element name="namespace_index" type="xs:unsignedShort" default="1"/>
-			<xs:element name="id" type="xs:string"/>
-		</xs:all>
-	</xs:complexType>
-	<xs:complexType name="namespace">
-		<xs:all>
-			<xs:element name="node_type" type="node_type" fixed="Namespace"/>
-			<xs:element name="index" type="xs:unsignedShort"/>
-		</xs:all>
-	</xs:complexType>
-	<xs:complexType name="folder">
-		<xs:all>
-			<xs:element name="node_type" type="node_type" fixed="Folder"/>
-			<xs:element name="name" type="xs:string"/>
-			<xs:element name="node_id" type="node_id"/>
-		</xs:all>
-	</xs:complexType>
-	<xs:complexType name="simple_var">
-		<xs:all>
-			<xs:element name="node_type" type="node_type" fixed="SimpleVariable"/>
-			<xs:element name="basic_type" type="basic_type"/>
-			<xs:element name="access" type="access"/>
-			<xs:element name="kind" type="kind" fixed="Jednoduchá proměnná"/>
-			<xs:element name="node_id" type="node_id"/>
-		</xs:all>
-	</xs:complexType>
-	<xs:complexType name="array_var">
-		<xs:all>
-			<xs:element name="node_type" type="node_type" fixed="ArrayVariable"/>
-			<xs:element name="basic_type" type="basic_type"/>
-			<xs:element name="access" type="access"/>
-			<xs:element name="kind" type="kind" fixed="Pole"/>
-			<xs:element name="length" type="xs:unsignedInt"/>
-			<xs:element name="node_id" type="node_id"/>
-		</xs:all>
-	</xs:complexType>
 	<xs:complexType name="node">
-		<xs:choice>
-			<xs:element name="namespace" type="namespace"/>
-			<xs:element name="folder" type="folder"/>
-			<xs:element name="simple_var" type="simple_var"/>
-			<xs:element name="array_var" type="array_var"/>
-		</xs:choice>
-	</xs:complexType>
-	<xs:complexType name="tree_node">
 		<xs:sequence>
-			<xs:element name="node" type="node"/>
-			<xs:element name="children" type="tree_node" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice>
+				<xs:element name="namespace">
+					<xs:complexType>
+						<xs:attribute name="index" type="xs:unsignedShort"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="folder">
+					<xs:complexType>
+						<xs:attribute name="name" type="xs:string"/>
+						<xs:attribute name="id" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="simple_var">
+					<xs:complexType>
+						<xs:attribute name="basic_type" type="basic_type"/>
+						<xs:attribute name="access" type="access"/>
+						<xs:attribute name="id" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="array_var">
+					<xs:complexType>
+						<xs:attribute name="basic_type" type="basic_type"/>
+						<xs:attribute name="access" type="access"/>
+						<xs:attribute name="id" type="xs:string"/>
+						<xs:attribute name="length" type="xs:unsignedInt"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="children">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="child" type="node" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="tree">
 		<xs:sequence>
-			<xs:element name="tree" type="tree_node" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:element name="tree_node" type="node" minOccurs="1" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="cfg" type="tree"/>
+	<xs:element name="opc_cfg" type="tree"/>
 </xs:schema>

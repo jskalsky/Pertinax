@@ -88,7 +88,7 @@ int main()
 
     for (int i = 0; i < 5; ++i)
     {
-        retval = UA_Client_connect(client, "opc.tcp://localhost:4840");
+        retval = UA_Client_connect(client, "opc.tcp://localhost:4841");
         if (retval != UA_STATUSCODE_GOOD)
         {
             printf("Connect %x\n", retval);
