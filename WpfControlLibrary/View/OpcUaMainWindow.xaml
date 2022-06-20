@@ -55,6 +55,11 @@
                                 </StackPanel>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
                     </TreeView>
                 </GroupBox>
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>

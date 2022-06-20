@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,11 +9,15 @@ using System.Threading.Tasks;
 namespace WpfControlLibrary.DataModel
 {
     public enum DataModelType { None, Namespace, Folder, ObjectType, ObjectVariable, SimpleVariable, ArrayVariable }
-    public abstract class DataModelNode
+    public abstract class DataModelNode : INotifyPropertyChanged
     {
         protected readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
         protected readonly string[] _access = new string[] { "Read", "Write", "ReadWrite" };
         public const ushort DefaultNamespaceIndex = 1;
+        private bool _isExpanded;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         protected DataModelNode(string name, string imagePath, NodeIdBase nodeId, DataModelNode parent)
         {
             Name = name;
@@ -29,6 +34,12 @@ namespace WpfControlLibrary.DataModel
         public DataModelNode Parent { get; private set; }
         public ObservableCollection<DataModelNode> Children { get; }
         public DataModelType DataModelType { get; protected set; }
+
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { _isExpanded = value; OnPropertyChanged("IsExpanded"); }
+        }
         public static DataModelFolder GetFolder(string name, NodeIdBase nodeId, DataModelNode parent)
         {
             DataModelFolder node = new DataModelFolder(name, nodeId, parent);
@@ -69,6 +80,11 @@ namespace WpfControlLibrary.DataModel
                 return ns;
             }
             return null;
+        }
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

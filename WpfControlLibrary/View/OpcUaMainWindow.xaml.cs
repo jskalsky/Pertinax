@@ -115,8 +115,7 @@ namespace WpfControlLibrary.View
                     {
                         DataModelFolder dmf = DataModelNode.GetFolder(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
                         mvm.SelectedNode.AddChildren(dmf);
-                        IdFactory.RemoveAllPublishedNames(ns.Namespace);
-                        IdFactory.RemoveAllPublishedIds(ns.Namespace);
+                        mvm.SelectedNode.IsExpanded = true;
                     }
                 }
             }
@@ -151,10 +150,11 @@ namespace WpfControlLibrary.View
                         vm.SelectedBasicType = vm.BasicTypes[0];
                         Debug.Print("503");
                     }
+                    Debug.Print("504");
+                    bool? result = dialogAddVariable.ShowDialog();
+                    mvm.SelectedNode.IsExpanded = true;
+                    Debug.Print("505");
                 }
-                Debug.Print("504");
-                bool? result = dialogAddVariable.ShowDialog();
-                Debug.Print("505");
             }
         }
 
@@ -171,8 +171,7 @@ namespace WpfControlLibrary.View
                     {
                         DataModelObjectType dmot = DataModelNode.GetObjectType(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
                         mvm.SelectedNode.AddChildren(dmot);
-                        IdFactory.RemoveAllPublishedNames(ns.Namespace);
-                        IdFactory.RemoveAllPublishedIds(ns.Namespace);
+                        mvm.SelectedNode.IsExpanded = true;
                     }
                 }
             }
