@@ -20,20 +20,20 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute("opc_cfg", Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
     public partial class tree {
         
-        private node[] tree_nodeField;
+        private node[] nodesField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("tree_node")]
-        public node[] tree_node {
+        [System.Xml.Serialization.XmlElementAttribute("nodes")]
+        public node[] nodes {
             get {
-                return this.tree_nodeField;
+                return this.nodesField;
             }
             set {
-                this.tree_nodeField = value;
+                this.nodesField = value;
             }
         }
     }
@@ -84,6 +84,8 @@ namespace OpcUaCfg {
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public partial class nodeArray_var {
         
+        private string nameField;
+        
         private basic_type basic_typeField;
         
         private bool basic_typeFieldSpecified;
@@ -97,6 +99,17 @@ namespace OpcUaCfg {
         private uint lengthField;
         
         private bool lengthFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -310,6 +323,8 @@ namespace OpcUaCfg {
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public partial class nodeSimple_var {
         
+        private string nameField;
+        
         private basic_type basic_typeField;
         
         private bool basic_typeFieldSpecified;
@@ -319,6 +334,17 @@ namespace OpcUaCfg {
         private bool accessFieldSpecified;
         
         private string idField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]

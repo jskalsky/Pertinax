@@ -1,6 +1,7 @@
 ﻿using OpcUaPars;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -353,154 +354,209 @@ namespace ConfigOpcUa
                 }
             }
         }
+
+        private void LoadNode(DataModelNode parent, OpcUaCfg.node n, ObservableCollection<DataModelNode> dataModel)
+        {
+            DataModelNode dmn = null;
+            if (n.Item is OpcUaCfg.nodeFolder folder)
+            {
+                dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), null);
+            }
+            else
+            {
+                if (n.Item is OpcUaCfg.nodeNamespace nodeNamespace)
+                {
+                    dmn = new DataModelNamespace(nodeNamespace.index);
+                }
+                else
+                {
+                    if (n.Item is OpcUaCfg.nodeSimple_var simpleVar)
+                    {
+                        dmn = new DataModelSimpleVariable(simpleVar.name, NodeIdBase.GetNodeIdBase(simpleVar.id), GetBasicType(simpleVar.basic_type),
+                            GetAccess(simpleVar.access), parent);
+                    }
+                    else
+                    {
+                        if (n.Item is OpcUaCfg.nodeArray_var arrayVar)
+                        {
+                            dmn = new DataModelArrayVariable(arrayVar.name, NodeIdBase.GetNodeIdBase(arrayVar.id), GetBasicType(arrayVar.basic_type),
+                                GetAccess(arrayVar.access), (int)arrayVar.length, parent);
+                        }
+                    }
+                }
+            }
+            if (parent == null)
+            {
+                dataModel.Add(dmn);
+            }
+            foreach (OpcUaCfg.node child in n.children)
+            {
+                LoadNode(dmn, child, dataModel);
+            }
+        }
+        private void LoadXml(string pName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
+        {
+            if (File.Exists(pName))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.tree));
+                using (TextReader tr = new StreamReader(pName))
+                {
+                    OpcUaCfg.tree treeNodes = (OpcUaCfg.tree)serializer.Deserialize(tr);
+                    foreach (OpcUaCfg.node node in treeNodes.nodes)
+                    {
+                        LoadNode(null, node, mvm.DataModel);
+                    }
+                }
+            }
+        }
         public override void LoadConfig(string pName)
         {
             Debug.Print($"LoadConfig= {pName}");
-            _objects.Clear();
-            _localIpAddress = string.Empty;
-            _groupAddress = string.Empty;
-            _publisherId = 1;
-            _subscriberItems.Clear();
-            _publisherItems.Clear();
-            _clientItems.Clear();
-            _serverItems.Clear();
-            _ports.Clear();
-            _allPorts.Clear();
-            NodeIdBase.Clear();
+            /*            _objects.Clear();
+                        _localIpAddress = string.Empty;
+                        _groupAddress = string.Empty;
+                        _publisherId = 1;
+                        _subscriberItems.Clear();
+                        _publisherItems.Clear();
+                        _clientItems.Clear();
+                        _serverItems.Clear();
+                        _ports.Clear();
+                        _allPorts.Clear();
+                        NodeIdBase.Clear();
 
-            if (File.Exists(pName))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
-                using (TextReader tr = new StreamReader(pName))
-                {
-                    OPCUAParametersType pars = (OPCUAParametersType)serializer.Deserialize(tr);
-                    string[] ips = pars.ServerRootType.Split(';');
-                    if (ips.Length == 2)
-                    {
-                        _localIpAddress = ips[0];
-                        _groupAddress = ips[1];
-                    }
-                    _serverEncryption = pars.ServerEncryption;
-                    foreach (ObjectTypeType ott in pars.ObjectType)
-                    {
-                        string[] objectItems = ott.Description.Split(';');
-                        bool serverObject = false;
-                        bool clientObject = false;
-                        bool publisherObject = false;
-                        bool subscriberObject = false;
-                        bool isImported = false;
-                        if (objectItems.Length == 5)
+                        if (File.Exists(pName))
                         {
-                            bool.TryParse(objectItems[0], out serverObject);
-                            bool.TryParse(objectItems[1], out clientObject);
-                            bool.TryParse(objectItems[2], out publisherObject);
-                            bool.TryParse(objectItems[3], out subscriberObject);
-                            bool.TryParse(objectItems[4], out isImported);
-                        }
-
-                        string[] nodeIdItems = ott.BaseType.Split(';');
-                        ushort namespaceIndex = 0;
-                        string nodeId = string.Empty;
-                        Debug.Print($"nodeIdItems= {nodeIdItems.Length}");
-                        if (nodeIdItems.Length == 2)
-                        {
-                            if (ushort.TryParse(nodeIdItems[0], out ushort ns))
+                            XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
+                            using (TextReader tr = new StreamReader(pName))
                             {
-                                namespaceIndex = ns;
-                            }
-
-                            nodeId = $"{namespaceIndex}:{nodeIdItems[1]}";
-                        }
-                        else
-                        {
-                            nodeId = $"{namespaceIndex}:{nodeIdItems[0]}";
-                        }
-                        if (!isImported)
-                        {
-                            Debug.Print($"nodeId= {nodeId}");
-                            WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, serverObject, clientObject, publisherObject, subscriberObject, isImported, nodeId);
-                            AddItemsToObject(ott, oo, publisherObject);
-                            _objects.Add(oo);
-                            if (serverObject)
-                            {
-                                _serverItems.Add(new ServerItem(oo));
-                            }
-                        }
-                    }
-
-                    if (pars.UsePublisher)
-                    {
-                        _publisherId = (int)pars.PublisherId;
-                        Debug.Print($"_publisherId= {_publisherId}");
-                        foreach (SubscriberType subscriberType in pars.Subscriber)
-                        {
-                            string[] items = subscriberType.Description.Split(';');
-                            int writerId = 0;
-                            int dataSetWriter = 0;
-                            if (items.Length == 3)
-                            {
-                                int.TryParse(items[0], out writerId);
-                                int.TryParse(items[1], out dataSetWriter);
-                            }
-                            WpfControlLibrary.OpcObject opcObject = FindOpcObject(items[2]);
-                            if (opcObject != null)
-                            {
-                                WpfControlLibrary.PublisherItem pi = new WpfControlLibrary.PublisherItem(opcObject, _publisherId, writerId, dataSetWriter, subscriberType.SendPeriod);
-                                _publisherItems.Add(pi);
-                            }
-                        }
-                    }
-                    if (pars.UseSubscriber)
-                    {
-                        Debug.Print($"Subscriber {_subscriberItems}");
-                        foreach (PublisherType pt in pars.Publisher)
-                        {
-                            string[] items = pt.Description.Split(';');
-                            bool receive = false;
-                            if (items.Length >= 4)
-                            {
-                                string path = items[0];
-                                string objectName = items[1];
-                                bool.TryParse(items[2], out receive);
-                                Import(path, objectName, receive, false, 0, false);
-                            }
-                        }
-                    }
-                    if (pars.UseClient)
-                    {
-                        foreach (ServerType st in pars.Server)
-                        {
-                            string[] items = st.Description.Split(';');
-                            if (items.Length == 6)
-                            {
-                                bool receive = false;
-                                bool monitoring = false;
-                                string path = items[0];
-                                string objectName = items[1];
-                                bool.TryParse(items[3], out receive);
-                                bool.TryParse(items[5], out monitoring);
-                                if (string.IsNullOrEmpty(path))
+                                OPCUAParametersType pars = (OPCUAParametersType)serializer.Deserialize(tr);
+                                string[] ips = pars.ServerRootType.Split(';');
+                                if (ips.Length == 2)
                                 {
-                                    foreach (WpfControlLibrary.OpcObject oo in _objects)
+                                    _localIpAddress = ips[0];
+                                    _groupAddress = ips[1];
+                                }
+                                _serverEncryption = pars.ServerEncryption;
+                                foreach (ObjectTypeType ott in pars.ObjectType)
+                                {
+                                    string[] objectItems = ott.Description.Split(';');
+                                    bool serverObject = false;
+                                    bool clientObject = false;
+                                    bool publisherObject = false;
+                                    bool subscriberObject = false;
+                                    bool isImported = false;
+                                    if (objectItems.Length == 5)
                                     {
-                                        if (oo.Name == items[4])
+                                        bool.TryParse(objectItems[0], out serverObject);
+                                        bool.TryParse(objectItems[1], out clientObject);
+                                        bool.TryParse(objectItems[2], out publisherObject);
+                                        bool.TryParse(objectItems[3], out subscriberObject);
+                                        bool.TryParse(objectItems[4], out isImported);
+                                    }
+
+                                    string[] nodeIdItems = ott.BaseType.Split(';');
+                                    ushort namespaceIndex = 0;
+                                    string nodeId = string.Empty;
+                                    Debug.Print($"nodeIdItems= {nodeIdItems.Length}");
+                                    if (nodeIdItems.Length == 2)
+                                    {
+                                        if (ushort.TryParse(nodeIdItems[0], out ushort ns))
                                         {
-                                            WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod, monitoring, st.ClientEncryption);
-                                            _clientItems.Add(ci);
-                                            break;
+                                            namespaceIndex = ns;
+                                        }
+
+                                        nodeId = $"{namespaceIndex}:{nodeIdItems[1]}";
+                                    }
+                                    else
+                                    {
+                                        nodeId = $"{namespaceIndex}:{nodeIdItems[0]}";
+                                    }
+                                    if (!isImported)
+                                    {
+                                        Debug.Print($"nodeId= {nodeId}");
+                                        WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject(ott.Name, serverObject, clientObject, publisherObject, subscriberObject, isImported, nodeId);
+                                        AddItemsToObject(ott, oo, publisherObject);
+                                        _objects.Add(oo);
+                                        if (serverObject)
+                                        {
+                                            _serverItems.Add(new ServerItem(oo));
                                         }
                                     }
                                 }
-                                else
+
+                                if (pars.UsePublisher)
                                 {
-                                    Import(path, objectName, receive, monitoring, st.QueryPeriod, st.ClientEncryption);
+                                    _publisherId = (int)pars.PublisherId;
+                                    Debug.Print($"_publisherId= {_publisherId}");
+                                    foreach (SubscriberType subscriberType in pars.Subscriber)
+                                    {
+                                        string[] items = subscriberType.Description.Split(';');
+                                        int writerId = 0;
+                                        int dataSetWriter = 0;
+                                        if (items.Length == 3)
+                                        {
+                                            int.TryParse(items[0], out writerId);
+                                            int.TryParse(items[1], out dataSetWriter);
+                                        }
+                                        WpfControlLibrary.OpcObject opcObject = FindOpcObject(items[2]);
+                                        if (opcObject != null)
+                                        {
+                                            WpfControlLibrary.PublisherItem pi = new WpfControlLibrary.PublisherItem(opcObject, _publisherId, writerId, dataSetWriter, subscriberType.SendPeriod);
+                                            _publisherItems.Add(pi);
+                                        }
+                                    }
                                 }
+                                if (pars.UseSubscriber)
+                                {
+                                    Debug.Print($"Subscriber {_subscriberItems}");
+                                    foreach (PublisherType pt in pars.Publisher)
+                                    {
+                                        string[] items = pt.Description.Split(';');
+                                        bool receive = false;
+                                        if (items.Length >= 4)
+                                        {
+                                            string path = items[0];
+                                            string objectName = items[1];
+                                            bool.TryParse(items[2], out receive);
+                                            Import(path, objectName, receive, false, 0, false);
+                                        }
+                                    }
+                                }
+                                if (pars.UseClient)
+                                {
+                                    foreach (ServerType st in pars.Server)
+                                    {
+                                        string[] items = st.Description.Split(';');
+                                        if (items.Length == 6)
+                                        {
+                                            bool receive = false;
+                                            bool monitoring = false;
+                                            string path = items[0];
+                                            string objectName = items[1];
+                                            bool.TryParse(items[3], out receive);
+                                            bool.TryParse(items[5], out monitoring);
+                                            if (string.IsNullOrEmpty(path))
+                                            {
+                                                foreach (WpfControlLibrary.OpcObject oo in _objects)
+                                                {
+                                                    if (oo.Name == items[4])
+                                                    {
+                                                        WpfControlLibrary.ClientItem ci = new ClientItem(path, objectName, items[2], oo, receive, st.QueryPeriod, monitoring, st.ClientEncryption);
+                                                        _clientItems.Add(ci);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Import(path, objectName, receive, monitoring, st.QueryPeriod, st.ClientEncryption);
+                                            }
+                                        }
+                                    }
+                                }
+                                CreatePorts();
                             }
-                        }
-                    }
-                    CreatePorts();
-                }
-            }
+                        }*/
         }
 
         private string[] ItemToText(string objectName, WpfControlLibrary.OpcObjectItem ooi)
@@ -665,9 +721,10 @@ namespace ConfigOpcUa
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
         {
             WpfControlLibrary.View.OpcUaMainWindow mainWindow = new WpfControlLibrary.View.OpcUaMainWindow();
-            if ((bool)mainWindow.ShowDialog())
+            if (mainWindow.DataContext is WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
             {
-                if (mainWindow.DataContext is WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
+                LoadXml(pName, mvm);
+                if ((bool)mainWindow.ShowDialog())
                 {
                     Debug.Print("3");
                     SaveConfiguration(pName, mvm);
@@ -905,7 +962,19 @@ namespace ConfigOpcUa
             }
             return OpcUaCfg.access.Unknown;
         }
-
+        private static string GetAccess(OpcUaCfg.access access)
+        {
+            switch (access)
+            {
+                case OpcUaCfg.access.Read:
+                    return "Read";
+                case OpcUaCfg.access.Write:
+                    return "Write";
+                case OpcUaCfg.access.ReadWrite:
+                    return "ReadWrite";
+            }
+            return "Unknown";
+        }
         private static OpcUaCfg.basic_type GetBasicType(string s)
         {
             switch (s)
@@ -931,34 +1000,60 @@ namespace ConfigOpcUa
             }
             return OpcUaCfg.basic_type.Unknown;
         }
-
+        private static string GetBasicType(OpcUaCfg.basic_type s)
+        {
+            switch (s)
+            {
+                case OpcUaCfg.basic_type.Boolean:
+                    return "Boolean";
+                case OpcUaCfg.basic_type.UInt8:
+                    return "UInt8";
+                case OpcUaCfg.basic_type.Int8:
+                    return "Int8";
+                case OpcUaCfg.basic_type.UInt16:
+                    return "UInt16";
+                case OpcUaCfg.basic_type.Int16:
+                    return "Int16";
+                case OpcUaCfg.basic_type.UInt32:
+                    return "UInt32";
+                case OpcUaCfg.basic_type.Int32:
+                    return "Int32";
+                case OpcUaCfg.basic_type.Float:
+                    return "Float";
+                case OpcUaCfg.basic_type.Double:
+                    return "Double";
+            }
+            return "Unknown";
+        }
         private static OpcUaCfg.nodeFolder GetFolder(DataModelFolder dmFolder)
         {
             OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
             folder.name = dmFolder.Name;
-            folder.id = dmFolder.NodeId.GetIdentifier();
+            folder.id = $"{dmFolder.GetNamespace().Namespace}:{dmFolder.NodeId.GetIdentifier()}";
             return folder;
         }
 
         private static OpcUaCfg.nodeSimple_var GetSimpleVar(DataModelSimpleVariable dmSimple)
         {
             OpcUaCfg.nodeSimple_var simple = new OpcUaCfg.nodeSimple_var();
+            simple.name = dmSimple.Name;
             simple.access = GetAccess(dmSimple.VarAccess);
             simple.accessSpecified = true;
             simple.basic_type = GetBasicType(dmSimple.BasicType);
             simple.basic_typeSpecified = true;
-            simple.id = dmSimple.NodeId.GetIdentifier();
+            simple.id = $"{dmSimple.GetNamespace().Namespace}:{dmSimple.NodeId.GetIdentifier()}";
             return simple;
         }
 
         private static OpcUaCfg.nodeArray_var GetArrayVar(DataModelArrayVariable dmArray)
         {
             OpcUaCfg.nodeArray_var array = new OpcUaCfg.nodeArray_var();
+            array.name = dmArray.Name;
             array.access = GetAccess(dmArray.VarAccess);
             array.accessSpecified = true;
             array.basic_type = GetBasicType(dmArray.BasicType);
             array.basic_typeSpecified = true;
-            array.id = dmArray.NodeId.GetIdentifier();
+            array.id = $"{dmArray.GetNamespace().Namespace}:{dmArray.NodeId.GetIdentifier()}";
             array.length = (uint)dmArray.ArrayLength;
             array.lengthSpecified = true;
             return array;
@@ -1019,7 +1114,7 @@ namespace ConfigOpcUa
                 SaveTreeNode(modelNode, tn);
                 nodes.Add(tn);
             }
-            tree.tree_node = nodes.ToArray();
+            tree.nodes = nodes.ToArray();
             XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.tree));
             using (TextWriter tw = new StreamWriter(fileName))
             {

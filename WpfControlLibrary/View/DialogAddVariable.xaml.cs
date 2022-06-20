@@ -101,8 +101,8 @@ namespace WpfControlLibrary.View
                     {
                         vm.VisId = Visibility.Collapsed;
                     }
-                    IdFactory.RemoveAllPublishedNames(vm.Namespace);
-                    IdFactory.RemoveAllPublishedIds(vm.Namespace);
+//                    IdFactory.RemoveAllPublishedNames(vm.Namespace);
+//                    IdFactory.RemoveAllPublishedIds(vm.Namespace);
                 }
             }
         }
@@ -132,8 +132,6 @@ namespace WpfControlLibrary.View
                             vm.ParentNode.AddChildren(node);
                             ++vm.VarWritten;
                         }
-                        IdFactory.RemovePublishedNames(vm.Namespace, names);
-                        IdFactory.RemovePublishedIds(vm.Namespace, ids);
                     }
                 }
                 else

@@ -63,6 +63,7 @@
 				</xs:element>
 				<xs:element name="simple_var">
 					<xs:complexType>
+						<xs:attribute name="name" type="xs:string"/>
 						<xs:attribute name="basic_type" type="basic_type"/>
 						<xs:attribute name="access" type="access"/>
 						<xs:attribute name="id" type="xs:string"/>
@@ -70,6 +71,7 @@
 				</xs:element>
 				<xs:element name="array_var">
 					<xs:complexType>
+						<xs:attribute name="name" type="xs:string"/>
 						<xs:attribute name="basic_type" type="basic_type"/>
 						<xs:attribute name="access" type="access"/>
 						<xs:attribute name="id" type="xs:string"/>
@@ -86,10 +88,11 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tree">
-		<xs:sequence>
-			<xs:element name="tree_node" type="node" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:element name="opc_cfg" type="tree"/>
+	<xs:element name="tree">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="nodes" type="node" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>
