@@ -33,7 +33,12 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
+                Debug.Print($"Exception: {exc.Message}");
+                StackTrace stackTrace = new StackTrace(exc, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
             }
         }
 
@@ -50,7 +55,12 @@ namespace ZatCad
             }
             catch(Exception exc)
             {
-                File.WriteAllText("c:\\Work\\zat.log", exc.Message);
+                Debug.Print($"Exception: {exc.Message}");
+                StackTrace stackTrace = new StackTrace(exc, true);
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
+                }
             }
         }
 

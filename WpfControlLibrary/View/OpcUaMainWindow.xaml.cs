@@ -22,15 +22,14 @@ namespace WpfControlLibrary.View
     /// </summary>
     public partial class OpcUaMainWindow : Window
     {
-        private readonly Dictionary<DataModelType, List<DataModelType>> _DataModelTypes = new Dictionary<DataModelType, List<DataModelType>>()
+        private readonly Dictionary<DataModelType, List<string>> _DataModelTypes = new Dictionary<DataModelType, List<string>>()
         {
-            { DataModelType.Namespace, new List<DataModelType>(){DataModelType.Folder, DataModelType.ObjectVariable, DataModelType.SimpleVariable, DataModelType.ArrayVariable} },
-            { DataModelType.Folder, new List<DataModelType>(){DataModelType.Folder, DataModelType.ObjectType, DataModelType.SimpleVariable, DataModelType.ArrayVariable,
-                DataModelType.ObjectVariable} },
-            { DataModelType.SimpleVariable, new List<DataModelType>()},
-            { DataModelType.ArrayVariable, new List<DataModelType>()},
-            { DataModelType.ObjectVariable, new List<DataModelType>()},
-            { DataModelType.ObjectType, new List<DataModelType>(){DataModelType.SimpleVariable, DataModelType.ArrayVariable, DataModelType.ObjectVariable} }
+            { DataModelType.Namespace, new List<string>(){ "MiAddFolder", "MiAddVar"} },
+            { DataModelType.Folder, new List<string>(){"MiAddFolder", "MiAddObjectType", "MiAddVar" } },
+            { DataModelType.SimpleVariable, new List<string>()},
+            { DataModelType.ArrayVariable, new List<string>()},
+            { DataModelType.ObjectVariable, new List<string>()},
+            { DataModelType.ObjectType, new List<string>(){ "MiAddVar" } }
         };
 
         public OpcUaMainWindow()
@@ -51,11 +50,11 @@ namespace WpfControlLibrary.View
         {
             if (sender is ContextMenu menu)
             {
-                if (DataContext is MainViewModel vm)
+                if (DataContext is OpcUaViewModel vm)
                 {
-                    if (vm.SelectedDataModelNode != null)
+                    if (vm.SelectedNode != null)
                     {
-                        DataModelNamespace ns = vm.SelectedDataModelNode.GetNamespace();
+                        DataModelNamespace ns = vm.SelectedNode.GetNamespace();
                         if (ns != null)
                         {
                             if (ns.Namespace == 0)
@@ -71,25 +70,19 @@ namespace WpfControlLibrary.View
                             }
                             else
                             {
-                                if (_DataModelTypes.TryGetValue(vm.SelectedDataModelNode.DataModelType, out List<DataModelType> enabledTypes))
+                                if (_DataModelTypes.TryGetValue(vm.SelectedNode.DataModelType, out List<string> enabledTypes))
                                 {
-                                    foreach (DataModelType type in enabledTypes)
+                                    foreach (object mi in menu.Items)
                                     {
-                                        foreach (object mi in menu.Items)
+                                        if (mi is MenuItem menuItem)
                                         {
-                                            if (mi is MenuItem menuItem)
+                                            menuItem.IsEnabled = false;
+                                            foreach (string type in enabledTypes)
                                             {
-                                                switch (menuItem.Name)
+                                                if(menuItem.Name == type)
                                                 {
-                                                    case "MiAddFolder":
-                                                        menuItem.IsEnabled = (type == DataModelType.Folder) ? true : false;
-                                                        break;
-                                                    case "MiAddVar":
-                                                        menuItem.IsEnabled = (type == DataModelType.SimpleVariable || type == DataModelType.ObjectVariable || type == DataModelType.ArrayVariable) ? true : false;
-                                                        break;
-                                                    case "MiAddObjectType":
-                                                        menuItem.IsEnabled = (type == DataModelType.Folder) ? true : false;
-                                                        break;
+                                                    menuItem.IsEnabled=true;
+                                                    break;
                                                 }
                                             }
                                         }
@@ -107,11 +100,11 @@ namespace WpfControlLibrary.View
             if (DataContext is OpcUaViewModel mvm)
             {
                 DataModelNamespace ns = mvm.SelectedNode.GetNamespace();
-                if(ns != null)
+                if (ns != null)
                 {
                     string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameFolder);
                     string[] ids = IdFactory.GetNumericIds(ns.Namespace);
-                    if(names != null && names.Length == 1 && ids != null && ids.Length == 1)
+                    if (names != null && names.Length == 1 && ids != null && ids.Length == 1)
                     {
                         DataModelFolder dmf = DataModelNode.GetFolder(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
                         mvm.SelectedNode.AddChildren(dmf);
@@ -186,6 +179,34 @@ namespace WpfControlLibrary.View
             e.Handled = true;
             DialogResult = true;
             Close();
+        }
+
+        private void SelectAddress(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void KeyboardSelectAddress(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.SelectAll();
+            }
+        }
+
+        private void SelectivelyIgnoreMouseButton(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                if (!tb.IsKeyboardFocusWithin)
+                {
+                    e.Handled = true;
+                    tb.Focus();
+                }
+            }
         }
     }
 }

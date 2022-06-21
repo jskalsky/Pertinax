@@ -303,5 +303,29 @@ namespace WpfControlLibrary.View
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 1)
+            {
+                if (e.AddedItems[0] is string selectedType)
+                {
+                    VarBasicType = selectedType;
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void Access_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 1)
+            {
+                if (e.AddedItems[0] is string selectedAccess)
+                {
+                    VarAccess = selectedAccess;
+                }
+            }
+            e.Handled = true;
+        }
     }
 }

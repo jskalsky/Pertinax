@@ -360,7 +360,9 @@ namespace ConfigOpcUa
             DataModelNode dmn = null;
             if (n.Item is OpcUaCfg.nodeFolder folder)
             {
-                dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), null);
+                dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), parent);
+                DataModelNamespace ns = dmn.GetNamespace();
+                IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
             }
             else
             {
@@ -374,6 +376,8 @@ namespace ConfigOpcUa
                     {
                         dmn = new DataModelSimpleVariable(simpleVar.name, NodeIdBase.GetNodeIdBase(simpleVar.id), GetBasicType(simpleVar.basic_type),
                             GetAccess(simpleVar.access), parent);
+                        DataModelNamespace ns = dmn.GetNamespace();
+                        IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
                     }
                     else
                     {
@@ -381,6 +385,8 @@ namespace ConfigOpcUa
                         {
                             dmn = new DataModelArrayVariable(arrayVar.name, NodeIdBase.GetNodeIdBase(arrayVar.id), GetBasicType(arrayVar.basic_type),
                                 GetAccess(arrayVar.access), (int)arrayVar.length, parent);
+                            DataModelNamespace ns = dmn.GetNamespace();
+                            IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
                         }
                     }
                 }
@@ -389,9 +395,16 @@ namespace ConfigOpcUa
             {
                 dataModel.Add(dmn);
             }
-            foreach (OpcUaCfg.node child in n.children)
+            else
             {
-                LoadNode(dmn, child, dataModel);
+                parent.AddChildren(dmn);
+            }
+            if(n.children != null)
+            {
+                foreach (OpcUaCfg.node child in n.children)
+                {
+                    LoadNode(dmn, child, dataModel);
+                }
             }
         }
         private void LoadXml(string pName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
@@ -407,6 +420,13 @@ namespace ConfigOpcUa
                         LoadNode(null, node, mvm.DataModel);
                     }
                 }
+            }
+            else
+            {
+                mvm.DataModelNamespace0 = new DataModelNamespace(0);
+                mvm.DataModelNamespace1 = new DataModelNamespace(1);
+                mvm.DataModel.Add(mvm.DataModelNamespace0);
+                mvm.DataModel.Add(mvm.DataModelNamespace1);
             }
         }
         public override void LoadConfig(string pName)

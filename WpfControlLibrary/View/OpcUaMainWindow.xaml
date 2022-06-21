@@ -11,6 +11,57 @@
     <Window.DataContext>
         <vm:OpcUaViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <Image x:Key="FolderIcon" Source="Icons/Folder_6222.png"/>
+            <Style TargetType="{x:Type TextBox}" x:Key="ToolTipError">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors)/ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <ControlTemplate x:Key="ToolTipTemplate" TargetType="ToolTip">
+                <Grid Opacity="0.93" MaxWidth="200">
+                    <Border BorderBrush="Black" BorderThickness="1,1,1,1" CornerRadius="2">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFF5FAFE" Offset="0"/>
+                                <GradientStop Color="#FFE5EFF9" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect Color="DarkBlue" />
+                        </Border.Effect>
+                        <TextBlock Margin="10,10,10,10"
+                    VerticalAlignment="Top"
+                    TextWrapping="Wrap"
+                    HorizontalAlignment="Left"  
+                    Text="{TemplateBinding Content}" Foreground="DarkBlue">
+                        </TextBlock>
+                    </Border>
+                </Grid>
+            </ControlTemplate>
+            <ControlTemplate x:Key="ValidationTemplate">
+                <Grid>
+                    <Polygon Fill="Red"
+							 Margin="0,2,2,0"
+							 Points="10,10 10,0 0,0"
+							 VerticalAlignment="Top"
+							 HorizontalAlignment="Right">
+                        <Polygon.ToolTip>
+                            <ToolTip  Content="{Binding Path=[0].ErrorContent}"
+									 BorderThickness="1"
+									 Foreground="White"
+									 Background="Red" Template="{StaticResource ToolTipTemplate}"   >
+                            </ToolTip>
+                        </Polygon.ToolTip>
+                    </Polygon>
+                    <AdornedElementPlaceholder x:Name="adorner" />
+                </Grid>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
     <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
@@ -51,6 +102,9 @@
                             <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                    <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                             Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                     <TextBlock Margin="5,0,0,0" Text="{Binding TreeNodeText}"/>
                                 </StackPanel>
                             </HierarchicalDataTemplate>

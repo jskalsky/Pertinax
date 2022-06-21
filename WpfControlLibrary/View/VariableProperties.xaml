@@ -77,8 +77,8 @@
                 <Label Grid.Row="3" Content="Jméno objektu" Name="LabelObjectName"/>
                 <Label Grid.Column="2" Content="Počet položek" Name="LabelArrayLength"/>
                 <ComboBox Grid.Column="1" Name="ComboKind" SelectionChanged="Kind_SelectionChanged"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" Name="ComboType" Margin="0,2,0,0"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" Name="ComboAccess" Margin="0,2,0,0"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Name="ComboType" Margin="0,2,0,0" SelectionChanged="Type_SelectionChanged"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Name="ComboAccess" Margin="0,2,0,0" SelectionChanged="Access_SelectionChanged"/>
                 <ComboBox Grid.Row="3" Grid.Column="1" Name="ComboObject" Margin="0,2,0,0"/>
                 <local:NumericUpDown Grid.Column="3" NudIncrement="1" NudMin="1" NudMax="30000" x:Name="NudArrayLength"/>
             </Grid>

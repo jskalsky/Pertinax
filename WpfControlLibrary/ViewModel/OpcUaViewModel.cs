@@ -17,15 +17,11 @@ namespace WpfControlLibrary.ViewModel
         {
             SelectedNode= null;
             DataModel = new ObservableCollection<DataModelNode>();
-            DataModelNamespace0 = new DataModelNamespace(0);
-            DataModelNamespace1 = new DataModelNamespace(1);
-            DataModel.Add(DataModelNamespace0);
-            DataModel.Add(DataModelNamespace1);
         }
 
         public DataModelNode SelectedNode { get; set; }
-        public DataModelNamespace DataModelNamespace0 { get; }
-        public DataModelNamespace DataModelNamespace1 { get; }
+        public DataModelNamespace DataModelNamespace0 { get; set; }
+        public DataModelNamespace DataModelNamespace1 { get; set; }
 
         public ObservableCollection<DataModelNode> DataModel { get; }
 

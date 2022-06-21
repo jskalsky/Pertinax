@@ -9,26 +9,32 @@ using System.Threading.Tasks;
 namespace WpfControlLibrary.DataModel
 {
     public enum DataModelType { None, Namespace, Folder, ObjectType, ObjectVariable, SimpleVariable, ArrayVariable }
-    public abstract class DataModelNode : INotifyPropertyChanged
+    public abstract class DataModelNode : INotifyPropertyChanged, IDataErrorInfo
     {
         protected readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
         protected readonly string[] _access = new string[] { "Read", "Write", "ReadWrite" };
         public const ushort DefaultNamespaceIndex = 1;
         private bool _isExpanded;
+        private string _name;
+        private string _oldName = string.Empty;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected DataModelNode(string name, string imagePath, NodeIdBase nodeId, DataModelNode parent)
         {
             Name = name;
-            TreeNodeText = name;
+            TreeNodeText = string.Empty;
             ImagePath = imagePath;
             NodeId = nodeId;
             Children = new ObservableCollection<DataModelNode>();
             Parent = parent;
         }
         public string TreeNodeText { get; protected set; }
-        public string Name { get; }
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; OnPropertyChanged("Name"); }
+        }
         public string ImagePath { get; }
         public NodeIdBase NodeId { get; }
         public DataModelNode Parent { get; private set; }
@@ -39,6 +45,36 @@ namespace WpfControlLibrary.DataModel
         {
             get { return _isExpanded; }
             set { _isExpanded = value; OnPropertyChanged("IsExpanded"); }
+        }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get
+            {
+                return Validate(columnName);
+            }
+        }
+
+        private string Validate(string propertyName)
+        {
+            string error = string.Empty;
+            if (_oldName == Name || _oldName == string.Empty)
+            {
+                return error;
+            }
+            DataModelNamespace ns = GetNamespace();
+            switch (propertyName)
+            {
+                case "Name":
+                    if (IdFactory.NameExists(ns.Namespace, Name))
+                    {
+                        error = $"Jméno {Name} již existuje";
+                    }
+                    break;
+            }
+            return error;
         }
         public static DataModelFolder GetFolder(string name, NodeIdBase nodeId, DataModelNode parent)
         {

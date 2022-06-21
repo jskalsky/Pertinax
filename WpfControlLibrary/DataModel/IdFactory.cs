@@ -9,13 +9,15 @@ namespace WpfControlLibrary.DataModel
 {
     public static class IdFactory
     {
-        private static readonly Dictionary<ushort, LinkedList<int>> _freeIndexes = new Dictionary<ushort, LinkedList<int>>();
-        private static readonly Dictionary<ushort, HashSet<string>> _names = new Dictionary<ushort, HashSet<string>>();
-        private static readonly Dictionary<ushort, LinkedList<int>> _freeNumericIds = new Dictionary<ushort, LinkedList<int>>();
-        private static readonly Dictionary<ushort, HashSet<string>> _ids = new Dictionary<ushort, HashSet<string>>();
+        private static readonly Dictionary<ushort, int> _nextFolderIndex = new Dictionary<ushort, int>();
+        private static readonly Dictionary<ushort, int> _nextObjectTypeIndex = new Dictionary<ushort, int>();
+        private static readonly Dictionary<ushort, int> _nextSimpleVarIndex = new Dictionary<ushort, int>();
+        private static readonly Dictionary<ushort, int> _nextArrayVarIndex = new Dictionary<ushort, int>();
+        private static readonly Dictionary<ushort, int> _nextObjectVarIndex = new Dictionary<ushort, int>();
+        private static readonly Dictionary<ushort, int> _nextNumericIdIndex = new Dictionary<ushort, int>();
 
-        private static readonly Dictionary<ushort, HashSet<string>> _publishedNames = new Dictionary<ushort, HashSet<string>>();
-        private static readonly Dictionary<ushort, HashSet<string>> _publishedIds = new Dictionary<ushort, HashSet<string>>();
+        private static readonly Dictionary<ushort, HashSet<string>> _names = new Dictionary<ushort, HashSet<string>>();
+        private static readonly Dictionary<ushort, HashSet<string>> _ids = new Dictionary<ushort, HashSet<string>>();
 
         public const string NameNamespace = "Ns";
         public const string NameFolder = "Folder";
@@ -26,210 +28,151 @@ namespace WpfControlLibrary.DataModel
         private static readonly List<string> _baseNames = new List<string>() { NameNamespace, NameFolder, NameObjectType, NameSimpleVar, NameArrayVar, NameObjectVar };
 
         //        private const int IndexesAmountPlus = 10000;
-        private const int IndexesAmountPlus = 10;
-
-        private static int _maxNameIndex = 0;
-        private static int _maxNumericId = 0;
         public static string[] GetNames(ushort ns, string nameBase, int count = 1)
         {
             Debug.Print("GetNames");
-            string[] names = GetFreeN(ns, _freeIndexes, _names, nameBase, count, ref _maxNameIndex).ToArray();
-            foreach (string name in names)
+            switch (nameBase)
             {
-                if (!_publishedNames.TryGetValue(ns, out HashSet<string> nameSet))
-                {
-                    nameSet = new HashSet<string>();
-                    _publishedNames.Add(ns, nameSet);
-                }
-                nameSet.Add(name);
+                case NameFolder:
+                    return GetFreeNames(ns, _nextFolderIndex, nameBase, count);
+                case NameObjectType:
+                    return GetFreeNames(ns, _nextObjectTypeIndex, nameBase, count);
+                case NameSimpleVar:
+                    return GetFreeNames(ns, _nextSimpleVarIndex, nameBase, count);
+                case NameArrayVar:
+                    return GetFreeNames(ns, _nextArrayVarIndex, nameBase, count);
+                case NameObjectVar:
+                    return GetFreeNames(ns, _nextObjectVarIndex, nameBase, count);
             }
-            return names;
+            return null;
         }
 
         public static string[] GetNumericIds(ushort ns, int count = 1)
         {
             Debug.Print("GetNumericIds");
-            string[] ids = GetFreeN(ns, _freeNumericIds, _ids, null, count, ref _maxNumericId).ToArray();
-            foreach (string id in ids)
+            if (!_nextNumericIdIndex.TryGetValue(ns, out int idx))
             {
-                if (!_publishedIds.TryGetValue(ns, out HashSet<string> idSet))
-                {
-                    idSet = new HashSet<string>();
-                    _publishedIds.Add(ns, idSet);
-                }
-                idSet.Add(id);
+                idx = 1;
+                _nextNumericIdIndex[ns] = idx;
             }
-            return ids;
-        }
-
-        public static void RemovePublishedNames(ushort ns, string[] names)
-        {
-            foreach (string name in names)
+            if (!_ids.TryGetValue(ns, out HashSet<string> ids))
             {
-                if (_publishedNames.TryGetValue(ns, out HashSet<string> nameSet))
-                {
-                    nameSet.Remove(name);
-                }
-            }
-        }
-
-        public static void RemoveAllPublishedNames(ushort ns)
-        {
-            Debug.Print($"RemoveAllPublishedNames");
-            if (_publishedNames.TryGetValue(ns, out HashSet<string> nameSet))
-            {
-                List<string> names = new List<string>();
-                foreach(string name in nameSet)
-                {
-                    names.Add(name);
-                }
-                ReturnN(ns, _freeIndexes, _names, names);
-                nameSet.Clear();
-            }
-        }
-
-        public static void RemovePublishedIds(ushort ns, string[] ids)
-        {
-            foreach (string name in ids)
-            {
-                if (_publishedIds.TryGetValue(ns, out HashSet<string> idSet))
-                {
-                    idSet.Remove(name);
-                }
-            }
-        }
-
-        public static void RemoveAllPublishedIds(ushort ns)
-        {
-            Debug.Print($"RemoveAllPublishedIds");
-            if (_publishedIds.TryGetValue(ns, out HashSet<string> idSet))
-            {
-                List<string> names = new List<string>();
-                foreach (string name in idSet)
-                {
-                    names.Add(name);
-                }
-                ReturnN(ns, _freeNumericIds, _ids, names);
-                idSet.Clear();
-            }
-        }
-
-        private static IList<string> GetFreeN(ushort ns, Dictionary<ushort, LinkedList<int>> idxs, Dictionary<ushort, HashSet<string>> names, string nameBase, int count,
-            ref int maxIndex)
-        {
-            if (!idxs.TryGetValue(ns, out LinkedList<int> ll))
-            {
-                ll = new LinkedList<int>();
-                for (int i = 1; i < IndexesAmountPlus; i++)
-                {
-                    ll.AddLast(i);
-                    Debug.Print($"1AddLast= {i}, ns= {ns}");
-                    maxIndex = i;
-                }
-                idxs[ns] = ll;
-            }
-            Debug.Print($"indexesCount= {ll.Count}, count= {count}");
-            while (ll.Count < count)
-            {
-                int mi = maxIndex + 1;
-                for (int i = 0; i < IndexesAmountPlus; ++i)
-                {
-                    ll.AddLast(mi + i);
-                    Debug.Print($"2AddLast= {i}");
-                    maxIndex = mi + i;
-                }
-            }
-            if (!names.TryGetValue(ns, out HashSet<string> existingNames))
-            {
-                existingNames = new HashSet<string>();
-                names[ns] = existingNames;
+                ids = new HashSet<string>();
+                _ids[ns] = ids;
             }
             List<string> result = new List<string>();
             for (int i = 0; i < count; ++i)
             {
-                Debug.Print($"ll.Count= {ll.Count}");
-                string s = (string.IsNullOrEmpty(nameBase)) ? $"{ll.First.Value}" : $"{nameBase}{ll.First.Value}";
-                result.Add(s);
-                ll.RemoveFirst();
-                names[ns].Add(s);
+                string id = $"{idx}";
+                result.Add(id);
+                ++idx;
+                ids.Add(id);
             }
-            foreach (int node in ll)
+            return result.ToArray();
+        }
+        private static string[] GetFreeNames(ushort ns, Dictionary<ushort, int> idxs, string nameBase, int count)
+        {
+            if (!idxs.TryGetValue(ns, out int idx))
             {
-                Debug.Print($"ll= {node}");
+                idx = 1;
+                idxs[ns] = idx;
             }
-            foreach (string s in result)
+            if (!_names.TryGetValue(ns, out HashSet<string> names))
             {
-                Debug.Print($"GetFreeN= {s}");
+                names = new HashSet<string>();
+                _names[ns] = names;
             }
-            return result;
+            List<string> result = new List<string>();
+            for (int i = 0; i < count; i++)
+            {
+                string name = $"{nameBase}{idx}";
+                names.Add(name);
+                result.Add(name);
+                ++idx;
+            }
+            idxs.Remove(ns);
+            idxs[ns] = idx;
+            return result.ToArray();
+        }
+        public static bool NameExists(ushort ns, string name)
+        {
+            if (_names.TryGetValue(ns, out HashSet<string> namesList))
+            {
+                return namesList.Contains(name);
+            }
+            return false;
         }
 
-        private static void ReturnN(ushort ns, Dictionary<ushort, LinkedList<int>> idxs, Dictionary<ushort, HashSet<string>> names, IList<string> returningNames)
+        public static void AddName(ushort ns, string nameBase, string name)
         {
-            foreach (string s in returningNames)
+            Debug.Print($"AddName {ns}, {nameBase}:{name}");
+            switch (nameBase)
             {
-                Debug.Print($"Returning {s}");
-                bool founded = false;
-                foreach(string baseName in _baseNames)
-                {
-                    int idx = s.IndexOf(baseName);
-                    if (idx == 0)
-                    {
-                        string index = s.Remove(0, baseName.Length);
-                        if (int.TryParse(index, out int indexInt))
-                        {
-                            if (idxs.TryGetValue(ns, out LinkedList<int> idxList))
-                            {
-                                AddSort(idxList, indexInt);
-                                founded = true;
-                                Debug.Print($"founded {s}, {baseName}, {indexInt}");
-                                break;
-                            }
-                        }
-                    }
+                case NameFolder:
+                    IncrementMaxNameIndex(ns, _nextFolderIndex, nameBase, name);
+                    break;
+                case NameObjectType:
+                    IncrementMaxNameIndex(ns, _nextObjectTypeIndex, nameBase, name);
+                    break;
+                case NameSimpleVar:
+                    IncrementMaxNameIndex(ns, _nextSimpleVarIndex, nameBase, name);
+                    break;
+                case NameArrayVar:
+                    IncrementMaxNameIndex(ns, _nextArrayVarIndex, nameBase, name);
+                    break;
+                case NameObjectVar:
+                    IncrementMaxNameIndex(ns, _nextObjectVarIndex, nameBase, name);
+                    break;
+            }
+        }
 
-                }
-                if (!founded)
+        private static void IncrementMaxNameIndex(ushort ns, Dictionary<ushort, int> idxs, string nameBase, string name)
+        {
+            if (!idxs.TryGetValue(ns, out int idx))
+            {
+                idx = 1;
+                idxs[ns] = idx;
+            }
+            if (!_names.TryGetValue(ns, out HashSet<string> namesList))
+            {
+                namesList = new HashSet<string>();
+                _names[ns] = namesList;
+            }
+            namesList.Add(name);
+            int index = name.IndexOf(nameBase);
+            if (index == 0)
+            {
+                string indexInString = name.Substring(0, nameBase.Length);
+                if (int.TryParse(indexInString, out int i))
                 {
-                    Debug.Print($"Nenasel {s}");
-                    if (int.TryParse(s, out int indexInt))
+                    if (i > idx)
                     {
-                        Debug.Print($"indexInt= {indexInt}");
-                        if (idxs.TryGetValue(ns, out LinkedList<int> idxList))
-                        {
-                            AddSort(idxList, indexInt);
-                        }
+                        idxs.Remove(ns);
+                        idxs[ns] = i;
                     }
-                }
-                if (names.TryGetValue(ns, out HashSet<string> namesList))
-                {
-                    namesList.Remove(s);
                 }
             }
         }
 
-        private static void AddSort(LinkedList<int> ll, int val)
+        public static void AddNumericId(ushort ns, string id)
         {
-            if (val < ll.First.Value)
+            if (!_nextNumericIdIndex.TryGetValue(ns, out int idx))
             {
-                ll.AddFirst(val);
+                idx = 1;
+                _nextNumericIdIndex[ns] = idx;
             }
-            else
+            if (!_ids.TryGetValue(ns, out HashSet<string> ids))
             {
-                if (val > ll.Last.Value)
+                ids = new HashSet<string>();
+                _ids[ns] = ids;
+            }
+            ids.Add(id);
+            if (int.TryParse(id, out int i))
+            {
+                if (i > idx)
                 {
-                    ll.AddLast(val);
-                }
-                else
-                {
-                    for (LinkedListNode<int> node = ll.First; node != null; node = node.Next)
-                    {
-                        if (val > node.Value)
-                        {
-                            ll.AddAfter(node, val);
-                            break;
-                        }
-                    }
+                    _nextNumericIdIndex.Remove(ns);
+                    _nextNumericIdIndex[ns] = i;
                 }
             }
         }

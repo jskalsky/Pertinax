@@ -26,7 +26,8 @@
                 </GroupBox>
                 <Button DockPanel.Dock="Right" Content="Zpět" Width="50" Height="22" HorizontalAlignment="Right" Margin="0,0,5,0" IsDefault="True" Click="Button_Click"/>
             </DockPanel>
-            <local:VariableProperties VarKind="{Binding SelectedKind,Mode=TwoWay}" VarBasicType="{Binding SelectedBasicType}" VarAccess="{Binding SelectedAccess}" VarName="{Binding VarName}"
+            <local:VariableProperties VarKind="{Binding SelectedKind,Mode=TwoWay}" VarBasicType="{Binding SelectedBasicType,Mode=TwoWay}" 
+                                      VarAccess="{Binding SelectedAccess,Mode=TwoWay}" VarName="{Binding VarName}"
                                       VarId="{Binding VarId}" VisibleId="{Binding VisId}" KindChanged="VariableProperties_KindChanged"/>
         </DockPanel>
     </Border>
