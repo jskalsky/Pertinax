@@ -28,7 +28,8 @@
             </DockPanel>
             <local:VariableProperties VarKind="{Binding SelectedKind,Mode=TwoWay}" VarBasicType="{Binding SelectedBasicType,Mode=TwoWay}" 
                                       VarAccess="{Binding SelectedAccess,Mode=TwoWay}" VarName="{Binding VarName}"
-                                      VarId="{Binding VarId}" VisibleId="{Binding VisId}" KindChanged="VariableProperties_KindChanged"/>
+                                      VarId="{Binding VarId}" VisibleId="{Binding VisId}" VarObjectType="{Binding SelectedObjectType,Mode=TwoWay}" 
+                                      KindChanged="VariableProperties_KindChanged" ObjectTypes="{Binding ObjectTypes}"/>
         </DockPanel>
     </Border>
 </Window>

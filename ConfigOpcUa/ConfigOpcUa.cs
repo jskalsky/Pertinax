@@ -363,6 +363,7 @@ namespace ConfigOpcUa
                 dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), parent);
                 DataModelNamespace ns = dmn.GetNamespace();
                 IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
+                IdFactory.AddNumericId(ns.Namespace, folder.id);
             }
             else
             {
@@ -378,6 +379,7 @@ namespace ConfigOpcUa
                             GetAccess(simpleVar.access), parent);
                         DataModelNamespace ns = dmn.GetNamespace();
                         IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
+                        IdFactory.AddNumericId(ns.Namespace, simpleVar.id);
                     }
                     else
                     {
@@ -387,6 +389,28 @@ namespace ConfigOpcUa
                                 GetAccess(arrayVar.access), (int)arrayVar.length, parent);
                             DataModelNamespace ns = dmn.GetNamespace();
                             IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
+                            IdFactory.AddNumericId(ns.Namespace, arrayVar.id);
+                        }
+                        else
+                        {
+                            if (n.Item is OpcUaCfg.nodeObject_type objectType)
+                            {
+                                dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
+                                DataModelNamespace ns = dmn.GetNamespace();
+                                IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectType.name);
+                                IdFactory.AddNumericId(ns.Namespace, objectType.id);
+                            }
+                            else
+                            {
+                                if (n.Item is OpcUaCfg.nodeObject_var objectVar)
+                                {
+                                    dmn = new DataModelObjectVariable(objectVar.name, NodeIdBase.GetNodeIdBase(objectVar.id), objectVar.object_type_name,
+                                        parent);
+                                    DataModelNamespace ns = dmn.GetNamespace();
+                                    IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
+                                    IdFactory.AddNumericId(ns.Namespace, objectVar.id);
+                                }
+                            }
                         }
                     }
                 }
@@ -399,7 +423,7 @@ namespace ConfigOpcUa
             {
                 parent.AddChildren(dmn);
             }
-            if(n.children != null)
+            if (n.children != null)
             {
                 foreach (OpcUaCfg.node child in n.children)
                 {
@@ -1079,6 +1103,22 @@ namespace ConfigOpcUa
             return array;
         }
 
+        private static OpcUaCfg.nodeObject_type GetObjectType(DataModelObjectType dmObjectType)
+        {
+            OpcUaCfg.nodeObject_type ot = new OpcUaCfg.nodeObject_type();
+            ot.name = dmObjectType.Name;
+            ot.id = $"{dmObjectType.GetNamespace().Namespace}:{dmObjectType.NodeId.GetIdentifier()}";
+            return ot;
+        }
+
+        private static OpcUaCfg.nodeObject_var GetObjectvar(DataModelObjectVariable dmObjectVar)
+        {
+            OpcUaCfg.nodeObject_var objectVar = new OpcUaCfg.nodeObject_var();
+            objectVar.name = dmObjectVar.Name;
+            objectVar.object_type_name = dmObjectVar.ObjectTypeName;
+            objectVar.id = $"{dmObjectVar.GetNamespace().Namespace}:{dmObjectVar.NodeId.GetIdentifier()}";
+            return objectVar;
+        }
         private static void SaveTreeNode(DataModelNode node, OpcUaCfg.node tn)
         {
             Debug.Print($"SaveTreeNode {node}");
@@ -1106,6 +1146,20 @@ namespace ConfigOpcUa
                         if (node is DataModelArrayVariable dmArray)
                         {
                             tn.Item = GetArrayVar(dmArray);
+                        }
+                        else
+                        {
+                            if (node is DataModelObjectType dmObjectType)
+                            {
+                                tn.Item = GetObjectType(dmObjectType);
+                            }
+                            else
+                            {
+                                if (node is DataModelObjectVariable dmObjectVar)
+                                {
+                                    tn.Item = GetObjectvar(dmObjectVar);
+                                }
+                            }
                         }
                     }
                 }

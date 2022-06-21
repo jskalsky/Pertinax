@@ -54,6 +54,8 @@ namespace OpcUaCfg {
         [System.Xml.Serialization.XmlElementAttribute("array_var", typeof(nodeArray_var))]
         [System.Xml.Serialization.XmlElementAttribute("folder", typeof(nodeFolder))]
         [System.Xml.Serialization.XmlElementAttribute("namespace", typeof(nodeNamespace))]
+        [System.Xml.Serialization.XmlElementAttribute("object_type", typeof(nodeObject_type))]
+        [System.Xml.Serialization.XmlElementAttribute("object_var", typeof(nodeObject_var))]
         [System.Xml.Serialization.XmlElementAttribute("simple_var", typeof(nodeSimple_var))]
         public object Item {
             get {
@@ -311,6 +313,89 @@ namespace OpcUaCfg {
             }
             set {
                 this.indexFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class nodeObject_type {
+        
+        private string nameField;
+        
+        private string idField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class nodeObject_var {
+        
+        private string nameField;
+        
+        private string idField;
+        
+        private string object_type_nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string object_type_name {
+            get {
+                return this.object_type_nameField;
+            }
+            set {
+                this.object_type_nameField = value;
             }
         }
     }

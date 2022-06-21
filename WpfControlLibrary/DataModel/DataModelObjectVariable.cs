@@ -12,6 +12,7 @@ namespace WpfControlLibrary.DataModel
         {
             ObjectTypeName = objectTypeName;
             DataModelType = DataModelType.ObjectVariable;
+            TreeNodeText = $"{ObjectTypeName}";
         }
 
         public string ObjectTypeName { get; }

@@ -17,6 +17,7 @@ namespace WpfControlLibrary.ViewModel
         {
             SelectedNode= null;
             DataModel = new ObservableCollection<DataModelNode>();
+            ObjectTypes = new List<DataModelObjectType>();
         }
 
         public DataModelNode SelectedNode { get; set; }
@@ -24,7 +25,7 @@ namespace WpfControlLibrary.ViewModel
         public DataModelNamespace DataModelNamespace1 { get; set; }
 
         public ObservableCollection<DataModelNode> DataModel { get; }
-
+        public List<DataModelObjectType> ObjectTypes { get; }
 
 
         private void OnPropertyChanged(string name)

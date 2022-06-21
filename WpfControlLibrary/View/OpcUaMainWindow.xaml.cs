@@ -123,6 +123,13 @@ namespace WpfControlLibrary.View
             {
                 if (DataContext is OpcUaViewModel mvm)
                 {
+                    List<string> objectTypes = new List<string>();
+                    foreach(DataModelObjectType ot in mvm.ObjectTypes)
+                    {
+                        objectTypes.Add(ot.Name);
+                    }
+                    vm.ObjectTypes = objectTypes.ToArray();
+
                     DataModelNamespace ns = mvm.SelectedNode.GetNamespace();
                     if (ns != null)
                     {
@@ -163,6 +170,7 @@ namespace WpfControlLibrary.View
                     if (names != null && names.Length == 1 && ids != null && ids.Length == 1)
                     {
                         DataModelObjectType dmot = DataModelNode.GetObjectType(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
+                        mvm.ObjectTypes.Add(dmot);
                         mvm.SelectedNode.AddChildren(dmot);
                         mvm.SelectedNode.IsExpanded = true;
                     }

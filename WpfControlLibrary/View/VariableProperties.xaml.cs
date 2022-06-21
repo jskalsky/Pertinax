@@ -141,6 +141,39 @@ namespace WpfControlLibrary.View
             }
         }
 
+        public static readonly DependencyProperty ObjectTypesProperty = DependencyProperty.Register("ObjectTypes", typeof(string[]),
+            typeof(VariableProperties), new PropertyMetadata(null, OnObjectTypesPropertyChanged));
+        public string[] ObjectTypes
+        {
+            get { return (string[])GetValue(ObjectTypesProperty); }
+            set { SetValue(ObjectTypesProperty, value); Debug.Print($"Set Depend {value};"); }
+        }
+        private static void OnObjectTypesPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            Debug.Print($"ObjectTypesPropertyChanged {dependencyObject}, {e.NewValue}");
+            if (dependencyObject is VariableProperties varp)
+            {
+                varp.ComboObject.ItemsSource = (string[])e.NewValue;
+                varp.ComboObject.SelectedIndex = 0;
+            }
+        }
+
+        public static readonly DependencyProperty VarObjectTypeProperty = DependencyProperty.Register("VarObjectType", typeof(string), typeof(VariableProperties),
+            new PropertyMetadata(string.Empty, OnVarObjectTypePropertyChanged));
+        public string VarObjectType
+        {
+            get { Debug.Print($"Get Depend {(string)GetValue(VarObjectTypeProperty)}"); return (string)GetValue(VarObjectTypeProperty); }
+            set { SetValue(VarObjectTypeProperty, value); Debug.Print($"Set Depend {value};"); }
+        }
+        private static void OnVarObjectTypePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            Debug.Print($"VarAccessPropertyChanged {dependencyObject}, {e.NewValue}");
+            if (dependencyObject is VariableProperties varp)
+            {
+                varp.ComboObject.SelectedItem = (string)e.NewValue;
+            }
+        }
+
         public static readonly DependencyProperty VisibleIdProperty = DependencyProperty.Register("VisibleId", typeof(Visibility), typeof(VariableProperties),
             new PropertyMetadata(Visibility.Visible, OnVisibleIdPropertyChanged));
         public Visibility VisibleId
@@ -323,6 +356,18 @@ namespace WpfControlLibrary.View
                 if (e.AddedItems[0] is string selectedAccess)
                 {
                     VarAccess = selectedAccess;
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void ComboObject_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(e.AddedItems.Count == 1)
+            {
+                if (e.AddedItems[0] is string selectedObjectType)
+                {
+                    VarObjectType = selectedObjectType;
                 }
             }
             e.Handled = true;

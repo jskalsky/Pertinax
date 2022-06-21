@@ -146,6 +146,19 @@ namespace WpfControlLibrary.View
                             ++vm.VarWritten;
                         }
                     }
+                    else
+                    {
+                        if(vm.SelectedKind == vm.Kind[2])
+                        {
+                            if(vm.VarCount==1)
+                            {
+                                DataModelObjectVariable node = new DataModelObjectVariable(vm.VarName, NodeIdBase.GetNodeIdBase($"{vm.Namespace}:{vm.VarId}"),
+                                    vm.SelectedObjectType,vm.ParentNode);
+                                vm.ParentNode.AddChildren(node);
+                                ++vm.VarWritten;
+                            }
+                        }
+                    }
                 }
             }
         }

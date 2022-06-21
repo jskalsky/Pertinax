@@ -24,6 +24,7 @@ namespace WpfControlLibrary.ViewModel
         private string _varId;
         private int _varCount;
         private int _arrayLength;
+        private string _selectedObjectType;
 
         private bool _enableArrayLength;
         private bool _enableObjectName;
@@ -38,6 +39,8 @@ namespace WpfControlLibrary.ViewModel
         private Visibility _visId;
         private Visibility _visVarCount;
 
+        private string[] _objectTypes;
+
         private int _varWritten;
         public AddVariableViewModel()
         {
@@ -48,6 +51,12 @@ namespace WpfControlLibrary.ViewModel
             VarCount = 1;
             VarWritten = 0;
         }
+
+        public string[] ObjectTypes
+        {
+            get { return _objectTypes; }
+            set { _objectTypes = value; OnPropertyChanged("ObjectTypes"); }
+        }
         public string[] BasicTypes
         {
             get { return _basicTypes; }
@@ -56,6 +65,12 @@ namespace WpfControlLibrary.ViewModel
         {
             get { return _selectedBasicType; }
             set { _selectedBasicType = value; OnPropertyChanged("SelectedBasicType"); }
+        }
+
+        public string SelectedObjectType
+        {
+            get { return _selectedObjectType; }
+            set { _selectedObjectType = value; OnPropertyChanged("SelectedObjectType"); }
         }
         public string[] Access
         {
