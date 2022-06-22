@@ -28,17 +28,8 @@ namespace WpfControlLibrary.View
         private string _selectedAccess;
         private readonly string[] _kind = new string[] { "Jednoduchá proměnná", "Pole", "Objekt" };
         private string _selectedKind;
-        private string _varName;
-        private string _varId;
         private int _varCount;
         private int _arrayLength;
-
-        private bool _enableArrayLength;
-        private bool _enableObjectName;
-        private bool _enableVarName;
-        private bool _enableVarId;
-        private bool _enableBasicType;
-        private bool _enableAccess;
 
         private Visibility _visSimple;
         private Visibility _visArray;

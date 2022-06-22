@@ -117,6 +117,35 @@
                     </TreeView>
                 </GroupBox>
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="Server">
+                        <CheckBox Content="Šifrovat"/>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1" Header="Client">
+                        <StackPanel Orientation="Vertical">
+                            <ListView>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Ip adresa"></GridViewColumn>
+                                        <GridViewColumn Header="Perioda"></GridViewColumn>
+                                        <GridViewColumn Header="Jméno"></GridViewColumn>
+                                        <GridViewColumn Header="Id uzlu"></GridViewColumn>
+                                        <GridViewColumn Header="Přístup"></GridViewColumn>                                    
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <CheckBox Content="Šifrovat"/>
+                        </StackPanel>   
+                    </GroupBox>
+                </Grid>
             </Grid>
         </DockPanel>
     </Border>
