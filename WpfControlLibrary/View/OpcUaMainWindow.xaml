@@ -81,72 +81,69 @@
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="4"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <GroupBox Header="Datový model">
-                    <TreeView ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged">
-                        <TreeView.ContextMenu>
-                            <ContextMenu  Opened="ContextMenu_Opened">
-                                <MenuItem Header="Přidat záložku" Name="MiAddFolder" Click="MiAddFolder_Click"/>
-                                <MenuItem Header="Přidat proměnnou" Name="MiAddVar" Click="MiAddVar_Click"/>
-                                <MenuItem Header="Přidat typ objekt" Name="MiAddObjectType" Click="MiAddObjectType_Click"/>
-                                <Separator/>
-                                <MenuItem Header="Zrušit" Name="MiRemove" Click="MiRemove_Click"/>
-                            </ContextMenu>
-                        </TreeView.ContextMenu>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                    <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+            <TabControl Margin="0,5,0,0">
+                <TabItem Header="Server">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox Content="Šifrovat"/>
+                        <Label Grid.Row="1" Content="Datový model"/>
+                        <TreeView Grid.Row="2" ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                            <TreeView.ContextMenu>
+                                <ContextMenu  Opened="ContextMenu_Opened">
+                                    <MenuItem Header="Přidat záložku" Name="MiAddFolder" Click="MiAddFolder_Click"/>
+                                    <MenuItem Header="Přidat proměnnou" Name="MiAddVar" Click="MiAddVar_Click"/>
+                                    <MenuItem Header="Přidat typ objekt" Name="MiAddObjectType" Click="MiAddObjectType_Click"/>
+                                    <Separator/>
+                                    <MenuItem Header="Zrušit" Name="MiRemove" Click="MiRemove_Click"/>
+                                </ContextMenu>
+                            </TreeView.ContextMenu>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                        <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                                              Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                    <TextBlock Margin="5,0,0,0" Text="{Binding TreeNodeText}"/>
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="TreeViewItem">
-                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                    </TreeView>
-                </GroupBox>
-                <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="4" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
-                <Grid Grid.Column="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <GroupBox Header="Server">
-                        <CheckBox Content="Šifrovat"/>
-                    </GroupBox>
-                    <GroupBox Grid.Row="1" Header="Client">
-                        <StackPanel Orientation="Vertical">
-                            <ListView>
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Ip adresa"></GridViewColumn>
-                                        <GridViewColumn Header="Perioda"></GridViewColumn>
-                                        <GridViewColumn Header="Jméno"></GridViewColumn>
-                                        <GridViewColumn Header="Id uzlu"></GridViewColumn>
-                                        <GridViewColumn Header="Přístup"></GridViewColumn>                                    
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                            <CheckBox Content="Šifrovat"/>
-                        </StackPanel>   
-                    </GroupBox>
-                </Grid>
-            </Grid>
+                                        <TextBlock Margin="5,0,0,0" Text="{Binding TreeNodeText}"/>
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem">
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                        </TreeView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Client">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Spojení"/>
+                        <TreeView Grid.Row="1">
+                            <TreeView.ContextMenu>
+                                <ContextMenu  Opened="Connections_Opened">
+                                    <MenuItem Header="Přidat spojení" Name="MiAddConnection" Click="MiAddConnection_Click"/>
+                                    <MenuItem Header="Přidat proměnnou" Name="MiAddConnectionVar" Click="MiAddConnectionVar_Click"/>
+                                    <Separator/>
+                                    <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
+                                </ContextMenu>
+                            </TreeView.ContextMenu>
+                        </TreeView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Publisher">
+
+                </TabItem>
+                <TabItem Header="Subscriber"></TabItem>
+            </TabControl>
         </DockPanel>
     </Border>
 </Window>

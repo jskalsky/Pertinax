@@ -47,6 +47,28 @@
 			<xs:enumeration value="ArrayVariable"/>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:complexType name="var_type">
+		<xs:sequence>
+			<xs:element name="var">
+				<xs:complexType>
+					<xs:attribute name="ns" type="xs:unsignedShort"/>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="connection_type">
+		<xs:sequence>
+			<xs:element name="end_point">
+				<xs:complexType>
+					<xs:attribute name="ip_address" type="xs:string"/>
+					<xs:attribute name="period" type="xs:unsignedShort"/>
+					<xs:attribute name="encryption" type="xs:boolean"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="vars" type="var_type" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="node">
 		<xs:sequence>
 			<xs:choice>
@@ -101,10 +123,11 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="tree">
+	<xs:element name="opc_ua">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="nodes" type="node" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element name="connections" type="connection_type" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

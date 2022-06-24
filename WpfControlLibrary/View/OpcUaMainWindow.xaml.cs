@@ -216,5 +216,25 @@ namespace WpfControlLibrary.View
                 }
             }
         }
+
+        private void MiAddConnection_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MiAddConnectionVar_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MiConnectionRemove_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Connections_Opened(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

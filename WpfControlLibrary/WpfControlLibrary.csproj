@@ -68,6 +68,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientItem.cs" />
+    <Compile Include="Client\ClientConnection.cs" />
+    <Compile Include="Client\ClientVar.cs" />
     <Compile Include="DataModel\DataModelArrayVariable.cs" />
     <Compile Include="DataModel\DataModelFolder.cs" />
     <Compile Include="DataModel\DataModelNamespace.cs" />

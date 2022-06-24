@@ -22,9 +22,11 @@ namespace OpcUaCfg {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
-    public partial class tree {
+    public partial class opc_ua {
         
         private node[] nodesField;
+        
+        private connection_type[] connectionsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("nodes")]
@@ -34,6 +36,17 @@ namespace OpcUaCfg {
             }
             set {
                 this.nodesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("connections")]
+        public connection_type[] connections {
+            get {
+                return this.connectionsField;
+            }
+            set {
+                this.connectionsField = value;
             }
         }
     }
@@ -245,6 +258,183 @@ namespace OpcUaCfg {
         
         /// <remarks/>
         ReadWrite,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class var_type {
+        
+        private var_typeVar varField;
+        
+        /// <remarks/>
+        public var_typeVar var {
+            get {
+                return this.varField;
+            }
+            set {
+                this.varField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class var_typeVar {
+        
+        private ushort nsField;
+        
+        private bool nsFieldSpecified;
+        
+        private string idField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public ushort ns {
+            get {
+                return this.nsField;
+            }
+            set {
+                this.nsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool nsSpecified {
+            get {
+                return this.nsFieldSpecified;
+            }
+            set {
+                this.nsFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class connection_type {
+        
+        private connection_typeEnd_point end_pointField;
+        
+        private var_type[] varsField;
+        
+        /// <remarks/>
+        public connection_typeEnd_point end_point {
+            get {
+                return this.end_pointField;
+            }
+            set {
+                this.end_pointField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("vars")]
+        public var_type[] vars {
+            get {
+                return this.varsField;
+            }
+            set {
+                this.varsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class connection_typeEnd_point {
+        
+        private string ip_addressField;
+        
+        private ushort periodField;
+        
+        private bool periodFieldSpecified;
+        
+        private bool encryptionField;
+        
+        private bool encryptionFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string ip_address {
+            get {
+                return this.ip_addressField;
+            }
+            set {
+                this.ip_addressField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public ushort period {
+            get {
+                return this.periodField;
+            }
+            set {
+                this.periodField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool periodSpecified {
+            get {
+                return this.periodFieldSpecified;
+            }
+            set {
+                this.periodFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool encryption {
+            get {
+                return this.encryptionField;
+            }
+            set {
+                this.encryptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool encryptionSpecified {
+            get {
+                return this.encryptionFieldSpecified;
+            }
+            set {
+                this.encryptionFieldSpecified = value;
+            }
+        }
     }
     
     /// <remarks/>

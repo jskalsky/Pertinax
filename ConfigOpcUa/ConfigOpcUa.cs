@@ -435,10 +435,10 @@ namespace ConfigOpcUa
         {
             if (File.Exists(pName))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.tree));
+                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua));
                 using (TextReader tr = new StreamReader(pName))
                 {
-                    OpcUaCfg.tree treeNodes = (OpcUaCfg.tree)serializer.Deserialize(tr);
+                    OpcUaCfg.opc_ua treeNodes = (OpcUaCfg.opc_ua)serializer.Deserialize(tr);
                     foreach (OpcUaCfg.node node in treeNodes.nodes)
                     {
                         LoadNode(null, node, mvm.DataModel);
@@ -1180,7 +1180,7 @@ namespace ConfigOpcUa
         {
             Debug.Print($"SaveConfiguration {fileName}");
 
-            OpcUaCfg.tree tree = new OpcUaCfg.tree();
+            OpcUaCfg.opc_ua tree = new OpcUaCfg.opc_ua();
             List<OpcUaCfg.node> nodes = new List<OpcUaCfg.node>();
             foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
             {
@@ -1189,7 +1189,7 @@ namespace ConfigOpcUa
                 nodes.Add(tn);
             }
             tree.nodes = nodes.ToArray();
-            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.tree));
+            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua));
             using (TextWriter tw = new StreamWriter(fileName))
             {
                 serializer.Serialize(tw, tree);
