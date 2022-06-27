@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfControlLibrary.View"
         xmlns:vm="clr-namespace:WpfControlLibrary.ViewModel"
         xmlns:dm="clr-namespace:WpfControlLibrary.DataModel"
+        xmlns:client="clr-namespace:WpfControlLibrary.Client"
         mc:Ignorable="d"
         Title="OpcUaMainWindow" Height="450" Width="800" ResizeMode="CanResize"  WindowStyle="None">
     <Window.DataContext>
@@ -108,7 +109,7 @@
                                         <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                                              Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <TextBlock Margin="5,0,0,0" Text="{Binding TreeNodeText}"/>
+                                        <ComboBox Margin="5,0,0,0" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedString,Mode=TwoWay}"/>
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
                             </TreeView.ItemTemplate>
@@ -127,7 +128,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Label Content="Spojení"/>
-                        <TreeView Grid.Row="1">
+                        <TreeView Grid.Row="1" ItemsSource="{Binding Connections}">
                             <TreeView.ContextMenu>
                                 <ContextMenu  Opened="Connections_Opened">
                                     <MenuItem Header="Přidat spojení" Name="MiAddConnection" Click="MiAddConnection_Click"/>
@@ -136,6 +137,15 @@
                                     <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
                                 </ContextMenu>
                             </TreeView.ContextMenu>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding IpAddress}"/>
+                                        <TextBlock Text="{Binding Period}"/>
+                                        <CheckBox Content="Šifrovat" IsChecked="{Binding Crypto}"/>
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
                         </TreeView>
                     </Grid>
                 </TabItem>

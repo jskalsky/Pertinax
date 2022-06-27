@@ -47,6 +47,13 @@
 			<xs:enumeration value="ArrayVariable"/>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:simpleType name="client_service">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unknown"/>
+			<xs:enumeration value="Read"/>
+			<xs:enumeration value="Write"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:complexType name="var_type">
 		<xs:sequence>
 			<xs:element name="var">
@@ -64,6 +71,7 @@
 					<xs:attribute name="ip_address" type="xs:string"/>
 					<xs:attribute name="period" type="xs:unsignedShort"/>
 					<xs:attribute name="encryption" type="xs:boolean"/>
+					<xs:attribute name="service" type="client_service"/>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="vars" type="var_type" minOccurs="1" maxOccurs="unbounded"/>

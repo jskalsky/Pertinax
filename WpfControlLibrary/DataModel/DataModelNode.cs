@@ -17,6 +17,7 @@ namespace WpfControlLibrary.DataModel
         private bool _isExpanded;
         private string _name;
         private string _oldName = string.Empty;
+        private string _selectedString;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,6 +31,7 @@ namespace WpfControlLibrary.DataModel
             Parent = parent;
         }
         public string TreeNodeText { get; protected set; }
+        public string[] BasicTypes { get { return _basicTypes; } }
         public string Name
         {
             get { return _name; }
@@ -47,6 +49,11 @@ namespace WpfControlLibrary.DataModel
             set { _isExpanded = value; OnPropertyChanged("IsExpanded"); }
         }
 
+        public string SelectedString
+        {
+            get { return _selectedString; }
+            set { _selectedString = value; OnPropertyChanged(nameof(SelectedString)); }
+        }
         public string Error => throw new NotImplementedException();
 
         public string this[string columnName]

@@ -1069,6 +1069,31 @@ namespace ConfigOpcUa
             }
             return "Unknown";
         }
+
+        private static string GetClientService(OpcUaCfg.client_service service)
+        {
+            switch (service)
+            {
+                case OpcUaCfg.client_service.Read:
+                    return "Read";
+                case OpcUaCfg.client_service.Write:
+                    return "Write";
+            }
+            return "Unknown";
+
+        }
+        private static OpcUaCfg.client_service GetClientService(string service)
+        {
+            switch (service)
+            {
+                case "Read" :
+                    return OpcUaCfg.client_service.Read;
+                case "Write":
+                    return OpcUaCfg.client_service.Write;
+            }
+            return OpcUaCfg.client_service.Unknown;
+
+        }
         private static OpcUaCfg.nodeFolder GetFolder(DataModelFolder dmFolder)
         {
             OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
@@ -1083,7 +1108,7 @@ namespace ConfigOpcUa
             simple.name = dmSimple.Name;
             simple.access = GetAccess(dmSimple.VarAccess);
             simple.accessSpecified = true;
-            simple.basic_type = GetBasicType(dmSimple.BasicType);
+            simple.basic_type = GetBasicType(dmSimple.SelectedString);
             simple.basic_typeSpecified = true;
             simple.id = $"{dmSimple.GetNamespace().Namespace}:{dmSimple.NodeId.GetIdentifier()}";
             return simple;
@@ -1176,6 +1201,28 @@ namespace ConfigOpcUa
                 }
             }
         }
+
+        private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.connection_type ct)
+        {
+            ct.end_point = new OpcUaCfg.connection_typeEnd_point();
+            ct.end_point.ip_address = connection.IpAddress;
+            ct.end_point.encryption = connection.Crypto;
+            ct.end_point.encryptionSpecified = true;
+            ct.end_point.period = connection.Period;
+            ct.end_point.periodSpecified = true;
+            ct.end_point.service = GetClientService(connection.Service);
+            ct.end_point.serviceSpecified = true;
+
+            
+        }
+
+        private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.var_type var_Type)
+        {
+            var_Type.var = new OpcUaCfg.var_typeVar();
+            var_Type.var.ns = var.NsIndex;
+            var_Type.var.nsSpecified = true;
+            var_Type.var.id = var.Id;
+        }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
             Debug.Print($"SaveConfiguration {fileName}");
@@ -1189,6 +1236,25 @@ namespace ConfigOpcUa
                 nodes.Add(tn);
             }
             tree.nodes = nodes.ToArray();
+
+            List<OpcUaCfg.connection_type> connections = new List<OpcUaCfg.connection_type>();
+            foreach(WpfControlLibrary.Client.ClientConnection connection in mvm.Connections)
+            {
+                OpcUaCfg.connection_type ct = new OpcUaCfg.connection_type();
+                SaveConnection(connection, ct);
+
+                List<OpcUaCfg.var_type> vars = new List<OpcUaCfg.var_type>();
+                foreach(WpfControlLibrary.Client.ClientVar var in connection.Vars)
+                {
+                    OpcUaCfg.var_type var_Type = new OpcUaCfg.var_type();
+                    SaveClientVar(var, var_Type);
+                    vars.Add(var_Type);
+                }
+                ct.vars = vars.ToArray();
+                connections.Add(ct);
+            }
+            tree.connections = connections.ToArray();
+
             XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua));
             using (TextWriter tw = new StreamWriter(fileName))
             {

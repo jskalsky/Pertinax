@@ -381,6 +381,10 @@ namespace OpcUaCfg {
         
         private bool encryptionFieldSpecified;
         
+        private client_service serviceField;
+        
+        private bool serviceFieldSpecified;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ip_address {
@@ -435,6 +439,44 @@ namespace OpcUaCfg {
                 this.encryptionFieldSpecified = value;
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public client_service service {
+            get {
+                return this.serviceField;
+            }
+            set {
+                this.serviceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool serviceSpecified {
+            get {
+                return this.serviceFieldSpecified;
+            }
+            set {
+                this.serviceFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public enum client_service {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        Read,
+        
+        /// <remarks/>
+        Write,
     }
     
     /// <remarks/>

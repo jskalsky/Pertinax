@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfControlLibrary.DataModel;
+using WpfControlLibrary.Client;
 
 namespace WpfControlLibrary.ViewModel
 {
@@ -17,6 +18,7 @@ namespace WpfControlLibrary.ViewModel
         {
             SelectedNode= null;
             DataModel = new ObservableCollection<DataModelNode>();
+            Connections = new ObservableCollection<ClientConnection>();
             ObjectTypes = new List<DataModelObjectType>();
         }
 
@@ -25,6 +27,7 @@ namespace WpfControlLibrary.ViewModel
         public DataModelNamespace DataModelNamespace1 { get; set; }
 
         public ObservableCollection<DataModelNode> DataModel { get; }
+        public ObservableCollection<ClientConnection> Connections { get; }
         public List<DataModelObjectType> ObjectTypes { get; }
 
 
