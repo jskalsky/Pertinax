@@ -29,6 +29,7 @@ namespace WpfControlLibrary.ViewModel
         public ObservableCollection<DataModelNode> DataModel { get; }
         public ObservableCollection<ClientConnection> Connections { get; }
         public List<DataModelObjectType> ObjectTypes { get; }
+        public Client.ClientConnection SelectedConnection { get; set; }
 
 
         private void OnPropertyChanged(string name)

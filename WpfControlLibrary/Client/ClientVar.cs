@@ -14,6 +14,10 @@ namespace WpfControlLibrary.Client
         private ushort _nsIndex;
         private string _id;
 
+        public ClientVar()
+        {
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Constant_495.png";
+        }
         public ushort NsIndex
         {
             get { return _nsIndex; }
@@ -25,6 +29,7 @@ namespace WpfControlLibrary.Client
             get { return _id; }
             set { _id = value; OnPropertyChanged(nameof(Id)); }
         }
+        public string ImagePath { get; }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

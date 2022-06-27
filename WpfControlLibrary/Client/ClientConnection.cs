@@ -14,12 +14,16 @@ namespace WpfControlLibrary.Client
         private bool _crypto;
         private ushort _period;
         private string _service;
+        private bool _isExpanded;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ClientConnection()
         {
-            Vars=new ObservableCollection<ClientVar>();
+            Vars = new ObservableCollection<ClientVar>();
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/ClassIcon.png";
+            Period = 100;
+            Crypto = false;
         }
 
         public string IpAddress
@@ -45,8 +49,19 @@ namespace WpfControlLibrary.Client
             get { return _service; }
             set { _service = value; OnPropertyChanged(nameof(Service)); }
         }
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { _isExpanded = value; OnPropertyChanged("IsExpanded"); }
+        }
+        public string ImagePath { get; }
 
         public ObservableCollection<ClientVar> Vars { get; }
+        public void AddVar(ushort ns, string id)
+        {
+            ClientVar var = new ClientVar() { NsIndex = ns, Id = id };
+            Vars.Add(var);
+        }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

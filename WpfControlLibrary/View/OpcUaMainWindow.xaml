@@ -128,7 +128,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Label Content="Spojení"/>
-                        <TreeView Grid.Row="1" ItemsSource="{Binding Connections}">
+                        <TreeView Grid.Row="1" ItemsSource="{Binding Connections}" SelectedItemChanged="Connections_SelectedItemChanged">
                             <TreeView.ContextMenu>
                                 <ContextMenu  Opened="Connections_Opened">
                                     <MenuItem Header="Přidat spojení" Name="MiAddConnection" Click="MiAddConnection_Click"/>
@@ -137,15 +137,31 @@
                                     <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
                                 </ContextMenu>
                             </TreeView.ContextMenu>
-                            <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding}">
+                            <TreeView.Resources>
+                                <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding IpAddress}"/>
-                                        <TextBlock Text="{Binding Period}"/>
-                                        <CheckBox Content="Šifrovat" IsChecked="{Binding Crypto}"/>
+                                        <Image Stretch="Fill" Source="{Binding ImagePath}"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                             Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Period,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                             Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Crypto}" Content="Šifrovat"/>                                        <TextBlock Text="{Binding IpAddress}"/>
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
-                            </TreeView.ItemTemplate>
+                                <DataTemplate DataType="{x:Type client:ClientVar}">
+                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                        <TextBox Text="{Binding NsIndex}"/>
+                                        <TextBox Text="{Binding Id}" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </TreeView.Resources>.
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="client:ClientConnection">
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                </Style>
+                            </TreeView.ItemContainerStyle>
                         </TreeView>
                     </Grid>
                 </TabItem>

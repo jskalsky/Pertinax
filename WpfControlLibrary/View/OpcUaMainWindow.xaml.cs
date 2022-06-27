@@ -219,12 +219,25 @@ namespace WpfControlLibrary.View
 
         private void MiAddConnection_Click(object sender, RoutedEventArgs e)
         {
-
+            if (DataContext is OpcUaViewModel vm)
+            {
+                Client.ClientConnection connection = new Client.ClientConnection() { Crypto = false, IpAddress = "10.10.200.200" };
+                vm.Connections.Add(connection);
+            }
+            e.Handled = true;
         }
 
         private void MiAddConnectionVar_Click(object sender, RoutedEventArgs e)
         {
-
+            if (DataContext is OpcUaViewModel vm)
+            {
+                if (vm.SelectedConnection != null)
+                {
+                    vm.SelectedConnection.AddVar(1, "Var");
+                    vm.SelectedConnection.IsExpanded = true;
+                }
+            }
+            e.Handled = true;
         }
 
         private void MiConnectionRemove_Click(object sender, RoutedEventArgs e)
@@ -234,7 +247,52 @@ namespace WpfControlLibrary.View
 
         private void Connections_Opened(object sender, RoutedEventArgs e)
         {
+            if (sender is ContextMenu menu)
+            {
+                if (DataContext is OpcUaViewModel vm)
+                {
+                    if (vm.SelectedConnection == null)
+                    {
+                        foreach (object mi in menu.Items)
+                        {
+                            if (mi is MenuItem menuItem)
+                            {
+                                menuItem.IsEnabled = false;
+                                if (menuItem.Name == "MiAddConnection")
+                                {
+                                    menuItem.IsEnabled = true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (vm.SelectedConnection is Client.ClientConnection)
+                        {
+                            foreach (object mi in menu.Items)
+                            {
+                                if (mi is MenuItem menuItem)
+                                {
+                                    menuItem.IsEnabled = false;
+                                    if (menuItem.Name == "MiAddConnectionVar")
+                                    {
+                                        menuItem.IsEnabled = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
+        private void Connections_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                vm.SelectedConnection = e.NewValue as Client.ClientConnection;
+            }
+            e.Handled = true;
         }
     }
 }
