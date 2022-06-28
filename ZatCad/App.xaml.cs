@@ -29,9 +29,16 @@ namespace ZatCad
             Debug.WriteLine("Start");
 #endif
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+
+            AppDomain = AppDomain.CreateDomain("ChildDomain");
+            Assembly = AppDomain.Load("ConfigOpcUa");
+            configOpcUa = (ConfigOpcUa.ConfigOpcUa) Assembly.CreateInstance("ConfigOpcUa.ConfigOpcUa");
         }
 
         public static string AppFolder { get; set; }
+        public static AppDomain AppDomain { get; set; }
+        public static Assembly Assembly { get; set; }
+        public static ConfigOpcUa.ConfigOpcUa configOpcUa { get; set; }
         private void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             string msg = $"Exception: {e.Exception.Message}";
@@ -46,7 +53,13 @@ namespace ZatCad
             {
                 Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
             }
-            e.Handled = false;
+            e.Handled = true;
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            Debug.Print("Exit");
+            AppDomain.Unload(AppDomain);
         }
     }
 }

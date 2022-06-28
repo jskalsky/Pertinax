@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Client
 {
-    public class ClientConnection : INotifyPropertyChanged
+    public class ClientConnection : INotifyPropertyChanged, IDataErrorInfo
     {
         private string _ipAddress;
         private bool _crypto;
@@ -57,6 +57,19 @@ namespace WpfControlLibrary.Client
         public string ImagePath { get; }
 
         public ObservableCollection<ClientVar> Vars { get; }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get { return Validate(columnName); }
+        }
+
+        private string Validate(string propertyName)
+        {
+            string error = string.Empty;
+            return error;
+        }
         public void AddVar(ushort ns, string id)
         {
             ClientVar var = new ClientVar() { NsIndex = ns, Id = id };

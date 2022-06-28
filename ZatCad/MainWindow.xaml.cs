@@ -23,13 +23,11 @@ namespace ZatCad
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ConfigOpcUa.ConfigOpcUa configOpcUa;
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
-                configOpcUa = new ConfigOpcUa.ConfigOpcUa();
             }
             catch(Exception exc)
             {
@@ -50,7 +48,7 @@ namespace ZatCad
                 {
                     string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
 //                    configOpcUa.LoadConfig(fileName);
-                    configOpcUa.MakeConfig(null, fileName);
+                    App.configOpcUa.MakeConfig(null, fileName);
                 }
             }
             catch(Exception exc)
@@ -69,8 +67,8 @@ namespace ZatCad
             if (DataContext is MainViewModel mvm)
             {
                 string fileName = App.AppFolder + '\\' + mvm.SelectedCfg;
-                configOpcUa.LoadConfig(fileName);
-                string port = configOpcUa.CreatePort();
+                App.configOpcUa.LoadConfig(fileName);
+                string port = App.configOpcUa.CreatePort();
                 Debug.Print($"port= {port}");
             }
         }

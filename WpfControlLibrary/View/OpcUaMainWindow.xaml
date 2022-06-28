@@ -14,7 +14,6 @@
     </Window.DataContext>
     <Window.Resources>
         <ResourceDictionary>
-            <Image x:Key="FolderIcon" Source="Icons/Folder_6222.png"/>
             <Style TargetType="{x:Type TextBox}" x:Key="ToolTipError">
                 <Style.Triggers>
                     <Trigger Property="Validation.HasError" Value="true">
@@ -137,31 +136,31 @@
                                     <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
                                 </ContextMenu>
                             </TreeView.ContextMenu>
-                            <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Stretch="Fill" Source="{Binding ImagePath}"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                            <!--TreeView.Resources-->
+                                <!--HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
+                                    <StackPanel Orientation="Horizontal"-->
+                                        <!--Image Stretch="Fill" Source="{Binding ImagePath}"/-->
+                                        <!--TextBox Style="{StaticResource ToolTipError}" Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                                              Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Period,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/-->
+                                        <!--TextBox Style="{StaticResource ToolTipError}" Text="{Binding Period,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                                              Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Crypto}" Content="Šifrovat"/>                                        <TextBlock Text="{Binding IpAddress}"/>
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/-->
+                                        <!--CheckBox Margin="5,0,0,0" IsChecked="{Binding Crypto}" Content="Šifrovat"/>
                                     </StackPanel>
-                                </HierarchicalDataTemplate>
-                                <DataTemplate DataType="{x:Type client:ClientVar}">
+                                </HierarchicalDataTemplate-->
+                                <!--DataTemplate DataType="{x:Type client:ClientVar}">
                                     <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
                                         <TextBox Text="{Binding NsIndex}"/>
                                         <TextBox Text="{Binding Id}" Margin="5,0,0,0"/>
                                     </StackPanel>
                                 </DataTemplate>
-                            </TreeView.Resources>.
-                            <TreeView.ItemContainerStyle>
+                            </TreeView.Resources-->
+                            <!--TreeView.ItemContainerStyle>
                                 <Style TargetType="client:ClientConnection">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                 </Style>
-                            </TreeView.ItemContainerStyle>
+                            </TreeView.ItemContainerStyle-->
                         </TreeView>
                     </Grid>
                 </TabItem>
