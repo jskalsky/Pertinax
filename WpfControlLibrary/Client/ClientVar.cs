@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Client
 {
-    public class ClientVar : INotifyPropertyChanged
+    public class ClientVar : INotifyPropertyChanged, IDataErrorInfo
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,6 +30,18 @@ namespace WpfControlLibrary.Client
             set { _id = value; OnPropertyChanged(nameof(Id)); }
         }
         public string ImagePath { get; }
+
+        public string Error => throw new NotImplementedException();
+        public string this[string columnName]
+        {
+            get { return Validate(columnName); }
+        }
+
+        private string Validate(string propertyName)
+        {
+            string error = string.Empty;
+            return error;
+        }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

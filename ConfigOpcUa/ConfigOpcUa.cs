@@ -443,6 +443,21 @@ namespace ConfigOpcUa
                     {
                         LoadNode(null, node, mvm.DataModel);
                     }
+                    foreach(OpcUaCfg.connection_type connection in treeNodes.connections)
+                    {
+                        WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
+                        cc.Crypto = connection.end_point.encryption;
+                        cc.IpAddress = connection.end_point.ip_address;
+                        cc.Service = GetClientService(connection.end_point.service);
+                        if(connection.vars != null)
+                        {
+                            foreach (OpcUaCfg.var_type vt in connection.vars)
+                            {
+                                cc.AddVar(vt.var.ns, vt.var.id);
+                            }
+                        }
+                        mvm.Connections.Add(cc);
+                    }
                 }
             }
             else

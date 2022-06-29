@@ -103,12 +103,13 @@
                             </TreeView.ContextMenu>
                             <TreeView.ItemTemplate>
                                 <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                         <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
                                         <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
                                              Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
                                             PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <ComboBox Margin="5,0,0,0" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedString,Mode=TwoWay}"/>
+                                        <ComboBox Margin="5,0,0,0" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedString,Mode=TwoWay}"
+                                                  Visibility="{Binding BasicTypesVisibility}"/>
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
                             </TreeView.ItemTemplate>
@@ -138,45 +139,38 @@
                             </TreeView.ContextMenu>
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                         <Image Stretch="Fill" Source="{Binding ImagePath}"/>
-                                        <TextBox Text="{Binding IpAddress}"/>
-                                        <TextBox Text="{Binding Period}"/>
-                                        <CheckBox Content="Šifrovat" IsChecked="{Binding Crypto}"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0" 
+                                                 Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0"
+                                                 Text="{Binding Period,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                        <CheckBox Margin="5,0,0,0" VerticalAlignment="Center" Content="Šifrovat" IsChecked="{Binding Crypto}"/>
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
                                 <DataTemplate DataType="{x:Type client:ClientVar}">
-                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                        <TextBox Text="{Binding NsIndex}"/>
-                                        <TextBox Text="{Binding Id}" Margin="5,0,0,0"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                        <Image Stretch="Fill" Source="{Binding ImagePath}"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0"
+                                                 Text="{Binding NsIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0"
+                                                 Text="{Binding Id,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </TreeView.Resources>
-                            <!--TreeView.Resources-->
-                                <!--HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
-                                    <StackPanel Orientation="Horizontal"-->
-                                        <!--Image Stretch="Fill" Source="{Binding ImagePath}"/-->
-                                        <!--TextBox Style="{StaticResource ToolTipError}" Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
-                                             Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/-->
-                                        <!--TextBox Style="{StaticResource ToolTipError}" Text="{Binding Period,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
-                                             Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/-->
-                                        <!--CheckBox Margin="5,0,0,0" IsChecked="{Binding Crypto}" Content="Šifrovat"/>
-                                    </StackPanel>
-                                </HierarchicalDataTemplate-->
-                                <!--DataTemplate DataType="{x:Type client:ClientVar}">
-                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                        <TextBox Text="{Binding NsIndex}"/>
-                                        <TextBox Text="{Binding Id}" Margin="5,0,0,0"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </TreeView.Resources-->
-                            <!--TreeView.ItemContainerStyle>
-                                <Style TargetType="client:ClientConnection">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                 </Style>
-                            </TreeView.ItemContainerStyle-->
+                            </TreeView.ItemContainerStyle>
                         </TreeView>
                     </Grid>
                 </TabItem>

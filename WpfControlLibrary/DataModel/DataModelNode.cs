@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace WpfControlLibrary.DataModel
 {
@@ -18,6 +19,7 @@ namespace WpfControlLibrary.DataModel
         private string _name;
         private string _oldName = string.Empty;
         private string _selectedString;
+        private Visibility _basicTypesVisibility;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -29,6 +31,7 @@ namespace WpfControlLibrary.DataModel
             NodeId = nodeId;
             Children = new ObservableCollection<DataModelNode>();
             Parent = parent;
+            BasicTypesVisibility = Visibility.Collapsed;
         }
         public string TreeNodeText { get; protected set; }
         public string[] BasicTypes { get { return _basicTypes; } }
@@ -53,6 +56,12 @@ namespace WpfControlLibrary.DataModel
         {
             get { return _selectedString; }
             set { _selectedString = value; OnPropertyChanged(nameof(SelectedString)); }
+        }
+
+        public Visibility BasicTypesVisibility
+        {
+            get { return _basicTypesVisibility; }
+            set { _basicTypesVisibility = value; OnPropertyChanged(nameof(BasicTypesVisibility)); }
         }
         public string Error => throw new NotImplementedException();
 
