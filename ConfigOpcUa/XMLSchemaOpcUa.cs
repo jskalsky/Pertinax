@@ -24,9 +24,33 @@ namespace OpcUaCfg {
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
     public partial class opc_ua {
         
+        private string local_ipField;
+        
+        private string multicast_ipField;
+        
         private node[] nodesField;
         
-        private connection_type[] connectionsField;
+        private opc_uaConnection[] connectionField;
+        
+        /// <remarks/>
+        public string local_ip {
+            get {
+                return this.local_ipField;
+            }
+            set {
+                this.local_ipField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string multicast_ip {
+            get {
+                return this.multicast_ipField;
+            }
+            set {
+                this.multicast_ipField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("nodes")]
@@ -40,13 +64,13 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("connections")]
-        public connection_type[] connections {
+        [System.Xml.Serialization.XmlElementAttribute("connection")]
+        public opc_uaConnection[] connection {
             get {
-                return this.connectionsField;
+                return this.connectionField;
             }
             set {
-                this.connectionsField = value;
+                this.connectionField = value;
             }
         }
     }
@@ -258,225 +282,6 @@ namespace OpcUaCfg {
         
         /// <remarks/>
         ReadWrite,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class var_type {
-        
-        private var_typeVar varField;
-        
-        /// <remarks/>
-        public var_typeVar var {
-            get {
-                return this.varField;
-            }
-            set {
-                this.varField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class var_typeVar {
-        
-        private ushort nsField;
-        
-        private bool nsFieldSpecified;
-        
-        private string idField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public ushort ns {
-            get {
-                return this.nsField;
-            }
-            set {
-                this.nsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool nsSpecified {
-            get {
-                return this.nsFieldSpecified;
-            }
-            set {
-                this.nsFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class connection_type {
-        
-        private connection_typeEnd_point end_pointField;
-        
-        private var_type[] varsField;
-        
-        /// <remarks/>
-        public connection_typeEnd_point end_point {
-            get {
-                return this.end_pointField;
-            }
-            set {
-                this.end_pointField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("vars")]
-        public var_type[] vars {
-            get {
-                return this.varsField;
-            }
-            set {
-                this.varsField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class connection_typeEnd_point {
-        
-        private string ip_addressField;
-        
-        private ushort periodField;
-        
-        private bool periodFieldSpecified;
-        
-        private bool encryptionField;
-        
-        private bool encryptionFieldSpecified;
-        
-        private client_service serviceField;
-        
-        private bool serviceFieldSpecified;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string ip_address {
-            get {
-                return this.ip_addressField;
-            }
-            set {
-                this.ip_addressField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public ushort period {
-            get {
-                return this.periodField;
-            }
-            set {
-                this.periodField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool periodSpecified {
-            get {
-                return this.periodFieldSpecified;
-            }
-            set {
-                this.periodFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public bool encryption {
-            get {
-                return this.encryptionField;
-            }
-            set {
-                this.encryptionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool encryptionSpecified {
-            get {
-                return this.encryptionFieldSpecified;
-            }
-            set {
-                this.encryptionFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public client_service service {
-            get {
-                return this.serviceField;
-            }
-            set {
-                this.serviceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool serviceSpecified {
-            get {
-                return this.serviceFieldSpecified;
-            }
-            set {
-                this.serviceFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public enum client_service {
-        
-        /// <remarks/>
-        Unknown,
-        
-        /// <remarks/>
-        Read,
-        
-        /// <remarks/>
-        Write,
     }
     
     /// <remarks/>
@@ -709,6 +514,125 @@ namespace OpcUaCfg {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class opc_uaConnection {
+        
+        private string ip_addressField;
+        
+        private ushort periodField;
+        
+        private bool encryptionField;
+        
+        private client_service serviceField;
+        
+        private opc_uaConnectionVar[] varField;
+        
+        /// <remarks/>
+        public string ip_address {
+            get {
+                return this.ip_addressField;
+            }
+            set {
+                this.ip_addressField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ushort period {
+            get {
+                return this.periodField;
+            }
+            set {
+                this.periodField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool encryption {
+            get {
+                return this.encryptionField;
+            }
+            set {
+                this.encryptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public client_service service {
+            get {
+                return this.serviceField;
+            }
+            set {
+                this.serviceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("var")]
+        public opc_uaConnectionVar[] var {
+            get {
+                return this.varField;
+            }
+            set {
+                this.varField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public enum client_service {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        Read,
+        
+        /// <remarks/>
+        Write,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class opc_uaConnectionVar {
+        
+        private ushort nsField;
+        
+        private string idField;
+        
+        /// <remarks/>
+        public ushort ns {
+            get {
+                return this.nsField;
+            }
+            set {
+                this.nsField = value;
+            }
+        }
+        
+        /// <remarks/>
         public string id {
             get {
                 return this.idField;

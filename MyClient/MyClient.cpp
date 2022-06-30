@@ -155,8 +155,8 @@ int main()
 {
 	UA_Client* client = UA_Client_new();
 	UA_ClientConfig_setDefault(UA_Client_getConfig(client));
-//	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://localhost:4840");
-	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
+	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://localhost:4840");
+//	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
 	if (retval != UA_STATUSCODE_GOOD)
 	{
 		UA_Client_delete(client);
@@ -173,7 +173,7 @@ int main()
 	bReq.nodesToBrowse[0].resultMask = UA_BROWSERESULTMASK_ALL; // return everything
 
 	FILE* fp;
-	errno_t err = fopen_s(&fp, "c:\\Work\\BrowseResult.txt", "wt");
+	errno_t err = fopen_s(&fp, "e:\\Work\\BrowseResult.txt", "wt");
 	if (fp != NULL)
 	{
 		Browse(client, bReq, 0, fp);

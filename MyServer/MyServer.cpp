@@ -27,42 +27,38 @@ UA_StatusCode InsertFolder(UA_Server* server, const char* name, UA_NodeId parent
     return sc;
 }
 
-UA_StatusCode ServerOpcUa::AddObjectNode(char* name, UA_NodeId* objectid, UA_NodeId parentid, UA_NodeId referenceid, UA_NodeId type_id)
+UA_StatusCode AddObjectNode(UA_Server* server, char* name, UA_NodeId* objectid, UA_NodeId parentid, UA_NodeId referenceid, UA_NodeId type_id)
 {
     UA_ObjectAttributes object_attr = UA_ObjectAttributes_default;
     object_attr.displayName = UA_LOCALIZEDTEXT((char*)"en-US", name);
-    return UA_Server_addObjectNode(Server, UA_NODEID_NULL, parentid, referenceid, UA_QUALIFIEDNAME(1, name), type_id, object_attr, NULL, objectid);
+    return UA_Server_addObjectNode(server, UA_NODEID_NULL, parentid, referenceid, UA_QUALIFIEDNAME(1, name), type_id, object_attr, NULL, objectid);
 }
 
-UA_StatusCode ServerOpcUa::SetFolders()
+UA_StatusCode SetFolders(UA_Server* server)
 {
     UA_NodeId folderRoot;
-    UA_StatusCode sc = AddObjectNode((char*)"Z1xx", &folderRoot, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
+    UA_StatusCode sc = AddObjectNode(server, (char*)"Z1xx", &folderRoot, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
         UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE));
-    Terminal::Printf("%u:%u", folderRoot.namespaceIndex, folderRoot.identifier.numeric);
     if (sc != UA_STATUSCODE_GOOD)
     {
-        Terminal::Printf("1");
         return sc;
     }
     UA_NodeId folderVariables;
-    sc = AddObjectNode((char*)"Variables", &folderVariables, folderRoot,
+    sc = AddObjectNode(server, (char*)"Variables", &folderVariables, folderRoot,
         UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE));
     if (sc != UA_STATUSCODE_GOOD)
     {
-        Terminal::Printf("2");
         return sc;
     }
     UA_NodeId folderObjects;
-    sc = AddObjectNode((char*)"Objects", &folderObjects, folderRoot,
+    sc = AddObjectNode(server, (char*)"Objects", &folderObjects, folderRoot,
         UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE));
     if (sc != UA_STATUSCODE_GOOD)
     {
-        Terminal::Printf("3");
         return sc;
     }
     UA_NodeId folderObjectTypes;
-    sc = AddObjectNode((char*)"ObjectTypes", &folderObjectTypes, folderRoot,
+    sc = AddObjectNode(server, (char*)"ObjectTypes", &folderObjectTypes, folderRoot,
         UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE));
     //  Terminal::Printf("4");
     return sc;
@@ -74,11 +70,14 @@ int main()
     UA_Server* server = UA_Server_new();
     UA_ServerConfig_setDefault(UA_Server_getConfig(server));
 
-    UA_NodeId z1;
-    UA_StatusCode sc = InsertFolder(server, "Z1xx", UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER), &z1);
-    printf("sc= %x\n", sc);
-    UA_NodeId z2;
-    sc = InsertFolder(server, "Z200", z1, &z2);
+//    UA_NodeId z1;
+//    UA_StatusCode sc = InsertFolder(server, "Z1xx", UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER), &z1);
+//    printf("sc= %x\n", sc);
+//    UA_NodeId z2;
+//    sc = InsertFolder(server, "Z200", z1, &z2);
+//    printf("sc= %x\n", sc);
+
+    UA_StatusCode sc = SetFolders(server);
     printf("sc= %x\n", sc);
 
     UA_StatusCode retval = UA_Server_run(server, &running);

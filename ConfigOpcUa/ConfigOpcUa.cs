@@ -443,17 +443,17 @@ namespace ConfigOpcUa
                     {
                         LoadNode(null, node, mvm.DataModel);
                     }
-                    foreach(OpcUaCfg.connection_type connection in treeNodes.connections)
+                    foreach(OpcUaCfg.opc_uaConnection connection in treeNodes.connection)
                     {
                         WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
-                        cc.Crypto = connection.end_point.encryption;
-                        cc.IpAddress = connection.end_point.ip_address;
-                        cc.Service = GetClientService(connection.end_point.service);
-                        if(connection.vars != null)
+                        cc.Crypto = connection.encryption;
+                        cc.IpAddress = connection.ip_address;
+                        cc.Service = GetClientService(connection.service);
+                        if(connection.var != null)
                         {
-                            foreach (OpcUaCfg.var_type vt in connection.vars)
+                            foreach (OpcUaCfg.opc_uaConnectionVar vt in connection.var)
                             {
-                                cc.AddVar(vt.var.ns, vt.var.id);
+                                cc.AddVar(vt.ns, vt.id);
                             }
                         }
                         mvm.Connections.Add(cc);
@@ -1217,26 +1217,18 @@ namespace ConfigOpcUa
             }
         }
 
-        private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.connection_type ct)
+        private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.opc_uaConnection ct)
         {
-            ct.end_point = new OpcUaCfg.connection_typeEnd_point();
-            ct.end_point.ip_address = connection.IpAddress;
-            ct.end_point.encryption = connection.Crypto;
-            ct.end_point.encryptionSpecified = true;
-            ct.end_point.period = connection.Period;
-            ct.end_point.periodSpecified = true;
-            ct.end_point.service = GetClientService(connection.Service);
-            ct.end_point.serviceSpecified = true;
-
-            
+            ct.ip_address = connection.IpAddress;
+            ct.encryption = connection.Crypto;
+            ct.period = connection.Period;
+            ct.service = GetClientService(connection.Service);
         }
 
-        private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.var_type var_Type)
+        private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.opc_uaConnectionVar var_Type)
         {
-            var_Type.var = new OpcUaCfg.var_typeVar();
-            var_Type.var.ns = var.NsIndex;
-            var_Type.var.nsSpecified = true;
-            var_Type.var.id = var.Id;
+            var_Type.ns = var.NsIndex;
+            var_Type.id = var.Id;
         }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
@@ -1252,23 +1244,23 @@ namespace ConfigOpcUa
             }
             tree.nodes = nodes.ToArray();
 
-            List<OpcUaCfg.connection_type> connections = new List<OpcUaCfg.connection_type>();
+            List<OpcUaCfg.opc_uaConnection> connections = new List<OpcUaCfg.opc_uaConnection>();
             foreach(WpfControlLibrary.Client.ClientConnection connection in mvm.Connections)
             {
-                OpcUaCfg.connection_type ct = new OpcUaCfg.connection_type();
+                OpcUaCfg.opc_uaConnection ct = new OpcUaCfg.opc_uaConnection();
                 SaveConnection(connection, ct);
 
-                List<OpcUaCfg.var_type> vars = new List<OpcUaCfg.var_type>();
+                List<OpcUaCfg.opc_uaConnectionVar> vars = new List<OpcUaCfg.opc_uaConnectionVar>();
                 foreach(WpfControlLibrary.Client.ClientVar var in connection.Vars)
                 {
-                    OpcUaCfg.var_type var_Type = new OpcUaCfg.var_type();
+                    OpcUaCfg.opc_uaConnectionVar var_Type = new OpcUaCfg.opc_uaConnectionVar();
                     SaveClientVar(var, var_Type);
                     vars.Add(var_Type);
                 }
-                ct.vars = vars.ToArray();
+                ct.var = vars.ToArray();
                 connections.Add(ct);
             }
-            tree.connections = connections.ToArray();
+            tree.connection = connections.ToArray();
 
             XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua));
             using (TextWriter tw = new StreamWriter(fileName))
