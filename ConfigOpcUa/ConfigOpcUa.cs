@@ -423,9 +423,9 @@ namespace ConfigOpcUa
             {
                 parent.AddChildren(dmn);
             }
-            if (n.children != null)
+            if (n.node1 != null)
             {
-                foreach (OpcUaCfg.node child in n.children)
+                foreach (OpcUaCfg.node child in n.node1)
                 {
                     LoadNode(dmn, child, dataModel);
                 }
@@ -435,23 +435,23 @@ namespace ConfigOpcUa
         {
             if (File.Exists(pName))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua));
+                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua_cfg));
                 using (TextReader tr = new StreamReader(pName))
                 {
-                    OpcUaCfg.opc_ua treeNodes = (OpcUaCfg.opc_ua)serializer.Deserialize(tr);
+                    OpcUaCfg.opc_ua_cfg treeNodes = (OpcUaCfg.opc_ua_cfg)serializer.Deserialize(tr);
                     foreach (OpcUaCfg.node node in treeNodes.nodes)
                     {
                         LoadNode(null, node, mvm.DataModel);
                     }
-                    foreach(OpcUaCfg.opc_uaConnection connection in treeNodes.connection)
+                    foreach (OpcUaCfg.connectionsConnection connection in treeNodes.connections)
                     {
                         WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
                         cc.Crypto = connection.encryption;
                         cc.IpAddress = connection.ip_address;
                         cc.Service = GetClientService(connection.service);
-                        if(connection.var != null)
+                        if (connection.var != null)
                         {
-                            foreach (OpcUaCfg.opc_uaConnectionVar vt in connection.var)
+                            foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
                             {
                                 cc.AddVar(vt.ns, vt.id);
                             }
@@ -1101,7 +1101,7 @@ namespace ConfigOpcUa
         {
             switch (service)
             {
-                case "Read" :
+                case "Read":
                     return OpcUaCfg.client_service.Read;
                 case "Write":
                     return OpcUaCfg.client_service.Write;
@@ -1122,9 +1122,7 @@ namespace ConfigOpcUa
             OpcUaCfg.nodeSimple_var simple = new OpcUaCfg.nodeSimple_var();
             simple.name = dmSimple.Name;
             simple.access = GetAccess(dmSimple.VarAccess);
-            simple.accessSpecified = true;
             simple.basic_type = GetBasicType(dmSimple.SelectedString);
-            simple.basic_typeSpecified = true;
             simple.id = $"{dmSimple.GetNamespace().Namespace}:{dmSimple.NodeId.GetIdentifier()}";
             return simple;
         }
@@ -1134,12 +1132,9 @@ namespace ConfigOpcUa
             OpcUaCfg.nodeArray_var array = new OpcUaCfg.nodeArray_var();
             array.name = dmArray.Name;
             array.access = GetAccess(dmArray.VarAccess);
-            array.accessSpecified = true;
             array.basic_type = GetBasicType(dmArray.BasicType);
-            array.basic_typeSpecified = true;
             array.id = $"{dmArray.GetNamespace().Namespace}:{dmArray.NodeId.GetIdentifier()}";
             array.length = (uint)dmArray.ArrayLength;
-            array.lengthSpecified = true;
             return array;
         }
 
@@ -1166,7 +1161,6 @@ namespace ConfigOpcUa
             {
                 OpcUaCfg.nodeNamespace objNamespace = new OpcUaCfg.nodeNamespace();
                 objNamespace.index = dmNs.Namespace;
-                objNamespace.indexSpecified = true;
                 tn.Item = objNamespace;
             }
             else
@@ -1206,18 +1200,18 @@ namespace ConfigOpcUa
             }
             if (node.Children.Count != 0)
             {
-                tn.children = new OpcUaCfg.node[node.Children.Count];
+                tn.node1 = new OpcUaCfg.node[node.Children.Count];
                 int index = 0;
                 foreach (DataModelNode child in node.Children)
                 {
-                    tn.children[index] = new OpcUaCfg.node();
-                    SaveTreeNode(child, tn.children[index]);
+                    tn.node1[index] = new OpcUaCfg.node();
+                    SaveTreeNode(child, tn.node1[index]);
                     ++index;
                 }
             }
         }
 
-        private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.opc_uaConnection ct)
+        private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.connectionsConnection ct)
         {
             ct.ip_address = connection.IpAddress;
             ct.encryption = connection.Crypto;
@@ -1225,7 +1219,7 @@ namespace ConfigOpcUa
             ct.service = GetClientService(connection.Service);
         }
 
-        private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.opc_uaConnectionVar var_Type)
+        private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.connectionsConnectionVar var_Type)
         {
             var_Type.ns = var.NsIndex;
             var_Type.id = var.Id;
@@ -1234,7 +1228,10 @@ namespace ConfigOpcUa
         {
             Debug.Print($"SaveConfiguration {fileName}");
 
-            OpcUaCfg.opc_ua tree = new OpcUaCfg.opc_ua();
+            OpcUaCfg.opc_ua_cfg cfg = new OpcUaCfg.opc_ua_cfg();
+            cfg.settings.local_ip = mvm.LocalIpAddress;
+            cfg.settings.multicast_ip = mvm.MulticastIpAddress;
+
             List<OpcUaCfg.node> nodes = new List<OpcUaCfg.node>();
             foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
             {
@@ -1242,30 +1239,30 @@ namespace ConfigOpcUa
                 SaveTreeNode(modelNode, tn);
                 nodes.Add(tn);
             }
-            tree.nodes = nodes.ToArray();
+            cfg.nodes = nodes.ToArray();
 
-            List<OpcUaCfg.opc_uaConnection> connections = new List<OpcUaCfg.opc_uaConnection>();
-            foreach(WpfControlLibrary.Client.ClientConnection connection in mvm.Connections)
+            List<OpcUaCfg.connectionsConnection> connections = new List<OpcUaCfg.connectionsConnection>();
+            foreach (WpfControlLibrary.Client.ClientConnection connection in mvm.Connections)
             {
-                OpcUaCfg.opc_uaConnection ct = new OpcUaCfg.opc_uaConnection();
+                OpcUaCfg.connectionsConnection ct = new OpcUaCfg.connectionsConnection();
                 SaveConnection(connection, ct);
 
-                List<OpcUaCfg.opc_uaConnectionVar> vars = new List<OpcUaCfg.opc_uaConnectionVar>();
-                foreach(WpfControlLibrary.Client.ClientVar var in connection.Vars)
+                List<OpcUaCfg.connectionsConnectionVar> vars = new List<OpcUaCfg.connectionsConnectionVar>();
+                foreach (WpfControlLibrary.Client.ClientVar var in connection.Vars)
                 {
-                    OpcUaCfg.opc_uaConnectionVar var_Type = new OpcUaCfg.opc_uaConnectionVar();
+                    OpcUaCfg.connectionsConnectionVar var_Type = new OpcUaCfg.connectionsConnectionVar();
                     SaveClientVar(var, var_Type);
                     vars.Add(var_Type);
                 }
                 ct.var = vars.ToArray();
                 connections.Add(ct);
             }
-            tree.connection = connections.ToArray();
+            cfg.connections = connections.ToArray();
 
-            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua));
+            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua_cfg));
             using (TextWriter tw = new StreamWriter(fileName))
             {
-                serializer.Serialize(tw, tree);
+                serializer.Serialize(tw, cfg);
                 Debug.Print("Po serialize");
             }
         }

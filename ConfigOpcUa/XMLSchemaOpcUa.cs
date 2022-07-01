@@ -22,15 +22,11 @@ namespace OpcUaCfg {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
-    public partial class opc_ua {
+    public partial class settings {
         
         private string local_ipField;
         
         private string multicast_ipField;
-        
-        private node[] nodesField;
-        
-        private opc_uaConnection[] connectionField;
         
         /// <remarks/>
         public string local_ip {
@@ -51,28 +47,6 @@ namespace OpcUaCfg {
                 this.multicast_ipField = value;
             }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("nodes")]
-        public node[] nodes {
-            get {
-                return this.nodesField;
-            }
-            set {
-                this.nodesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("connection")]
-        public opc_uaConnection[] connection {
-            get {
-                return this.connectionField;
-            }
-            set {
-                this.connectionField = value;
-            }
-        }
     }
     
     /// <remarks/>
@@ -80,12 +54,13 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
     public partial class node {
         
         private object itemField;
         
-        private node[] childrenField;
+        private node[] node1Field;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("array_var", typeof(nodeArray_var))]
@@ -104,13 +79,13 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("child", IsNullable=false)]
-        public node[] children {
+        [System.Xml.Serialization.XmlElementAttribute("node")]
+        public node[] node1 {
             get {
-                return this.childrenField;
+                return this.node1Field;
             }
             set {
-                this.childrenField = value;
+                this.node1Field = value;
             }
         }
     }
@@ -127,20 +102,13 @@ namespace OpcUaCfg {
         
         private basic_type basic_typeField;
         
-        private bool basic_typeFieldSpecified;
-        
         private access accessField;
-        
-        private bool accessFieldSpecified;
         
         private string idField;
         
         private uint lengthField;
         
-        private bool lengthFieldSpecified;
-        
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string name {
             get {
                 return this.nameField;
@@ -151,7 +119,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public basic_type basic_type {
             get {
                 return this.basic_typeField;
@@ -162,18 +129,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool basic_typeSpecified {
-            get {
-                return this.basic_typeFieldSpecified;
-            }
-            set {
-                this.basic_typeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public access access {
             get {
                 return this.accessField;
@@ -184,18 +139,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool accessSpecified {
-            get {
-                return this.accessFieldSpecified;
-            }
-            set {
-                this.accessFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
@@ -206,24 +149,12 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public uint length {
             get {
                 return this.lengthField;
             }
             set {
                 this.lengthField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lengthSpecified {
-            get {
-                return this.lengthFieldSpecified;
-            }
-            set {
-                this.lengthFieldSpecified = value;
             }
         }
     }
@@ -297,7 +228,6 @@ namespace OpcUaCfg {
         private string idField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string name {
             get {
                 return this.nameField;
@@ -308,7 +238,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
@@ -329,27 +258,13 @@ namespace OpcUaCfg {
         
         private ushort indexField;
         
-        private bool indexFieldSpecified;
-        
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public ushort index {
             get {
                 return this.indexField;
             }
             set {
                 this.indexField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool indexSpecified {
-            get {
-                return this.indexFieldSpecified;
-            }
-            set {
-                this.indexFieldSpecified = value;
             }
         }
     }
@@ -367,7 +282,6 @@ namespace OpcUaCfg {
         private string idField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string name {
             get {
                 return this.nameField;
@@ -378,7 +292,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
@@ -404,7 +317,6 @@ namespace OpcUaCfg {
         private string object_type_nameField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string name {
             get {
                 return this.nameField;
@@ -415,7 +327,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
@@ -426,7 +337,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string object_type_name {
             get {
                 return this.object_type_nameField;
@@ -449,16 +359,11 @@ namespace OpcUaCfg {
         
         private basic_type basic_typeField;
         
-        private bool basic_typeFieldSpecified;
-        
         private access accessField;
-        
-        private bool accessFieldSpecified;
         
         private string idField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string name {
             get {
                 return this.nameField;
@@ -469,7 +374,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public basic_type basic_type {
             get {
                 return this.basic_typeField;
@@ -480,18 +384,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool basic_typeSpecified {
-            get {
-                return this.basic_typeFieldSpecified;
-            }
-            set {
-                this.basic_typeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public access access {
             get {
                 return this.accessField;
@@ -502,18 +394,6 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool accessSpecified {
-            get {
-                return this.accessFieldSpecified;
-            }
-            set {
-                this.accessFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
@@ -530,7 +410,53 @@ namespace OpcUaCfg {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class opc_uaConnection {
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    public partial class nodes {
+        
+        private node[] nodeField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("node")]
+        public node[] node {
+            get {
+                return this.nodeField;
+            }
+            set {
+                this.nodeField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    public partial class connections {
+        
+        private connectionsConnection[] connectionField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("connection")]
+        public connectionsConnection[] connection {
+            get {
+                return this.connectionField;
+            }
+            set {
+                this.connectionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class connectionsConnection {
         
         private string ip_addressField;
         
@@ -540,7 +466,7 @@ namespace OpcUaCfg {
         
         private client_service serviceField;
         
-        private opc_uaConnectionVar[] varField;
+        private connectionsConnectionVar[] varField;
         
         /// <remarks/>
         public string ip_address {
@@ -584,7 +510,7 @@ namespace OpcUaCfg {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("var")]
-        public opc_uaConnectionVar[] var {
+        public connectionsConnectionVar[] var {
             get {
                 return this.varField;
             }
@@ -616,7 +542,7 @@ namespace OpcUaCfg {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class opc_uaConnectionVar {
+    public partial class connectionsConnectionVar {
         
         private ushort nsField;
         
@@ -639,6 +565,54 @@ namespace OpcUaCfg {
             }
             set {
                 this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    public partial class opc_ua_cfg {
+        
+        private settings settingsField;
+        
+        private node[] nodesField;
+        
+        private connectionsConnection[] connectionsField;
+        
+        /// <remarks/>
+        public settings settings {
+            get {
+                return this.settingsField;
+            }
+            set {
+                this.settingsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("node", IsNullable=false)]
+        public node[] nodes {
+            get {
+                return this.nodesField;
+            }
+            set {
+                this.nodesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("connection", IsNullable=false)]
+        public connectionsConnection[] connections {
+            get {
+                return this.connectionsField;
+            }
+            set {
+                this.connectionsField = value;
             }
         }
     }

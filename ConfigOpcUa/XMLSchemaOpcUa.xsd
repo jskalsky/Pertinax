@@ -54,73 +54,86 @@
 			<xs:enumeration value="Write"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:element name="opc_ua">
+	<xs:element name="settings">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="local_ip" type="xs:string"/>
 				<xs:element name="multicast_ip" type="xs:string"/>
-				<xs:element name="node" minOccurs="1" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:choice>
-								<xs:element name="namespace">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="index" type="xs:unsignedShort"/>
-										</xs:sequence>
-									</xs:complexType>
-								</xs:element>
-								<xs:element name="folder">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="name" type="xs:string"/>
-											<xs:element name="id" type="xs:string"/>
-										</xs:sequence>
-									</xs:complexType>
-								</xs:element>
-								<xs:element name="simple_var">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="name" type="xs:string"/>
-											<xs:element name="basic_type" type="basic_type"/>
-											<xs:element name="access" type="access"/>
-											<xs:element name="id" type="xs:string"/>
-										</xs:sequence>
-									</xs:complexType>
-								</xs:element>
-								<xs:element name="array_var">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="name" type="xs:string"/>
-											<xs:element name="basic_type" type="basic_type"/>
-											<xs:element name="access" type="access"/>
-											<xs:element name="id" type="xs:string"/>
-											<xs:element name="length" type="xs:unsignedInt"/>
-										</xs:sequence>
-									</xs:complexType>
-								</xs:element>
-								<xs:element name="object_type">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="name" type="xs:string"/>
-											<xs:element name="id" type="xs:string"/>
-										</xs:sequence>
-									</xs:complexType>
-								</xs:element>
-								<xs:element name="object_var">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="name" type="xs:string"/>
-											<xs:element name="id" type="xs:string"/>
-											<xs:element name="object_type_name" type="xs:string"/>
-										</xs:sequence>
-									</xs:complexType>
-								</xs:element>
-							</xs:choice>
-							<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="node">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name="namespace">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="index" type="xs:unsignedShort"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="folder">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="name" type="xs:string"/>
+								<xs:element name="id" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="simple_var">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="name" type="xs:string"/>
+								<xs:element name="basic_type" type="basic_type"/>
+								<xs:element name="access" type="access"/>
+								<xs:element name="id" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="array_var">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="name" type="xs:string"/>
+								<xs:element name="basic_type" type="basic_type"/>
+								<xs:element name="access" type="access"/>
+								<xs:element name="id" type="xs:string"/>
+								<xs:element name="length" type="xs:unsignedInt"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="object_type">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="name" type="xs:string"/>
+								<xs:element name="id" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="object_var">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="name" type="xs:string"/>
+								<xs:element name="id" type="xs:string"/>
+								<xs:element name="object_type_name" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="nodes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="connections">
+		<xs:complexType>
+			<xs:sequence>
 				<xs:element name="connection" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>
@@ -139,6 +152,15 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="opc_ua_cfg">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="settings"/>
+				<xs:element ref="nodes"/>
+				<xs:element ref="connections"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
