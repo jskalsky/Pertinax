@@ -12,7 +12,7 @@ namespace WpfControlLibrary.DataModel
     public enum DataModelType { None, Namespace, Folder, ObjectType, ObjectVariable, SimpleVariable, ArrayVariable }
     public abstract class DataModelNode : INotifyPropertyChanged, IDataErrorInfo
     {
-        protected readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
+        public static string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
         protected readonly string[] _access = new string[] { "Read", "Write", "ReadWrite" };
         public const ushort DefaultNamespaceIndex = 1;
         private bool _isExpanded;

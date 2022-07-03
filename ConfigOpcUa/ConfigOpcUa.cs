@@ -453,7 +453,7 @@ namespace ConfigOpcUa
                         {
                             foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
                             {
-                                cc.AddVar(vt.ns, vt.id);
+                                cc.AddVar(vt.ns, vt.id, GetBasicType(vt.basic_type), vt.alias);
                             }
                         }
                         mvm.Connections.Add(cc);
@@ -1221,14 +1221,26 @@ namespace ConfigOpcUa
 
         private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.connectionsConnectionVar var_Type)
         {
-            var_Type.ns = var.NsIndex;
-            var_Type.id = var.Id;
+            var_Type.ns = 0;
+            var_Type.id = string.Empty;
+            string[] items = var.Identifier.Split(':');
+            if(items.Length == 2)
+            {
+                if (ushort.TryParse(items[0], out ushort nsIndex))
+                {
+                    var_Type.ns= nsIndex;
+                    var_Type.id = items[1];
+                }
+            }
+            var_Type.basic_type = GetBasicType(var.SelectedBasicType);
+            var_Type.alias= var.Alias;
         }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
             Debug.Print($"SaveConfiguration {fileName}");
 
             OpcUaCfg.opc_ua_cfg cfg = new OpcUaCfg.opc_ua_cfg();
+            cfg.settings=new OpcUaCfg.settings();
             cfg.settings.local_ip = mvm.LocalIpAddress;
             cfg.settings.multicast_ip = mvm.MulticastIpAddress;
 

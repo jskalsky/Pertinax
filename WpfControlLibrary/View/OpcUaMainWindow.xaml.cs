@@ -233,7 +233,7 @@ namespace WpfControlLibrary.View
             {
                 if (vm.SelectedConnection != null)
                 {
-                    vm.SelectedConnection.AddVar(1, "Var");
+                    vm.SelectedConnection.AddVar(1, "1000", DataModel.DataModelNode._basicTypes[0], string.Empty);
                     vm.SelectedConnection.IsExpanded = true;
                 }
             }
@@ -251,21 +251,18 @@ namespace WpfControlLibrary.View
             {
                 if (DataContext is OpcUaViewModel vm)
                 {
-                    if (vm.SelectedConnection == null)
+                    foreach (object mi in menu.Items)
                     {
-                        foreach (object mi in menu.Items)
+                        if (mi is MenuItem menuItem)
                         {
-                            if (mi is MenuItem menuItem)
+                            menuItem.IsEnabled = false;
+                            if (menuItem.Name == "MiAddConnection")
                             {
-                                menuItem.IsEnabled = false;
-                                if (menuItem.Name == "MiAddConnection")
-                                {
-                                    menuItem.IsEnabled = true;
-                                }
+                                menuItem.IsEnabled = true;
                             }
                         }
                     }
-                    else
+                    if (vm.SelectedConnection != null)
                     {
                         if (vm.SelectedConnection is Client.ClientConnection)
                         {
@@ -273,7 +270,6 @@ namespace WpfControlLibrary.View
                             {
                                 if (mi is MenuItem menuItem)
                                 {
-                                    menuItem.IsEnabled = false;
                                     if (menuItem.Name == "MiAddConnectionVar")
                                     {
                                         menuItem.IsEnabled = true;

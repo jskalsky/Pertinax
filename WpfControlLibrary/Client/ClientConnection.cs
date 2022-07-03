@@ -15,6 +15,7 @@ namespace WpfControlLibrary.Client
         private ushort _period;
         private string _service;
         private bool _isExpanded;
+        private string[] _services = new string[] {"Read", "Write"};
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -23,7 +24,9 @@ namespace WpfControlLibrary.Client
             Vars = new ObservableCollection<ClientVar>();
             ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/ClassIcon.png";
             Period = 100;
-            Crypto = false;
+            Crypto = true;
+            Service = _services[1];
+            ValidateVars = true;
         }
 
         public string IpAddress
@@ -44,6 +47,10 @@ namespace WpfControlLibrary.Client
             set { _period = value; OnPropertyChanged(nameof(Period)); }
         }
 
+        public string[] Services
+        { 
+            get { return _services; } 
+        }
         public string Service
         {
             get { return _service; }
@@ -57,7 +64,7 @@ namespace WpfControlLibrary.Client
         public string ImagePath { get; }
 
         public ObservableCollection<ClientVar> Vars { get; }
-
+        public bool ValidateVars { get; set; }
         public string Error => throw new NotImplementedException();
 
         public string this[string columnName]
@@ -70,9 +77,9 @@ namespace WpfControlLibrary.Client
             string error = string.Empty;
             return error;
         }
-        public void AddVar(ushort ns, string id)
+        public void AddVar(ushort ns, string id, string basicType, string alias)
         {
-            ClientVar var = new ClientVar() { NsIndex = ns, Id = id };
+            ClientVar var = new ClientVar(this) { Identifier=$"{ns}:{id}", SelectedBasicType = basicType, Alias = alias };
             Vars.Add(var);
         }
         private void OnPropertyChanged(string name)

@@ -146,6 +146,8 @@
 									<xs:sequence>
 										<xs:element name="ns" type="xs:unsignedShort"/>
 										<xs:element name="id" type="xs:string"/>
+										<xs:element name="basic_type" type="basic_type"/>
+										<xs:element name="alias" type="xs:string"/>
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>

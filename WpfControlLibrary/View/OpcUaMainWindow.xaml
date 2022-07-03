@@ -105,11 +105,13 @@
                                 <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                         <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                        <Label Content="Jméno"/>
                                         <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
-                                             Margin="5,0,0,0" GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <ComboBox Margin="5,0,0,0" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedString,Mode=TwoWay}"
-                                                  Visibility="{Binding BasicTypesVisibility}"/>
+                                             GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                        <Label Content="Typ" Visibility="{Binding BasicTypesVisibility}"/>
+                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedString,Mode=TwoWay}"
+                                                  Visibility="{Binding BasicTypesVisibility}" VerticalContentAlignment="Center"/>
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
                             </TreeView.ItemTemplate>
@@ -141,26 +143,32 @@
                                 <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
                                     <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                         <Image Stretch="Fill" Source="{Binding ImagePath}"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0" 
+                                        <Label  Content="Ip" Margin="5,0,0,0"/>
+                                        <TextBox Style="{StaticResource ToolTipError}" 
                                                  Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                                  GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0"
-                                                 Text="{Binding Period,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                        <Label Content="Perioda" Margin="5,0,0,0"/>
+                                        <local:NumericUpDown NudIncrement="10" NudMin="10" NudMax="10000" NudValue="{Binding Period}"/>
+                                        <Label  Content="ms"/>
+                                        <ComboBox ItemsSource="{Binding Services}" Margin="5,0,0,0" SelectedValue="{Binding Service,Mode=TwoWay}"
+                                                  VerticalAlignment="Center"/>
                                         <CheckBox Margin="5,0,0,0" VerticalAlignment="Center" Content="Šifrovat" IsChecked="{Binding Crypto}"/>
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
                                 <DataTemplate DataType="{x:Type client:ClientVar}">
                                     <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                         <Image Stretch="Fill" Source="{Binding ImagePath}"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0"
-                                                 Text="{Binding NsIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                        <Label Content="Id"/>
+                                        <TextBox Style="{StaticResource ToolTipError}"
+                                                 Text="{Binding Identifier,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                                  GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" Margin="5,0,0,0"
-                                                 Text="{Binding Id,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                        <Label Content="Typ"/>
+                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType,Mode=TwoWay}"/>
+                                        <Label Content="Alias"/>
+                                        <TextBox Style="{StaticResource ToolTipError}"
+                                                 Text="{Binding Alias,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                                  GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
                                                  PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                     </StackPanel>

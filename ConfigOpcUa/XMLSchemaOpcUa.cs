@@ -548,6 +548,10 @@ namespace OpcUaCfg {
         
         private string idField;
         
+        private basic_type basic_typeField;
+        
+        private string aliasField;
+        
         /// <remarks/>
         public ushort ns {
             get {
@@ -565,6 +569,26 @@ namespace OpcUaCfg {
             }
             set {
                 this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public basic_type basic_type {
+            get {
+                return this.basic_typeField;
+            }
+            set {
+                this.basic_typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string alias {
+            get {
+                return this.aliasField;
+            }
+            set {
+                this.aliasField = value;
             }
         }
     }
