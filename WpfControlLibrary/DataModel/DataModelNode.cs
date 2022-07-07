@@ -26,14 +26,12 @@ namespace WpfControlLibrary.DataModel
         protected DataModelNode(string name, string imagePath, NodeIdBase nodeId, DataModelNode parent)
         {
             Name = name;
-            TreeNodeText = string.Empty;
             ImagePath = imagePath;
             NodeId = nodeId;
             Children = new ObservableCollection<DataModelNode>();
             Parent = parent;
             BasicTypesVisibility = Visibility.Collapsed;
         }
-        public string TreeNodeText { get; protected set; }
         public string[] BasicTypes { get { return _basicTypes; } }
         public string Name
         {
@@ -79,16 +77,6 @@ namespace WpfControlLibrary.DataModel
             if (_oldName == Name || _oldName == string.Empty)
             {
                 return error;
-            }
-            DataModelNamespace ns = GetNamespace();
-            switch (propertyName)
-            {
-                case "Name":
-                    if (IdFactory.NameExists(ns.Namespace, Name))
-                    {
-                        error = $"Jméno {Name} již existuje";
-                    }
-                    break;
             }
             return error;
         }

@@ -109,7 +109,7 @@ namespace WpfControlLibrary.View
 
         private void Write_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is AddVariableViewModel vm)
+/*            if (DataContext is AddVariableViewModel vm)
             {
                 vm.VarWritten = 0;
                 if (vm.SelectedKind == vm.Kind[0])
@@ -160,7 +160,7 @@ namespace WpfControlLibrary.View
                         }
                     }
                 }
-            }
+            }*/
         }
 
         private void VariableProperties_KindChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

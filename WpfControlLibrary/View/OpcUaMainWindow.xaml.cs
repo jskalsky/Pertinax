@@ -79,9 +79,9 @@ namespace WpfControlLibrary.View
                                             menuItem.IsEnabled = false;
                                             foreach (string type in enabledTypes)
                                             {
-                                                if(menuItem.Name == type)
+                                                if (menuItem.Name == type)
                                                 {
-                                                    menuItem.IsEnabled=true;
+                                                    menuItem.IsEnabled = true;
                                                     break;
                                                 }
                                             }
@@ -103,10 +103,10 @@ namespace WpfControlLibrary.View
                 if (ns != null)
                 {
                     string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameFolder);
-                    string[] ids = IdFactory.GetNumericIds(ns.Namespace);
-                    if (names != null && names.Length == 1 && ids != null && ids.Length == 1)
+                    NodeIdNumeric numeric = NodeIdBase.GetNextSystemNodeId(ns.Namespace);
+                    if (names != null && names.Length == 1 && numeric != null)
                     {
-                        DataModelFolder dmf = DataModelNode.GetFolder(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
+                        DataModelFolder dmf = DataModelNode.GetFolder(names[0], numeric, mvm.SelectedNode);
                         mvm.SelectedNode.AddChildren(dmf);
                         mvm.SelectedNode.IsExpanded = true;
                     }
@@ -116,44 +116,40 @@ namespace WpfControlLibrary.View
 
         private void MiAddVar_Click(object sender, RoutedEventArgs e)
         {
-            Debug.Print("500");
-            DialogAddVariable dialogAddVariable = new DialogAddVariable();
-            Debug.Print("501");
-            if (dialogAddVariable.DataContext is AddVariableViewModel vm)
+            DataModelManager dmm = new DataModelManager();
+            if (dmm.DataContext is DataModelManagerViewModel vm)
             {
                 if (DataContext is OpcUaViewModel mvm)
                 {
                     List<string> objectTypes = new List<string>();
-                    foreach(DataModelObjectType ot in mvm.ObjectTypes)
+                    foreach (DataModelObjectType ot in mvm.ObjectTypes)
                     {
                         objectTypes.Add(ot.Name);
                     }
-                    vm.ObjectTypes = objectTypes.ToArray();
+                    //                    vm.ObjectTypes = objectTypes.ToArray();
 
                     DataModelNamespace ns = mvm.SelectedNode.GetNamespace();
                     if (ns != null)
                     {
-                        vm.ParentNode = mvm.SelectedNode;
-                        vm.Namespace = ns.Namespace;
-                        string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameSimpleVar);
-                        if (names != null && names.Length == 1)
-                        {
-                            vm.VarName = names[0];
-                        }
-                        string[] ids = IdFactory.GetNumericIds(ns.Namespace);
-                        if (ids != null && ids.Length == 1)
-                        {
-                            vm.VarId = ids[0];
-                        }
-                        Debug.Print("502");
+                        /*                        vm.ParentNode = mvm.SelectedNode;
+                                                vm.Namespace = ns.Namespace;
+                                                string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameSimpleVar);
+                                                if (names != null && names.Length == 1)
+                                                {
+                                                    vm.VarName = names[0];
+                                                }
+                                                string[] ids = IdFactory.GetNumericIds(ns.Namespace);
+                                                if (ids != null && ids.Length == 1)
+                                                {
+                                                    vm.VarId = ids[0];
+                                                }*/
                         vm.SelectedKind = vm.Kind[0];
                         vm.SelectedBasicType = vm.BasicTypes[0];
-                        Debug.Print("503");
+                        vm.SelectedAccess = vm.Access[1];
+                        vm.SelectedIdType = vm.IdType[0];
                     }
-                    Debug.Print("504");
-                    bool? result = dialogAddVariable.ShowDialog();
+                    bool? result = dmm.ShowDialog();
                     mvm.SelectedNode.IsExpanded = true;
-                    Debug.Print("505");
                 }
             }
         }
@@ -165,15 +161,15 @@ namespace WpfControlLibrary.View
                 DataModelNamespace ns = mvm.SelectedNode.GetNamespace();
                 if (ns != null)
                 {
-                    string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameObjectType);
-                    string[] ids = IdFactory.GetNumericIds(ns.Namespace);
-                    if (names != null && names.Length == 1 && ids != null && ids.Length == 1)
-                    {
-                        DataModelObjectType dmot = DataModelNode.GetObjectType(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
-                        mvm.ObjectTypes.Add(dmot);
-                        mvm.SelectedNode.AddChildren(dmot);
-                        mvm.SelectedNode.IsExpanded = true;
-                    }
+                    /*                    string[] names = IdFactory.GetNames(ns.Namespace, IdFactory.NameObjectType);
+                                        string[] ids = IdFactory.GetNumericIds(ns.Namespace);
+                                        if (names != null && names.Length == 1 && ids != null && ids.Length == 1)
+                                        {
+                                            DataModelObjectType dmot = DataModelNode.GetObjectType(names[0], NodeIdBase.GetNodeIdBase($"{ns}:{ids[0]}"), mvm.SelectedNode);
+                                            mvm.ObjectTypes.Add(dmot);
+                                            mvm.SelectedNode.AddChildren(dmot);
+                                            mvm.SelectedNode.IsExpanded = true;
+                                        }*/
                 }
             }
         }
@@ -289,6 +285,39 @@ namespace WpfControlLibrary.View
                 vm.SelectedConnection = e.NewValue as Client.ClientConnection;
             }
             e.Handled = true;
+        }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                if (vm.SelectedNode != null)
+                {
+                    DataModelNamespace ns = vm.SelectedNode.GetNamespace();
+                    string nameBase = (vm.ArrayLength == 0) ? IdFactory.NameSimpleVar : IdFactory.NameArrayVar;
+                    string[] names = IdFactory.GetNames(ns.Namespace, nameBase, vm.VarCount);
+                    NodeIdNumeric[] ids = NodeIdBase.GetNextNodeIds(ns.Namespace, vm.VarCount);
+                    for (int i = 0; i < vm.VarCount; i++)
+                    {
+                        if (vm.ArrayLength == 0)
+                        {
+                            DataModelSimpleVariable dmsv = new DataModelSimpleVariable(names[i], ids[i], vm.SelectedBasicType,
+                            vm.SelectedAccess, vm.SelectedNode);
+                            vm.SelectedNode.AddChildren(dmsv);
+                        }
+                        else
+                        {
+                            DataModelArrayVariable dmav = new DataModelArrayVariable(names[i], ids[i], vm.SelectedBasicType, vm.SelectedAccess,
+                            vm.ArrayLength, vm.SelectedNode);
+                            vm.SelectedNode.AddChildren(dmav);
+                        }
+                    }
+                    if (vm.SelectedNode.Children.Count > 0)
+                    {
+                        vm.SelectedNode.IsExpanded = true;
+                    }
+                }
+            }
         }
     }
 }

@@ -14,7 +14,6 @@ namespace WpfControlLibrary.DataModel
             SelectedString = basicType;
             VarAccess = varAccess;
             DataModelType = DataModelType.SimpleVariable;
-            TreeNodeText = $"{SelectedString}, {VarAccess}, {nodeId.GetIdentifier()}";
             BasicTypesVisibility = System.Windows.Visibility.Visible;
         }
 

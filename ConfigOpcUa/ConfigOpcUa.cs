@@ -26,16 +26,10 @@ namespace ConfigOpcUa
             { 'I', 4 }, {'L', 6 }, {'R', 8 }, {'D', 11 } };
         private readonly Dictionary<string, byte> _access = new Dictionary<string, byte>() { { "Read", 0 }, { "Write", 1 }, { "ReadWrite", 2 } };
 
-        private readonly List<WpfControlLibrary.OpcObject> _objects;
         private string _localIpAddress;
         private string _groupAddress;
         private int _publisherId;
         private bool _serverEncryption;
-        private readonly List<WpfControlLibrary.SubscriberItem> _subscriberItems;
-        private readonly List<WpfControlLibrary.PublisherItem> _publisherItems;
-        private readonly List<WpfControlLibrary.ClientItem> _clientItems;
-        private readonly List<WpfControlLibrary.ServerItem> _serverItems;
-
         private readonly List<WpfControlLibrary.PortsNode> _ports;
         private readonly Dictionary<string, Flag> _allPorts;
         public ConfigOpcUa()
@@ -52,11 +46,6 @@ namespace ConfigOpcUa
             Debug.AutoFlush = true;
             Debug.WriteLine("Start");
 #endif
-            _objects = new List<WpfControlLibrary.OpcObject>();
-            _subscriberItems = new List<WpfControlLibrary.SubscriberItem>();
-            _publisherItems = new List<WpfControlLibrary.PublisherItem>();
-            _clientItems = new List<WpfControlLibrary.ClientItem>();
-            _serverItems = new List<WpfControlLibrary.ServerItem>();
             _ports = new List<WpfControlLibrary.PortsNode>();
             _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
@@ -212,148 +201,6 @@ namespace ConfigOpcUa
             return string.Empty;
         }
 
-        private WpfControlLibrary.OpcObject FindOpcObject(string name)
-        {
-            foreach (WpfControlLibrary.OpcObject oo in _objects)
-            {
-                if (oo.Name == name)
-                {
-                    return oo;
-                }
-            }
-            return null;
-        }
-        private void AddItemsToObject(ObjectTypeType ott, WpfControlLibrary.OpcObject oo, bool publish)
-        {
-            try
-            {
-                if (ott.Variables == null)
-                {
-                    return;
-                }
-                foreach (VariablesType vt in ott.Variables)
-                {
-                    string[] iitems = vt.Description.Split(';');
-                    ushort ns = 0;
-                    string id = string.Empty;
-                    if (iitems.Length == 2)
-                    {
-                        ushort.TryParse(iitems[0], out ns);
-                        id = iitems[1];
-                    }
-                    else
-                    {
-                        if (iitems.Length == 1)
-                        {
-                            id = iitems[0];
-                        }
-                    }
-                    WpfControlLibrary.OpcObjectItem ooi = new WpfControlLibrary.OpcObjectItem(vt.Name, GetAccess(vt.AccessType), string.Empty, vt.ArraySize, GetBasicType(vt.BasicType),
-                        false, $"{ns}:{id}", oo);
-                    ooi.SelectedBasicType = GetBasicType(vt.BasicType);
-                    ooi.SelectedAccess = GetAccess(vt.AccessType);
-                    ooi.WriteOutside = (ooi.SelectedAccess != ooi.Access[0]);
-                    ooi.ArraySizeValue = vt.ArraySize;
-                    ooi.SelectedRank = (vt.Type == 0) ? ooi.Rank[0] : ooi.Rank[1];
-                    oo.AddItem(ooi);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Print($"Exc= {e.Message}");
-            }
-            Debug.Print("AddItemsToObject End");
-        }
-
-        private WpfControlLibrary.OpcObject ImportObject(OPCUAParametersType pars, string name, string cfgName, bool publish)
-        {
-            /*            foreach (ObjectTypeType ott in pars.ObjectType)
-                        {
-                            Debug.Print($"ImportObject {ott.Name}");
-                            string[] items = ott.Description.Split(';');
-                            Debug.Print($"items= {items.Length}");
-                            if (items.Length == 2)
-                            {
-                                bool pub = false;
-                                bool.TryParse(items[0], out pub);
-                                Debug.Print($"pub= {pub}, {items[0]}, {publish}");
-                                if (ott.Name == name && pub == publish)
-                                {
-                                    Debug.Print("300");
-                                    WpfControlLibrary.OpcObject oo = new WpfControlLibrary.OpcObject($"{cfgName}_{name}", false, true);
-                                    Debug.Print("301");
-                                    if (oo != null)
-                                    {
-                                        Debug.Print("302");
-                                        AddItemsToObject(ott, oo, publish);
-                                        Debug.Print("303");
-                                        return oo;
-                                    }
-                                }
-                            }
-                        }*/
-            return null;
-        }
-
-        private void Import(string path, string objectName, bool receive, bool monitoring, int period, bool encrypt, WpfControlLibrary.MainViewModel mvm = null)
-        {
-            Debug.Print("Import");
-            if (File.Exists(path))
-            {
-                XmlSerializer serializerOpc = new XmlSerializer(typeof(OPCUAParametersType));
-                using (TextReader tr = new StreamReader(path))
-                {
-                    OPCUAParametersType parsOpc = (OPCUAParametersType)serializerOpc.Deserialize(tr);
-                    if (parsOpc.Subscriber != null)
-                    {
-                        foreach (SubscriberType subscriberType in parsOpc.Subscriber)
-                        {
-                            if (subscriberType.PublisherRootType == objectName)
-                            {
-                                WpfControlLibrary.OpcObject oo = ImportObject(parsOpc, objectName, Path.GetFileNameWithoutExtension(path), true);
-                                if (oo != null)
-                                {
-                                    string[] itemsSub = subscriberType.Description.Split(';');
-                                    if (itemsSub.Length == 3)
-                                    {
-                                        int writerId = 0;
-                                        int.TryParse(itemsSub[0], out writerId);
-                                        int datasetId = 0;
-                                        int.TryParse(itemsSub[1], out datasetId);
-                                        WpfControlLibrary.SubscriberItem si = new WpfControlLibrary.SubscriberItem(path, objectName, parsOpc.PublisherId, writerId, datasetId, oo, receive);
-                                        _subscriberItems.Add(si);
-                                        if (mvm != null)
-                                        {
-                                            mvm.SubscriberObjects.Add(si);
-                                            mvm.SelectedSubscriberItem = si;
-                                        }
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    string[] ips = parsOpc.ServerRootType.Split(';');
-                    Debug.Print($"ips= {ips.Length}");
-                    if (ips.Length == 2)
-                    {
-                        Debug.Print("200");
-                        WpfControlLibrary.OpcObject oo = ImportObject(parsOpc, objectName, Path.GetFileNameWithoutExtension(path), false);
-                        Debug.Print("201");
-                        if (oo != null)
-                        {
-                            WpfControlLibrary.ClientItem ci = new WpfControlLibrary.ClientItem(path, objectName, ips[0], oo, receive, period, encrypt, monitoring);
-                            _clientItems.Add(ci);
-                            if (mvm != null)
-                            {
-                                mvm.ClientObjects.Add(ci);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
-        }
 
         private void LoadNode(DataModelNode parent, OpcUaCfg.node n, ObservableCollection<DataModelNode> dataModel)
         {
@@ -362,8 +209,8 @@ namespace ConfigOpcUa
             {
                 dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), parent);
                 DataModelNamespace ns = dmn.GetNamespace();
-                IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
-                IdFactory.AddNumericId(ns.Namespace, folder.id);
+//                IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
+//                IdFactory.AddNumericId(ns.Namespace, folder.id);
             }
             else
             {
@@ -378,8 +225,8 @@ namespace ConfigOpcUa
                         dmn = new DataModelSimpleVariable(simpleVar.name, NodeIdBase.GetNodeIdBase(simpleVar.id), GetBasicType(simpleVar.basic_type),
                             GetAccess(simpleVar.access), parent);
                         DataModelNamespace ns = dmn.GetNamespace();
-                        IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
-                        IdFactory.AddNumericId(ns.Namespace, simpleVar.id);
+//                        IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
+//                        IdFactory.AddNumericId(ns.Namespace, simpleVar.id);
                     }
                     else
                     {
@@ -388,8 +235,8 @@ namespace ConfigOpcUa
                             dmn = new DataModelArrayVariable(arrayVar.name, NodeIdBase.GetNodeIdBase(arrayVar.id), GetBasicType(arrayVar.basic_type),
                                 GetAccess(arrayVar.access), (int)arrayVar.length, parent);
                             DataModelNamespace ns = dmn.GetNamespace();
-                            IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
-                            IdFactory.AddNumericId(ns.Namespace, arrayVar.id);
+//                            IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
+//                            IdFactory.AddNumericId(ns.Namespace, arrayVar.id);
                         }
                         else
                         {
@@ -397,8 +244,8 @@ namespace ConfigOpcUa
                             {
                                 dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
                                 DataModelNamespace ns = dmn.GetNamespace();
-                                IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectType.name);
-                                IdFactory.AddNumericId(ns.Namespace, objectType.id);
+//                                IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectType.name);
+//                                IdFactory.AddNumericId(ns.Namespace, objectType.id);
                             }
                             else
                             {
@@ -407,8 +254,8 @@ namespace ConfigOpcUa
                                     dmn = new DataModelObjectVariable(objectVar.name, NodeIdBase.GetNodeIdBase(objectVar.id), objectVar.object_type_name,
                                         parent);
                                     DataModelNamespace ns = dmn.GetNamespace();
-                                    IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
-                                    IdFactory.AddNumericId(ns.Namespace, objectVar.id);
+//                                    IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
+//                                    IdFactory.AddNumericId(ns.Namespace, objectVar.id);
                                 }
                             }
                         }
@@ -464,8 +311,10 @@ namespace ConfigOpcUa
             {
                 mvm.DataModelNamespace0 = new DataModelNamespace(0);
                 mvm.DataModelNamespace1 = new DataModelNamespace(1);
+                mvm.DataModelNamespace2 = new DataModelNamespace(2);
                 mvm.DataModel.Add(mvm.DataModelNamespace0);
                 mvm.DataModel.Add(mvm.DataModelNamespace1);
+                mvm.DataModel.Add(mvm.DataModelNamespace2);
             }
         }
         public override void LoadConfig(string pName)
@@ -618,25 +467,6 @@ namespace ConfigOpcUa
                         }*/
         }
 
-        private string[] ItemToText(string objectName, WpfControlLibrary.OpcObjectItem ooi)
-        {
-            List<string> flags = new List<string>();
-            string flag = $"{ooi.Name}({objectName})";
-            Debug.Print($"ItemToText {objectName}, {ooi.Name}, {ooi.SelectedRank}");
-            if (ooi.SelectedRank == ooi.Rank[0])
-            {
-                flags.Add(flag);
-            }
-            else
-            {
-                for (int i = 0; i < ooi.ArraySizeValue; ++i)
-                {
-                    flags.Add($"{flag}.{i}");
-                }
-            }
-            return flags.ToArray();
-        }
-
         private ushort GetArrayIndex(string text)
         {
             int i = text.LastIndexOf('.');
@@ -662,7 +492,7 @@ namespace ConfigOpcUa
             _ports.Add(inputs);
 
             StringBuilder sb = new StringBuilder();
-            foreach (WpfControlLibrary.OpcObject oo in _objects)
+/*            foreach (WpfControlLibrary.OpcObject oo in _objects)
             {
                 WpfControlLibrary.PortsNode objectNodeIn = inputs.Add(oo.Name);
                 WpfControlLibrary.PortsNode objectNodeOut = outputs.Add(oo.Name);
@@ -774,7 +604,7 @@ namespace ConfigOpcUa
                     }
                 }
                 ++serverIndex;
-            }
+            }*/
         }
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
@@ -863,7 +693,7 @@ namespace ConfigOpcUa
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Debug.Print($"Vm_PropertyChanged {e.PropertyName}, {sender}");
-            if (e.PropertyName == "SubscriberPath")
+/*            if (e.PropertyName == "SubscriberPath")
             {
                 if (sender is WpfControlLibrary.MainViewModel mvm)
                 {
@@ -885,7 +715,7 @@ namespace ConfigOpcUa
                         Import(mvm.SubscriberPath, objectName, false, false, 100, false, mvm);
                     }
                 }
-            }
+            }*/
         }
 
         public override void OS9Files(out string pFiles, string pName, int typ)
@@ -908,80 +738,6 @@ namespace ConfigOpcUa
         {
             Debug.Print($"UnLoadConfig");
         }
-
-        /*        private void SaveConfiguration(string fileName, ViewModel vm)
-                {
-                    OpcConfiguration opc = new OpcConfiguration();
-                    opc.GroupIpAddress = vm.GroupAddressString;
-                    List<OpcConfigurationObject> objects = new List<OpcConfigurationObject>();
-                    List<OpcConfigurationObjectItem> items = new List<OpcConfigurationObjectItem>();
-                    foreach (OpcObject oo in vm.Objects)
-                    {
-                        OpcConfigurationObject ot = new OpcConfigurationObject();
-                        ot.Name = oo.Name;
-                        ot.PublishingInterval = (ushort)oo.PublishingInterval;
-                        ot.PublishingIntervalSpecified = true;
-                        ot.Pub = oo.Pub;
-                        ot.PubSpecified = true;
-                        ot.Sub = oo.Sub;
-                        ot.SubSpecified = true;
-                        items.Clear();
-                        foreach (OpcObjectItem ooi in oo.Items)
-                        {
-                            OpcConfigurationObjectItem oit = new OpcConfigurationObjectItem();
-                            oit.Name = ooi.Name;
-                            oit.ArraySize = (ushort)ooi.ArraySizeValue;
-                            oit.ArraySizeSpecified = true;
-                            oit.Access = ooi.SelectedAccess;
-                            oit.BasicType = ooi.SelectedBasicType;
-                            oit.Rank = ooi.SelectedRank;
-                            items.Add(oit);
-                        }
-                        ot.Items = items.ToArray();
-                        objects.Add(ot);
-                    }
-                    opc.Objects = objects.ToArray();
-                    XmlSerializer serializer = new XmlSerializer(typeof(OpcConfiguration));
-                    using (TextWriter tw = new StreamWriter(fileName))
-                    {
-                        serializer.Serialize(tw, opc);
-                    }
-                }*/
-        private ObjectTypeType CreateObjectTypeType(WpfControlLibrary.OpcObject opcObject, ushort id)
-        {
-            List<VariablesType> variables = new List<VariablesType>();
-            ObjectTypeType ott = new ObjectTypeType();
-            ott.Id = id;
-            ott.Name = opcObject.Name;
-            ott.Description = $"{opcObject.ServerObject};{opcObject.ClientObject};{opcObject.PublisherObject};{opcObject.SubscriberObject};{opcObject.IsImported}";
-            ott.VariablesCount = (ushort)opcObject.Items.Count;
-            ott.BaseType = $"{opcObject.NodeId.NamespaceIndex};{opcObject.NodeId.GetIdentifier()}";
-            foreach (WpfControlLibrary.OpcObjectItem ooi in opcObject.Items)
-            {
-                if (_basicTypes.TryGetValue(ooi.SelectedBasicType, out byte typeCode))
-                {
-                    VariablesType vt = new VariablesType
-                    {
-                        Name = ooi.Name,
-                        BasicType = typeCode,
-                        Description = $"{ooi.NodeId.NamespaceIndex};{ooi.NodeId.GetIdentifier()}"
-                    };
-                    ooi.SelectedAccess = ooi.WriteOutside ? ooi.Access[1] : ooi.Access[0];
-                    if (_access.TryGetValue(ooi.SelectedAccess, out byte accessCode))
-                    {
-                        vt.AccessType = accessCode;
-                        vt.ArraySize = (ushort)ooi.ArraySizeValue;
-                        vt.Type = (ooi.SelectedRank == ooi.Rank[0]) ? (byte)0 : (byte)1;
-                        Debug.Print($"Object= {opcObject.Name}, Item= {vt.Name}, Type={vt.Type}");
-                        Debug.Flush();
-                        variables.Add(vt);
-                    }
-                }
-            }
-            ott.Variables = variables.ToArray();
-            return ott;
-        }
-
         private ObjectTypeType GetObjectFromPublisher(string path, string name, ushort id, out ushort publisherId)
         {
             publisherId = 0;
@@ -1113,7 +869,7 @@ namespace ConfigOpcUa
         {
             OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
             folder.name = dmFolder.Name;
-            folder.id = $"{dmFolder.GetNamespace().Namespace}:{dmFolder.NodeId.GetIdentifier()}";
+//            folder.id = $"{dmFolder.GetNamespace().Namespace}:{dmFolder.NodeId.GetIdentifier()}";
             return folder;
         }
 
@@ -1123,7 +879,7 @@ namespace ConfigOpcUa
             simple.name = dmSimple.Name;
             simple.access = GetAccess(dmSimple.VarAccess);
             simple.basic_type = GetBasicType(dmSimple.SelectedString);
-            simple.id = $"{dmSimple.GetNamespace().Namespace}:{dmSimple.NodeId.GetIdentifier()}";
+//            simple.id = $"{dmSimple.GetNamespace().Namespace}:{dmSimple.NodeId.GetIdentifier()}";
             return simple;
         }
 
@@ -1133,7 +889,7 @@ namespace ConfigOpcUa
             array.name = dmArray.Name;
             array.access = GetAccess(dmArray.VarAccess);
             array.basic_type = GetBasicType(dmArray.BasicType);
-            array.id = $"{dmArray.GetNamespace().Namespace}:{dmArray.NodeId.GetIdentifier()}";
+//            array.id = $"{dmArray.GetNamespace().Namespace}:{dmArray.NodeId.GetIdentifier()}";
             array.length = (uint)dmArray.ArrayLength;
             return array;
         }
@@ -1142,7 +898,7 @@ namespace ConfigOpcUa
         {
             OpcUaCfg.nodeObject_type ot = new OpcUaCfg.nodeObject_type();
             ot.name = dmObjectType.Name;
-            ot.id = $"{dmObjectType.GetNamespace().Namespace}:{dmObjectType.NodeId.GetIdentifier()}";
+//            ot.id = $"{dmObjectType.GetNamespace().Namespace}:{dmObjectType.NodeId.GetIdentifier()}";
             return ot;
         }
 
@@ -1151,7 +907,7 @@ namespace ConfigOpcUa
             OpcUaCfg.nodeObject_var objectVar = new OpcUaCfg.nodeObject_var();
             objectVar.name = dmObjectVar.Name;
             objectVar.object_type_name = dmObjectVar.ObjectTypeName;
-            objectVar.id = $"{dmObjectVar.GetNamespace().Namespace}:{dmObjectVar.NodeId.GetIdentifier()}";
+//            objectVar.id = $"{dmObjectVar.GetNamespace().Namespace}:{dmObjectVar.NodeId.GetIdentifier()}";
             return objectVar;
         }
         private static void SaveTreeNode(DataModelNode node, OpcUaCfg.node tn)

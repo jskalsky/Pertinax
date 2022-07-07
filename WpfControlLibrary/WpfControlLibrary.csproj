@@ -67,7 +67,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientItem.cs" />
     <Compile Include="Client\ClientConnection.cs" />
     <Compile Include="Client\ClientVar.cs" />
     <Compile Include="DataModel\DataModelArrayVariable.cs" />
@@ -78,35 +77,28 @@
     <Compile Include="DataModel\DataModelObjectVariable.cs" />
     <Compile Include="DataModel\DataModelSimpleVariable.cs" />
     <Compile Include="DataModel\IdFactory.cs" />
-    <Compile Include="EditObjectItemDialog.xaml.cs">
-      <DependentUpon>EditObjectItemDialog.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Exceptions\OpcUaException.cs" />
     <Compile Include="ImportedItem.cs" />
-    <Compile Include="NodeId.cs" />
+    <Compile Include="ViewModel\Variable.cs" />
     <Compile Include="DataModel\NodeIdBase.cs" />
     <Compile Include="DataModel\NodeIdNumeric.cs" />
     <Compile Include="DataModel\NodeIdString.cs" />
-    <Compile Include="SecondaryViewModel.cs" />
-    <Compile Include="ServerItem.cs" />
-    <Compile Include="ViewModelEditItems.cs" />
-    <Compile Include="OpcObject.cs" />
-    <Compile Include="OpcObjectItem.cs" />
-    <Compile Include="OpcObjectItemBase.cs" />
     <Compile Include="PortDialog.xaml.cs">
       <DependentUpon>PortDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="PortsNode.cs" />
-    <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PublisherItem.cs" />
-    <Compile Include="SubscriberItem.cs" />
     <Compile Include="ViewModelPorts.cs" />
     <Compile Include="ViewModel\AddVariableViewModel.cs" />
+    <Compile Include="ViewModel\DataModelManagerViewModel.cs" />
     <Compile Include="ViewModel\OpcUaViewModel.cs" />
+    <Compile Include="View\DataModelManager.xaml.cs">
+      <DependentUpon>DataModelManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DialogAddVariable.xaml.cs">
       <DependentUpon>DialogAddVariable.xaml</DependentUpon>
     </Compile>
@@ -116,15 +108,11 @@
     <Compile Include="View\VariableProperties.xaml.cs">
       <DependentUpon>VariableProperties.xaml</DependentUpon>
     </Compile>
-    <Page Include="EditObjectItemDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="IpAddressBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\DataModelManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -134,9 +122,6 @@
     </Page>
     <Compile Include="IpAddressBox.xaml.cs">
       <DependentUpon>IpAddressBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
@@ -190,6 +175,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\Enum_582.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

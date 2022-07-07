@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfControlLibrary
+namespace WpfControlLibrary.Exceptions
 {
-    public class ViewModelEditItems : OpcObjectItemBase
+    public class OpcUaException : ApplicationException
     {
-        public ViewModelEditItems() : base()
+        public OpcUaException(string message) : base(message)
         {
 
         }

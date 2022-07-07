@@ -15,7 +15,6 @@ namespace WpfControlLibrary.DataModel
             VarAccess = varAccess;
             ArrayLength = arrayLength;
             DataModelType = DataModelType.ArrayVariable;
-            TreeNodeText = $"{BasicType}, {ArrayLength}, {VarAccess}, {nodeId.GetIdentifier()}";
         }
         public string BasicType { get; }
         public string VarAccess { get; }
