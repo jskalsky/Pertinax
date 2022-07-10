@@ -11,12 +11,16 @@ namespace WpfControlLibrary.DataModel
         public DataModelSimpleVariable(string name, NodeIdBase nodeId, string basicType, string varAccess, DataModelNode parent) : base(name, 
             "pack://application:,,,/WpfControlLibrary;component/Icons/Constant_495.png", nodeId, parent)
         {
-            SelectedString = basicType;
+            VarType = basicType;
             VarAccess = varAccess;
             DataModelType = DataModelType.SimpleVariable;
-            BasicTypesVisibility = System.Windows.Visibility.Visible;
         }
 
         public string VarAccess { get; }
+        public string VarType { get; }
+        public override string ToString()
+        {
+            return $"{Name}, {VarType},  {NodeId}";
+        }
     }
 }

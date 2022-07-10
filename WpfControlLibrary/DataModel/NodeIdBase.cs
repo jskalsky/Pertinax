@@ -15,12 +15,12 @@ namespace WpfControlLibrary.DataModel
         public const uint FirstVarNumericId = 10000;
         public const uint LastVarNumericId = 100000;
         public const ushort FirstNamespaceIndex = 0;
-        public const ushort LastNamespaceIndex = 8;
+        public const ushort LastNamespaceIndex = 2;
         public const uint Divider = 50;
 
-        private static HashSet<string> _ids = new HashSet<string>();
-        private static uint _nextSystemNumericId = FirstSystemNumericId;
-        private static uint _nextVarNumericId = FirstVarNumericId;
+        private static Dictionary<ushort,HashSet<string>> _ids = new Dictionary<ushort, HashSet<string>>();
+        private static Dictionary<ushort, uint> _nextSystemNumericId = new Dictionary<ushort, uint>();
+        private static Dictionary<ushort,uint> _nextVarNumericId = new Dictionary<ushort, uint>();
         protected NodeIdBase(ushort namespaceIndex, IdentifierType identifierType)
         {
             NamespaceIndex = namespaceIndex;
@@ -36,11 +36,11 @@ namespace WpfControlLibrary.DataModel
             {
                 return null;
             }
-            if (ushort.TryParse(items[0], out ushort namespaceIndex))
+            if (ushort.TryParse(items[1], out ushort namespaceIndex))
             {
                 ns = namespaceIndex;
             }
-            if (items[1] =="N")
+            if (items[0] =="N")
             {
                 if (uint.TryParse(items[2], out uint numeric))
                 {
@@ -49,51 +49,106 @@ namespace WpfControlLibrary.DataModel
             }
             else
             {
-                if (items[1]=="S")
+                if (items[0]=="S")
                 {
                     return new NodeIdString(ns, items[2]);
                 }
             }
             return null;
         }
+
+        private static void Open()
+        {
+            if (_nextSystemNumericId.Count == 0)
+            {
+                for (ushort i = FirstNamespaceIndex; i <= LastNamespaceIndex; i++)
+                {
+                    _nextSystemNumericId[i] = FirstSystemNumericId;
+                }
+            }
+            if (_ids.Count == 0)
+            {
+                for (ushort i = FirstNamespaceIndex; i <= LastNamespaceIndex; i++)
+                {
+                    _ids[i] = new HashSet<string>();
+                }
+            }
+            if (_nextVarNumericId.Count == 0)
+            {
+                for (ushort i = FirstNamespaceIndex; i <= LastNamespaceIndex; i++)
+                {
+                    _nextVarNumericId[i] = FirstVarNumericId;
+                }
+            }
+        }
         public static NodeIdNumeric GetNextSystemNodeId(ushort ns)
         {
-            if(_nextSystemNumericId + 1 >=  FirstVarNumericId)
+            Open();
+            if (_nextSystemNumericId[ns] + 1 >=  FirstVarNumericId)
             {
                 throw new ArgumentOutOfRangeException(nameof(ns), $"Počet systémových numerických identifikátorů uzlů mimo rozsah");
             }
-            NodeIdNumeric nin = new NodeIdNumeric(ns,_nextSystemNumericId++);
+            NodeIdNumeric nin = new NodeIdNumeric(ns, _nextSystemNumericId[ns]++);
             string nodeId = nin.GetNodeName();
-            if(_ids.Contains(nodeId))
+            if (_ids[ns].Contains(nodeId))
             {
                 throw new Exceptions.OpcUaException($"Systémový identifikátor {nodeId} již existuje");
             }
-            _ids.Add(nodeId);
+            _ids[ns].Add(nodeId);
             return nin;
         }
         public static NodeIdNumeric[] GetNextNodeIds(ushort ns, int count, bool round=true)
         {
-            if(_nextVarNumericId + count >= LastVarNumericId)
+            Open();
+            if (_nextVarNumericId[ns] + count >= LastVarNumericId)
             {
                 throw new ArgumentOutOfRangeException(nameof(ns), $"Počet numerických identifikátorů uzlů mimo rozsah");
             }
             NodeIdNumeric[] nodes = new NodeIdNumeric[count];
             if(round)
             {
-                uint remainder = _nextVarNumericId % Divider;
-                _nextVarNumericId = _nextVarNumericId - remainder + Divider;
+                uint remainder = _nextVarNumericId[ns] % Divider;
+                if(remainder > 0)
+                {
+                    _nextVarNumericId[ns] = _nextVarNumericId[ns] - remainder + Divider;
+                }
             }
             for(int i=0;i< count; i++)
             {
-                nodes[i] = new NodeIdNumeric(ns,_nextVarNumericId++);
+                nodes[i] = new NodeIdNumeric(ns, _nextVarNumericId[ns]++);
                 string nodeId = nodes[i].GetNodeName();
-                if (_ids.Contains(nodeId))
+                if (_ids[ns].Contains(nodeId))
                 {
                     throw new Exceptions.OpcUaException($"Identifikátor {nodeId} již existuje");
                 }
-                _ids.Add(nodeId);
+                _ids[ns].Add(nodeId);
             }
             return nodes;
+        }
+
+        public static void AddSystemNodeId(ushort ns, NodeIdBase id)
+        {
+            Open();
+            if (id is  NodeIdNumeric num)
+            {
+                if(num.IdentifierNumeric > _nextSystemNumericId[ns])
+                {
+                    _nextSystemNumericId[ns]=num.IdentifierNumeric;
+                }
+            }
+            _ids[ns].Add(id.GetNodeName());
+        }
+        public static void AddVarNodeId(ushort ns, NodeIdBase id)
+        {
+            Open();
+            if (id is NodeIdNumeric num)
+            {
+                if (num.IdentifierNumeric > _nextVarNumericId[ns])
+                {
+                    _nextVarNumericId[ns] = num.IdentifierNumeric;
+                }
+            }
+            _ids[ns].Add(id.GetNodeName());
         }
         public static bool ExistsNodeId(string nodeId)
         {

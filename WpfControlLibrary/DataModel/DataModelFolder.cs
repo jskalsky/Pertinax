@@ -12,5 +12,9 @@ namespace WpfControlLibrary.DataModel
         {
             DataModelType = DataModelType.Folder;
         }
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
     }
 }

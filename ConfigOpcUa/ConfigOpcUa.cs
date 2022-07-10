@@ -209,8 +209,8 @@ namespace ConfigOpcUa
             {
                 dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), parent);
                 DataModelNamespace ns = dmn.GetNamespace();
-//                IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
-//                IdFactory.AddNumericId(ns.Namespace, folder.id);
+                IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
+                NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId);
             }
             else
             {
@@ -225,8 +225,8 @@ namespace ConfigOpcUa
                         dmn = new DataModelSimpleVariable(simpleVar.name, NodeIdBase.GetNodeIdBase(simpleVar.id), GetBasicType(simpleVar.basic_type),
                             GetAccess(simpleVar.access), parent);
                         DataModelNamespace ns = dmn.GetNamespace();
-//                        IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
-//                        IdFactory.AddNumericId(ns.Namespace, simpleVar.id);
+                        IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
+                        NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId);
                     }
                     else
                     {
@@ -235,8 +235,8 @@ namespace ConfigOpcUa
                             dmn = new DataModelArrayVariable(arrayVar.name, NodeIdBase.GetNodeIdBase(arrayVar.id), GetBasicType(arrayVar.basic_type),
                                 GetAccess(arrayVar.access), (int)arrayVar.length, parent);
                             DataModelNamespace ns = dmn.GetNamespace();
-//                            IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
-//                            IdFactory.AddNumericId(ns.Namespace, arrayVar.id);
+                            IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
+                            NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId);
                         }
                         else
                         {
@@ -244,7 +244,7 @@ namespace ConfigOpcUa
                             {
                                 dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
                                 DataModelNamespace ns = dmn.GetNamespace();
-//                                IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectType.name);
+                                IdFactory.AddName(ns.Namespace, IdFactory.NameObjectType, objectType.name);
 //                                IdFactory.AddNumericId(ns.Namespace, objectType.id);
                             }
                             else
@@ -254,7 +254,7 @@ namespace ConfigOpcUa
                                     dmn = new DataModelObjectVariable(objectVar.name, NodeIdBase.GetNodeIdBase(objectVar.id), objectVar.object_type_name,
                                         parent);
                                     DataModelNamespace ns = dmn.GetNamespace();
-//                                    IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
+                                   IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
 //                                    IdFactory.AddNumericId(ns.Namespace, objectVar.id);
                                 }
                             }
@@ -869,7 +869,7 @@ namespace ConfigOpcUa
         {
             OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
             folder.name = dmFolder.Name;
-//            folder.id = $"{dmFolder.GetNamespace().Namespace}:{dmFolder.NodeId.GetIdentifier()}";
+            folder.id = dmFolder.NodeId.GetNodeName();
             return folder;
         }
 
@@ -878,8 +878,8 @@ namespace ConfigOpcUa
             OpcUaCfg.nodeSimple_var simple = new OpcUaCfg.nodeSimple_var();
             simple.name = dmSimple.Name;
             simple.access = GetAccess(dmSimple.VarAccess);
-            simple.basic_type = GetBasicType(dmSimple.SelectedString);
-//            simple.id = $"{dmSimple.GetNamespace().Namespace}:{dmSimple.NodeId.GetIdentifier()}";
+            simple.basic_type = GetBasicType(dmSimple.VarType);
+            simple.id = dmSimple.NodeId.GetNodeName();
             return simple;
         }
 
@@ -889,7 +889,7 @@ namespace ConfigOpcUa
             array.name = dmArray.Name;
             array.access = GetAccess(dmArray.VarAccess);
             array.basic_type = GetBasicType(dmArray.BasicType);
-//            array.id = $"{dmArray.GetNamespace().Namespace}:{dmArray.NodeId.GetIdentifier()}";
+            array.id = dmArray.NodeId.GetNodeName();
             array.length = (uint)dmArray.ArrayLength;
             return array;
         }

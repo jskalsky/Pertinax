@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WpfControlLibrary.DataModel;
 using WpfControlLibrary.Client;
+using System.Windows;
 
 namespace WpfControlLibrary.ViewModel
 {
@@ -23,6 +24,11 @@ namespace WpfControlLibrary.ViewModel
         private string _selectedIdType;
         private int _varCount;
         private int _arrayLength;
+        private string _varName;
+        private Visibility _visibilityNumeric;
+        private Visibility _visibilityString;
+        private int _selectedNumeric;
+        private string _selectedString;
         public OpcUaViewModel()
         {
             SelectedNode = null;
@@ -92,6 +98,31 @@ namespace WpfControlLibrary.ViewModel
         {
             get { return _varCount; }
             set { _varCount = value; OnPropertyChanged(nameof(VarCount)); }
+        }
+        public string VarName
+        {
+            get { return _varName; }
+            set { _varName = value; OnPropertyChanged(nameof(VarName)); }
+        }
+        public Visibility VisibilityNumeric
+        {
+            get { return _visibilityNumeric; }
+            set { _visibilityNumeric = value; OnPropertyChanged(nameof(VisibilityNumeric)); }
+        }
+        public Visibility VisibilityString
+        {
+            get { return _visibilityString; }
+            set { _visibilityString = value; OnPropertyChanged(nameof(VisibilityString)); }
+        }
+        public int SelectedNumeric
+        {
+            get { return _selectedNumeric; }
+            set { _selectedNumeric=value; OnPropertyChanged(nameof(SelectedNumeric)); }
+        }
+        public string SelectedString
+        {
+            get { return _selectedString; }
+            set { _selectedString = value; OnPropertyChanged(nameof(SelectedString)); }
         }
         private void OnPropertyChanged(string name)
         {

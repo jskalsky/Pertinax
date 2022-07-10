@@ -107,16 +107,14 @@
                                     </ContextMenu>
                                 </TreeView.ContextMenu>
                                 <TreeView.Resources>
-                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNode}" ItemsSource="{Binding Children}">
+                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelSimpleVariable}" ItemsSource="{Binding Children}">
                                         <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                             <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                            <Label Content="Jméno"/>
-                                            <TextBox Style="{StaticResource ToolTipError}" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
-                                             GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
-                                            <Label Content="Typ" Visibility="{Binding BasicTypesVisibility}"/>
-                                            <ComboBox ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedString,Mode=TwoWay}"
-                                                  Visibility="{Binding BasicTypesVisibility}" VerticalContentAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                            <Label Content=", "/>
+                                            <TextBlock Text="{Binding VarType}" VerticalAlignment="Center"/>
+                                            <Label Content=", "/>
+                                            <TextBlock Text="{Binding NodeId}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNamespace}" ItemsSource="{Binding Children}">
@@ -128,7 +126,10 @@
                                     <HierarchicalDataTemplate DataType="{x:Type dm:DataModelFolder}" ItemsSource="{Binding Children}">
                                         <StackPanel Orientation="Horizontal">
                                             <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                            <TextBox Margin="2,0,0,0" Text="{Binding Name}"/>
+                                            <TextBox Margin="2,0,0,0" Style="{StaticResource ToolTipError}" 
+                                                     Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
                                 </TreeView.Resources>
@@ -162,9 +163,9 @@
                                     <Label Grid.Row="2" Content="Možnosti klienta"/>
                                     <ComboBox Grid.Row="3" ItemsSource="{Binding Access}" SelectedValue="{Binding SelectedAccess}"/>
                                     <Label Content="Počet položek pole" Grid.Row="4"/>
-                                    <local:NumericUpDown Grid.Row="5" NudIncrement="1" NudMin="0" NudMax="1000" NudValue="{Binding ArrayLength}"/>
+                                    <local:NumericUpDown Grid.Row="5" NudIncrement="1" NudMin="0" NudMax="1000" NudValue="{Binding ArrayLength,Mode=TwoWay}"/>
                                     <Label Grid.Row="6" Content="Počet proměnných"/>
-                                    <local:NumericUpDown Grid.Row="7" NudIncrement="1" NudMin="1" NudMax="10000" NudValue="{Binding VarCount}"/>
+                                    <local:NumericUpDown Grid.Row="7" NudIncrement="1" NudMin="1" NudMax="10000" NudValue="{Binding VarCount,Mode=TwoWay}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Row="8"  Margin="0,5,0,0">
                                         <Button Content="Přidat" Width="40" Click="Add_Click"/>
                                         <Button Content="Vložit" Margin="2,0,0,0" Width="40"/>
@@ -183,12 +184,22 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Label Content="Jméno proměnné"/>
-                                    <TextBox Grid.Row="1"/>
+                                    <TextBox Grid.Row="1" Style="{StaticResource ToolTipError}" 
+                                                 Text="{Binding VarName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
                                     <Label Grid.Row="2" Content="Identifikátor uzlu"/>
-                                    <ComboBox Grid.Row="3" ItemsSource="{Binding IdType}" SelectedValue="{Binding SelectedIdType}"/>
-                                    <local:NumericUpDown Grid.Row="4" Margin="0,2,0,0"/>
+                                    <ComboBox Grid.Row="3" ItemsSource="{Binding IdType}" SelectedValue="{Binding SelectedIdType}" 
+                                              SelectionChanged="IdType_SelectionChanged"/>
+                                    <local:NumericUpDown Grid.Row="4" Margin="0,2,0,0" Visibility="{Binding VisibilityNumeric}" NudIncrement="1"
+                                                         NudMin="1" NudMax="100000" NudValue="{Binding SelectedNumeric,Mode=TwoWay}"/>
+                                    <TextBox Grid.Row="4" Margin="0,2,0,0" Visibility="{Binding VisibilityString}" 
+                                             Style="{StaticResource ToolTipError}" 
+                                                 Text="{Binding SelectedString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
                                     <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,5,0,0">
-                                        <Button Content="Změnit"/>
+                                        <Button Content="Změnit" Click="Change_Click"/>
                                     </StackPanel>
                                 </Grid>
                             </GroupBox>

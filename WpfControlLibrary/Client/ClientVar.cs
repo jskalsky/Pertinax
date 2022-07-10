@@ -30,7 +30,7 @@ namespace WpfControlLibrary.Client
 
         public string[] BasicTypes 
         {
-            get { return DataModel.DataModelNode._basicTypes; }
+            get { return null; }
         }
         public string SelectedBasicType
         {

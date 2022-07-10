@@ -15,5 +15,9 @@ namespace WpfControlLibrary.DataModel
         }
 
         public ushort Namespace { get; }
+        public override string ToString()
+        {
+            return $"{Namespace}";
+        }
     }
 }

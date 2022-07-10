@@ -18,5 +18,9 @@ namespace WpfControlLibrary.DataModel
         {
             return $"N:{NamespaceIndex}:{IdentifierNumeric}";
         }
+        public override string ToString()
+        {
+            return GetNodeName();
+        }
     }
 }

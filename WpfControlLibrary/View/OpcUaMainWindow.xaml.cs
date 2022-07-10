@@ -42,6 +42,15 @@ namespace WpfControlLibrary.View
             if (DataContext is OpcUaViewModel vm)
             {
                 vm.SelectedNode = e.NewValue as DataModelNode;
+                if(vm.SelectedNode is DataModelSimpleVariable || vm.SelectedNode is DataModelArrayVariable)
+                {
+                    vm.VarName = vm.SelectedNode.Name;
+                    if(vm.SelectedNode.NodeId is NodeIdNumeric nodeIdNuneric)
+                    {
+                        vm.SelectedIdType = vm.IdType[0];
+                        vm.SelectedNumeric = (int)nodeIdNuneric.IdentifierNumeric;
+                    }
+                }
             }
             e.Handled = true;
         }
@@ -229,8 +238,8 @@ namespace WpfControlLibrary.View
             {
                 if (vm.SelectedConnection != null)
                 {
-                    vm.SelectedConnection.AddVar(1, "1000", DataModel.DataModelNode._basicTypes[0], string.Empty);
-                    vm.SelectedConnection.IsExpanded = true;
+                    //                    vm.SelectedConnection.AddVar(1, "1000", DataModel.DataModelNode._basicTypes[0], string.Empty);
+                    //                    vm.SelectedConnection.IsExpanded = true;
                 }
             }
             e.Handled = true;
@@ -316,6 +325,40 @@ namespace WpfControlLibrary.View
                     {
                         vm.SelectedNode.IsExpanded = true;
                     }
+                }
+            }
+        }
+
+        private void IdType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(DataContext is OpcUaViewModel vm)
+            {
+                if(e.AddedItems.Count==1 && e.AddedItems[0] is string sel)
+                {
+                    if(sel == vm.IdType[0])
+                    {
+                        vm.VisibilityNumeric = Visibility.Visible;
+                        vm.VisibilityString = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        vm.VisibilityNumeric = Visibility.Collapsed;
+                        vm.VisibilityString = Visibility.Visible;
+                    }
+                }
+            }
+            e.Handled= true;
+        }
+
+        private void Change_Click(object sender, RoutedEventArgs e)
+        {
+            if(DataContext is OpcUaViewModel vm)
+            {
+                vm.SelectedNode.Name = vm.VarName;
+                if(vm.SelectedIdType == vm.IdType[0])
+                {
+                    NodeIdNumeric nin = new NodeIdNumeric(vm.SelectedNode.NodeId.NamespaceIndex, (uint)vm.SelectedNumeric);
+                    vm.SelectedNode.NodeId = nin;
                 }
             }
         }

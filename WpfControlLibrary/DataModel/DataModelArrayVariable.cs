@@ -19,6 +19,9 @@ namespace WpfControlLibrary.DataModel
         public string BasicType { get; }
         public string VarAccess { get; }
         public int ArrayLength { get; }
-
+        public override string ToString()
+        {
+            return $"{Name}, {BasicType}, {ArrayLength}, {NodeId}";
+        }
     }
 }
