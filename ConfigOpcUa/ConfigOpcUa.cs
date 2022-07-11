@@ -270,9 +270,9 @@ namespace ConfigOpcUa
             {
                 parent.AddChildren(dmn);
             }
-            if (n.node1 != null)
+            if (n.sub_nodes != null)
             {
-                foreach (OpcUaCfg.node child in n.node1)
+                foreach (OpcUaCfg.node child in n.sub_nodes)
                 {
                     LoadNode(dmn, child, dataModel);
                 }
@@ -956,12 +956,12 @@ namespace ConfigOpcUa
             }
             if (node.Children.Count != 0)
             {
-                tn.node1 = new OpcUaCfg.node[node.Children.Count];
+                tn.sub_nodes = new OpcUaCfg.node[node.Children.Count];
                 int index = 0;
                 foreach (DataModelNode child in node.Children)
                 {
-                    tn.node1[index] = new OpcUaCfg.node();
-                    SaveTreeNode(child, tn.node1[index]);
+                    tn.sub_nodes[index] = new OpcUaCfg.node();
+                    SaveTreeNode(child, tn.sub_nodes[index]);
                     ++index;
                 }
             }

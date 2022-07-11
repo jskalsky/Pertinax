@@ -54,13 +54,12 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     public partial class node {
         
         private object itemField;
         
-        private node[] node1Field;
+        private node[] sub_nodesField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("array_var", typeof(nodeArray_var))]
@@ -79,13 +78,13 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("node")]
-        public node[] node1 {
+        [System.Xml.Serialization.XmlArrayItemAttribute("sub_node", IsNullable=false)]
+        public node[] sub_nodes {
             get {
-                return this.node1Field;
+                return this.sub_nodesField;
             }
             set {
-                this.node1Field = value;
+                this.sub_nodesField = value;
             }
         }
     }
@@ -411,29 +410,6 @@ namespace OpcUaCfg {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
-    public partial class nodes {
-        
-        private node[] nodeField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("node")]
-        public node[] node {
-            get {
-                return this.nodeField;
-            }
-            set {
-                this.nodeField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
     public partial class connections {
         
         private connectionsConnection[] connectionField;
@@ -604,6 +580,8 @@ namespace OpcUaCfg {
         
         private settings settingsField;
         
+        private opc_ua_cfgServer serverField;
+        
         private node[] nodesField;
         
         private connectionsConnection[] connectionsField;
@@ -619,7 +597,17 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("node", IsNullable=false)]
+        public opc_ua_cfgServer server {
+            get {
+                return this.serverField;
+            }
+            set {
+                this.serverField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("nodes")]
         public node[] nodes {
             get {
                 return this.nodesField;
@@ -637,6 +625,27 @@ namespace OpcUaCfg {
             }
             set {
                 this.connectionsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    public partial class opc_ua_cfgServer {
+        
+        private bool encryptionField;
+        
+        /// <remarks/>
+        public bool encryption {
+            get {
+                return this.encryptionField;
+            }
+            set {
+                this.encryptionField = value;
             }
         }
     }
