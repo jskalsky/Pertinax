@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using OpcUaCfg;
 using WpfControlLibrary;
 using WpfControlLibrary.DataModel;
 
@@ -245,7 +246,7 @@ namespace ConfigOpcUa
                                 dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
                                 DataModelNamespace ns = dmn.GetNamespace();
                                 IdFactory.AddName(ns.Namespace, IdFactory.NameObjectType, objectType.name);
-//                                IdFactory.AddNumericId(ns.Namespace, objectType.id);
+                                //                                IdFactory.AddNumericId(ns.Namespace, objectType.id);
                             }
                             else
                             {
@@ -254,8 +255,8 @@ namespace ConfigOpcUa
                                     dmn = new DataModelObjectVariable(objectVar.name, NodeIdBase.GetNodeIdBase(objectVar.id), objectVar.object_type_name,
                                         parent);
                                     DataModelNamespace ns = dmn.GetNamespace();
-                                   IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
-//                                    IdFactory.AddNumericId(ns.Namespace, objectVar.id);
+                                    IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, objectVar.name);
+                                    //                                    IdFactory.AddNumericId(ns.Namespace, objectVar.id);
                                 }
                             }
                         }
@@ -278,33 +279,34 @@ namespace ConfigOpcUa
                 }
             }
         }
+
         private void LoadXml(string pName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
             if (File.Exists(pName))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua_cfg));
+                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.OPCUAParametersType));
                 using (TextReader tr = new StreamReader(pName))
                 {
-                    OpcUaCfg.opc_ua_cfg treeNodes = (OpcUaCfg.opc_ua_cfg)serializer.Deserialize(tr);
+                    OpcUaCfg.OPCUAParametersType treeNodes = (OpcUaCfg.OPCUAParametersType)serializer.Deserialize(tr);
                     foreach (OpcUaCfg.node node in treeNodes.nodes)
                     {
                         LoadNode(null, node, mvm.DataModel);
                     }
-                    foreach (OpcUaCfg.connectionsConnection connection in treeNodes.connections)
-                    {
-                        WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
-                        cc.Crypto = connection.encryption;
-                        cc.IpAddress = connection.ip_address;
-                        cc.Service = GetClientService(connection.service);
-                        if (connection.var != null)
-                        {
-                            foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
-                            {
-                                cc.AddVar(vt.ns, vt.id, GetBasicType(vt.basic_type), vt.alias);
-                            }
-                        }
-                        mvm.Connections.Add(cc);
-                    }
+                    /*                    foreach (OpcUaCfg.connectionsConnection connection in treeNodes.connections)
+                                        {
+                                            WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
+                                            cc.Crypto = connection.encryption;
+                                            cc.IpAddress = connection.ip_address;
+                                            cc.Service = GetClientService(connection.service);
+                                            if (connection.var != null)
+                                            {
+                                                foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
+                                                {
+                                                    cc.AddVar(vt.ns, vt.id, GetBasicType(vt.basic_type), vt.alias);
+                                                }
+                                            }
+                                            mvm.Connections.Add(cc);
+                                        }*/
                 }
             }
             else
@@ -317,9 +319,102 @@ namespace ConfigOpcUa
                 mvm.DataModel.Add(mvm.DataModelNamespace2);
             }
         }
+
+        private void CreateFlags(OpcUaCfg.node n, StringBuilder path, PortsNode pn)
+        {
+            string nodeText = String.Empty;
+            if (n.Item is OpcUaCfg.nodeNamespace ns)
+            {
+                path.Append($"{ns.index}");
+                nodeText = $"Ns{ns.index}";
+            }
+            else
+            {
+                if (n.Item is OpcUaCfg.nodeFolder nf)
+                {
+                    path.Append($".{nf.name}");
+                    nodeText = $"{nf.name}";
+                }
+                else
+                {
+                    if (n.Item is OpcUaCfg.nodeSimple_var nsv)
+                    {
+                        if (_ptxBasicTypes.TryGetValue(GetBasicType(nsv.basic_type), out char basicTypeChar))
+                        {
+                            if (nsv.access == access.Read || nsv.access == access.ReadWrite)
+                            {
+                                pn.Add($"O.OPCUA.{basicTypeChar}.{path}.{nsv.name}");
+                            }
+                            else
+                            {
+                                pn.Add($"I.OPCUA.{basicTypeChar}.{path}.{nsv.name}");
+                            }
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        if (n.Item is OpcUaCfg.nodeArray_var nav)
+                        {
+                            if (_ptxBasicTypes.TryGetValue(GetBasicType(nav.basic_type), out char basicTypeChar))
+                            {
+                                for (uint i = 0; i < nav.length; i++)
+                                {
+                                    if (nav.access == access.Read || nav.access == access.ReadWrite)
+                                    {
+                                        pn.Add($"O.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}");
+                                    }
+                                    else
+                                    {
+                                        pn.Add($"I.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}");
+                                    }
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+            PortsNode childNode = pn.Add(nodeText);
+            if (n.sub_nodes != null)
+            {
+                foreach (OpcUaCfg.node child in n.sub_nodes)
+                {
+                    CreateFlags(child, path, childNode);
+                }
+            }
+        }
         public override void LoadConfig(string pName)
         {
             Debug.Print($"LoadConfig= {pName}");
+            if (File.Exists(pName))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.OPCUAParametersType));
+                using (TextReader tr = new StreamReader(pName))
+                {
+                    OpcUaCfg.OPCUAParametersType cfg = (OpcUaCfg.OPCUAParametersType)serializer.Deserialize(tr);
+                    _ports.Clear();
+                    StringBuilder sb = new StringBuilder();
+                    foreach (OpcUaCfg.node treeNode in cfg.nodes)
+                    {
+                        PortsNode portsNode = null;
+                        if (treeNode.Item is OpcUaCfg.nodeNamespace ns)
+                        {
+                            sb.Clear();
+                            sb.Append($"{ns.index}");
+                            portsNode = new PortsNode($"Ns{ns.index}");
+                            if (treeNode.sub_nodes != null)
+                            {
+                                foreach (OpcUaCfg.node child in treeNode.sub_nodes)
+                                {
+                                    CreateFlags(child, sb, portsNode);
+                                }
+                            }
+                            _ports.Add(portsNode);
+                        }
+                    }
+                }
+            }
             /*            _objects.Clear();
                         _localIpAddress = string.Empty;
                         _groupAddress = string.Empty;
@@ -492,119 +587,119 @@ namespace ConfigOpcUa
             _ports.Add(inputs);
 
             StringBuilder sb = new StringBuilder();
-/*            foreach (WpfControlLibrary.OpcObject oo in _objects)
-            {
-                WpfControlLibrary.PortsNode objectNodeIn = inputs.Add(oo.Name);
-                WpfControlLibrary.PortsNode objectNodeOut = outputs.Add(oo.Name);
-                if (!oo.PublisherObject && !oo.IsImported)
-                {
-                    bool founded = false;
-                    foreach (WpfControlLibrary.ClientItem ci in _clientItems)
-                    {
-                        if (ci.OpcObject.Name == oo.Name)
+            /*            foreach (WpfControlLibrary.OpcObject oo in _objects)
                         {
-                            founded = true;
-                            break;
-                        }
-                    }
+                            WpfControlLibrary.PortsNode objectNodeIn = inputs.Add(oo.Name);
+                            WpfControlLibrary.PortsNode objectNodeOut = outputs.Add(oo.Name);
+                            if (!oo.PublisherObject && !oo.IsImported)
+                            {
+                                bool founded = false;
+                                foreach (WpfControlLibrary.ClientItem ci in _clientItems)
+                                {
+                                    if (ci.OpcObject.Name == oo.Name)
+                                    {
+                                        founded = true;
+                                        break;
+                                    }
+                                }
 
-                    if (!founded)
-                    {
-                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
-                        {
-                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
-                            {
-                                string[] flags = ItemToText(oo.Name, ooi);
-                                foreach (string flag in flags)
+                                if (!founded)
                                 {
-                                    sb.Clear();
-                                    if (ooi.WriteOutside)
+                                    foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
                                     {
-                                        sb.Append($"I.OPCUA.{typeChar}.Server.{flag}");
-                                        objectNodeIn.Add(sb.ToString());
+                                        if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                                        {
+                                            string[] flags = ItemToText(oo.Name, ooi);
+                                            foreach (string flag in flags)
+                                            {
+                                                sb.Clear();
+                                                if (ooi.WriteOutside)
+                                                {
+                                                    sb.Append($"I.OPCUA.{typeChar}.Server.{flag}");
+                                                    objectNodeIn.Add(sb.ToString());
+                                                }
+                                                else
+                                                {
+                                                    sb.Append($"O.OPCUA.{typeChar}.Server.{flag}");
+                                                    objectNodeOut.Add(sb.ToString());
+                                                }
+                                                _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
+                                            }
+                                        }
                                     }
-                                    else
-                                    {
-                                        sb.Append($"O.OPCUA.{typeChar}.Server.{flag}");
-                                        objectNodeOut.Add(sb.ToString());
-                                    }
-                                    _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
                                 }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (oo.PublisherObject && !oo.IsImported)
-                    {
-                        foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
-                        {
-                            if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
-                            {
-                                string[] flags = ItemToText(oo.Name, ooi);
-                                foreach (string flag in flags)
-                                {
-                                    sb.Clear();
-                                    sb.Append($"O.OPCUA.{typeChar}.Pub.Sub1.{flag}");
-                                    objectNodeOut.Add(sb.ToString());
-                                    _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            foreach (WpfControlLibrary.SubscriberItem si in _subscriberItems)
-            {
-                if (si.Receive)
-                {
-                    WpfControlLibrary.PortsNode obj = inputs.Add(si.OpcObject.Name);
-                    foreach (WpfControlLibrary.OpcObjectItem ooi in si.OpcObject.Items)
-                    {
-                        if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
-                        {
-                            string[] flags = ItemToText(si.OpcObject.Name, ooi);
-                            foreach (string flag in flags)
-                            {
-                                sb.Clear();
-                                sb.Append($"I.OPCUA.{typeChar}.Sub.Pub1.{flag}");
-                                obj.Add(sb.ToString());
-                                _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
-                            }
-                        }
-                    }
-                }
-            }
-            int serverIndex = 1;
-            foreach (WpfControlLibrary.ClientItem ci in _clientItems)
-            {
-                WpfControlLibrary.PortsNode objOuts = outputs.Add(ci.OpcObject.Name);
-                WpfControlLibrary.PortsNode objIns = inputs.Add(ci.OpcObject.Name);
-                foreach (WpfControlLibrary.OpcObjectItem ooi in ci.OpcObject.Items)
-                {
-                    if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
-                    {
-                        string[] flags = ItemToText(ci.OpcObject.Name, ooi);
-                        foreach (string flag in flags)
-                        {
-                            sb.Clear();
-                            if (ooi.WriteOutside)
-                            {
-                                sb.Append($"O.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
-                                objOuts.Add(sb.ToString());
                             }
                             else
                             {
-                                sb.Append($"I.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
-                                objIns.Add(sb.ToString());
+                                if (oo.PublisherObject && !oo.IsImported)
+                                {
+                                    foreach (WpfControlLibrary.OpcObjectItem ooi in oo.Items)
+                                    {
+                                        if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                                        {
+                                            string[] flags = ItemToText(oo.Name, ooi);
+                                            foreach (string flag in flags)
+                                            {
+                                                sb.Clear();
+                                                sb.Append($"O.OPCUA.{typeChar}.Pub.Sub1.{flag}");
+                                                objectNodeOut.Add(sb.ToString());
+                                                _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
                         }
-                    }
-                }
-                ++serverIndex;
-            }*/
+                        foreach (WpfControlLibrary.SubscriberItem si in _subscriberItems)
+                        {
+                            if (si.Receive)
+                            {
+                                WpfControlLibrary.PortsNode obj = inputs.Add(si.OpcObject.Name);
+                                foreach (WpfControlLibrary.OpcObjectItem ooi in si.OpcObject.Items)
+                                {
+                                    if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                                    {
+                                        string[] flags = ItemToText(si.OpcObject.Name, ooi);
+                                        foreach (string flag in flags)
+                                        {
+                                            sb.Clear();
+                                            sb.Append($"I.OPCUA.{typeChar}.Sub.Pub1.{flag}");
+                                            obj.Add(sb.ToString());
+                                            _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        int serverIndex = 1;
+                        foreach (WpfControlLibrary.ClientItem ci in _clientItems)
+                        {
+                            WpfControlLibrary.PortsNode objOuts = outputs.Add(ci.OpcObject.Name);
+                            WpfControlLibrary.PortsNode objIns = inputs.Add(ci.OpcObject.Name);
+                            foreach (WpfControlLibrary.OpcObjectItem ooi in ci.OpcObject.Items)
+                            {
+                                if (_ptxBasicTypes.TryGetValue(ooi.SelectedBasicType, out char typeChar))
+                                {
+                                    string[] flags = ItemToText(ci.OpcObject.Name, ooi);
+                                    foreach (string flag in flags)
+                                    {
+                                        sb.Clear();
+                                        if (ooi.WriteOutside)
+                                        {
+                                            sb.Append($"O.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
+                                            objOuts.Add(sb.ToString());
+                                        }
+                                        else
+                                        {
+                                            sb.Append($"I.OPCUA.{typeChar}.Client.Server{serverIndex}.{flag}");
+                                            objIns.Add(sb.ToString());
+                                        }
+                                        _allPorts[sb.ToString().ToUpperInvariant()] = new Flag(sb.ToString(), GetArrayIndex(flag));
+                                    }
+                                }
+                            }
+                            ++serverIndex;
+                        }*/
         }
 
         public override void MakeConfig(System.Windows.Forms.IWin32Window hWnd, string pName)
@@ -693,29 +788,29 @@ namespace ConfigOpcUa
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Debug.Print($"Vm_PropertyChanged {e.PropertyName}, {sender}");
-/*            if (e.PropertyName == "SubscriberPath")
-            {
-                if (sender is WpfControlLibrary.MainViewModel mvm)
-                {
-                    List<string> objectNames = new List<string>();
-                    if (File.Exists(mvm.SubscriberPath))
-                    {
-                        XmlSerializer serializerOpc = new XmlSerializer(typeof(OPCUAParametersType));
-                        using (TextReader tr = new StreamReader(mvm.SubscriberPath))
+            /*            if (e.PropertyName == "SubscriberPath")
                         {
-                            OPCUAParametersType parsOpc = (OPCUAParametersType)serializerOpc.Deserialize(tr);
-                            foreach (ObjectTypeType ott in parsOpc.ObjectType)
+                            if (sender is WpfControlLibrary.MainViewModel mvm)
                             {
-                                objectNames.Add(ott.Name);
+                                List<string> objectNames = new List<string>();
+                                if (File.Exists(mvm.SubscriberPath))
+                                {
+                                    XmlSerializer serializerOpc = new XmlSerializer(typeof(OPCUAParametersType));
+                                    using (TextReader tr = new StreamReader(mvm.SubscriberPath))
+                                    {
+                                        OPCUAParametersType parsOpc = (OPCUAParametersType)serializerOpc.Deserialize(tr);
+                                        foreach (ObjectTypeType ott in parsOpc.ObjectType)
+                                        {
+                                            objectNames.Add(ott.Name);
+                                        }
+                                    }
+                                }
+                                foreach (string objectName in objectNames)
+                                {
+                                    Import(mvm.SubscriberPath, objectName, false, false, 100, false, mvm);
+                                }
                             }
-                        }
-                    }
-                    foreach (string objectName in objectNames)
-                    {
-                        Import(mvm.SubscriberPath, objectName, false, false, 100, false, mvm);
-                    }
-                }
-            }*/
+                        }*/
         }
 
         public override void OS9Files(out string pFiles, string pName, int typ)
@@ -738,31 +833,31 @@ namespace ConfigOpcUa
         {
             Debug.Print($"UnLoadConfig");
         }
-        private ObjectTypeType GetObjectFromPublisher(string path, string name, ushort id, out ushort publisherId)
-        {
-            publisherId = 0;
-            if (File.Exists(path))
-            {
-                XmlSerializer serializerOpc = new XmlSerializer(typeof(OPCUAParametersType));
-                using (TextReader tr = new StreamReader(path))
+        /*        private ObjectTypeType GetObjectFromPublisher(string path, string name, ushort id, out ushort publisherId)
                 {
-                    OPCUAParametersType parsOpc = (OPCUAParametersType)serializerOpc.Deserialize(tr);
-                    foreach (ObjectTypeType objectTypeType in parsOpc.ObjectType)
+                    publisherId = 0;
+                    if (File.Exists(path))
                     {
-                        if (objectTypeType.Name == name)
+                        XmlSerializer serializerOpc = new XmlSerializer(typeof(OpcUaCfg.OPCUAParametersType));
+                        using (TextReader tr = new StreamReader(path))
                         {
-                            bool subscribe = true;
-                            string[] descrItems = objectTypeType.Description.Split(';');
-                            objectTypeType.Description = $"{subscribe};{descrItems[1]};{descrItems[2]};{descrItems[3]}";
-                            objectTypeType.Id = id;
-                            publisherId = parsOpc.PublisherId;
-                            return objectTypeType;
+                            OpcUaCfg.OPCUAParametersType parsOpc = (OpcUaCfg.OPCUAParametersType)serializerOpc.Deserialize(tr);
+                            foreach (ObjectTypeType objectTypeType in parsOpc.ObjectType)
+                            {
+                                if (objectTypeType.Name == name)
+                                {
+                                    bool subscribe = true;
+                                    string[] descrItems = objectTypeType.Description.Split(';');
+                                    objectTypeType.Description = $"{subscribe};{descrItems[1]};{descrItems[2]};{descrItems[3]}";
+                                    objectTypeType.Id = id;
+                                    publisherId = parsOpc.PublisherId;
+                                    return objectTypeType;
+                                }
+                            }
                         }
                     }
-                }
-            }
-            return null;
-        }
+                    return null;
+                }*/
 
         private static OpcUaCfg.access GetAccess(string s)
         {
@@ -777,6 +872,7 @@ namespace ConfigOpcUa
             }
             return OpcUaCfg.access.Unknown;
         }
+
         private static string GetAccess(OpcUaCfg.access access)
         {
             switch (access)
@@ -865,6 +961,7 @@ namespace ConfigOpcUa
             return OpcUaCfg.client_service.Unknown;
 
         }
+
         private static OpcUaCfg.nodeFolder GetFolder(DataModelFolder dmFolder)
         {
             OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
@@ -898,7 +995,7 @@ namespace ConfigOpcUa
         {
             OpcUaCfg.nodeObject_type ot = new OpcUaCfg.nodeObject_type();
             ot.name = dmObjectType.Name;
-//            ot.id = $"{dmObjectType.GetNamespace().Namespace}:{dmObjectType.NodeId.GetIdentifier()}";
+            //            ot.id = $"{dmObjectType.GetNamespace().Namespace}:{dmObjectType.NodeId.GetIdentifier()}";
             return ot;
         }
 
@@ -907,9 +1004,10 @@ namespace ConfigOpcUa
             OpcUaCfg.nodeObject_var objectVar = new OpcUaCfg.nodeObject_var();
             objectVar.name = dmObjectVar.Name;
             objectVar.object_type_name = dmObjectVar.ObjectTypeName;
-//            objectVar.id = $"{dmObjectVar.GetNamespace().Namespace}:{dmObjectVar.NodeId.GetIdentifier()}";
+            //            objectVar.id = $"{dmObjectVar.GetNamespace().Namespace}:{dmObjectVar.NodeId.GetIdentifier()}";
             return objectVar;
         }
+
         private static void SaveTreeNode(DataModelNode node, OpcUaCfg.node tn)
         {
             Debug.Print($"SaveTreeNode {node}");
@@ -918,36 +1016,42 @@ namespace ConfigOpcUa
                 OpcUaCfg.nodeNamespace objNamespace = new OpcUaCfg.nodeNamespace();
                 objNamespace.index = dmNs.Namespace;
                 tn.Item = objNamespace;
+                tn.node_type = node_type.Namespace;
             }
             else
             {
                 if (node is DataModelFolder dmFolder)
                 {
                     tn.Item = GetFolder(dmFolder);
+                    tn.node_type = node_type.Folder;
                 }
                 else
                 {
                     if (node is DataModelSimpleVariable dmSimple)
                     {
                         tn.Item = GetSimpleVar(dmSimple);
+                        tn.node_type = node_type.SimpleVariable;
                     }
                     else
                     {
                         if (node is DataModelArrayVariable dmArray)
                         {
                             tn.Item = GetArrayVar(dmArray);
+                            tn.node_type = node_type.ArrayVariable;
                         }
                         else
                         {
                             if (node is DataModelObjectType dmObjectType)
                             {
                                 tn.Item = GetObjectType(dmObjectType);
+                                tn.node_type = node_type.ObjectType;
                             }
                             else
                             {
                                 if (node is DataModelObjectVariable dmObjectVar)
                                 {
                                     tn.Item = GetObjectvar(dmObjectVar);
+                                    tn.node_type = node_type.ObjectVariable;
                                 }
                             }
                         }
@@ -965,6 +1069,10 @@ namespace ConfigOpcUa
                     ++index;
                 }
             }
+            else
+            {
+                tn.sub_nodes = new node[] { };
+            }
         }
 
         private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.connectionsConnection ct)
@@ -980,25 +1088,28 @@ namespace ConfigOpcUa
             var_Type.ns = 0;
             var_Type.id = string.Empty;
             string[] items = var.Identifier.Split(':');
-            if(items.Length == 2)
+            if (items.Length == 2)
             {
                 if (ushort.TryParse(items[0], out ushort nsIndex))
                 {
-                    var_Type.ns= nsIndex;
+                    var_Type.ns = nsIndex;
                     var_Type.id = items[1];
                 }
             }
             var_Type.basic_type = GetBasicType(var.SelectedBasicType);
-            var_Type.alias= var.Alias;
+            var_Type.alias = var.Alias;
         }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
             Debug.Print($"SaveConfiguration {fileName}");
 
-            OpcUaCfg.opc_ua_cfg cfg = new OpcUaCfg.opc_ua_cfg();
-            cfg.settings=new OpcUaCfg.settings();
+            OpcUaCfg.OPCUAParametersType cfg = new OpcUaCfg.OPCUAParametersType();
+            cfg.settings = new OpcUaCfg.settings();
             cfg.settings.local_ip = mvm.LocalIpAddress;
             cfg.settings.multicast_ip = mvm.MulticastIpAddress;
+
+            cfg.server = new OPCUAParametersTypeServer();
+            cfg.server.encryption = false;
 
             List<OpcUaCfg.node> nodes = new List<OpcUaCfg.node>();
             foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
@@ -1025,9 +1136,9 @@ namespace ConfigOpcUa
                 ct.var = vars.ToArray();
                 connections.Add(ct);
             }
-            cfg.connections = connections.ToArray();
+            //            cfg.connections = connections.ToArray();
 
-            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.opc_ua_cfg));
+            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.OPCUAParametersType));
             using (TextWriter tw = new StreamWriter(fileName))
             {
                 serializer.Serialize(tw, cfg);

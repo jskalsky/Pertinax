@@ -20,8 +20,8 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.zat.cz/OPCUAParameters", IsNullable=false)]
     public partial class settings {
         
         private string local_ipField;
@@ -54,12 +54,24 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class node {
+        
+        private node_type node_typeField;
         
         private object itemField;
         
         private node[] sub_nodesField;
+        
+        /// <remarks/>
+        public node_type node_type {
+            get {
+                return this.node_typeField;
+            }
+            set {
+                this.node_typeField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("array_var", typeof(nodeArray_var))]
@@ -92,9 +104,37 @@ namespace OpcUaCfg {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
     [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
+    public enum node_type {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        Namespace,
+        
+        /// <remarks/>
+        Folder,
+        
+        /// <remarks/>
+        ObjectType,
+        
+        /// <remarks/>
+        ObjectVariable,
+        
+        /// <remarks/>
+        SimpleVariable,
+        
+        /// <remarks/>
+        ArrayVariable,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class nodeArray_var {
         
         private string nameField;
@@ -161,7 +201,7 @@ namespace OpcUaCfg {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
     public enum basic_type {
         
         /// <remarks/>
@@ -198,7 +238,7 @@ namespace OpcUaCfg {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
     public enum access {
         
         /// <remarks/>
@@ -219,7 +259,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class nodeFolder {
         
         private string nameField;
@@ -252,7 +292,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class nodeNamespace {
         
         private ushort indexField;
@@ -273,7 +313,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class nodeObject_type {
         
         private string nameField;
@@ -306,7 +346,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class nodeObject_var {
         
         private string nameField;
@@ -351,7 +391,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class nodeSimple_var {
         
         private string nameField;
@@ -408,8 +448,8 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.zat.cz/OPCUAParameters", IsNullable=false)]
     public partial class connections {
         
         private connectionsConnection[] connectionField;
@@ -431,7 +471,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class connectionsConnection {
         
         private string ip_addressField;
@@ -499,7 +539,7 @@ namespace OpcUaCfg {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
     public enum client_service {
         
         /// <remarks/>
@@ -517,7 +557,7 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
     public partial class connectionsConnectionVar {
         
         private ushort nsField;
@@ -574,17 +614,15 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd", IsNullable=false)]
-    public partial class opc_ua_cfg {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
+    [System.Xml.Serialization.XmlRootAttribute("OPCUAParameters", Namespace="http://www.zat.cz/OPCUAParameters", IsNullable=false)]
+    public partial class OPCUAParametersType {
         
         private settings settingsField;
         
-        private opc_ua_cfgServer serverField;
+        private OPCUAParametersTypeServer serverField;
         
         private node[] nodesField;
-        
-        private connectionsConnection[] connectionsField;
         
         /// <remarks/>
         public settings settings {
@@ -597,7 +635,7 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        public opc_ua_cfgServer server {
+        public OPCUAParametersTypeServer server {
             get {
                 return this.serverField;
             }
@@ -616,17 +654,6 @@ namespace OpcUaCfg {
                 this.nodesField = value;
             }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("connection", IsNullable=false)]
-        public connectionsConnection[] connections {
-            get {
-                return this.connectionsField;
-            }
-            set {
-                this.connectionsField = value;
-            }
-        }
     }
     
     /// <remarks/>
@@ -634,8 +661,8 @@ namespace OpcUaCfg {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/XMLSchemaOpcUa.xsd")]
-    public partial class opc_ua_cfgServer {
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    public partial class OPCUAParametersTypeServer {
         
         private bool encryptionField;
         
