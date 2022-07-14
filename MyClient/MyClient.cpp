@@ -6,6 +6,9 @@
 #include <open62541/client_highlevel.h>
 #include <open62541/plugin/log_stdout.h>
 #include <stdlib.h>
+#include <stdarg.h>
+
+char Buffer[4096];
 
 std::string GetNodeClass(UA_NodeClass nc)
 {
@@ -120,8 +123,33 @@ std::string GetExpandedNodeId(UA_ExpandedNodeId nodeId)
 	return s;
 }
 
-void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE* fp)
+void WriteSpaces(int nr, FILE* fp)
 {
+	for (int i = 0; i < nr; ++i)
+	{
+		fprintf(fp, " ");
+	}
+}
+
+void WriteLine(int nr, const char* line, FILE* fp)
+{
+	WriteSpaces(nr, fp);
+	fprintf(fp, "%s", line);
+}
+
+void WriteLine(int nr, FILE* fp, const char* format, ...)
+{
+	WriteSpaces(nr, fp);
+	va_list args;
+	va_start(args, format);
+	vsprintf_s(Buffer, format, args);
+	fprintf(fp, Buffer);
+	va_end(args);
+}
+
+void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE* fp, FILE* fpCs)
+{
+	fprintf(fp, "Browse %u:%u\n", browseRequest.nodesToBrowse[0].nodeId.namespaceIndex, browseRequest.nodesToBrowse[0].nodeId.identifier.numeric);
 	UA_BrowseResponse bResp = UA_Client_Service_browse(client, browseRequest);
 	fprintf(fp, "spaces= %d,  response= %u\n", spaces, bResp.resultsSize);
 	for (size_t i = 0; i < bResp.resultsSize; ++i)
@@ -136,7 +164,40 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 				{
 					fprintf(fp, " ");
 				}
-				fprintf(fp, "refTypeId= %s, isForward= %d, nodeId= %s, browseName= %s, displayName= %s, nodeClass= %s, typeDefinition= %s\n",
+				if (refDescr.referenceTypeId.identifierType == UA_NODEIDTYPE_NUMERIC)
+				{
+					if (refDescr.referenceTypeId.identifier.numeric == UA_NS0ID_ORGANIZES)
+					{
+						fprintf(fp, "refTypeId= %s, nodeId= %s, browseName= %s, nodeClass= %s, Type= %s\n", GetNodeId(refDescr.referenceTypeId).c_str(),
+							GetExpandedNodeId(refDescr.nodeId).c_str(), GetQualifiedName(refDescr.browseName).c_str(),
+							GetNodeClass(refDescr.nodeClass).c_str(), GetExpandedNodeId(refDescr.typeDefinition).c_str());
+						if (refDescr.typeDefinition.nodeId.identifierType == UA_NODEIDTYPE_NUMERIC &&
+							refDescr.typeDefinition.nodeId.identifier.numeric == UA_NS0ID_FOLDERTYPE)
+						{
+							WriteLine(6, fpCs, "parent = new DataModelFolder(%s, new NodeIdNumeric(0, %u), parent);\n",
+								GetQualifiedName(refDescr.browseName).c_str(), refDescr.nodeId.nodeId.identifier.numeric);
+							browseRequest.nodesToBrowse[0].nodeId = refDescr.nodeId.nodeId;
+							Browse(client, browseRequest, spaces + 2, fp, fpCs);
+						}
+						else
+						{
+							if (refDescr.nodeClass == UA_NODECLASS_VARIABLE)
+							{
+								fprintf(fp, "Variable %s\n", GetQualifiedName(refDescr.browseName).c_str());
+							}
+							else
+							{
+								if (refDescr.nodeClass == UA_NODECLASS_OBJECT)
+								{
+									fprintf(fp, "Object %s\n", GetQualifiedName(refDescr.browseName).c_str());
+									browseRequest.nodesToBrowse[0].nodeId = refDescr.nodeId.nodeId;
+									Browse(client, browseRequest, spaces + 2, fp, fpCs);
+								}
+							}
+						}
+					}
+				}
+/*				fprintf(fp, "refTypeId= %s, isForward= %d, nodeId= %s, browseName= %s, displayName= %s, nodeClass= %s, typeDefinition= %s\n",
 					GetNodeId(refDescr.referenceTypeId).c_str(), refDescr.isForward, GetExpandedNodeId(refDescr.nodeId).c_str(),
 					GetQualifiedName(refDescr.browseName).c_str(), GetLocalizedText(refDescr.displayName).c_str(), GetNodeClass(refDescr.nodeClass).c_str(),
 					GetExpandedNodeId(refDescr.typeDefinition).c_str());
@@ -144,11 +205,36 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 				{
 					browseRequest.nodesToBrowse[0].nodeId = refDescr.nodeId.nodeId;
 					Browse(client, browseRequest, spaces + 2, fp);
-				}
+				}*/
 			}
 		}
 	}
 	UA_BrowseResponse_clear(&bResp);
+}
+
+void StartCs(FILE* fpCs)
+{
+	fprintf(fpCs, "using System;\n");
+	fprintf(fpCs, "System.Windows;\n");
+	fprintf(fpCs, "using WpfControlLibrary.DataModel;\n");
+	fprintf(fpCs, "\n");
+	fprintf(fpCs, "namespace ConfigOpcUa\n");
+	fprintf(fpCs, "{\n");
+	WriteLine(2, "public class DefaultDataModel\n", fpCs);
+	WriteLine(2, "{\n", fpCs);
+	WriteLine(4, "public DataModelNamespace DataModelNamespace0 { get; set; }\n", fpCs);
+	WriteLine(4, "public DataModelNamespace DataModelNamespace1 { get; set; }\n", fpCs);
+	WriteLine(4, "public DataModelNamespace DataModelNamespace2 { get; set; }\n", fpCs);
+	WriteLine(4, "\n", fpCs);
+	WriteLine(4, "void Setup()\n", fpCs);
+	WriteLine(4, "{\n", fpCs);
+}
+
+void EndCs(FILE* fpCs)
+{
+	WriteLine(4, "}\n", fpCs);
+	WriteLine(2, "}\n", fpCs);
+	WriteLine(0, "}\n", fpCs);
 }
 
 int main()
@@ -173,10 +259,18 @@ int main()
 	bReq.nodesToBrowse[0].resultMask = UA_BROWSERESULTMASK_ALL; // return everything
 
 	FILE* fp;
-	errno_t err = fopen_s(&fp, "e:\\Work\\BrowseResult.txt", "wt");
+	FILE* fpCs;
+	errno_t err = fopen_s(&fp, "c:\\Work\\BrowseResult.txt", "wt");
 	if (fp != NULL)
 	{
-		Browse(client, bReq, 0, fp);
+		err = fopen_s(&fpCs, "c:\\Work\\DefaultDataModel.cs", "wt");
+		if (fpCs != NULL)
+		{
+			StartCs(fpCs);
+			Browse(client, bReq, 0, fp, fpCs);
+			EndCs(fpCs);
+			fclose(fpCs);
+		}
 		fclose(fp);
 	}
 	printf("Ok\n");
