@@ -63,14 +63,17 @@ std::string GetLocalizedText(UA_LocalizedText text)
 	return s;
 }
 
-std::string GetQualifiedName(UA_QualifiedName name)
+std::string GetQualifiedName(UA_QualifiedName name, bool withNamespace  = false)
 {
 	std::string s;
 	char buf[16];
 	snprintf(buf, 16, "%u", name.namespaceIndex);
 	std::string uaString = GetString(name.name);
-	s = buf;
-	s += ':';
+	if (withNamespace)
+	{
+		s = buf;
+		s += ':';
+	}
 	s += uaString;
 	return s;
 }
@@ -163,14 +166,41 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 				if (refD.typeDefinition.nodeId.identifierType == UA_NODEIDTYPE_NUMERIC && refD.typeDefinition.nodeId.identifier.numeric == UA_NS0ID_FOLDERTYPE)
 				{
 					fprintf(fp, "Folder: %s\n", GetQualifiedName(refD.browseName).c_str());
+					WriteLine(6, fpCs, "node = new DataModelFolder(\"%s\", new NodeIdNumeric(0,%u), parent);\n", GetQualifiedName(refD.browseName).c_str(),
+						refD.nodeId.nodeId.identifier.numeric);
+					WriteLine(6, fpCs, "parent.AddChildren(node);\n");
+					WriteLine(6, fpCs, "stack.Push(parent);\n");
+					WriteLine(6, fpCs, "parent = node;\n");
+
 					browseRequest.nodesToBrowse[0].nodeId = refD.nodeId.nodeId;
 					Browse(client, browseRequest, spaces + 2, fp, fpCs);
+
+					WriteLine(6, fpCs, "parent = stack.Pop();\n");
 				}
 				else
 				{
 					if (refD.nodeClass == UA_NODECLASS_VARIABLE)
 					{
+
+						WriteLine(6, fpCs, "node = new DataModelSimpleVariable(\"%s\", new NodeIdNumeric(0, %u), \"%s\", \"%s\", parent);\n", 
+							GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, "Float", "Read");
+						WriteLine(6, fpCs, "parent.AddChildren(node);\n");
 						fprintf(fp, "Variable: %s\n", GetQualifiedName(refD.browseName).c_str());
+					}
+					else
+					{
+						if (refD.nodeClass == UA_NODECLASS_OBJECT)
+						{
+							fprintf(fp, "Object: %s\n", GetQualifiedName(refD.browseName).c_str());
+							WriteLine(6, fpCs, "node = new DataModelObjectVariable(\"%s\", new NodeIdNumeric(0,%u), \"%s\", parent);\n", GetQualifiedName(refD.browseName).c_str(),
+								refD.nodeId.nodeId.identifier.numeric, "ObjectType");
+							WriteLine(6, fpCs, "parent.AddChildren(node);\n");
+							WriteLine(6, fpCs, "stack.Push(parent);\n");
+							WriteLine(6, fpCs, "parent = node;\n");
+							browseRequest.nodesToBrowse[0].nodeId = refD.nodeId.nodeId;
+							Browse(client, browseRequest, spaces + 2, fp, fpCs);
+							WriteLine(6, fpCs, "parent = stack.Pop();\n");
+						}
 					}
 				}
 			}
@@ -243,36 +273,39 @@ void StartCs(FILE* fpCs)
 {
 	fprintf(fpCs, "using System;\n");
 	fprintf(fpCs, "using System.Windows;\n");
+	fprintf(fpCs, "using System.Collections.Generic;\n");
 	fprintf(fpCs, "using System.Collections.ObjectModel;\n");
 	fprintf(fpCs, "using WpfControlLibrary.DataModel;\n");
 	fprintf(fpCs, "\n");
-	fprintf(fpCs, "namespace ConfigOpcUa\n");
+	fprintf(fpCs, "namespace WpfControlLibrary.DataModel\n");
 	fprintf(fpCs, "{\n");
-	WriteLine(2, "public class DefaultDataModel\n", fpCs);
+	WriteLine(2, "public static class DefaultDataModel\n", fpCs);
 	WriteLine(2, "{\n", fpCs);
-	WriteLine(4, "public DataModelNamespace DataModelNamespace0 { get; set; }\n", fpCs);
-	WriteLine(4, "public DataModelNamespace DataModelNamespace1 { get; set; }\n", fpCs);
-	WriteLine(4, "public DataModelNamespace DataModelNamespace2 { get; set; }\n", fpCs);
+	WriteLine(4, "public static DataModelNamespace DataModelNamespace0 { get; set; }\n", fpCs);
+	WriteLine(4, "public static DataModelNamespace DataModelNamespace1 { get; set; }\n", fpCs);
+	WriteLine(4, "public static DataModelNamespace DataModelNamespace2 { get; set; }\n", fpCs);
 	WriteLine(4, "\n", fpCs);
-	WriteLine(4, "void Setup(ObservableCollection<DataModelNode> dataModel)\n", fpCs);
+	WriteLine(4, "public static void Setup(ObservableCollection<DataModelNode> dataModel)\n", fpCs);
 	WriteLine(4, "{\n", fpCs);
 	WriteLine(6, "DataModelNamespace0 = new DataModelNamespace(0);\n", fpCs);
 	WriteLine(6, "DataModelNamespace1 = new DataModelNamespace(1);\n", fpCs);
-	WriteLine(6, "DataModelNamespace0 = new DataModelNamespace(2);\n", fpCs);
+	WriteLine(6, "DataModelNamespace2 = new DataModelNamespace(2);\n", fpCs);
 	WriteLine(6, "dataModel.Add(DataModelNamespace0);\n", fpCs);
 	WriteLine(6, "dataModel.Add(DataModelNamespace1);\n", fpCs);
 	WriteLine(6, "dataModel.Add(DataModelNamespace2);\n", fpCs);
 
-	WriteLine(6, fpCs, "FolderZ2Xx = new DataModelFolder(%s, NodeIdBase.GetNextSystemNodeId(1), mvm.DataModelNamespace1);\n", "Z2xx");
-	WriteLine(6, fpCs, "FolderObjectTypes = new DataModelFolder(%s, NodeIdBase.GetNextSystemNodeId(1), mvm.DataModelNamespace1);\n", "ObjectTypes");
-	WriteLine(6, fpCs, "FolderObjects = new DataModelFolder(%s, NodeIdBase.GetNextSystemNodeId(1), mvm.DataModelNamespace1);\n", "Objects");
-	WriteLine(6, fpCs, "FolderVariables = new DataModelFolder(%s, NodeIdBase.GetNextSystemNodeId(1), mvm.DataModelNamespace1);\n", "Variables");
+	WriteLine(6, fpCs, "DataModelFolder FolderZ2Xx = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "Z2xx");
+	WriteLine(6, fpCs, "DataModelFolder FolderObjectTypes = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "ObjectTypes");
+	WriteLine(6, fpCs, "DataModelFolder FolderObjects = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "Objects");
+	WriteLine(6, fpCs, "DataModelFolder FolderVariables = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "Variables");
 	WriteLine(6, fpCs, "FolderZ2Xx.AddChildren(FolderObjects);\n");
 	WriteLine(6, fpCs, "FolderZ2Xx.AddChildren(FolderObjectTypes);\n");
 	WriteLine(6, fpCs, "FolderZ2Xx.AddChildren(FolderVariables);\n");
 	WriteLine(6, fpCs, "DataModelNamespace1.AddChildren(FolderZ2Xx);\n");
 
 	WriteLine(6, fpCs, "DataModelNode parent = DataModelNamespace0;\n");
+	WriteLine(6, fpCs, "Stack<DataModelNode> stack = new Stack<DataModelNode>();\n");
+	WriteLine(6, fpCs, "DataModelNode node = null;\n");
 }
 
 void EndCs(FILE* fpCs)
@@ -286,8 +319,8 @@ int main()
 {
 	UA_Client* client = UA_Client_new();
 	UA_ClientConfig_setDefault(UA_Client_getConfig(client));
-//	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://localhost:4840");
-	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
+	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://localhost:4840");
+//	UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://10.10.13.252:4840");
 	if (retval != UA_STATUSCODE_GOOD)
 	{
 		UA_Client_delete(client);
@@ -305,10 +338,10 @@ int main()
 
 	FILE* fp;
 	FILE* fpCs;
-	errno_t err = fopen_s(&fp, "e:\\Work\\BrowseResult.txt", "wt");
+	errno_t err = fopen_s(&fp, "c:\\Work\\BrowseResult.txt", "wt");
 	if (fp != NULL)
 	{
-		err = fopen_s(&fpCs, "e:\\Work\\DefaultDataModel.cs", "wt");
+		err = fopen_s(&fpCs, "c:\\Work\\DefaultDataModel.cs", "wt");
 		if (fpCs != NULL)
 		{
 			printf("1\n");

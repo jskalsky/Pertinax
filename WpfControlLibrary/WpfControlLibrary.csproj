@@ -76,6 +76,7 @@
     <Compile Include="DataModel\DataModelObjectType.cs" />
     <Compile Include="DataModel\DataModelObjectVariable.cs" />
     <Compile Include="DataModel\DataModelSimpleVariable.cs" />
+    <Compile Include="DataModel\DefaultDataModel.cs" />
     <Compile Include="DataModel\IdFactory.cs" />
     <Compile Include="Exceptions\OpcUaException.cs" />
     <Compile Include="ImportedItem.cs" />

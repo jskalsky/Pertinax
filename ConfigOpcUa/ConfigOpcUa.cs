@@ -311,12 +311,24 @@ namespace ConfigOpcUa
             }
             else
             {
-                mvm.DataModelNamespace0 = new DataModelNamespace(0);
+                try
+                {
+                    Stopwatch sw = Stopwatch.StartNew();
+                    sw.Start();
+                    WpfControlLibrary.DataModel.DefaultDataModel.Setup(mvm.DataModel);
+                    sw.Stop();
+                    Debug.Print($"elapsed {sw.Elapsed}");
+                }
+                catch(Exception exc)
+                {
+                    Debug.Print($"ExcepTion: {exc.Message}");
+                }
+/*                mvm.DataModelNamespace0 = new DataModelNamespace(0);
                 mvm.DataModelNamespace1 = new DataModelNamespace(1);
                 mvm.DataModelNamespace2 = new DataModelNamespace(2);
                 mvm.DataModel.Add(mvm.DataModelNamespace0);
                 mvm.DataModel.Add(mvm.DataModelNamespace1);
-                mvm.DataModel.Add(mvm.DataModelNamespace2);
+                mvm.DataModel.Add(mvm.DataModelNamespace2);*/
             }
         }
 
@@ -707,7 +719,11 @@ namespace ConfigOpcUa
             WpfControlLibrary.View.OpcUaMainWindow mainWindow = new WpfControlLibrary.View.OpcUaMainWindow();
             if (mainWindow.DataContext is WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
             {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 LoadXml(pName, mvm);
+                sw.Stop();
+                Debug.Print($"Load {sw.Elapsed}, {sw.ElapsedMilliseconds}");
                 if ((bool)mainWindow.ShowDialog())
                 {
                     Debug.Print("3");

@@ -132,6 +132,15 @@
                                                  PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelObjectVariable}" ItemsSource="{Binding Children}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                            <TextBox Margin="2,0,0,0" Style="{StaticResource ToolTipError}" 
+                                                     Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
                                 </TreeView.Resources>
                                 <TreeView.ItemContainerStyle>
                                     <Style TargetType="TreeViewItem">
