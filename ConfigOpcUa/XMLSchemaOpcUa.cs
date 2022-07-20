@@ -624,6 +624,8 @@ namespace OpcUaCfg {
         
         private node[] nodesField;
         
+        private connectionsConnection[] connectionsField;
+        
         /// <remarks/>
         public settings settings {
             get {
@@ -652,6 +654,17 @@ namespace OpcUaCfg {
             }
             set {
                 this.nodesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("connection", IsNullable=false)]
+        public connectionsConnection[] connections {
+            get {
+                return this.connectionsField;
+            }
+            set {
+                this.connectionsField = value;
             }
         }
     }

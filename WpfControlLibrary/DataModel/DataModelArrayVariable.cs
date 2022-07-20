@@ -16,9 +16,9 @@ namespace WpfControlLibrary.DataModel
             ArrayLength = arrayLength;
             DataModelType = DataModelType.ArrayVariable;
         }
-        public string BasicType { get; }
-        public string VarAccess { get; }
-        public int ArrayLength { get; }
+        public string BasicType { get; set; }
+        public string VarAccess { get; set; }
+        public int ArrayLength { get; set; }
         public override string ToString()
         {
             return $"{Name}, {BasicType}, {ArrayLength}, {NodeId}";

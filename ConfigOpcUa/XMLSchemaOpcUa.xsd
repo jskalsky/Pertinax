@@ -166,7 +166,7 @@
 					</xs:complexType>
 				</xs:element>
       <xs:element name="nodes" type="node" minOccurs="0" maxOccurs="unbounded"/>
-      <!--xs:element ref="connections"/-->
+      <xs:element ref="connections" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

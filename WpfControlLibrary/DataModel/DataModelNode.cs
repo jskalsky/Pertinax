@@ -14,6 +14,7 @@ namespace WpfControlLibrary.DataModel
     {
         public const ushort DefaultNamespaceIndex = 1;
         private bool _isExpanded;
+        private bool _isEnabled;
         private string _name;
         private NodeIdBase _nodeId;
         private string _oldName = string.Empty;
@@ -27,6 +28,7 @@ namespace WpfControlLibrary.DataModel
             NodeId = nodeId;
             Children = new ObservableCollection<DataModelNode>();
             Parent = parent;
+            IsEnabled = true;
         }
         public string Name
         {
@@ -50,6 +52,12 @@ namespace WpfControlLibrary.DataModel
         {
             get { return _isExpanded; }
             set { _isExpanded = value; OnPropertyChanged("IsExpanded"); }
+        }
+
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set { _isEnabled = value; OnPropertyChanged("IsEnabled"); }
         }
         public string Error => throw new NotImplementedException();
 
@@ -110,6 +118,21 @@ namespace WpfControlLibrary.DataModel
                 return ns;
             }
             return null;
+        }
+
+        public bool IsParentFolder(DataModelFolder folder)
+        {
+            DataModelNode node = this;
+            while (node.DataModelType != DataModelType.Namespace)
+            {
+                if (node.Name == folder.Name)
+                {
+                    return true;
+                }
+                node = node.Parent;
+            }
+
+            return false;
         }
         private void OnPropertyChanged(string name)
         {

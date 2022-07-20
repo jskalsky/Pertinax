@@ -11,12 +11,18 @@ namespace WpfControlLibrary.DataModel
     {
         public NodeIdString(ushort namespaceIndex, string id) : base(namespaceIndex, IdentifierType.String)
         {
+            Debug.Print($"NodeIdString {namespaceIndex}:{id}");
             IdentifierString = id;
         }
         public string IdentifierString { get; }
         public override string GetNodeName()
         {
             return $"S:{NamespaceIndex}:{IdentifierString}";
+        }
+
+        public override string ToString()
+        {
+            return GetNodeName();
         }
     }
 }

@@ -16,8 +16,8 @@ namespace WpfControlLibrary.DataModel
             DataModelType = DataModelType.SimpleVariable;
         }
 
-        public string VarAccess { get; }
-        public string VarType { get; }
+        public string VarAccess { get; set; }
+        public string VarType { get; set; }
         public override string ToString()
         {
             return $"{Name}, {VarType},  {NodeId}";

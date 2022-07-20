@@ -18,9 +18,9 @@ namespace WpfControlLibrary.DataModel
         public const ushort LastNamespaceIndex = 2;
         public const uint Divider = 50;
 
-        private static Dictionary<ushort,HashSet<string>> _ids = new Dictionary<ushort, HashSet<string>>();
+        private static Dictionary<ushort, HashSet<string>> _ids = new Dictionary<ushort, HashSet<string>>();
         private static Dictionary<ushort, uint> _nextSystemNumericId = new Dictionary<ushort, uint>();
-        private static Dictionary<ushort,uint> _nextVarNumericId = new Dictionary<ushort, uint>();
+        private static Dictionary<ushort, uint> _nextVarNumericId = new Dictionary<ushort, uint>();
         protected NodeIdBase(ushort namespaceIndex, IdentifierType identifierType)
         {
             NamespaceIndex = namespaceIndex;
@@ -30,7 +30,9 @@ namespace WpfControlLibrary.DataModel
         public IdentifierType IdentifierType { get; }
         public static NodeIdBase GetNodeIdBase(string nodeId)
         {
+            Debug.Print($"GetNodeIdBase {nodeId}");
             string[] items = nodeId.Split(':');
+            Debug.Print($"items= {items.Length}");
             ushort ns = 0;
             if (items.Length != 3)
             {
@@ -40,7 +42,7 @@ namespace WpfControlLibrary.DataModel
             {
                 ns = namespaceIndex;
             }
-            if (items[0] =="N")
+            if (items[0] == "N")
             {
                 if (uint.TryParse(items[2], out uint numeric))
                 {
@@ -49,7 +51,7 @@ namespace WpfControlLibrary.DataModel
             }
             else
             {
-                if (items[0]=="S")
+                if (items[0] == "S")
                 {
                     return new NodeIdString(ns, items[2]);
                 }
@@ -84,7 +86,7 @@ namespace WpfControlLibrary.DataModel
         public static NodeIdNumeric GetNextSystemNodeId(ushort ns)
         {
             Open();
-            if (_nextSystemNumericId[ns] + 1 >=  FirstVarNumericId)
+            if (_nextSystemNumericId[ns] + 1 >= FirstVarNumericId)
             {
                 throw new ArgumentOutOfRangeException(nameof(ns), $"Počet systémových numerických identifikátorů uzlů mimo rozsah");
             }
@@ -97,7 +99,7 @@ namespace WpfControlLibrary.DataModel
             _ids[ns].Add(nodeId);
             return nin;
         }
-        public static NodeIdNumeric[] GetNextNodeIds(ushort ns, int count, bool round=true)
+        public static NodeIdNumeric[] GetNextNodeIds(ushort ns, int count, bool round = false)
         {
             Open();
             if (_nextVarNumericId[ns] + count >= LastVarNumericId)
@@ -105,15 +107,15 @@ namespace WpfControlLibrary.DataModel
                 throw new ArgumentOutOfRangeException(nameof(ns), $"Počet numerických identifikátorů uzlů mimo rozsah");
             }
             NodeIdNumeric[] nodes = new NodeIdNumeric[count];
-            if(round)
+            if (round)
             {
                 uint remainder = _nextVarNumericId[ns] % Divider;
-                if(remainder > 0)
+                if (remainder > 0)
                 {
                     _nextVarNumericId[ns] = _nextVarNumericId[ns] - remainder + Divider;
                 }
             }
-            for(int i=0;i< count; i++)
+            for (int i = 0; i < count; i++)
             {
                 nodes[i] = new NodeIdNumeric(ns, _nextVarNumericId[ns]++);
                 string nodeId = nodes[i].GetNodeName();
@@ -128,12 +130,15 @@ namespace WpfControlLibrary.DataModel
 
         public static void AddSystemNodeId(ushort ns, NodeIdBase id)
         {
+            Debug.Print($"AddSystemNodeId ns= {ns}, id= {id}");
             Open();
-            if (id is  NodeIdNumeric num)
+            if (id is NodeIdNumeric num)
             {
-                if(num.IdentifierNumeric > _nextSystemNumericId[ns])
+                Debug.Print($"num.IdentifierNumeric={num.IdentifierNumeric}, _nextSystemNumericId[ns]={_nextSystemNumericId[ns]}");
+                if (num.IdentifierNumeric >= _nextSystemNumericId[ns])
                 {
-                    _nextSystemNumericId[ns]=num.IdentifierNumeric;
+                    _nextSystemNumericId[ns] = num.IdentifierNumeric + 1;
+                    Debug.Print($"1 _nextSystemNumericId[ns]= {_nextSystemNumericId[ns]}");
                 }
             }
             _ids[ns].Add(id.GetNodeName());
@@ -143,9 +148,9 @@ namespace WpfControlLibrary.DataModel
             Open();
             if (id is NodeIdNumeric num)
             {
-                if (num.IdentifierNumeric > _nextVarNumericId[ns])
+                if (num.IdentifierNumeric >= _nextVarNumericId[ns])
                 {
-                    _nextVarNumericId[ns] = num.IdentifierNumeric;
+                    _nextVarNumericId[ns] = num.IdentifierNumeric + 1;
                 }
             }
             _ids[ns].Add(id.GetNodeName());

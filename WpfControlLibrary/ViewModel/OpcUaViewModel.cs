@@ -29,6 +29,7 @@ namespace WpfControlLibrary.ViewModel
         private Visibility _visibilityString;
         private int _selectedNumeric;
         private string _selectedString;
+        private string _selectedName;
         public OpcUaViewModel()
         {
             SelectedNode = null;
@@ -44,9 +45,6 @@ namespace WpfControlLibrary.ViewModel
         }
 
         public DataModelNode SelectedNode { get; set; }
-        public DataModelNamespace DataModelNamespace0 { get; set; }
-        public DataModelNamespace DataModelNamespace1 { get; set; }
-        public DataModelNamespace DataModelNamespace2 { get; set; }
         public ObservableCollection<DataModelNode> DataModel { get; }
         public ObservableCollection<ClientConnection> Connections { get; }
         public List<DataModelObjectType> ObjectTypes { get; }
@@ -117,12 +115,18 @@ namespace WpfControlLibrary.ViewModel
         public int SelectedNumeric
         {
             get { return _selectedNumeric; }
-            set { _selectedNumeric=value; OnPropertyChanged(nameof(SelectedNumeric)); }
+            set { _selectedNumeric = value; OnPropertyChanged(nameof(SelectedNumeric)); }
         }
         public string SelectedString
         {
             get { return _selectedString; }
             set { _selectedString = value; OnPropertyChanged(nameof(SelectedString)); }
+        }
+
+        public string SelectedName
+        {
+            get { return _selectedName; }
+            set { _selectedName = value; OnPropertyChanged(nameof(SelectedName)); }
         }
         private void OnPropertyChanged(string name)
         {

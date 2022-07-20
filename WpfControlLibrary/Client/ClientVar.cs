@@ -15,6 +15,8 @@ namespace WpfControlLibrary.Client
         private string _selectedBasicType;
         private string _alias;
         private ClientConnection _clientConnection;
+        private readonly string[] _basicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
+
         public ClientVar(ClientConnection cc)
         {
             _clientConnection = cc;
@@ -30,7 +32,7 @@ namespace WpfControlLibrary.Client
 
         public string[] BasicTypes 
         {
-            get { return null; }
+            get { return _basicTypes; }
         }
         public string SelectedBasicType
         {
