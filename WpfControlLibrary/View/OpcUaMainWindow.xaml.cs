@@ -482,5 +482,31 @@ namespace WpfControlLibrary.View
 
             e.Handled = true;
         }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(DataContext is OpcUaViewModel vm)
+            {
+                if (e.AddedItems.Count == 1)
+                {
+                    if (e.AddedItems[0] is StatusMsg status)
+                    {
+                        if (status.Tag != null)
+                        {
+                            if (status.Tag is DataModelSimpleVariable simple)
+                            {
+                                simple.IsSelected = true;
+                                DataModelNode dmn = simple;
+                                while(dmn.Parent != null)
+                                {
+                                    dmn.Parent.IsExpanded = true;
+                                    dmn = dmn.Parent;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

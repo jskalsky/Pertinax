@@ -80,6 +80,7 @@
     <Compile Include="DataModel\IdFactory.cs" />
     <Compile Include="Exceptions\OpcUaException.cs" />
     <Compile Include="ImportedItem.cs" />
+    <Compile Include="ViewModel\StatusMsg.cs" />
     <Compile Include="ViewModel\Variable.cs" />
     <Compile Include="DataModel\NodeIdBase.cs" />
     <Compile Include="DataModel\NodeIdNumeric.cs" />

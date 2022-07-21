@@ -197,7 +197,7 @@ namespace ConfigOpcUa
         }
 
 
-        private void LoadNode(DataModelNode parent, OpcUaCfg.node n, ObservableCollection<DataModelNode> dataModel)
+        private void LoadNode(DataModelNode parent, OpcUaCfg.node n, ObservableCollection<DataModelNode> dataModel, ref int nrErrors)
         {
             Debug.Print($"LoadNode {n.node_type}, parent= {parent}");
             DataModelNode dmn = null;
@@ -239,7 +239,12 @@ namespace ConfigOpcUa
                 {
                     DataModelNamespace ns = dmn.GetNamespace();
                     IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
-                    NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId);
+                    if(!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
+                    {
+                        ++nrErrors;
+                        WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
+                            $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
+                    }
                 }
             }
             else
@@ -273,7 +278,12 @@ namespace ConfigOpcUa
                             GetAccess(simpleVar.access), parent);
                         DataModelNamespace ns = dmn.GetNamespace();
                         IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
-                        NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId);
+                        if(!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
+                        {
+                            ++nrErrors;
+                            WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
+                                $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
+                        }
                     }
                     else
                     {
@@ -284,7 +294,12 @@ namespace ConfigOpcUa
                                 GetAccess(arrayVar.access), (int)arrayVar.length, parent);
                             DataModelNamespace ns = dmn.GetNamespace();
                             IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
-                            NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId);
+                            if(!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
+                            {
+                                ++nrErrors;
+                                WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
+                                    $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
+                            }
                         }
                         else
                         {
@@ -294,7 +309,12 @@ namespace ConfigOpcUa
                                 dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
                                 DataModelNamespace ns = dmn.GetNamespace();
                                 IdFactory.AddName(ns.Namespace, IdFactory.NameObjectType, objectType.name);
-                                NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId);
+                                if(!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
+                                {
+                                    ++nrErrors;
+                                    WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
+                                        $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
+                                }
                             }
                             else
                             {
@@ -305,7 +325,12 @@ namespace ConfigOpcUa
                                         parent);
                                     DataModelNamespace ns = dmn.GetNamespace();
                                     IdFactory.AddName(ns.Namespace, IdFactory.NameObjectVar, objectVar.name);
-                                    NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId);
+                                    if(!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
+                                    {
+                                        ++nrErrors;
+                                        WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
+                                            $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
+                                    }
                                 }
                             }
                         }
@@ -333,7 +358,7 @@ namespace ConfigOpcUa
                 {
                     Debug.Print($"9 {child}, {dmn}");
                     Debug.Flush();
-                    LoadNode(dmn, child, dataModel);
+                    LoadNode(dmn, child, dataModel, ref nrErrors);
                     Debug.Print("10");
                 }
             }
@@ -351,32 +376,34 @@ namespace ConfigOpcUa
                     using (TextReader tr = new StreamReader(pName))
                     {
                         OpcUaCfg.OPCUAParametersType cfg = (OpcUaCfg.OPCUAParametersType)serializer.Deserialize(tr);
-                        Debug.Print($"treeNodes= {cfg}");
                         mvm.LocalIpAddress = cfg.settings.local_ip;
                         mvm.MulticastIpAddress = cfg.settings.multicast_ip;
-                        Debug.Print($"cfg.nodes= {cfg.nodes.Length}");
+                        int nrErrors = 0;
                         foreach (OpcUaCfg.node node in cfg.nodes)
                         {
-                            LoadNode(null, node, mvm.DataModel);
+                            LoadNode(null, node, mvm.DataModel, ref nrErrors);
                         }
-                        Debug.Print($"Konec LoadNode");
+                        if(nrErrors == 0)
+                        {
+                            WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[2],
+                                $"Načtení konfigurace bez chyb");
+                        }
+                        else
+                        {
+                            WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[2],
+                                $"Načtení konfigurace, počet chyb = {nrErrors}");
+                        }
                         if (cfg.connections != null)
                         {
-                            Debug.Print($"Tady, {cfg.connections.Length}");
                             if (cfg.connections.Length != 0)
                             {
                                 foreach (OpcUaCfg.connectionsConnection connection in cfg.connections)
                                 {
-                                    Debug.Print($"Tady1");
                                     Debug.Flush();
                                     WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
-                                    Debug.Print($"Tady2");
                                     cc.Crypto = connection.encryption;
-                                    Debug.Print($"Tady3");
                                     cc.IpAddress = connection.ip_address;
-                                    Debug.Print($"Tady4");
                                     cc.Service = GetClientService(connection.service);
-                                    Debug.Print($"Tady5");
                                     if (connection.var != null)
                                     {
                                         foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
@@ -392,9 +419,7 @@ namespace ConfigOpcUa
                 }
                 else
                 {
-                    Debug.Print("Pred Setup");
                     WpfControlLibrary.DataModel.DefaultDataModel.Setup(mvm.DataModel);
-                    Debug.Print($"Po Setup {DefaultDataModel.DataModelNamespace1}, {DefaultDataModel.FolderZ2Xx}");
                 }
                 DefaultDataModel.DataModelNamespace1.IsExpanded = true;
             }

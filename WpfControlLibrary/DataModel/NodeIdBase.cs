@@ -128,7 +128,7 @@ namespace WpfControlLibrary.DataModel
             return nodes;
         }
 
-        public static void AddSystemNodeId(ushort ns, NodeIdBase id)
+        public static bool AddSystemNodeId(ushort ns, NodeIdBase id)
         {
             Debug.Print($"AddSystemNodeId ns= {ns}, id= {id}");
             Open();
@@ -141,9 +141,15 @@ namespace WpfControlLibrary.DataModel
                     Debug.Print($"1 _nextSystemNumericId[ns]= {_nextSystemNumericId[ns]}");
                 }
             }
-            _ids[ns].Add(id.GetNodeName());
+            string nodeId = id.GetNodeName();
+            if (_ids[ns].Contains(nodeId))
+            {
+                return false;
+            }
+            _ids[ns].Add(nodeId);
+            return true;
         }
-        public static void AddVarNodeId(ushort ns, NodeIdBase id)
+        public static bool AddVarNodeId(ushort ns, NodeIdBase id)
         {
             Open();
             if (id is NodeIdNumeric num)
@@ -153,7 +159,13 @@ namespace WpfControlLibrary.DataModel
                     _nextVarNumericId[ns] = num.IdentifierNumeric + 1;
                 }
             }
-            _ids[ns].Add(id.GetNodeName());
+            string nodeId = id.GetNodeName();
+            if (_ids[ns].Contains(nodeId))
+            {
+                return false;
+            }
+            _ids[ns].Add(nodeId);
+            return true;
         }
         public static bool ExistsNodeId(string nodeId)
         {

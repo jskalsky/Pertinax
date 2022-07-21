@@ -81,60 +81,178 @@
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>
-            <TabControl Margin="0,5,0,0">
-                <TabItem Header="Server">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TabControl Margin="0,5,0,0">
+                    <TabItem Header="Server">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <CheckBox Content="Šifrovat"/>
+                                <Label Grid.Row="1" Content="Datový model"/>
+                                <TreeView Grid.Row="2" ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged" Name="DataModelTree">
+                                    <TreeView.ContextMenu>
+                                        <ContextMenu  Opened="ContextMenu_Opened">
+                                            <MenuItem Header="Přidat záložku" Name="MiAddFolder" Click="MiAddFolder_Click"/>
+                                            <MenuItem Header="Přidat typ objekt" Name="MiAddObjectType" Click="MiAddObjectType_Click"/>
+                                            <MenuItem Header="Přidat objekt" Name="MiAddObject" Click="MiAddObject_Click"/>
+                                            <Separator/>
+                                            <MenuItem Header="Zrušit" Name="MiRemove" Click="MiRemove_Click"/>
+                                        </ContextMenu>
+                                    </TreeView.ContextMenu>
+                                    <TreeView.Resources>
+                                        <HierarchicalDataTemplate DataType="{x:Type dm:DataModelSimpleVariable}" ItemsSource="{Binding Children}">
+                                            <StackPanel Orientation="Horizontal" Height="16">
+                                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"></Image>
+                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                                <Label Content=", "/>
+                                                <TextBlock Text="{Binding VarType}" VerticalAlignment="Center"/>
+                                                <Label Content=", "/>
+                                                <TextBlock Text="{Binding NodeId}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </HierarchicalDataTemplate>
+                                        <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNamespace}" ItemsSource="{Binding Children}">
+                                            <StackPanel Orientation="Horizontal" Height="16">
+                                                <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                                <TextBlock Text="{Binding Namespace}"/>
+                                            </StackPanel>
+                                        </HierarchicalDataTemplate>
+                                        <HierarchicalDataTemplate DataType="{x:Type dm:DataModelFolder}" ItemsSource="{Binding Children}">
+                                            <StackPanel Orientation="Horizontal" Height="16">
+                                                <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                                <TextBlock Margin="2,0,0,0" Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </HierarchicalDataTemplate>
+                                        <HierarchicalDataTemplate DataType="{x:Type dm:DataModelObjectVariable}" ItemsSource="{Binding Children}">
+                                            <StackPanel Orientation="Horizontal" Height="16">
+                                                <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
+                                                <TextBox Margin="2,0,0,0" Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </HierarchicalDataTemplate>
+                                    </TreeView.Resources>
+                                    <TreeView.ItemContainerStyle>
+                                        <Style TargetType="TreeViewItem">
+                                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                            <Setter Property="IsSelected"  Value="{Binding IsSelected}"/>
+                                        </Style>
+                                    </TreeView.ItemContainerStyle>
+                                </TreeView>
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Jméno"/>
+                                <TextBox Grid.Row="1" Style="{StaticResource ToolTipError}" 
+                                                 Text="{Binding VarName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                <Label Grid.Row="2" Content="Typ proměnné"/>
+                                <ComboBox Grid.Row="3" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType}"/>
+                                <Label Grid.Row="4" Content="Možnosti klienta"/>
+                                <ComboBox Grid.Row="5" ItemsSource="{Binding Access}" SelectedValue="{Binding SelectedAccess}"/>
+                                <Label Content="Počet položek pole" Grid.Row="6"/>
+                                <local:NumericUpDown Grid.Row="7" NudIncrement="1" NudMin="0" NudMax="1000" NudValue="{Binding ArrayLength,Mode=TwoWay}"/>
+                                <Label Grid.Row="8" Content="Identifikátor uzlu"/>
+                                <ComboBox Grid.Row="9" ItemsSource="{Binding IdType}" SelectedValue="{Binding SelectedIdType}" 
+                                              SelectionChanged="IdType_SelectionChanged"/>
+                                <local:NumericUpDown Grid.Row="10" Margin="0,2,0,0" Visibility="{Binding VisibilityNumeric}" NudIncrement="1"
+                                                         NudMin="1" NudMax="100000" NudValue="{Binding SelectedNumeric,Mode=TwoWay}"/>
+                                <TextBox Grid.Row="11" Margin="0,2,0,0" Visibility="{Binding VisibilityString}" 
+                                             Style="{StaticResource ToolTipError}" 
+                                                 Text="{Binding SelectedString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                <Button Grid.Row="12" Content="Změnit" Click="ButtonChange_Click" Name="ButtonChange" Margin="0,5,0,0"/>
+                                <GroupBox Grid.Row="13" Header="Přidat" Margin="0,10,0,0" Visibility="{Binding VisibilityAddGroup}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Label Content="Počet proměnných"/>
+                                        <local:NumericUpDown Grid.Row="1" NudIncrement="1" NudMin="1" NudMax="10000" NudValue="{Binding VarCount,Mode=TwoWay}"/>
+                                        <Button Grid.Row="2" Content="Přidat" Click="ButtonAdd_Click" Name="ButtonAdd" Margin="0,5,0,0"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Client">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <CheckBox Content="Šifrovat"/>
-                            <Label Grid.Row="1" Content="Datový model"/>
-                            <TreeView Grid.Row="2" ItemsSource="{Binding DataModel}" SelectedItemChanged="TreeView_SelectedItemChanged" Name="DataModelTree">
+                            <Label Content="Spojení"/>
+                            <TreeView Grid.Row="1" ItemsSource="{Binding Connections}" SelectedItemChanged="Connections_SelectedItemChanged">
                                 <TreeView.ContextMenu>
-                                    <ContextMenu  Opened="ContextMenu_Opened">
-                                        <MenuItem Header="Přidat záložku" Name="MiAddFolder" Click="MiAddFolder_Click"/>
-                                        <MenuItem Header="Přidat typ objekt" Name="MiAddObjectType" Click="MiAddObjectType_Click"/>
-                                        <MenuItem Header="Přidat objekt" Name="MiAddObject" Click="MiAddObject_Click"/>
+                                    <ContextMenu  Opened="Connections_Opened">
+                                        <MenuItem Header="Přidat spojení" Name="MiAddConnection" Click="MiAddConnection_Click"/>
+                                        <MenuItem Header="Přidat proměnnou" Name="MiAddConnectionVar" Click="MiAddConnectionVar_Click"/>
                                         <Separator/>
-                                        <MenuItem Header="Zrušit" Name="MiRemove" Click="MiRemove_Click"/>
+                                        <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
                                     </ContextMenu>
                                 </TreeView.ContextMenu>
                                 <TreeView.Resources>
-                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelSimpleVariable}" ItemsSource="{Binding Children}">
-                                        <StackPanel Orientation="Horizontal" Height="16">
-                                            <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"></Image>
-                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                                            <Label Content=", "/>
-                                            <TextBlock Text="{Binding VarType}" VerticalAlignment="Center"/>
-                                            <Label Content=", "/>
-                                            <TextBlock Text="{Binding NodeId}" VerticalAlignment="Center"/>
+                                    <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <Image Stretch="Fill" Source="{Binding ImagePath}"/>
+                                            <Label  Content="Ip" Margin="5,0,0,0"/>
+                                            <TextBox Style="{StaticResource ToolTipError}" 
+                                                 Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                            <Label Content="Perioda" Margin="5,0,0,0"/>
+                                            <local:NumericUpDown NudIncrement="10" NudMin="10" NudMax="10000" NudValue="{Binding Period}"/>
+                                            <Label  Content="ms"/>
+                                            <ComboBox ItemsSource="{Binding Services}" Margin="5,0,0,0" SelectedValue="{Binding Service,Mode=TwoWay}"
+                                                  VerticalAlignment="Center"/>
+                                            <CheckBox Margin="5,0,0,0" VerticalAlignment="Center" Content="Šifrovat" IsChecked="{Binding Crypto}"/>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelNamespace}" ItemsSource="{Binding Children}">
-                                        <StackPanel Orientation="Horizontal" Height="16">
-                                            <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                            <TextBlock Text="{Binding Namespace}"/>
+                                    <DataTemplate DataType="{x:Type client:ClientVar}">
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <Image Stretch="Fill" Source="{Binding ImagePath}"/>
+                                            <Label Content="Id"/>
+                                            <TextBox Style="{StaticResource ToolTipError}"
+                                                 Text="{Binding Identifier,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
+                                            <Label Content="Typ"/>
+                                            <ComboBox ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType,Mode=TwoWay}"/>
+                                            <Label Content="Alias"/>
+                                            <TextBox Style="{StaticResource ToolTipError}"
+                                                 Text="{Binding Alias,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                                         </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelFolder}" ItemsSource="{Binding Children}">
-                                        <StackPanel Orientation="Horizontal" Height="16">
-                                            <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                            <TextBlock Margin="2,0,0,0" Text="{Binding Name}"/>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dm:DataModelObjectVariable}" ItemsSource="{Binding Children}">
-                                        <StackPanel Orientation="Horizontal" Height="16">
-                                            <Image Stretch="Fill" Source="{Binding ImagePath}"></Image>
-                                            <TextBox Margin="2,0,0,0" Text="{Binding Name}"/>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
+                                    </DataTemplate>
                                 </TreeView.Resources>
                                 <TreeView.ItemContainerStyle>
                                     <Style TargetType="TreeViewItem">
@@ -143,124 +261,28 @@
                                 </TreeView.ItemContainerStyle>
                             </TreeView>
                         </Grid>
-                        <Grid Grid.Column="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Label Content="Jméno"/>
-                            <TextBox Grid.Row="1" Style="{StaticResource ToolTipError}" 
-                                                 Text="{Binding VarName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
-                            <Label Grid.Row="2" Content="Typ proměnné"/>
-                            <ComboBox Grid.Row="3" ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType}"/>
-                            <Label Grid.Row="4" Content="Možnosti klienta"/>
-                            <ComboBox Grid.Row="5" ItemsSource="{Binding Access}" SelectedValue="{Binding SelectedAccess}"/>
-                            <Label Content="Počet položek pole" Grid.Row="6"/>
-                            <local:NumericUpDown Grid.Row="7" NudIncrement="1" NudMin="0" NudMax="1000" NudValue="{Binding ArrayLength,Mode=TwoWay}"/>
-                            <Label Grid.Row="8" Content="Identifikátor uzlu"/>
-                            <ComboBox Grid.Row="9" ItemsSource="{Binding IdType}" SelectedValue="{Binding SelectedIdType}" 
-                                              SelectionChanged="IdType_SelectionChanged"/>
-                            <local:NumericUpDown Grid.Row="10" Margin="0,2,0,0" Visibility="{Binding VisibilityNumeric}" NudIncrement="1"
-                                                         NudMin="1" NudMax="100000" NudValue="{Binding SelectedNumeric,Mode=TwoWay}"/>
-                            <TextBox Grid.Row="11" Margin="0,2,0,0" Visibility="{Binding VisibilityString}" 
-                                             Style="{StaticResource ToolTipError}" 
-                                                 Text="{Binding SelectedString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
-                            <Button Grid.Row="12" Content="Změnit" Click="ButtonChange_Click" Name="ButtonChange" Margin="0,5,0,0"/>
-                            <GroupBox Grid.Row="13" Header="Přidat" Margin="0,10,0,0" Visibility="{Binding VisibilityAddGroup}">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Label Content="Počet proměnných"/>
-                                    <local:NumericUpDown Grid.Row="1" NudIncrement="1" NudMin="1" NudMax="10000" NudValue="{Binding VarCount,Mode=TwoWay}"/>
-                                    <Button Grid.Row="2" Content="Přidat" Click="ButtonAdd_Click" Name="ButtonAdd" Margin="0,5,0,0"/>
-                                </Grid>
-                            </GroupBox>
-                        </Grid>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="Client">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Label Content="Spojení"/>
-                        <TreeView Grid.Row="1" ItemsSource="{Binding Connections}" SelectedItemChanged="Connections_SelectedItemChanged">
-                            <TreeView.ContextMenu>
-                                <ContextMenu  Opened="Connections_Opened">
-                                    <MenuItem Header="Přidat spojení" Name="MiAddConnection" Click="MiAddConnection_Click"/>
-                                    <MenuItem Header="Přidat proměnnou" Name="MiAddConnectionVar" Click="MiAddConnectionVar_Click"/>
-                                    <Separator/>
-                                    <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
-                                </ContextMenu>
-                            </TreeView.ContextMenu>
-                            <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type client:ClientConnection}" ItemsSource="{Binding Vars}">
-                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                        <Image Stretch="Fill" Source="{Binding ImagePath}"/>
-                                        <Label  Content="Ip" Margin="5,0,0,0"/>
-                                        <TextBox Style="{StaticResource ToolTipError}" 
-                                                 Text="{Binding IpAddress,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
-                                        <Label Content="Perioda" Margin="5,0,0,0"/>
-                                        <local:NumericUpDown NudIncrement="10" NudMin="10" NudMax="10000" NudValue="{Binding Period}"/>
-                                        <Label  Content="ms"/>
-                                        <ComboBox ItemsSource="{Binding Services}" Margin="5,0,0,0" SelectedValue="{Binding Service,Mode=TwoWay}"
-                                                  VerticalAlignment="Center"/>
-                                        <CheckBox Margin="5,0,0,0" VerticalAlignment="Center" Content="Šifrovat" IsChecked="{Binding Crypto}"/>
-                                    </StackPanel>
-                                </HierarchicalDataTemplate>
-                                <DataTemplate DataType="{x:Type client:ClientVar}">
-                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                        <Image Stretch="Fill" Source="{Binding ImagePath}"/>
-                                        <Label Content="Id"/>
-                                        <TextBox Style="{StaticResource ToolTipError}"
-                                                 Text="{Binding Identifier,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
-                                        <Label Content="Typ"/>
-                                        <ComboBox ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType,Mode=TwoWay}"/>
-                                        <Label Content="Alias"/>
-                                        <TextBox Style="{StaticResource ToolTipError}"
-                                                 Text="{Binding Alias,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                                 GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
-                                                 PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </TreeView.Resources>
-                            <TreeView.ItemContainerStyle>
-                                <Style TargetType="TreeViewItem">
-                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                                </Style>
-                            </TreeView.ItemContainerStyle>
-                        </TreeView>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="Publisher">
+                    </TabItem>
+                    <TabItem Header="Publisher">
 
-                </TabItem>
-                <TabItem Header="Subscriber"></TabItem>
-            </TabControl>
+                    </TabItem>
+                    <TabItem Header="Subscriber"></TabItem>
+                </TabControl>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Stav" Background="LightSteelBlue" Foreground="Black"/>
+                    <ListView Grid.Row="1" MinHeight="60" ItemsSource="{Binding Status}" SelectionChanged="ListView_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Typ" DisplayMemberBinding="{Binding MessageType}"/>
+                                <GridViewColumn Header="Text" DisplayMemberBinding="{Binding Message}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </Grid>
         </DockPanel>
     </Border>
 </Window>

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WpfControlLibrary.DataModel;
 using WpfControlLibrary.Client;
 using System.Windows;
+using System.Diagnostics;
 
 namespace WpfControlLibrary.ViewModel
 {
@@ -33,11 +34,15 @@ namespace WpfControlLibrary.ViewModel
         private int _selectedNumeric;
         private string _selectedString;
         private string _selectedName;
+        private StatusMsg _selectedStatusMsg;
+
+        private static OpcUaViewModel _instance;
         public OpcUaViewModel()
         {
             SelectedNode = null;
             DataModel = new ObservableCollection<DataModelNode>();
             Connections = new ObservableCollection<ClientConnection>();
+            Status = new ObservableCollection<StatusMsg>();
             ObjectTypes = new List<DataModelObjectType>();
             MulticastIpAddress = "224.0.0.22";
             LocalIpAddress = "10.10.13.252";
@@ -46,11 +51,13 @@ namespace WpfControlLibrary.ViewModel
             SelectedIdType = _idType[0];
             VarCount = 1;
             VisibilityAddGroup = Visibility.Collapsed;
+            _instance = this;
         }
 
         public DataModelNode SelectedNode { get; set; }
         public ObservableCollection<DataModelNode> DataModel { get; }
         public ObservableCollection<ClientConnection> Connections { get; }
+        public ObservableCollection<StatusMsg> Status { get; }
         public List<DataModelObjectType> ObjectTypes { get; }
         public Client.ClientConnection SelectedConnection { get; set; }
 
@@ -137,10 +144,22 @@ namespace WpfControlLibrary.ViewModel
             get { return _selectedName; }
             set { _selectedName = value; OnPropertyChanged(nameof(SelectedName)); }
         }
+
+        public StatusMsg SelectedStatusMsg
+        {
+            get { return _selectedStatusMsg; }
+            set { _selectedStatusMsg = value; OnPropertyChanged(nameof(SelectedStatusMsg)); }
+        }
         private void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public static void AddStatusMessage(string type, string message, object tag = null)
+        {
+            Debug.Print($"AddStatusMessage {type},  {message}");
+            _instance.Status.Add(new StatusMsg(type, message, tag));
         }
     }
 }

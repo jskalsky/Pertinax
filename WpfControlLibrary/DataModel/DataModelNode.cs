@@ -15,6 +15,7 @@ namespace WpfControlLibrary.DataModel
     {
         public const ushort DefaultNamespaceIndex = 1;
         private bool _isExpanded;
+        private bool _isSelected;
         private bool _isEnabled;
         private string _name;
         private NodeIdBase _nodeId;
@@ -30,6 +31,7 @@ namespace WpfControlLibrary.DataModel
             Children = new ObservableCollection<DataModelNode>();
             Parent = parent;
             IsEnabled = true;
+            IsSelected = false;
         }
         public string Name
         {
@@ -53,6 +55,12 @@ namespace WpfControlLibrary.DataModel
         {
             get { return _isExpanded; }
             set { _isExpanded = value; OnPropertyChanged("IsExpanded"); }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; OnPropertyChanged("IsSelected"); }
         }
 
         public bool IsEnabled
