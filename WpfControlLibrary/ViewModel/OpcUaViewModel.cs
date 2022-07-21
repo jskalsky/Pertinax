@@ -25,8 +25,11 @@ namespace WpfControlLibrary.ViewModel
         private int _varCount;
         private int _arrayLength;
         private string _varName;
+
         private Visibility _visibilityNumeric;
         private Visibility _visibilityString;
+        private Visibility _visibilityAddGroup;
+
         private int _selectedNumeric;
         private string _selectedString;
         private string _selectedName;
@@ -42,6 +45,7 @@ namespace WpfControlLibrary.ViewModel
             SelectedAccess = _access[0];
             SelectedIdType = _idType[0];
             VarCount = 1;
+            VisibilityAddGroup = Visibility.Collapsed;
         }
 
         public DataModelNode SelectedNode { get; set; }
@@ -111,6 +115,11 @@ namespace WpfControlLibrary.ViewModel
         {
             get { return _visibilityString; }
             set { _visibilityString = value; OnPropertyChanged(nameof(VisibilityString)); }
+        }
+        public Visibility VisibilityAddGroup
+        {
+            get { return _visibilityAddGroup; }
+            set { _visibilityAddGroup = value; OnPropertyChanged(nameof(VisibilityAddGroup)); }
         }
         public int SelectedNumeric
         {

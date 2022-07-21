@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,9 +73,11 @@ namespace WpfControlLibrary.DataModel
         private string Validate(string propertyName)
         {
             string error = string.Empty;
-            if (_oldName == Name || _oldName == string.Empty)
+            switch (propertyName)
             {
-                return error;
+                case "NodeId":
+                    Debug.Print($"{_nodeId}");
+                    break;
             }
             return error;
         }
@@ -109,6 +112,7 @@ namespace WpfControlLibrary.DataModel
         public DataModelNamespace GetNamespace()
         {
             DataModelNode node = this;
+            Debug.Print($"GetNamespace {node.Name}, {node.Parent}");
             while (node.DataModelType != DataModelType.Namespace)
             {
                 node = node.Parent;

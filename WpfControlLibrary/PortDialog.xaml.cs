@@ -45,19 +45,19 @@ namespace WpfControlLibrary
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Debug.Print($"DoubleClick {sender}");
-            if(sender is TreeViewItem tvi)
+            if(sender is ListBoxItem tvi)
             {
                 if(tvi.IsSelected)
                 {
-                    if (tvi.Header is PortsNode pn)
+                    if (tvi.Content is string s)
                     {
-                        SelectedPort = pn.Text;
-                        e.Handled = true;
+                        SelectedPort = s;
                         Debug.Print($"SelectedPort= {SelectedPort}, Handled= {e.Handled}");
                         Close();
                     }
                 }
             }
+            e.Handled = true;
         }
 
         private void TreePorts_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -65,8 +65,32 @@ namespace WpfControlLibrary
             Debug.Print($"ItemChanged {sender}, {e.NewValue}");
             if(e.NewValue is PortsNode pn)
             {
-                SelectedPort = pn.Text;
+                Debug.Print($"pn Flags= {pn.Flags.Count}");
+                Flags.Items.Clear();
+                foreach (string s in pn.Flags)
+                {
+                    Flags.Items.Add(s);
+                }
+
+                if (Flags.Items.Count != 0)
+                {
+                    Flags.SelectedIndex = 0;
+                }
             }
+
+            e.Handled = true;
+        }
+
+        private void Flags_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                if (e.AddedItems[0] is string s)
+                {
+                    SelectedPort = s;
+                }
+            }
+
             e.Handled = true;
         }
     }

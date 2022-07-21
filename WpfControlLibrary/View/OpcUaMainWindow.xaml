@@ -181,8 +181,8 @@
                                                  Text="{Binding SelectedString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                                  GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
                                                  PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" VerticalContentAlignment="Center"/>
-                            <Button Grid.Row="12" Content="Změnit" Click="ButtonChange_Click" Name="ButtonChange"/>
-                            <GroupBox Grid.Row="13" Header="Přidat">
+                            <Button Grid.Row="12" Content="Změnit" Click="ButtonChange_Click" Name="ButtonChange" Margin="0,5,0,0"/>
+                            <GroupBox Grid.Row="13" Header="Přidat" Margin="0,10,0,0" Visibility="{Binding VisibilityAddGroup}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -191,7 +191,7 @@
                                     </Grid.RowDefinitions>
                                     <Label Content="Počet proměnných"/>
                                     <local:NumericUpDown Grid.Row="1" NudIncrement="1" NudMin="1" NudMax="10000" NudValue="{Binding VarCount,Mode=TwoWay}"/>
-                                    <Button Grid.Row="2" Content="Přidat" Click="ButtonAdd_Click" Name="ButtonAdd"/>
+                                    <Button Grid.Row="2" Content="Přidat" Click="ButtonAdd_Click" Name="ButtonAdd" Margin="0,5,0,0"/>
                                 </Grid>
                             </GroupBox>
                         </Grid>

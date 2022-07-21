@@ -156,6 +156,15 @@ namespace ConfigOpcUa
                     s = s.Remove(0, idx + 1);
                 }
             }
+
+            if (flag.IsArray)
+            {
+                idx = s.LastIndexOf('.');
+                if (idx > 0)
+                {
+                    s = s.Remove(idx, s.Length - idx);
+                }
+            }
             bw.Write(IntelMotorola((ushort)s.Length));
             bw.Write(Encoding.ASCII.GetBytes(s));
             bw.Close();
@@ -174,44 +183,63 @@ namespace ConfigOpcUa
                     vmp.RootNodes.Add(pn);
                 }
             }
-            pd.ShowDialog();
-            if (pd.SelectedPort != null)
+            bool? result = pd.ShowDialog();
+            if (result != null && result == true)
             {
-                Debug.Print($"pd.SelectedPort= {pd.SelectedPort}");
-                return pd.SelectedPort;
+                if (pd.SelectedPort != null)
+                {
+                    Debug.Print($"pd.SelectedPort= {pd.SelectedPort}");
+                    return pd.SelectedPort;
+                }
             }
+
             return string.Empty;
         }
 
 
         private void LoadNode(DataModelNode parent, OpcUaCfg.node n, ObservableCollection<DataModelNode> dataModel)
         {
-            Debug.Print($"LoadNode {n.node_type}");
+            Debug.Print($"LoadNode {n.node_type}, parent= {parent}");
             DataModelNode dmn = null;
             if (n.Item is OpcUaCfg.nodeFolder folder)
             {
-                Debug.Print($"LoadNode FOLDER= {folder.name}");
-                dmn = new DataModelFolder(folder.name, NodeIdBase.GetNodeIdBase(folder.id), parent);
-                DataModelNamespace ns = dmn.GetNamespace();
-                IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
-                NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId);
-                if (dmn.NodeId.NamespaceIndex == 1)
+                Debug.Print($"LoadNode FOLDER= {folder.name}, {folder.id}");
+                NodeIdBase nodeId = NodeIdBase.GetNodeIdBase(folder.id);
+                dmn = new DataModelFolder(folder.name, nodeId, parent);
+/*                if (nodeId.NamespaceIndex == 1)
                 {
+                    Debug.Print($"nodeId.NamespaceIndex= {nodeId.NamespaceIndex}");
                     switch (folder.name)
                     {
                         case "Z2Xx":
-                            DefaultDataModel.FolderZ2Xx = (DataModelFolder)dmn;
+                            DefaultDataModel.FolderZ2Xx = new DataModelFolder(folder.name, nodeId, parent);
+                            dmn = DefaultDataModel.FolderZ2Xx;
                             break;
                         case "Objects":
-                            DefaultDataModel.FolderObjects = (DataModelFolder)dmn;
+                            DefaultDataModel.FolderObjects = new DataModelFolder(folder.name, nodeId, parent);
+                            dmn = DefaultDataModel.FolderObjects;
                             break;
                         case "ObjectTypes":
-                            DefaultDataModel.FolderObjectTypes = (DataModelFolder)dmn;
+                            DefaultDataModel.FolderObjectTypes = new DataModelFolder(folder.name, nodeId, parent);
+                            dmn = DefaultDataModel.FolderObjectTypes;
                             break;
                         case "Variables":
-                            DefaultDataModel.FolderVariables = (DataModelFolder)dmn;
+                            DefaultDataModel.FolderVariables = new DataModelFolder(folder.name, nodeId, parent);
+                            dmn = DefaultDataModel.FolderVariables;
                             break;
                     }
+
+                }
+                else
+                {
+                    dmn = new DataModelFolder(folder.name, nodeId, parent);
+                }*/
+                Debug.Print($"Folder dmn= {dmn}");
+                if (dmn != null)
+                {
+                    DataModelNamespace ns = dmn.GetNamespace();
+                    IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
+                    NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId);
                 }
             }
             else
@@ -219,20 +247,22 @@ namespace ConfigOpcUa
                 if (n.Item is OpcUaCfg.nodeNamespace nodeNamespace)
                 {
                     Debug.Print($"LoadNode NS= {nodeNamespace.index}");
-                    dmn = new DataModelNamespace(nodeNamespace.index);
                     switch (nodeNamespace.index)
                     {
                         case 0:
-                            DefaultDataModel.DataModelNamespace0 = (DataModelNamespace)dmn;
+                            DefaultDataModel.DataModelNamespace0 = new DataModelNamespace(nodeNamespace.index);
+                            dmn = DefaultDataModel.DataModelNamespace0;
                             break;
                         case 1:
-                            DefaultDataModel.DataModelNamespace1 = (DataModelNamespace)dmn;
+                            DefaultDataModel.DataModelNamespace1 = new DataModelNamespace(nodeNamespace.index);
+                            dmn = DefaultDataModel.DataModelNamespace1;
                             break;
                         case 2:
-                            DefaultDataModel.DataModelNamespace2 = (DataModelNamespace)dmn;
+                            DefaultDataModel.DataModelNamespace2 = new DataModelNamespace(nodeNamespace.index);
+                            dmn = DefaultDataModel.DataModelNamespace2;
                             break;
                     }
-                    Debug.Print("1000");
+                    Debug.Print($"1000, {dmn}");
                 }
                 else
                 {
@@ -282,7 +312,7 @@ namespace ConfigOpcUa
                     }
                 }
             }
-            Debug.Print($"parent= {parent}");
+            Debug.Print($"parent= {parent}, dmn= {dmn}");
             if (parent == null)
             {
                 Debug.Print("5");
@@ -301,7 +331,8 @@ namespace ConfigOpcUa
                 Debug.Print($"101, {n.sub_nodes}, {n.sub_nodes.Length}");
                 foreach (OpcUaCfg.node child in n.sub_nodes)
                 {
-                    Debug.Print("9");
+                    Debug.Print($"9 {child}, {dmn}");
+                    Debug.Flush();
                     LoadNode(dmn, child, dataModel);
                     Debug.Print("10");
                 }
@@ -323,27 +354,38 @@ namespace ConfigOpcUa
                         Debug.Print($"treeNodes= {cfg}");
                         mvm.LocalIpAddress = cfg.settings.local_ip;
                         mvm.MulticastIpAddress = cfg.settings.multicast_ip;
+                        Debug.Print($"cfg.nodes= {cfg.nodes.Length}");
                         foreach (OpcUaCfg.node node in cfg.nodes)
                         {
                             LoadNode(null, node, mvm.DataModel);
                         }
-
+                        Debug.Print($"Konec LoadNode");
                         if (cfg.connections != null)
                         {
-                            foreach (OpcUaCfg.connectionsConnection connection in cfg.connections)
+                            Debug.Print($"Tady, {cfg.connections.Length}");
+                            if (cfg.connections.Length != 0)
                             {
-                                WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
-                                cc.Crypto = connection.encryption;
-                                cc.IpAddress = connection.ip_address;
-                                cc.Service = GetClientService(connection.service);
-                                if (connection.var != null)
+                                foreach (OpcUaCfg.connectionsConnection connection in cfg.connections)
                                 {
-                                    foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
+                                    Debug.Print($"Tady1");
+                                    Debug.Flush();
+                                    WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
+                                    Debug.Print($"Tady2");
+                                    cc.Crypto = connection.encryption;
+                                    Debug.Print($"Tady3");
+                                    cc.IpAddress = connection.ip_address;
+                                    Debug.Print($"Tady4");
+                                    cc.Service = GetClientService(connection.service);
+                                    Debug.Print($"Tady5");
+                                    if (connection.var != null)
                                     {
-                                        cc.AddVar(vt.ns, vt.id, GetBasicType(vt.basic_type), vt.alias);
+                                        foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
+                                        {
+                                            cc.AddVar(vt.ns, vt.id, GetBasicType(vt.basic_type), vt.alias);
+                                        }
                                     }
+                                    mvm.Connections.Add(cc);
                                 }
-                                mvm.Connections.Add(cc);
                             }
                         }
                     }
@@ -355,11 +397,10 @@ namespace ConfigOpcUa
                     Debug.Print($"Po Setup {DefaultDataModel.DataModelNamespace1}, {DefaultDataModel.FolderZ2Xx}");
                 }
                 DefaultDataModel.DataModelNamespace1.IsExpanded = true;
-                DefaultDataModel.FolderZ2Xx.IsExpanded = true;
             }
             catch (Exception e)
             {
-                Debug.Print($"Exception: {e.Message}");
+                Debug.Print($"LoadXml Exception: {e.Message}");
                 StackTrace stackTrace = new StackTrace(e, true);
                 for (int i = 0; i < stackTrace.FrameCount; ++i)
                 {
@@ -391,15 +432,15 @@ namespace ConfigOpcUa
                             if (nsv.access == access.Read || nsv.access == access.ReadWrite)
                             {
                                 flag = $"O.OPCUA.{basicTypeChar}.{path}.{nsv.name}";
-                                pn.Add(flag);
+                                pn.AddFlag(flag);
                             }
                             else
                             {
                                 flag = $"I.OPCUA.{basicTypeChar}.{path}.{nsv.name}";
-                                pn.Add(flag);
+                                pn.AddFlag(flag);
                             }
 
-                            _allPorts[flag.ToUpperInvariant()] = new Flag(flag, GetArrayIndex(flag));
+                            _allPorts[flag.ToUpperInvariant()] = new Flag(flag, GetArrayIndex(flag), false);
                         }
                         return;
                     }
@@ -415,14 +456,14 @@ namespace ConfigOpcUa
                                     if (nav.access == access.Read || nav.access == access.ReadWrite)
                                     {
                                         flag = $"O.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}";
-                                        pn.Add(flag);
+                                        pn.AddFlag(flag);
                                     }
                                     else
                                     {
                                         flag = $"I.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}";
-                                        pn.Add(flag);
+                                        pn.AddFlag(flag);
                                     }
-                                    _allPorts[flag.ToUpperInvariant()] = new Flag(flag, GetArrayIndex(flag));
+                                    _allPorts[flag.ToUpperInvariant()] = new Flag(flag, GetArrayIndex(flag), true);
                                 }
                             }
                             return;
@@ -458,7 +499,8 @@ namespace ConfigOpcUa
                             if (treeNode.Item is OpcUaCfg.nodeNamespace ns)
                             {
                                 path = $"Ns{ns.index}";
-                                portsNode = new PortsNode($"Ns{ns.index}");
+                                bool isExpanded = (ns.index == 1) ? true : false;
+                                portsNode = new PortsNode($"Ns{ns.index}", isExpanded);
                                 if (treeNode.sub_nodes != null)
                                 {
                                     foreach (OpcUaCfg.node child in treeNode.sub_nodes)

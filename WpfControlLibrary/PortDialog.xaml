@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlLibrary"
         mc:Ignorable="d"
-        Title="PortDialog" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize">
+        Title="PortDialog" Height="600" Width="800" WindowStyle="None" ResizeMode="CanResize">
     <Window.DataContext>
         <local:ViewModelPorts/>
     </Window.DataContext>
@@ -16,18 +16,31 @@
                 <Button Content="OK" IsDefault="True" Click="ButtonOk_Click" Width="50"/>
                 <Button Content="Zrušit" IsCancel="True" Margin="5,0,0,0" Click="ButtonCancel_Click" Width="50"/>
             </StackPanel>
-            <TreeView Loaded="TreeView_Loaded" Name="TreePorts" ItemsSource="{Binding RootNodes}" SelectedItemChanged="TreePorts_SelectedItemChanged">
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
-                    </Style>
-                </TreeView.ItemContainerStyle>
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type local:PortsNode}" ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Text}"/>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TreeView Loaded="TreeView_Loaded" Name="TreePorts" ItemsSource="{Binding RootNodes}" SelectedItemChanged="TreePorts_SelectedItemChanged">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:PortsNode}" ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Text}"/>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+                <ListBox Grid.Column="1" Name="Flags" SelectionChanged="Flags_OnSelectionChanged">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
         </DockPanel>
     </Border>
 </Window>

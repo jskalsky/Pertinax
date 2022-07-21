@@ -32,6 +32,8 @@ namespace WpfControlLibrary.View
             if (DataContext is OpcUaViewModel vm)
             {
                 vm.SelectedNode = e.NewValue as DataModelNode;
+                ButtonAdd.IsEnabled = false;
+                vm.VisibilityAddGroup = Visibility.Collapsed;
                 if (vm.SelectedNode is DataModelSimpleVariable || vm.SelectedNode is DataModelArrayVariable)
                 {
                     vm.VarName = vm.SelectedNode.Name;
@@ -53,35 +55,37 @@ namespace WpfControlLibrary.View
                         }
                     }
                 }
-
-                ButtonAdd.IsEnabled = false;
-                if (vm.SelectedNode is DataModelFolder dmf)
-                {
-                    if (dmf.IsParentFolder(DefaultDataModel.FolderVariables))
-                    {
-                        ButtonAdd.IsEnabled = true;
-                    }
-
-                    if (dmf.NodeId.NamespaceIndex != 0)
-                    {
-                        vm.SelectedName = dmf.Name;
-                        ButtonChange.IsEnabled = true;
-                    }
-                }
                 else
                 {
-                    if (vm.SelectedNode is DataModelObjectType)
+                    if (vm.SelectedNode is DataModelFolder dmf)
                     {
-                        ButtonAdd.IsEnabled = true;
+                        if (dmf.IsParentFolder(DefaultDataModel.FolderVariables))
+                        {
+                            vm.VisibilityAddGroup = Visibility.Visible;
+                            ButtonAdd.IsEnabled = true;
+                        }
+
+                        if (dmf.NodeId.NamespaceIndex != 0)
+                        {
+                            vm.VarName = dmf.Name;
+                            ButtonChange.IsEnabled = true;
+                        }
                     }
                     else
                     {
-                        if (vm.SelectedNode is DataModelObjectVariable dmov)
+                        if (vm.SelectedNode is DataModelObjectType)
                         {
-                            if (dmov.NodeId.NamespaceIndex != 0)
+                            ButtonAdd.IsEnabled = true;
+                        }
+                        else
+                        {
+                            if (vm.SelectedNode is DataModelObjectVariable dmov)
                             {
-                                ButtonChange.IsEnabled = true;
-                                vm.SelectedName = dmov.Name;
+                                if (dmov.NodeId.NamespaceIndex != 0)
+                                {
+                                    ButtonChange.IsEnabled = true;
+                                    vm.SelectedName = dmov.Name;
+                                }
                             }
                         }
                     }
