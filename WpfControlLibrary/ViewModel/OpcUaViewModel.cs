@@ -30,6 +30,11 @@ namespace WpfControlLibrary.ViewModel
         private Visibility _visibilityNumeric;
         private Visibility _visibilityString;
         private Visibility _visibilityAddGroup;
+        private Visibility _visibilityConProperty;
+        private Visibility _visibilityGroupProperty;
+        private Visibility _visibilityVarProperty;
+        private Visibility _visibilityAddVars;
+        private Visibility _visibilityChangeVar;
 
         private int _selectedNumeric;
         private string _selectedString;
@@ -39,6 +44,15 @@ namespace WpfControlLibrary.ViewModel
         private static OpcUaViewModel _instance;
 
         private ObservableCollection<ClientVar> _vars;
+
+        private string _connectionIpAddress;
+        private ushort _connectionPeriod;
+        private string _connectionService;
+        private ushort _connectionNs;
+        private string _connectionIdType;
+        private uint _connectionIdNumeric;
+        private string _connectionIdString;
+        private int _connectionNrVars;
         public OpcUaViewModel()
         {
             SelectedNode = null;
@@ -53,6 +67,11 @@ namespace WpfControlLibrary.ViewModel
             SelectedIdType = _idType[0];
             VarCount = 1;
             VisibilityAddGroup = Visibility.Collapsed;
+            VisibilityConProperty = Visibility.Collapsed;
+            VisibilityGroupProperty = Visibility.Collapsed;
+            VisibilityVarProperty = Visibility.Collapsed;
+            VisibilityAddVars = Visibility.Collapsed;
+            VisibilityChangeVar = Visibility.Collapsed;
             _instance = this;
         }
 
@@ -62,6 +81,7 @@ namespace WpfControlLibrary.ViewModel
         public ObservableCollection<StatusMsg> Status { get; }
         public List<DataModelObjectType> ObjectTypes { get; }
         public object SelectedConnectionObject { get; set; }
+        public ClientVar SelectedClientVar { get; set; }
 
         public string LocalIpAddress
         {
@@ -130,6 +150,31 @@ namespace WpfControlLibrary.ViewModel
             get { return _visibilityAddGroup; }
             set { _visibilityAddGroup = value; OnPropertyChanged(nameof(VisibilityAddGroup)); }
         }
+        public Visibility VisibilityConProperty
+        {
+            get { return _visibilityConProperty; }
+            set { _visibilityConProperty = value; OnPropertyChanged(nameof(VisibilityConProperty)); }
+        }
+        public Visibility VisibilityGroupProperty
+        {
+            get { return _visibilityGroupProperty; }
+            set { _visibilityGroupProperty = value; OnPropertyChanged(nameof(VisibilityGroupProperty)); }
+        }
+        public Visibility VisibilityVarProperty
+        {
+            get { return _visibilityVarProperty; }
+            set { _visibilityVarProperty = value; OnPropertyChanged(nameof(VisibilityVarProperty)); }
+        }
+        public Visibility VisibilityAddVars
+        {
+            get { return _visibilityAddVars; }
+            set { _visibilityAddVars = value; OnPropertyChanged(nameof(VisibilityAddVars)); }
+        }
+        public Visibility VisibilityChangeVar
+        {
+            get { return _visibilityChangeVar; }
+            set { _visibilityChangeVar = value; OnPropertyChanged(nameof(VisibilityChangeVar)); }
+        }
         public int SelectedNumeric
         {
             get { return _selectedNumeric; }
@@ -157,6 +202,51 @@ namespace WpfControlLibrary.ViewModel
         {
             get { return _vars; }
             set { _vars = value; OnPropertyChanged("Vars"); }
+        }
+
+        public string ConnectionIpAddress
+        {
+            get { return _connectionIpAddress; }
+            set { _connectionIpAddress = value; OnPropertyChanged(nameof(ConnectionIpAddress)); }
+        }
+        public ushort ConnectionPeriod
+        {
+            get { return _connectionPeriod; }
+            set { _connectionPeriod = value; OnPropertyChanged(nameof(ConnectionPeriod)); }
+        }
+        public string ConnectionService
+        {
+            get { return _connectionService; }
+            set { _connectionService = value; OnPropertyChanged(nameof(ConnectionService)); }
+        }
+        public string[] ConnectionServices
+        {
+            get { return Client.Group.Services; }
+        }
+        public ushort ConnectionNs
+        {
+            get { return _connectionNs; }
+            set { _connectionNs = value; OnPropertyChanged(nameof(ConnectionNs)); }
+        }
+        public string ConnectionIdType
+        {
+            get { return _connectionIdType; }
+            set { _connectionIdType = value; OnPropertyChanged(nameof(ConnectionIdType)); }
+        }
+        public uint ConnectionIdNumeric
+        {
+            get { return _connectionIdNumeric; }
+            set { _connectionIdNumeric = value; OnPropertyChanged(nameof(ConnectionIdNumeric)); }
+        }
+        public string ConnectionIdString
+        {
+            get { return _connectionIdString; }
+            set { _connectionIdString = value; OnPropertyChanged(nameof(ConnectionIdString)); }
+        }
+        public int ConnectionNrVars
+        {
+            get { return _connectionNrVars; }
+            set { _connectionNrVars = value; OnPropertyChanged(nameof(ConnectionNrVars)); }
         }
         private void OnPropertyChanged(string name)
         {

@@ -13,7 +13,7 @@ namespace WpfControlLibrary.DataModel
         {
             IdentifierNumeric = identifier;
         }
-        public uint IdentifierNumeric { get; }
+        public uint IdentifierNumeric { get; set; }
         public override string GetNodeName()
         {
             return $"N:{NamespaceIndex}:{IdentifierNumeric}";

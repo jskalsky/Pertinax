@@ -223,7 +223,6 @@
                                         <ContextMenu  Opened="Connections_Opened">
                                             <MenuItem Header="Přidat spojení" Name="MiAddConnection" Click="MiAddConnection_Click"/>
                                             <MenuItem Header="Přidat skupinu" Name="MiAddGroup" Click="MiAddGroup_OnClick"/>
-                                            <MenuItem Header="Přidat proměnnou" Name="MiAddConnectionVar" Click="MiAddConnectionVar_Click"/>
                                             <Separator/>
                                             <MenuItem Header="Zrušit" Name="MiConnectionRemove" Click="MiConnectionRemove_Click"/>
                                         </ContextMenu>
@@ -254,7 +253,7 @@
                                     </TreeView.ItemContainerStyle>
                                 </TreeView>
                             </Grid>
-                            <ListView Grid.Column="1" ItemsSource="{Binding Vars}">
+                            <ListView Grid.Column="1" ItemsSource="{Binding Vars}" SelectionChanged="Vars_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Identifier}"/>
@@ -264,25 +263,38 @@
                                 </ListView.View>
                             </ListView>
                             <StackPanel Grid.Column="2" Orientation="Vertical">
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" Visibility="{Binding VisibilityConProperty}" Margin="5,0,0,0">
                                     <Label Content="Ip adresa"/>
-                                    <TextBox></TextBox>
+                                    <TextBox Text="{Binding ConnectionIpAddress,Mode=TwoWay}" VerticalContentAlignment="Center" 
+                                            GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                                    <Button Content="Změnit" Margin="0,5,0,0" Click="Change_Connection"/>
                                 </StackPanel>
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" Visibility="{Binding VisibilityGroupProperty}" Margin="5,0,0,0">
                                     <Label Content="Perioda[ms]"/>
-                                    <local:NumericUpDown></local:NumericUpDown>
+                                    <local:NumericUpDown NudMin="10" NudMax="10000" NudIncrement="10" NudValue="{Binding ConnectionPeriod,Mode=TwoWay}"/>
                                     <Label Content="Služba"/>
-                                    <ComboBox></ComboBox>
+                                    <ComboBox ItemsSource="{Binding ConnectionServices}" SelectedValue="{Binding ConnectionService}"/>
+                                    <Button Content="Změnit" Margin="0,5,0,0" Click="Change_Group"/>
                                 </StackPanel>
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" Visibility="{Binding VisibilityVarProperty}" Margin="5,0,0,0">
                                     <Label Content="Index Ns"></Label>
-                                    <local:NumericUpDown></local:NumericUpDown>
+                                    <local:NumericUpDown NudMin="0" NudMax="3" NudIncrement="1" NudValue="{Binding ConnectionNs,Mode=TwoWay}"/>
                                     <Label Content="Typ identifikátoru"/>
-                                    <ComboBox></ComboBox>
-                                    <local:NumericUpDown></local:NumericUpDown>
-                                    <TextBox></TextBox>
+                                    <ComboBox ItemsSource="{Binding IdType}" SelectedValue="{Binding ConnectionIdType,Mode=TwoWay}"/>
+                                    <local:NumericUpDown NudMin="1" NudMax="100000" NudIncrement="1" NudValue="{Binding ConnectionIdNumeric,Mode=TwoWay}"
+                                                         Visibility="{Binding VisibilityNumeric}"/>
+                                    <TextBox Text="{Binding ConnectionIdString,Mode=TwoWay}" VerticalContentAlignment="Center" 
+                                            GotKeyboardFocus="KeyboardSelectAddress" MouseDoubleClick="SelectAddress"
+                                            PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Visibility="{Binding VisibilityString}"/>
                                     <Label Content="Typ"/>
-                                    <ComboBox></ComboBox>
+                                    <ComboBox ItemsSource="{Binding BasicTypes}" SelectedValue="{Binding SelectedBasicType}"/>
+                                </StackPanel>
+                                <Button Content="Změnit" Visibility="{Binding VisibilityChangeVar}" Margin="0,5,0,0" Click="ChangeVar"/>
+                                <StackPanel Orientation="Vertical" Visibility="{Binding VisibilityAddVars}">
+                                    <Label Content="Počet proměnných"/>
+                                    <local:NumericUpDown NudMin="1" NudMax="50000" NudIncrement="1" NudValue="{Binding ConnectionNrVars,Mode=TwoWay}"/>
+                                    <Button Content="Přidat" Margin="0,5,0,0" Click="GroupAddVars"/>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>

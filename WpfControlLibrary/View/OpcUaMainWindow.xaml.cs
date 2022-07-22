@@ -260,21 +260,6 @@ namespace WpfControlLibrary.View
             }
             e.Handled = true;
         }
-
-        private void MiAddConnectionVar_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is OpcUaViewModel vm)
-            {
-                if (vm.SelectedConnectionObject is Group group)
-                {
-                    ClientVar cv = new ClientVar(group, "N:1:10000", ClientVar.BasicTypes[0],string.Empty);
-                    group.Vars.Add(cv);
-                    vm.Vars = group.Vars;
-                }
-            }
-            e.Handled = true;
-        }
-
         private void MiConnectionRemove_Click(object sender, RoutedEventArgs e)
         {
 
@@ -312,22 +297,6 @@ namespace WpfControlLibrary.View
                                 }
                             }
                         }
-                        else
-                        {
-                            if (vm.SelectedConnectionObject is Client.Group)
-                            {
-                                foreach (object mi in menu.Items)
-                                {
-                                    if (mi is MenuItem menuItem)
-                                    {
-                                        if (menuItem.Name == "MiAddConnectionVar")
-                                        {
-                                            menuItem.IsEnabled = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -338,6 +307,35 @@ namespace WpfControlLibrary.View
             if (DataContext is OpcUaViewModel vm)
             {
                 vm.SelectedConnectionObject = e.NewValue;
+                vm.VisibilityConProperty = Visibility.Collapsed;
+                vm.VisibilityGroupProperty = Visibility.Collapsed;
+                vm.VisibilityVarProperty = Visibility.Collapsed;
+                if (vm.SelectedConnectionObject is Client.ClientConnection cc)
+                {
+                    vm.VisibilityConProperty = Visibility.Visible;
+                    vm.ConnectionIpAddress = cc.IpAddress;
+                }
+                else
+                {
+                    if (vm.SelectedConnectionObject is Client.Group gr)
+                    {
+                        vm.VisibilityGroupProperty = Visibility.Visible;
+                        vm.ConnectionPeriod = gr.Period;
+                        vm.ConnectionService = gr.Service;
+                        vm.VisibilityVarProperty = Visibility.Visible;
+                        vm.ConnectionNs = 1;
+                        vm.ConnectionIdType = vm.IdType[0];
+                        vm.VisibilityNumeric = Visibility.Visible;
+                        vm.VisibilityString = Visibility.Collapsed;
+                        vm.ConnectionIdNumeric = 1000;
+                        vm.ConnectionIdString = "Variable";
+                        vm.SelectedBasicType = vm.BasicTypes[0];
+                        vm.VisibilityAddVars = Visibility.Visible;
+                        vm.VisibilityChangeVar = Visibility.Collapsed;
+                        vm.ConnectionNrVars = 1;
+                        vm.Vars = gr.Vars;
+                    }
+                }
             }
             e.Handled = true;
         }
@@ -551,6 +549,125 @@ namespace WpfControlLibrary.View
                     cc.IsExpanded = true;
                 }
             }
+        }
+
+        private void Change_Connection(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                if (vm.SelectedConnectionObject is ClientConnection cc)
+                {
+                    cc.IpAddress = vm.ConnectionIpAddress;
+                }
+            }
+        }
+
+        private void Change_Group(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                if (vm.SelectedConnectionObject is Group gr)
+                {
+                    gr.Period = vm.ConnectionPeriod;
+                    gr.Service = vm.ConnectionService;
+                }
+            }
+        }
+
+        private void GroupAddVars(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                if (vm.SelectedConnectionObject is Group gr)
+                {
+                    NodeIdBase nid = null;
+                    if (vm.ConnectionIdType == vm.IdType[0])
+                    {
+                        nid = new NodeIdNumeric(vm.ConnectionNs, vm.ConnectionIdNumeric);
+                    }
+                    else
+                    {
+                        if (vm.ConnectionIdType == vm.IdType[1])
+                        {
+                            nid = new NodeIdString(vm.ConnectionNs, vm.ConnectionIdString);
+                        }
+                    }
+                    for (int i = 0; i < vm.ConnectionNrVars; ++i)
+                    {
+                        ClientVar cv = new ClientVar(gr, nid.GetNodeName(), vm.SelectedBasicType, String.Empty);
+                        gr.AddVar(cv);
+                        if (nid is NodeIdNumeric numeric)
+                        {
+                            ++numeric.IdentifierNumeric;
+                        }
+                    }
+                    vm.Vars = gr.Vars;
+                }
+            }
+        }
+
+        private void Vars_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                if (e.AddedItems[0] is ClientVar cv)
+                {
+                    if (DataContext is OpcUaViewModel vm)
+                    {
+                        vm.SelectedClientVar = cv;
+                        vm.VisibilityChangeVar = Visibility.Visible;
+                        vm.VisibilityGroupProperty = Visibility.Collapsed;
+                        vm.VisibilityAddVars = Visibility.Collapsed;
+
+                        vm.ConnectionIdString = "Variable";
+                        NodeIdBase nib = NodeIdBase.GetNodeIdBase(cv.Identifier);
+                        if (nib is NodeIdNumeric numeric)
+                        {
+                            vm.ConnectionIdType = vm.IdType[0];
+                            vm.VisibilityNumeric = Visibility.Visible;
+                            vm.ConnectionIdNumeric = numeric.IdentifierNumeric;
+                            vm.ConnectionNs = numeric.NamespaceIndex;
+                            vm.VisibilityString = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            if (nib is NodeIdString idS)
+                            {
+                                vm.ConnectionIdType = vm.IdType[1];
+                                vm.VisibilityNumeric = Visibility.Collapsed;
+                                vm.ConnectionIdNumeric = 1000;
+                                vm.ConnectionNs = idS.NamespaceIndex;
+                                vm.ConnectionIdString = idS.IdentifierString;
+                                vm.VisibilityString = Visibility.Visible;
+                            }
+                        }
+                        vm.SelectedBasicType = cv.SelectedBasicType;
+                    }
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void ChangeVar(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                NodeIdBase nib = null;
+                if (vm.ConnectionIdType == vm.IdType[0])
+                {
+                    nib = new NodeIdNumeric(vm.ConnectionNs, vm.ConnectionIdNumeric);
+                }
+                else
+                {
+                    if (vm.ConnectionIdType == vm.IdType[1])
+                    {
+                        nib = new NodeIdString(vm.ConnectionNs, vm.ConnectionIdString);
+                    }
+                }
+                vm.SelectedClientVar.Identifier = nib.GetNodeName();
+                vm.SelectedClientVar.SelectedBasicType = vm.SelectedBasicType;
+            }
+            e.Handled = true;
         }
     }
 }
