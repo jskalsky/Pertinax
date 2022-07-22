@@ -61,6 +61,9 @@ namespace WpfControlLibrary.DataModel
 
         private static void Open()
         {
+            _nextSystemNumericId.Clear();
+            _ids.Clear();
+            _nextVarNumericId.Clear();
             if (_nextSystemNumericId.Count == 0)
             {
                 for (ushort i = FirstNamespaceIndex; i <= LastNamespaceIndex; i++)
@@ -167,12 +170,15 @@ namespace WpfControlLibrary.DataModel
             _ids[ns].Add(nodeId);
             return true;
         }
-        public static bool ExistsNodeId(string nodeId)
-        {
-            Debug.Print($"ExistsNodeId {nodeId}");
-            return false;
-        }
 
+        public static void RemoveId(NodeIdBase id)
+        {
+            string ids = id.GetNodeName();
+            if (_ids[id.NamespaceIndex].Contains(ids))
+            {
+                _ids[id.NamespaceIndex].Remove(ids);
+            }
+        }
         public static void Clear()
         {
             Debug.Print("NodeIdBase.Clear()");

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpcUaCfg;
 using WpfControlLibrary;
+using WpfControlLibrary.Client;
 using WpfControlLibrary.DataModel;
 
 namespace ConfigOpcUa
@@ -32,6 +33,7 @@ namespace ConfigOpcUa
         private int _publisherId;
         private bool _serverEncryption;
         private readonly List<WpfControlLibrary.PortsNode> _ports;
+        private readonly List<WpfControlLibrary.Client.ClientConnection> _connections;
         private readonly Dictionary<string, Flag> _allPorts;
         public ConfigOpcUa()
         {
@@ -48,6 +50,7 @@ namespace ConfigOpcUa
             Debug.WriteLine("Start");
 #endif
             _ports = new List<WpfControlLibrary.PortsNode>();
+            _connections = new List<ClientConnection>();
             _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
             _serverEncryption = false;
@@ -206,40 +209,40 @@ namespace ConfigOpcUa
                 Debug.Print($"LoadNode FOLDER= {folder.name}, {folder.id}");
                 NodeIdBase nodeId = NodeIdBase.GetNodeIdBase(folder.id);
                 dmn = new DataModelFolder(folder.name, nodeId, parent);
-/*                if (nodeId.NamespaceIndex == 1)
-                {
-                    Debug.Print($"nodeId.NamespaceIndex= {nodeId.NamespaceIndex}");
-                    switch (folder.name)
-                    {
-                        case "Z2Xx":
-                            DefaultDataModel.FolderZ2Xx = new DataModelFolder(folder.name, nodeId, parent);
-                            dmn = DefaultDataModel.FolderZ2Xx;
-                            break;
-                        case "Objects":
-                            DefaultDataModel.FolderObjects = new DataModelFolder(folder.name, nodeId, parent);
-                            dmn = DefaultDataModel.FolderObjects;
-                            break;
-                        case "ObjectTypes":
-                            DefaultDataModel.FolderObjectTypes = new DataModelFolder(folder.name, nodeId, parent);
-                            dmn = DefaultDataModel.FolderObjectTypes;
-                            break;
-                        case "Variables":
-                            DefaultDataModel.FolderVariables = new DataModelFolder(folder.name, nodeId, parent);
-                            dmn = DefaultDataModel.FolderVariables;
-                            break;
-                    }
+                /*                if (nodeId.NamespaceIndex == 1)
+                                {
+                                    Debug.Print($"nodeId.NamespaceIndex= {nodeId.NamespaceIndex}");
+                                    switch (folder.name)
+                                    {
+                                        case "Z2Xx":
+                                            DefaultDataModel.FolderZ2Xx = new DataModelFolder(folder.name, nodeId, parent);
+                                            dmn = DefaultDataModel.FolderZ2Xx;
+                                            break;
+                                        case "Objects":
+                                            DefaultDataModel.FolderObjects = new DataModelFolder(folder.name, nodeId, parent);
+                                            dmn = DefaultDataModel.FolderObjects;
+                                            break;
+                                        case "ObjectTypes":
+                                            DefaultDataModel.FolderObjectTypes = new DataModelFolder(folder.name, nodeId, parent);
+                                            dmn = DefaultDataModel.FolderObjectTypes;
+                                            break;
+                                        case "Variables":
+                                            DefaultDataModel.FolderVariables = new DataModelFolder(folder.name, nodeId, parent);
+                                            dmn = DefaultDataModel.FolderVariables;
+                                            break;
+                                    }
 
-                }
-                else
-                {
-                    dmn = new DataModelFolder(folder.name, nodeId, parent);
-                }*/
+                                }
+                                else
+                                {
+                                    dmn = new DataModelFolder(folder.name, nodeId, parent);
+                                }*/
                 Debug.Print($"Folder dmn= {dmn}");
                 if (dmn != null)
                 {
                     DataModelNamespace ns = dmn.GetNamespace();
                     IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
-                    if(!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
+                    if (!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
                     {
                         ++nrErrors;
                         WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
@@ -278,7 +281,7 @@ namespace ConfigOpcUa
                             GetAccess(simpleVar.access), parent);
                         DataModelNamespace ns = dmn.GetNamespace();
                         IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
-                        if(!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
+                        if (!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
                         {
                             ++nrErrors;
                             WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
@@ -294,7 +297,7 @@ namespace ConfigOpcUa
                                 GetAccess(arrayVar.access), (int)arrayVar.length, parent);
                             DataModelNamespace ns = dmn.GetNamespace();
                             IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
-                            if(!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
+                            if (!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
                             {
                                 ++nrErrors;
                                 WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
@@ -309,7 +312,7 @@ namespace ConfigOpcUa
                                 dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
                                 DataModelNamespace ns = dmn.GetNamespace();
                                 IdFactory.AddName(ns.Namespace, IdFactory.NameObjectType, objectType.name);
-                                if(!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
+                                if (!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
                                 {
                                     ++nrErrors;
                                     WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
@@ -325,7 +328,7 @@ namespace ConfigOpcUa
                                         parent);
                                     DataModelNamespace ns = dmn.GetNamespace();
                                     IdFactory.AddName(ns.Namespace, IdFactory.NameObjectVar, objectVar.name);
-                                    if(!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
+                                    if (!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
                                     {
                                         ++nrErrors;
                                         WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
@@ -383,16 +386,12 @@ namespace ConfigOpcUa
                         {
                             LoadNode(null, node, mvm.DataModel, ref nrErrors);
                         }
-                        if(nrErrors == 0)
-                        {
-                            WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[2],
-                                $"Načtení konfigurace bez chyb");
-                        }
-                        else
-                        {
-                            WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[2],
-                                $"Načtení konfigurace, počet chyb = {nrErrors}");
-                        }
+
+                        WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(
+                            WpfControlLibrary.ViewModel.StatusMsg._messageTypes[2],
+                            nrErrors == 0
+                                ? $"Načtení konfigurace bez chyb"
+                                : $"Načtení konfigurace, počet chyb = {nrErrors}");
                         if (cfg.connections != null)
                         {
                             if (cfg.connections.Length != 0)
@@ -400,15 +399,25 @@ namespace ConfigOpcUa
                                 foreach (OpcUaCfg.connectionsConnection connection in cfg.connections)
                                 {
                                     Debug.Flush();
-                                    WpfControlLibrary.Client.ClientConnection cc = new WpfControlLibrary.Client.ClientConnection();
-                                    cc.Crypto = connection.encryption;
-                                    cc.IpAddress = connection.ip_address;
-                                    cc.Service = GetClientService(connection.service);
-                                    if (connection.var != null)
+                                    WpfControlLibrary.Client.ClientConnection cc =
+                                        new WpfControlLibrary.Client.ClientConnection(connection.ip_address,
+                                            connection.encryption);
+                                    if (connection.group != null)
                                     {
-                                        foreach (OpcUaCfg.connectionsConnectionVar vt in connection.var)
+                                        foreach (OpcUaCfg.connectionsConnectionGroup group in connection.group)
                                         {
-                                            cc.AddVar(vt.ns, vt.id, GetBasicType(vt.basic_type), vt.alias);
+                                            WpfControlLibrary.Client.Group gr = new Group(group.period, group.service == client_service.Read ? "Read" : "Write");
+                                            cc.Groups.Add(gr);
+                                            if (group.var != null)
+                                            {
+                                                foreach (OpcUaCfg.connectionsConnectionGroupVar groupVar in group.var)
+                                                {
+                                                    WpfControlLibrary.Client.ClientVar clientVar =
+                                                        new ClientVar(gr, groupVar.id,
+                                                            GetBasicType(groupVar.basic_type), groupVar.alias);
+                                                    gr.Vars.Add(clientVar);
+                                                }
+                                            }
                                         }
                                     }
                                     mvm.Connections.Add(cc);
@@ -453,19 +462,29 @@ namespace ConfigOpcUa
                     {
                         if (_ptxBasicTypes.TryGetValue(GetBasicType(nsv.basic_type), out char basicTypeChar))
                         {
-                            string flag;
-                            if (nsv.access == access.Read || nsv.access == access.ReadWrite)
+                            string outFlag = $"O.OPCUA.{basicTypeChar}.{path}.{nsv.name}";
+                            string inFlag = $"I.OPCUA.{basicTypeChar}.{path}.{nsv.name}";
+                            if (nsv.access == access.ReadWrite)
                             {
-                                flag = $"O.OPCUA.{basicTypeChar}.{path}.{nsv.name}";
-                                pn.AddFlag(flag);
+                                pn.AddFlag(inFlag);
+                                _allPorts[inFlag.ToUpperInvariant()] = new Flag(inFlag, GetArrayIndex(inFlag), false);
+                                pn.AddFlag(outFlag);
+                                _allPorts[outFlag.ToUpperInvariant()] = new Flag(outFlag, GetArrayIndex(outFlag), false);
                             }
                             else
                             {
-                                flag = $"I.OPCUA.{basicTypeChar}.{path}.{nsv.name}";
-                                pn.AddFlag(flag);
+                                if (nsv.access == access.Read)
+                                {
+                                    pn.AddFlag(outFlag);
+                                }
+                                else
+                                {
+                                    if (nsv.access == access.Write)
+                                    {
+                                        pn.AddFlag(inFlag);
+                                    }
+                                }
                             }
-
-                            _allPorts[flag.ToUpperInvariant()] = new Flag(flag, GetArrayIndex(flag), false);
                         }
                         return;
                     }
@@ -477,18 +496,31 @@ namespace ConfigOpcUa
                             {
                                 for (uint i = 0; i < nav.length; i++)
                                 {
-                                    string flag;
-                                    if (nav.access == access.Read || nav.access == access.ReadWrite)
+                                    string outFlag = $"O.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}";
+                                    string inFlag = $"I.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}";
+                                    if (nav.access == access.ReadWrite)
                                     {
-                                        flag = $"O.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}";
-                                        pn.AddFlag(flag);
+                                        pn.AddFlag(outFlag);
+                                        _allPorts[outFlag.ToUpperInvariant()] = new Flag(outFlag, GetArrayIndex(outFlag), false);
+                                        pn.AddFlag(inFlag);
+                                        _allPorts[inFlag.ToUpperInvariant()] = new Flag(inFlag, GetArrayIndex(inFlag), false);
                                     }
                                     else
                                     {
-                                        flag = $"I.OPCUA.{basicTypeChar}.{path}.{nav.name}.{i}";
-                                        pn.AddFlag(flag);
+                                        if (nav.access == access.Read)
+                                        {
+                                            pn.AddFlag(outFlag);
+                                            _allPorts[outFlag.ToUpperInvariant()] = new Flag(outFlag, GetArrayIndex(outFlag), false);
+                                        }
+                                        else
+                                        {
+                                            if (nav.access == access.Write)
+                                            {
+                                                pn.AddFlag(inFlag);
+                                                _allPorts[inFlag.ToUpperInvariant()] = new Flag(inFlag, GetArrayIndex(inFlag), false);
+                                            }
+                                        }
                                     }
-                                    _allPorts[flag.ToUpperInvariant()] = new Flag(flag, GetArrayIndex(flag), true);
                                 }
                             }
                             return;
@@ -535,6 +567,33 @@ namespace ConfigOpcUa
                                 }
                                 _ports.Add(portsNode);
                             }
+                        }
+
+                        if (cfg.connections != null)
+                        {
+                            _connections.Clear();
+                            foreach (OpcUaCfg.connectionsConnection connection in cfg.connections)
+                            {
+                                WpfControlLibrary.Client.ClientConnection wc = new WpfControlLibrary.Client.ClientConnection(connection.ip_address, connection.encryption);
+                                if (connection.group != null)
+                                {
+                                    foreach (OpcUaCfg.connectionsConnectionGroup group in connection.group)
+                                    {
+                                        WpfControlLibrary.Client.Group gr = new Group(group.period, group.service == client_service.Read ? "Read" : "Write");
+                                        wc.Groups.Add(gr);
+                                        if (group.var != null)
+                                        {
+                                            foreach (OpcUaCfg.connectionsConnectionGroupVar groupVar in group.var)
+                                            {
+                                                WpfControlLibrary.Client.ClientVar clientVar = new ClientVar(gr, groupVar.id, GetBasicType(groupVar.basic_type), groupVar.alias);
+                                                gr.Vars.Add(clientVar);
+                                            }
+                                        }
+                                    }
+                                }
+                                _connections.Add(wc);
+                            }
+
                         }
                     }
                 }
@@ -1225,25 +1284,27 @@ namespace ConfigOpcUa
         {
             ct.ip_address = connection.IpAddress;
             ct.encryption = connection.Crypto;
-            ct.period = connection.Period;
-            ct.service = GetClientService(connection.Service);
-        }
-
-        private void SaveClientVar(WpfControlLibrary.Client.ClientVar var, OpcUaCfg.connectionsConnectionVar var_Type)
-        {
-            var_Type.ns = 0;
-            var_Type.id = string.Empty;
-            string[] items = var.Identifier.Split(':');
-            if (items.Length == 2)
+            List<OpcUaCfg.connectionsConnectionGroup> groups = new List<connectionsConnectionGroup>();
+            foreach (Group group in connection.Groups)
             {
-                if (ushort.TryParse(items[0], out ushort nsIndex))
+                OpcUaCfg.connectionsConnectionGroup g = new connectionsConnectionGroup();
+                g.period = group.Period;
+                g.service = (group.Service == "Read") ? OpcUaCfg.client_service.Read : OpcUaCfg.client_service.Write;
+                List<OpcUaCfg.connectionsConnectionGroupVar> groupVars = new List<connectionsConnectionGroupVar>();
+                foreach (ClientVar clientVar in group.Vars)
                 {
-                    var_Type.ns = nsIndex;
-                    var_Type.id = items[1];
+                    OpcUaCfg.connectionsConnectionGroupVar groupVar = new connectionsConnectionGroupVar();
+                    groupVar.id = clientVar.Identifier;
+                    groupVar.basic_type = GetBasicType(clientVar.SelectedBasicType);
+                    groupVar.alias = clientVar.Alias;
+                    groupVars.Add(groupVar);
                 }
+
+                g.var = groupVars.ToArray();
+                groups.Add(g);
             }
-            var_Type.basic_type = GetBasicType(var.SelectedBasicType);
-            var_Type.alias = var.Alias;
+
+            ct.group = groups.ToArray();
         }
         private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
         {
@@ -1271,15 +1332,6 @@ namespace ConfigOpcUa
             {
                 OpcUaCfg.connectionsConnection ct = new OpcUaCfg.connectionsConnection();
                 SaveConnection(connection, ct);
-
-                List<OpcUaCfg.connectionsConnectionVar> vars = new List<OpcUaCfg.connectionsConnectionVar>();
-                foreach (WpfControlLibrary.Client.ClientVar var in connection.Vars)
-                {
-                    OpcUaCfg.connectionsConnectionVar var_Type = new OpcUaCfg.connectionsConnectionVar();
-                    SaveClientVar(var, var_Type);
-                    vars.Add(var_Type);
-                }
-                ct.var = vars.ToArray();
                 connections.Add(ct);
             }
             cfg.connections = connections.ToArray();

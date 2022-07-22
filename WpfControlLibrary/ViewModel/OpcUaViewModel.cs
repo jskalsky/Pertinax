@@ -37,6 +37,8 @@ namespace WpfControlLibrary.ViewModel
         private StatusMsg _selectedStatusMsg;
 
         private static OpcUaViewModel _instance;
+
+        private ObservableCollection<ClientVar> _vars;
         public OpcUaViewModel()
         {
             SelectedNode = null;
@@ -59,7 +61,7 @@ namespace WpfControlLibrary.ViewModel
         public ObservableCollection<ClientConnection> Connections { get; }
         public ObservableCollection<StatusMsg> Status { get; }
         public List<DataModelObjectType> ObjectTypes { get; }
-        public Client.ClientConnection SelectedConnection { get; set; }
+        public object SelectedConnectionObject { get; set; }
 
         public string LocalIpAddress
         {
@@ -149,6 +151,12 @@ namespace WpfControlLibrary.ViewModel
         {
             get { return _selectedStatusMsg; }
             set { _selectedStatusMsg = value; OnPropertyChanged(nameof(SelectedStatusMsg)); }
+        }
+
+        public ObservableCollection<ClientVar> Vars
+        {
+            get { return _vars; }
+            set { _vars = value; OnPropertyChanged("Vars"); }
         }
         private void OnPropertyChanged(string name)
         {

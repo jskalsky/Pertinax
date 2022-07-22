@@ -476,13 +476,9 @@ namespace OpcUaCfg {
         
         private string ip_addressField;
         
-        private ushort periodField;
-        
         private bool encryptionField;
         
-        private client_service serviceField;
-        
-        private connectionsConnectionVar[] varField;
+        private connectionsConnectionGroup[] groupField;
         
         /// <remarks/>
         public string ip_address {
@@ -495,22 +491,48 @@ namespace OpcUaCfg {
         }
         
         /// <remarks/>
-        public ushort period {
-            get {
-                return this.periodField;
-            }
-            set {
-                this.periodField = value;
-            }
-        }
-        
-        /// <remarks/>
         public bool encryption {
             get {
                 return this.encryptionField;
             }
             set {
                 this.encryptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("group")]
+        public connectionsConnectionGroup[] group {
+            get {
+                return this.groupField;
+            }
+            set {
+                this.groupField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    public partial class connectionsConnectionGroup {
+        
+        private ushort periodField;
+        
+        private client_service serviceField;
+        
+        private connectionsConnectionGroupVar[] varField;
+        
+        /// <remarks/>
+        public ushort period {
+            get {
+                return this.periodField;
+            }
+            set {
+                this.periodField = value;
             }
         }
         
@@ -526,7 +548,7 @@ namespace OpcUaCfg {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("var")]
-        public connectionsConnectionVar[] var {
+        public connectionsConnectionGroupVar[] var {
             get {
                 return this.varField;
             }
@@ -558,25 +580,13 @@ namespace OpcUaCfg {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
-    public partial class connectionsConnectionVar {
-        
-        private ushort nsField;
+    public partial class connectionsConnectionGroupVar {
         
         private string idField;
         
         private basic_type basic_typeField;
         
         private string aliasField;
-        
-        /// <remarks/>
-        public ushort ns {
-            get {
-                return this.nsField;
-            }
-            set {
-                this.nsField = value;
-            }
-        }
         
         /// <remarks/>
         public string id {

@@ -8,25 +8,20 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Client
 {
-    public class ClientConnection : INotifyPropertyChanged, IDataErrorInfo
+    public class ClientConnection : INotifyPropertyChanged
     {
         private string _ipAddress;
         private bool _crypto;
-        private ushort _period;
-        private string _service;
         private bool _isExpanded;
-        private string[] _services = new string[] {"Read", "Write"};
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ClientConnection()
+        public ClientConnection(string ipAddress, bool crypto)
         {
-            Vars = new ObservableCollection<ClientVar>();
+            Groups = new ObservableCollection<Group>();
             ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/ClassIcon.png";
-            Period = 100;
-            Crypto = true;
-            Service = _services[1];
-            ValidateVars = true;
+            Crypto = crypto;
+            IpAddress = ipAddress;
         }
 
         public string IpAddress
@@ -40,22 +35,6 @@ namespace WpfControlLibrary.Client
             get { return _crypto; }
             set { _crypto = value; OnPropertyChanged(nameof(Crypto)); }
         }
-
-        public ushort Period
-        {
-            get { return _period; }
-            set { _period = value; OnPropertyChanged(nameof(Period)); }
-        }
-
-        public string[] Services
-        { 
-            get { return _services; } 
-        }
-        public string Service
-        {
-            get { return _service; }
-            set { _service = value; OnPropertyChanged(nameof(Service)); }
-        }
         public bool IsExpanded
         {
             get { return _isExpanded; }
@@ -63,24 +42,11 @@ namespace WpfControlLibrary.Client
         }
         public string ImagePath { get; }
 
-        public ObservableCollection<ClientVar> Vars { get; }
-        public bool ValidateVars { get; set; }
-        public string Error => throw new NotImplementedException();
+        public ObservableCollection<Group> Groups { get; }
 
-        public string this[string columnName]
+        public void AddGroup(Group group)
         {
-            get { return Validate(columnName); }
-        }
-
-        private string Validate(string propertyName)
-        {
-            string error = string.Empty;
-            return error;
-        }
-        public void AddVar(ushort ns, string id, string basicType, string alias)
-        {
-            ClientVar var = new ClientVar(this) { Identifier=$"{ns}:{id}", SelectedBasicType = basicType, Alias = alias };
-            Vars.Add(var);
+            Groups.Add(group);
         }
         private void OnPropertyChanged(string name)
         {

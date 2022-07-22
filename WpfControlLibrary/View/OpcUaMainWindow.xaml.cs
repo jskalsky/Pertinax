@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using WpfControlLibrary.ViewModel;
 using WpfControlLibrary.DataModel;
 using System.Diagnostics;
+using WpfControlLibrary.Client;
 
 namespace WpfControlLibrary.View
 {
@@ -59,16 +60,12 @@ namespace WpfControlLibrary.View
                 {
                     if (vm.SelectedNode is DataModelFolder dmf)
                     {
-                        if (dmf.IsParentFolder(DefaultDataModel.FolderVariables))
-                        {
-                            vm.VisibilityAddGroup = Visibility.Visible;
-                            ButtonAdd.IsEnabled = true;
-                        }
-
                         if (dmf.NodeId.NamespaceIndex != 0)
                         {
                             vm.VarName = dmf.Name;
                             ButtonChange.IsEnabled = true;
+                            vm.VisibilityAddGroup = Visibility.Visible;
+                            ButtonAdd.IsEnabled = true;
                         }
                     }
                     else
@@ -258,8 +255,8 @@ namespace WpfControlLibrary.View
         {
             if (DataContext is OpcUaViewModel vm)
             {
-                Client.ClientConnection connection = new Client.ClientConnection() { Crypto = false, IpAddress = "10.10.200.200" };
-                vm.Connections.Add(connection);
+                Client.ClientConnection cc = new ClientConnection("10.10.200.200", false);
+                vm.Connections.Add(cc);
             }
             e.Handled = true;
         }
@@ -268,11 +265,11 @@ namespace WpfControlLibrary.View
         {
             if (DataContext is OpcUaViewModel vm)
             {
-                if (vm.SelectedConnection != null)
+                if (vm.SelectedConnectionObject is Group group)
                 {
-                    vm.SelectedBasicType = vm.BasicTypes[0];
-                    vm.SelectedConnection.AddVar(1, "1000", vm.BasicTypes[0], string.Empty);
-                    vm.SelectedConnection.IsExpanded = true;
+                    ClientVar cv = new ClientVar(group, "N:1:10000", ClientVar.BasicTypes[0],string.Empty);
+                    group.Vars.Add(cv);
+                    vm.Vars = group.Vars;
                 }
             }
             e.Handled = true;
@@ -280,7 +277,7 @@ namespace WpfControlLibrary.View
 
         private void MiConnectionRemove_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void Connections_Opened(object sender, RoutedEventArgs e)
@@ -300,17 +297,33 @@ namespace WpfControlLibrary.View
                             }
                         }
                     }
-                    if (vm.SelectedConnection != null)
+                    if (vm.SelectedConnectionObject != null)
                     {
-                        if (vm.SelectedConnection is Client.ClientConnection)
+                        if (vm.SelectedConnectionObject is Client.ClientConnection)
                         {
                             foreach (object mi in menu.Items)
                             {
                                 if (mi is MenuItem menuItem)
                                 {
-                                    if (menuItem.Name == "MiAddConnectionVar")
+                                    if (menuItem.Name == "MiAddGroup")
                                     {
                                         menuItem.IsEnabled = true;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (vm.SelectedConnectionObject is Client.Group)
+                            {
+                                foreach (object mi in menu.Items)
+                                {
+                                    if (mi is MenuItem menuItem)
+                                    {
+                                        if (menuItem.Name == "MiAddConnectionVar")
+                                        {
+                                            menuItem.IsEnabled = true;
+                                        }
                                     }
                                 }
                             }
@@ -324,7 +337,7 @@ namespace WpfControlLibrary.View
         {
             if (DataContext is OpcUaViewModel vm)
             {
-                vm.SelectedConnection = e.NewValue as Client.ClientConnection;
+                vm.SelectedConnectionObject = e.NewValue;
             }
             e.Handled = true;
         }
@@ -383,6 +396,41 @@ namespace WpfControlLibrary.View
             e.Handled = true;
         }
 
+        public bool TestNodeId(NodeIdBase newNodeId, bool isSystem, DataModelNode tag = null, NodeIdBase oldNodeId = null)
+        {
+            if (oldNodeId != null)
+            {
+                NodeIdBase.RemoveId(oldNodeId);
+            }
+
+            bool result = isSystem ? NodeIdBase.AddSystemNodeId(newNodeId.NamespaceIndex, newNodeId) : NodeIdBase.AddVarNodeId(newNodeId.NamespaceIndex, newNodeId);
+
+            if (!result)
+            {
+                WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
+                    $"NodeId {newNodeId.GetNodeName()} již existuje", tag);
+            }
+
+            return result;
+        }
+        public NodeIdBase CreateNodeId(ushort ns, uint numeric, string s, string idType, string[] idTypes)
+        {
+            if (idType == idTypes[0])
+            {
+                NodeIdNumeric nin = new NodeIdNumeric(ns, numeric);
+                return nin;
+            }
+            else
+            {
+                if (idType == idTypes[1])
+                {
+                    NodeIdString nis = new NodeIdString(ns, s);
+                    return nis;
+                }
+            }
+
+            return null;
+        }
         private void ButtonChange_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is OpcUaViewModel vm)
@@ -391,24 +439,16 @@ namespace WpfControlLibrary.View
                 DataModelNode selectedNode = vm.SelectedNode;
                 parent?.Children.Remove(selectedNode);
                 selectedNode.Name = vm.VarName;
+                NodeIdBase nib = null;
+                bool testResult = false;
                 if (selectedNode is DataModelSimpleVariable dmsv)
                 {
                     dmsv.VarAccess = vm.SelectedAccess;
                     dmsv.VarType = vm.SelectedBasicType;
-                    if (vm.SelectedIdType == vm.IdType[0])
-                    {
-                        NodeIdNumeric nin = new NodeIdNumeric(vm.SelectedNode.NodeId.NamespaceIndex, (uint)vm.SelectedNumeric);
-                        selectedNode.NodeId = nin;
-                    }
-                    else
-                    {
-                        if (vm.SelectedIdType == vm.IdType[1])
-                        {
-                            Debug.Print($"Change_Click string");
-                            NodeIdString nis = new NodeIdString(vm.SelectedNode.NodeId.NamespaceIndex, vm.SelectedString);
-                            selectedNode.NodeId = nis;
-                        }
-                    }
+                    nib = CreateNodeId(selectedNode.NodeId.NamespaceIndex, (uint)vm.SelectedNumeric,
+                        vm.SelectedString, vm.SelectedIdType, vm.IdType);
+                    testResult = TestNodeId(nib, false, selectedNode, selectedNode.NodeId);
+                    selectedNode.NodeId = nib;
                 }
                 else
                 {
@@ -416,20 +456,11 @@ namespace WpfControlLibrary.View
                     {
                         dmav.VarAccess = vm.SelectedAccess;
                         dmav.BasicType = vm.SelectedBasicType;
-                        if (vm.SelectedIdType == vm.IdType[0])
-                        {
-                            NodeIdNumeric nin = new NodeIdNumeric(vm.SelectedNode.NodeId.NamespaceIndex, (uint)vm.SelectedNumeric);
-                            selectedNode.NodeId = nin;
-                        }
-                        else
-                        {
-                            if (vm.SelectedIdType == vm.IdType[1])
-                            {
-                                Debug.Print($"Change_Click string");
-                                NodeIdString nis = new NodeIdString(vm.SelectedNode.NodeId.NamespaceIndex, vm.SelectedString);
-                                selectedNode.NodeId = nis;
-                            }
-                        }
+                        dmav.ArrayLength = vm.ArrayLength;
+                        nib = CreateNodeId(selectedNode.NodeId.NamespaceIndex, (uint)vm.SelectedNumeric,
+                            vm.SelectedString, vm.SelectedIdType, vm.IdType);
+                        testResult = TestNodeId(nib, false, selectedNode, selectedNode.NodeId);
+                        selectedNode.NodeId = nib;
                     }
                     else
                     {
@@ -485,7 +516,7 @@ namespace WpfControlLibrary.View
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(DataContext is OpcUaViewModel vm)
+            if (DataContext is OpcUaViewModel vm)
             {
                 if (e.AddedItems.Count == 1)
                 {
@@ -497,7 +528,7 @@ namespace WpfControlLibrary.View
                             {
                                 simple.IsSelected = true;
                                 DataModelNode dmn = simple;
-                                while(dmn.Parent != null)
+                                while (dmn.Parent != null)
                                 {
                                     dmn.Parent.IsExpanded = true;
                                     dmn = dmn.Parent;
@@ -505,6 +536,19 @@ namespace WpfControlLibrary.View
                             }
                         }
                     }
+                }
+            }
+        }
+
+        private void MiAddGroup_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is OpcUaViewModel vm)
+            {
+                if (vm.SelectedConnectionObject is ClientConnection cc)
+                {
+                    Group group = new Group(100, Group.Services[0]);
+                    cc.AddGroup(group);
+                    cc.IsExpanded = true;
                 }
             }
         }
