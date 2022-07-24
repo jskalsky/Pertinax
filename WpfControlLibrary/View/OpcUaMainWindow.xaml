@@ -7,6 +7,7 @@
         xmlns:vm="clr-namespace:WpfControlLibrary.ViewModel"
         xmlns:dm="clr-namespace:WpfControlLibrary.DataModel"
         xmlns:client="clr-namespace:WpfControlLibrary.Client"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         mc:Ignorable="d"
         Title="OpcUaMainWindow" Height="630" Width="900" ResizeMode="CanResize"  WindowStyle="None">
     <Window.DataContext>
@@ -93,6 +94,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid>
@@ -203,6 +205,9 @@
                                     </Grid>
                                 </GroupBox>
                             </Grid>
+                            <WindowsFormsHost Grid.Column="2" Width="150">
+                                <wf:PropertyGrid></wf:PropertyGrid>
+                            </WindowsFormsHost>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Client">

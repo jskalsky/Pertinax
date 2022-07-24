@@ -211,9 +211,9 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 				if (refD.typeDefinition.nodeId.identifierType == UA_NODEIDTYPE_NUMERIC && refD.typeDefinition.nodeId.identifier.numeric == UA_NS0ID_FOLDERTYPE)
 				{
 					fprintf(fp, "Folder: %s\n", GetQualifiedName(refD.browseName).c_str());
-					WriteLine(6, fpCs, "node = new DataModelFolder(\"%s\", new NodeIdNumeric(0,%u), parent);\n", GetQualifiedName(refD.browseName).c_str(),
+					WriteLine(6, fpCs, "node = new ModNodeFolder(\"%s\", new ModNodeIdNumeric(0,%u));\n", GetQualifiedName(refD.browseName).c_str(),
 						refD.nodeId.nodeId.identifier.numeric);
-					WriteLine(6, fpCs, "parent.AddChildren(node);\n");
+					WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 					WriteLine(6, fpCs, "stack.Push(parent);\n");
 					WriteLine(6, fpCs, "parent = node;\n");
 
@@ -265,17 +265,17 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 										{
 											if (isScalar)
 											{
-												WriteLine(6, fpCs, "node = new DataModelSimpleVariable(\"%s\", new NodeIdNumeric(0, %u), \"%s\", \"%s\", parent);\n",
+												WriteLine(6, fpCs, "node = new ModNodeVariable(\"%s\", new ModNodeIdNumeric(0, %u), \"%s\", \"%s\");\n",
 													GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, basicType.c_str(), access.c_str());
-												WriteLine(6, fpCs, "parent.AddChildren(node);\n");
+												WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 											}
 											else
 											{
 												if (isArray)
 												{
-													WriteLine(6, fpCs, "node = new DataModelArrayVariable(\"%s\", new NodeIdNumeric(0, %u), \"%s\", \"%s\", %d, parent);\n",
+													WriteLine(6, fpCs, "node = new ModNodeArrayVariable(\"%s\", new ModNodeIdNumeric(0, %u), \"%s\", \"%s\", %d);\n",
 														GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, basicType.c_str(), access.c_str(), arrayLength);
-													WriteLine(6, fpCs, "parent.AddChildren(node);\n");
+													WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 												}
 											}
 											fprintf(fp, "Variable: %s, %s\n", GetQualifiedName(refD.browseName).c_str(), GetExpandedNodeId(refD.typeDefinition).c_str());
@@ -296,9 +296,9 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 						if (refD.nodeClass == UA_NODECLASS_OBJECT)
 						{
 							fprintf(fp, "Object: %s\n", GetQualifiedName(refD.browseName).c_str());
-							WriteLine(6, fpCs, "node = new DataModelObjectVariable(\"%s\", new NodeIdNumeric(0,%u), \"%s\", parent);\n", GetQualifiedName(refD.browseName).c_str(),
+							WriteLine(6, fpCs, "node = new ModNodeObject(\"%s\", new ModNodeIdNumeric(0,%u), \"%s\");\n", GetQualifiedName(refD.browseName).c_str(),
 								refD.nodeId.nodeId.identifier.numeric, "ObjectType");
-							WriteLine(6, fpCs, "parent.AddChildren(node);\n");
+							WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 							WriteLine(6, fpCs, "stack.Push(parent);\n");
 							WriteLine(6, fpCs, "parent = node;\n");
 							browseRequest.nodesToBrowse[0].nodeId = refD.nodeId.nodeId;
@@ -379,41 +379,17 @@ void StartCs(FILE* fpCs)
 	fprintf(fpCs, "using System.Windows;\n");
 	fprintf(fpCs, "using System.Collections.Generic;\n");
 	fprintf(fpCs, "using System.Collections.ObjectModel;\n");
-	fprintf(fpCs, "using WpfControlLibrary.DataModel;\n");
 	fprintf(fpCs, "\n");
-	fprintf(fpCs, "namespace WpfControlLibrary.DataModel\n");
+	fprintf(fpCs, "namespace WpfControlLibrary.Model\n");
 	fprintf(fpCs, "{\n");
-	WriteLine(2, "public static class DefaultDataModel\n", fpCs);
+	WriteLine(2, "internal static class DefaultDataModel\n", fpCs);
 	WriteLine(2, "{\n", fpCs);
-	WriteLine(4, "public static DataModelNamespace DataModelNamespace0 { get; set; }\n", fpCs);
-	WriteLine(4, "public static DataModelNamespace DataModelNamespace1 { get; set; }\n", fpCs);
-	WriteLine(4, "public static DataModelNamespace DataModelNamespace2 { get; set; }\n", fpCs);
-	WriteLine(4, "public static DataModelFolder FolderZ2Xx { get; set; }\n", fpCs);
-	WriteLine(4, "public static DataModelFolder FolderObjectTypes { get; set; }\n", fpCs);
-	WriteLine(4, "public static DataModelFolder FolderObjects { get; set; }\n", fpCs);
-	WriteLine(4, "public static DataModelFolder FolderVariables { get; set; }\n", fpCs);
-	WriteLine(4, "\n", fpCs);
-	WriteLine(4, "public static void Setup(ObservableCollection<DataModelNode> dataModel)\n", fpCs);
+	WriteLine(4, "internal static void Setup(ModNodeNs ns0)\n", fpCs);
 	WriteLine(4, "{\n", fpCs);
-	WriteLine(6, "DataModelNamespace0 = new DataModelNamespace(0);\n", fpCs);
-	WriteLine(6, "DataModelNamespace1 = new DataModelNamespace(1);\n", fpCs);
-	WriteLine(6, "DataModelNamespace2 = new DataModelNamespace(2);\n", fpCs);
-	WriteLine(6, "dataModel.Add(DataModelNamespace0);\n", fpCs);
-	WriteLine(6, "dataModel.Add(DataModelNamespace1);\n", fpCs);
-	WriteLine(6, "dataModel.Add(DataModelNamespace2);\n", fpCs);
 
-	WriteLine(6, fpCs, "FolderZ2Xx = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "Z2xx");
-	WriteLine(6, fpCs, "FolderObjectTypes = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "ObjectTypes");
-	WriteLine(6, fpCs, "FolderObjects = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "Objects");
-	WriteLine(6, fpCs, "FolderVariables = new DataModelFolder(\"%s\", NodeIdBase.GetNextSystemNodeId(1), DataModelNamespace1);\n", "Variables");
-	WriteLine(6, fpCs, "FolderZ2Xx.AddChildren(FolderObjects);\n");
-	WriteLine(6, fpCs, "FolderZ2Xx.AddChildren(FolderObjectTypes);\n");
-	WriteLine(6, fpCs, "FolderZ2Xx.AddChildren(FolderVariables);\n");
-	WriteLine(6, fpCs, "DataModelNamespace1.AddChildren(FolderZ2Xx);\n");
-
-	WriteLine(6, fpCs, "DataModelNode parent = DataModelNamespace0;\n");
-	WriteLine(6, fpCs, "Stack<DataModelNode> stack = new Stack<DataModelNode>();\n");
-	WriteLine(6, fpCs, "DataModelNode node = null;\n");
+	WriteLine(6, fpCs, "ModNode parent = ns0;\n");
+	WriteLine(6, fpCs, "Stack<ModNode> stack = new Stack<ModNode>();\n");
+	WriteLine(6, fpCs, "ModNode node = null;\n");
 }
 
 void EndCs(FILE* fpCs)
@@ -446,10 +422,10 @@ int main()
 
 	FILE* fp;
 	FILE* fpCs;
-	errno_t err = fopen_s(&fp, "e:\\Work\\BrowseResult.txt", "wt");
+	errno_t err = fopen_s(&fp, "c:\\Work\\BrowseResult.txt", "wt");
 	if (fp != NULL)
 	{
-		err = fopen_s(&fpCs, "e:\\Work\\DefaultDataModel.cs", "wt");
+		err = fopen_s(&fpCs, "c:\\Work\\DefaultDataModel.cs", "wt");
 		if (fpCs != NULL)
 		{
 			printf("1\n");

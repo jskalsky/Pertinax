@@ -53,6 +53,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -65,6 +66,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\ClientConnection.cs" />
@@ -81,6 +83,26 @@
     <Compile Include="DataModel\IdFactory.cs" />
     <Compile Include="Exceptions\OpcUaException.cs" />
     <Compile Include="ImportedItem.cs" />
+    <Compile Include="Model\DefaultDataModel.cs" />
+    <Compile Include="Model\ModBaseVariableNode.cs" />
+    <Compile Include="Model\ModNodeClient.cs" />
+    <Compile Include="Model\ModNode.cs" />
+    <Compile Include="Model\ModNodeArrayVariable.cs" />
+    <Compile Include="Model\ModNodeFolder.cs" />
+    <Compile Include="Model\ModNodeId.cs" />
+    <Compile Include="Model\ModNodeIdNumeric.cs" />
+    <Compile Include="Model\ModNodeIdString.cs" />
+    <Compile Include="Model\ModNodeNs.cs" />
+    <Compile Include="Model\ModNodeObject.cs" />
+    <Compile Include="Model\ModNodeObjectType.cs" />
+    <Compile Include="Model\ModNodeVariable.cs" />
+    <Compile Include="Model\ModNodeWithNodeId.cs" />
+    <Compile Include="Model\ModOpcUa.cs" />
+    <Compile Include="Model\ModNodeServer.cs" />
+    <Compile Include="Model\XMLSchemaOpcUa.cs">
+      <DependentUpon>XMLSchemaOpcUa.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\StatusMsg.cs" />
     <Compile Include="ViewModel\Variable.cs" />
     <Compile Include="DataModel\NodeIdBase.cs" />
@@ -99,6 +121,17 @@
     <Compile Include="ViewModel\AddVariableViewModel.cs" />
     <Compile Include="ViewModel\DataModelManagerViewModel.cs" />
     <Compile Include="ViewModel\OpcUaViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="ViewModel\VmNodeArrayVariable.cs" />
+    <Compile Include="ViewModel\VmNodeFolder.cs" />
+    <Compile Include="ViewModel\VmNode.cs" />
+    <Compile Include="ViewModel\VmNodeNs.cs" />
+    <Compile Include="ViewModel\VmNodeObject.cs" />
+    <Compile Include="ViewModel\VmNodeObjectType.cs" />
+    <Compile Include="ViewModel\VmNodeServer.cs" />
+    <Compile Include="ViewModel\VmNodeSimpleVariable.cs" />
+    <Compile Include="ViewModel\VmNodeVariable.cs" />
+    <Compile Include="ViewModel\VmNodeWithNodeId.cs" />
     <Compile Include="View\DataModelManager.xaml.cs">
       <DependentUpon>DataModelManager.xaml</DependentUpon>
     </Compile>
@@ -158,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Model\XMLSchemaOpcUa.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -179,8 +215,6 @@
   <ItemGroup>
     <Resource Include="Icons\Enum_582.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
