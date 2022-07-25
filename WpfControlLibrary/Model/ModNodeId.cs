@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal abstract class ModNodeId
+    public abstract class ModNodeId
     {
-        internal ModNodeId(ushort ns)
+        public ModNodeId(ushort ns)
         {
             Ns = ns;
         }
 
-        internal ushort Ns { get; }
-        internal abstract string GetText();
-        internal static ModNodeId GetModNodeId(string nodeId)
+        public ushort Ns { get; }
+        public abstract string GetText();
+        public static ModNodeId GetModNodeId(string nodeId)
         {
             Debug.Print($"GetNodeIdBase {nodeId}");
             string[] items = nodeId.Split(':');

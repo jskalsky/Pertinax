@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModNodeClient : ModNode
+    public class ModNodeClient : ModNode
     {
-        internal ModNodeClient(string name, bool encrypt, string ipAddress) : base(name)
+        public ModNodeClient(string name, bool encrypt, string ipAddress) : base(name)
         {
             Encrypt = encrypt;
             IpAddress = ipAddress;
         }
 
-        internal bool Encrypt { get; }
-        internal string IpAddress { get; }
+        public bool Encrypt { get; }
+        public string IpAddress { get; }
     }
 }

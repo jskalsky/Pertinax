@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal class VmNodeNs : VmNode
+    public class VmNodeNs : VmNode
     {
-        internal VmNodeNs(string name, ushort nsIndex, bool isExpanded = false, bool isEditable = false) :
+        public VmNodeNs(string name, ushort nsIndex, bool isExpanded = false, bool isEditable = false) :
             base(name, isExpanded, isEditable)
         {
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Enum_582.png";
             NsIndex = nsIndex;
         }
-        internal ushort NsIndex { get; }
+        public ushort NsIndex { get; }
     }
 }

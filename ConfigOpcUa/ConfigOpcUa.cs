@@ -899,15 +899,12 @@ namespace ConfigOpcUa
         {
             try
             {
-                WpfControlLibrary.View.OpcUaMainWindow mainWindow = new WpfControlLibrary.View.OpcUaMainWindow();
-                if (mainWindow.DataContext is WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
+                WpfControlLibrary.View.MainWindow mainWindow = new WpfControlLibrary.View.MainWindow();
+                if (mainWindow.DataContext is WpfControlLibrary.ViewModel.MainWindowViewModel mvm)
                 {
-                    LoadXml(pName, mvm);
+                    mvm.LoadXml(pName);
                     if ((bool)mainWindow.ShowDialog())
                     {
-                        Debug.Print("3");
-                        SaveConfiguration(pName, mvm);
-                        Debug.Print("4");
                     }
                 }
             }

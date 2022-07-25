@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModNodeObject : ModNodeWithNodeId
+    public class ModNodeObject : ModNodeWithNodeId
     {
-        internal ModNodeObject(string name, ModNodeId nodeId, string objectType) : base(name, nodeId)
+        public ModNodeObject(string name, ModNodeId nodeId, string objectType) : base(name, nodeId)
         {
             ObjectType = objectType;
         }
-        internal string ObjectType { get; }
+        public string ObjectType { get; }
     }
 }

@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal class VmNodeArrayVariable : VmNodeVariable
+    public class VmNodeArrayVariable : VmNodeVariable
     {
-        internal VmNodeArrayVariable(string name, Model.ModNodeId nodeId, string type, string access, int arrayLength, bool isExpanded = false, 
+        public VmNodeArrayVariable(string name, Model.ModNodeId nodeId, string type, string access, int arrayLength, bool isExpanded = false, 
             bool isEditable = false) : base(name, nodeId, type, access, isExpanded, isEditable)
         {
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Type_527.png";
             ArrayLength = arrayLength;
         }
 
-        internal int ArrayLength { get; }
+        public int ArrayLength { get; }
     }
 }

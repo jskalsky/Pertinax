@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModNodeObjectType : ModNodeWithNodeId
+    public class ModNodeObjectType : ModNodeWithNodeId
     {
-        internal ModNodeObjectType(string name, ModNodeId nodeId) : base(name, nodeId)
+        public ModNodeObjectType(string name, ModNodeId nodeId) : base(name, nodeId)
         {
 
         }

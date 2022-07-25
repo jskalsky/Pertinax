@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal abstract class VmNodeVariable: VmNodeWithNodeId
+    public abstract class VmNodeVariable: VmNodeWithNodeId
     {
-        internal VmNodeVariable(string name, Model.ModNodeId nodeId, string type, string access, bool isExpanded, bool isEditable) :
+        public VmNodeVariable(string name, Model.ModNodeId nodeId, string type, string access, bool isExpanded, bool isEditable) :
             base(name, nodeId, isExpanded, isEditable)
         {
             Type = type;
             Access = access;
         }
 
-        internal string Type { get; }
-        internal string Access { get; }
+        public string Type { get; }
+        public string Access { get; }
     }
 }

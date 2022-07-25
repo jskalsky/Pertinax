@@ -5,9 +5,9 @@ using System.Collections.ObjectModel;
 
 namespace WpfControlLibrary.Model
 {
-  internal static class DefaultDataModel
+  public static class DefaultDataModel
   {
-    internal static void Setup(ModNodeNs ns0)
+    public static void Setup(ModNodeNs ns0)
     {
       ModNode parent = ns0;
       Stack<ModNode> stack = new Stack<ModNode>();

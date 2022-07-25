@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal abstract class ModNode
+    public abstract class ModNode
     {
         private List<ModNode> _subNodes;
         protected ModNode(string name)
@@ -15,9 +15,9 @@ namespace WpfControlLibrary.Model
             Name = name;
             _subNodes = new List<ModNode>();
         }
-        internal IList<ModNode> SubNodes => _subNodes;
-        internal string Name { get; }
-        internal void AddSubNode(ModNode modNode)
+        public IList<ModNode> SubNodes => _subNodes;
+        public string Name { get; }
+        public void AddSubNode(ModNode modNode)
         {
             SubNodes.Add(modNode);
         }

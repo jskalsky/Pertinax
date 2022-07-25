@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal class VmNodeSimpleVariable : VmNodeVariable
+    public class VmNodeSimpleVariable : VmNodeVariable
     {
-        internal VmNodeSimpleVariable(string name, Model.ModNodeId nodeId, string type, string access, bool isExpanded = false, bool isEditable = false) :
+        public VmNodeSimpleVariable(string name, Model.ModNodeId nodeId, string type, string access, bool isExpanded = false, bool isEditable = false) :
             base(name, nodeId, type, access, isExpanded, isEditable)
         {
-
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Constant_495.png";
         }
     }
 }

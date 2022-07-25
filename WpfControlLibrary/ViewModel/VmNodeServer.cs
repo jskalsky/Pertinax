@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal class VmNodeServer : VmNode
+    public class VmNodeServer : VmNode
     {
-        internal VmNodeServer(string name, bool encrypt, bool isExpanded = false, bool isEditable = false) : base(name, isExpanded, isEditable)
+        public VmNodeServer(string name, bool encrypt, bool isExpanded = false, bool isEditable = false) : base(name, isExpanded, isEditable)
         {
             Encrypt = encrypt;
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/MultiView_6035.png";
         }
 
-        internal bool Encrypt { get; }
+        public bool Encrypt { get; }
     }
 }

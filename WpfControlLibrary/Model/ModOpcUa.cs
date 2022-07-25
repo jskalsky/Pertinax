@@ -9,17 +9,17 @@ using System.Xml.Serialization;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModOpcUa
+    public class ModOpcUa
     {
         private List<ModNode> _nodes;
-        internal ModOpcUa()
+        public ModOpcUa()
         {
             _nodes = new List<ModNode>();
         }
-        internal string LocalIpAddress { get; set; }
-        internal string MulticastIpAddress { get; set; }
-        internal IList<ModNode> Nodes => _nodes;
-        internal void GenerateTest()
+        public string LocalIpAddress { get; set; }
+        public string MulticastIpAddress { get; set; }
+        public IList<ModNode> Nodes => _nodes;
+        public void GenerateTest()
         {
             ModNodeServer server = new ModNodeServer("Server", false);
             _nodes.Add(server);
@@ -266,7 +266,7 @@ namespace WpfControlLibrary.Model
             }
         }
 
-        internal void WriteXml(string fileName)
+        public void WriteXml(string fileName)
         {
             OPCUAParametersType cfg = new OPCUAParametersType();
             cfg.settings = new settings();
@@ -295,7 +295,7 @@ namespace WpfControlLibrary.Model
                 serializer.Serialize(tw, cfg);
             }
         }
-        internal void ReadXml(string fileName)
+        public void ReadXml(string fileName)
         {
             if (File.Exists(fileName))
             {

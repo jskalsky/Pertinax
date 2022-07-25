@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModNodeServer : ModNode
+    public class ModNodeServer : ModNode
     {
-        internal ModNodeServer(string name, bool encrypt) : base(name)
+        public ModNodeServer(string name, bool encrypt) : base(name)
         {
             Encrypt = encrypt;
         }
-        internal bool Encrypt { get; }
+        public bool Encrypt { get; }
     }
 }

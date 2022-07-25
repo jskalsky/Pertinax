@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModNodeIdString : ModNodeId
+    public class ModNodeIdString : ModNodeId
     {
-        internal ModNodeIdString(ushort ns, string stringId) : base(ns)
+        public ModNodeIdString(ushort ns, string stringId) : base(ns)
         {
             StringId = stringId;
         }
-        internal string StringId { get; }
+        public string StringId { get; }
 
-        internal override string GetText()
+        public override string GetText()
         {
             return $"S:{Ns}:{StringId}";
         }

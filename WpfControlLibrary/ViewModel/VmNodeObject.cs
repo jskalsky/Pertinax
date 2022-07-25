@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal class VmNodeObject : VmNodeWithNodeId
+    public class VmNodeObject : VmNodeWithNodeId
     {
-        internal VmNodeObject(string name, Model.ModNodeId nodeId, string objectType, bool isExpanded = false, bool isEditable = false) :
+        public VmNodeObject(string name, Model.ModNodeId nodeId, string objectType, bool isExpanded = false, bool isEditable = false) :
             base(name, nodeId, isExpanded, isEditable)
         {
             ObjectType = objectType;
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Object_554.png";
         }
 
-        internal string ObjectType { get; }
+        public string ObjectType { get; }
     }
 }

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.ViewModel
 {
-    internal class VmNodeFolder : VmNodeWithNodeId
+    public class VmNodeFolder : VmNodeWithNodeId
     {
-        internal VmNodeFolder(string name, Model.ModNodeId nodeId, bool isExpanded = false, bool isEditable = false) : 
+        public VmNodeFolder(string name, Model.ModNodeId nodeId, bool isExpanded = false, bool isEditable = false) : 
             base(name, nodeId,isExpanded,isEditable)
         {
-
+            ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Folder_6222.png";
         }
     }
 }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace WpfControlLibrary.Model
 {
-    internal class ModNodeArrayVariable : ModBaseVariableNode
+    public class ModNodeArrayVariable : ModBaseVariableNode
     {
-        internal ModNodeArrayVariable(string name, ModNodeId nodeId, string type, string access, int arrayLength) : base(name, nodeId, type, access)
+        public ModNodeArrayVariable(string name, ModNodeId nodeId, string type, string access, int arrayLength) : base(name, nodeId, type, access)
         {
             ArrayLength = arrayLength;
         }
 
-        internal int ArrayLength { get; }
+        public int ArrayLength { get; }
     }
 }
