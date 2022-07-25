@@ -19,7 +19,7 @@ namespace WpfControlLibrary.ViewModel
         }
         [Browsable(false)]
         public ObservableCollection<VmNode> SubNodes { get; }
-        public string Name { get; }
+        public string Name { get; set; }
         [Browsable(false)]
         public bool IsExpanded { get; }
         [Browsable(false)]

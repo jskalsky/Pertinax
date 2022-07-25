@@ -14,6 +14,6 @@ namespace WpfControlLibrary.ViewModel
             ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/MultiView_6035.png";
         }
 
-        public bool Encrypt { get; }
+        public bool Encrypt { get; set; }
     }
 }

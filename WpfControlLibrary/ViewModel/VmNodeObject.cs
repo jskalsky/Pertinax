@@ -15,6 +15,6 @@ namespace WpfControlLibrary.ViewModel
             ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Object_554.png";
         }
 
-        public string ObjectType { get; }
+        public string ObjectType { get; set; }
     }
 }

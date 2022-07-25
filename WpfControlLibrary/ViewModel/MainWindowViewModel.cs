@@ -111,6 +111,80 @@ namespace WpfControlLibrary.ViewModel
                 }
             }
         }
+        private void SaveVmNode(ModNode modNode, VmNode vmNode)
+        {
+            ModNode modN = null;
+            if (vmNode is VmNodeNs vmNs)
+            {
+                modN = new ModNodeNs(vmNs.Name, vmNs.NsIndex);
+                modNode.AddSubNode(modN);
+            }
+            else
+            {
+                if (vmNode is VmNodeFolder vmFolder)
+                {
+                    modN = new ModNodeFolder(vmFolder.Name, vmFolder.NodeId);
+                    modNode.AddSubNode(modN);
+                }
+                else
+                {
+                    if (vmNode is VmNodeSimpleVariable vmVar)
+                    {
+                        modN = new ModNodeVariable(vmVar.Name, vmVar.NodeId, vmVar.Type, vmVar.Access);
+                        modNode.AddSubNode(modN);
+                    }
+                    else
+                    {
+                        if (vmNode is VmNodeArrayVariable arrayVar)
+                        {
+                            modN = new ModNodeArrayVariable(arrayVar.Name, arrayVar.NodeId, arrayVar.Type, arrayVar.Access, arrayVar.ArrayLength);
+                            modNode.AddSubNode(modN);
+                        }
+                        else
+                        {
+                            if (vmNode is VmNodeObjectType vmOt)
+                            {
+                                modN = new ModNodeObjectType(vmOt.Name, vmOt.NodeId);
+                                modNode.AddSubNode(modN);
+                            }
+                            else
+                            {
+                                if (vmNode is VmNodeObject vmO)
+                                {
+                                    modN = new ModNodeObject(vmO.Name, vmO.NodeId, vmO.ObjectType);
+                                    modNode.AddSubNode(modN);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (modN != null)
+            {
+                foreach (VmNode vN in vmNode.SubNodes)
+                {
+                    SaveVmNode(modN, vN);
+                }
+            }
+        }
+        public void SaveXml(string fileName)
+        {
+            ModOpcUa opcUa = new Model.ModOpcUa();
+            opcUa.Nodes.Clear();
+            foreach (VmNode vmNode in Nodes)
+            {
+                if(vmNode is VmNodeServer vmServer)
+                {
+                    ModNodeServer modServer = new ModNodeServer(vmServer.Name, vmServer.Encrypt);
+                    foreach(VmNode sub in vmServer.SubNodes)
+                    {
+                        SaveVmNode(modServer, sub);
+                    }
+                    opcUa.Nodes.Add(modServer);
+                }
+            }
+            opcUa.WriteXml(fileName);
+        }
         private async Task OkCommandAsync()
         {
 

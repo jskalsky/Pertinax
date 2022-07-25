@@ -15,6 +15,6 @@ namespace WpfControlLibrary.ViewModel
             ArrayLength = arrayLength;
         }
 
-        public int ArrayLength { get; }
+        public int ArrayLength { get; set; }
     }
 }

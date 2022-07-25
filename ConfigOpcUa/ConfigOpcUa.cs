@@ -905,6 +905,7 @@ namespace ConfigOpcUa
                     mvm.LoadXml(pName);
                     if ((bool)mainWindow.ShowDialog())
                     {
+                        mvm.SaveXml(pName);
                     }
                 }
             }

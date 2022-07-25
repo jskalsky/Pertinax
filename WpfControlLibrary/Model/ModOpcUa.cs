@@ -164,12 +164,21 @@ namespace WpfControlLibrary.Model
                         {
                             if (node is ModNodeObjectType modObjectType)
                             {
+                                nodeObject_type ot = new nodeObject_type();
+                                ot.name = modObjectType.Name;
+                                ot.id= modObjectType.NodeId.GetText();
+                                tn.Item= ot;
                                 tn.node_type = node_type.ObjectType;
                             }
                             else
                             {
                                 if (node is ModNodeObject modObject)
                                 {
+                                    nodeObject_var o = new nodeObject_var();
+                                    o.name = modObject.Name;
+                                    o.object_type_name = modObject.ObjectType;
+                                    o.id = modObject.NodeId.GetText();
+                                    tn.Item = o;
                                     tn.node_type = node_type.ObjectVariable;
                                 }
                             }
@@ -313,7 +322,7 @@ namespace WpfControlLibrary.Model
                         int nrErrors = 0;
                         foreach (node n in cfg.nodes)
                         {
-                            LoadNode(null, n, ref nrErrors);
+                            LoadNode(modServer, n, ref nrErrors);
                         }
                     }
                 }

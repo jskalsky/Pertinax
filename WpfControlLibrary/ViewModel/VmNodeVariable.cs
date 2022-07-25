@@ -15,7 +15,7 @@ namespace WpfControlLibrary.ViewModel
             Access = access;
         }
 
-        public string Type { get; }
-        public string Access { get; }
+        public string Type { get; set; }
+        public string Access { get; set; }
     }
 }
