@@ -108,9 +108,11 @@
     <Compile Include="ImportedItem.cs" />
     <Compile Include="Model\DefaultDataModel.cs" />
     <Compile Include="Model\ModBaseVariableNode.cs" />
+    <Compile Include="Model\ModNodeClientGroup.cs" />
     <Compile Include="Model\ModNodeClient.cs" />
     <Compile Include="Model\ModNode.cs" />
     <Compile Include="Model\ModNodeArrayVariable.cs" />
+    <Compile Include="Model\ModNodeClientVar.cs" />
     <Compile Include="Model\ModNodeFolder.cs" />
     <Compile Include="Model\ModNodeId.cs" />
     <Compile Include="Model\ModNodeIdNumeric.cs" />

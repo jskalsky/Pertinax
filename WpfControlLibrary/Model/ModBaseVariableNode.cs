@@ -8,13 +8,13 @@ namespace WpfControlLibrary.Model
 {
     public abstract class ModBaseVariableNode : ModNodeWithNodeId
     {
-        public ModBaseVariableNode(string name, ModNodeId nodeId, string type, string access) : base(name, nodeId)
+        public ModBaseVariableNode(string name, ModNodeId nodeId, basic_type type, string access) : base(name, nodeId)
         {
             Type = type;
             Access = access;
         }
 
-        public string Type { get; }
+        public basic_type Type { get; }
         public string Access { get; }
     }
 }

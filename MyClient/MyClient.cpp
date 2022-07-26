@@ -265,7 +265,7 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 										{
 											if (isScalar)
 											{
-												WriteLine(6, fpCs, "node = new ModNodeVariable(\"%s\", new ModNodeIdNumeric(0, %u), \"%s\", \"%s\");\n",
+												WriteLine(6, fpCs, "node = new ModNodeVariable(\"%s\", new ModNodeIdNumeric(0, %u), basic_type.%s, \"%s\");\n",
 													GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, basicType.c_str(), access.c_str());
 												WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 											}
@@ -273,7 +273,7 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 											{
 												if (isArray)
 												{
-													WriteLine(6, fpCs, "node = new ModNodeArrayVariable(\"%s\", new ModNodeIdNumeric(0, %u), \"%s\", \"%s\", %d);\n",
+													WriteLine(6, fpCs, "node = new ModNodeArrayVariable(\"%s\", new ModNodeIdNumeric(0, %u), basic_type.%s, \"%s\", %d);\n",
 														GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, basicType.c_str(), access.c_str(), arrayLength);
 													WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 												}

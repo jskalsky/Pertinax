@@ -39,7 +39,7 @@ namespace WpfControlLibrary.Model
             ns1.AddSubNode(folderVariables);
             for (int i = 0; i < 10; ++i)
             {
-                folderVariables.AddSubNode(new ModNodeVariable($"Var{i + 1}", new ModNodeIdNumeric(1, (uint)(5000 + i)), "Float", "Read"));
+                folderVariables.AddSubNode(new ModNodeVariable($"Var{i + 1}", new ModNodeIdNumeric(1, (uint)(5000 + i)), basic_type.Float, "Read"));
             }
         }
         private static access GetAccess(string s)
@@ -120,6 +120,28 @@ namespace WpfControlLibrary.Model
             return "Unknown";
         }
 
+        private static string GetClientService(client_service cs)
+        {
+            switch (cs)
+            {
+                case client_service.Read:
+                    return "Read";
+                case client_service.Write:
+                    return "Write";
+            }
+            return "Unknown";
+        }
+        private static client_service GetClientService(string s)
+        {
+            switch (s)
+            {
+                case "Read":
+                    return client_service.Read;
+                case "Write":
+                    return client_service.Write;
+            }
+            return client_service.Unknown;
+        }
         private void SaveTreeNode(ModNode node, node tn)
         {
             Debug.Print($"SaveTreeNode {node}");
@@ -147,7 +169,7 @@ namespace WpfControlLibrary.Model
                         nodeSimple_var simple = new nodeSimple_var();
                         simple.name = modVariable.Name;
                         simple.access = GetAccess(modVariable.Access);
-                        simple.basic_type = GetBasicType(modVariable.Type);
+                        simple.basic_type = modVariable.Type;
                         simple.id = modVariable.NodeId.GetText();
                         tn.Item = simple;
                         tn.node_type = node_type.SimpleVariable;
@@ -159,7 +181,7 @@ namespace WpfControlLibrary.Model
                             nodeArray_var array = new nodeArray_var();
                             array.name = modArrayVariable.Name;
                             array.access = GetAccess(modArrayVariable.Access);
-                            array.basic_type = GetBasicType(modArrayVariable.Type);
+                            array.basic_type = modArrayVariable.Type;
                             array.length = modArrayVariable.ArrayLength;
                             tn.Item = array;
                             tn.node_type = node_type.ArrayVariable;
@@ -170,8 +192,8 @@ namespace WpfControlLibrary.Model
                             {
                                 nodeObject_type ot = new nodeObject_type();
                                 ot.name = modObjectType.Name;
-                                ot.id= modObjectType.NodeId.GetText();
-                                tn.Item= ot;
+                                ot.id = modObjectType.NodeId.GetText();
+                                tn.Item = ot;
                                 tn.node_type = node_type.ObjectType;
                             }
                             else
@@ -229,7 +251,7 @@ namespace WpfControlLibrary.Model
                     {
                         Debug.Print($"LoadNode SIMPLE= {simpleVar.name}");
                         modNode = new ModNodeVariable(simpleVar.name, ModNodeId.GetModNodeId(simpleVar.id),
-                            GetBasicType(simpleVar.basic_type),
+                            simpleVar.basic_type,
                             GetAccess(simpleVar.access));
                     }
                     else
@@ -238,7 +260,7 @@ namespace WpfControlLibrary.Model
                         {
                             Debug.Print($"LoadNode ARRAY= {arrayVar.name}");
                             modNode = new ModNodeArrayVariable(arrayVar.name, ModNodeId.GetModNodeId(arrayVar.id),
-                                GetBasicType(arrayVar.basic_type),
+                                arrayVar.basic_type,
                                 GetAccess(arrayVar.access), (int)arrayVar.length);
                         }
                         else
@@ -262,7 +284,7 @@ namespace WpfControlLibrary.Model
                 }
             }
             Debug.Print($"parent= {parent}, modNode= {modNode}");
-            if(parent == null || modNode == null)
+            if (parent == null || modNode == null)
             {
                 Debug.Print($"Hruba chyba");
                 return;
@@ -286,6 +308,7 @@ namespace WpfControlLibrary.Model
             cfg.settings.local_ip = LocalIpAddress;
             cfg.settings.multicast_ip = MulticastIpAddress;
             List<node> nodes = new List<node>();
+            List<OPCUAParametersTypeClient> clients = new List<OPCUAParametersTypeClient>();
             foreach (ModNode modNode in _nodes)
             {
                 if (modNode is ModNodeServer modServer)
@@ -299,8 +322,39 @@ namespace WpfControlLibrary.Model
                         nodes.Add(tn);
                     }
                 }
+                else
+                {
+                    if (modNode is ModNodeClient modClient)
+                    {
+                        OPCUAParametersTypeClient client = new OPCUAParametersTypeClient();
+                        client.name = modClient.Name;
+                        client.encryption = modClient.Encrypt;
+                        List<OPCUAParametersTypeClientGroup> groups = new List<OPCUAParametersTypeClientGroup>();
+                        foreach (ModNodeClientGroup group in modClient.SubNodes)
+                        {
+                            OPCUAParametersTypeClientGroup groupGroup = new OPCUAParametersTypeClientGroup();
+                            groupGroup.name = group.Name;
+                            groupGroup.period = group.Period;
+                            groupGroup.service = GetClientService(group.Service);
+                            groups.Add(groupGroup);
+                            List<OPCUAParametersTypeClientGroupVar> vars = new List<OPCUAParametersTypeClientGroupVar>();
+                            foreach (ModNodeClientVar clientVar in group.SubNodes)
+                            {
+                                OPCUAParametersTypeClientGroupVar groupVar = new OPCUAParametersTypeClientGroupVar();
+                                groupVar.name = clientVar.Name;
+                                groupVar.id = clientVar.NodeId;
+                                groupVar.basic_type = GetBasicType(clientVar.Type);
+                                vars.Add(groupVar);
+                            }
+                            groupGroup.var = vars.ToArray();
+                        }
+                        client.group = groups.ToArray();
+                        clients.Add(client);
+                    }
+                }
             }
             cfg.nodes = nodes.ToArray();
+            cfg.client = clients.ToArray();
 
             XmlSerializer serializer = new XmlSerializer(typeof(OPCUAParametersType));
             using (TextWriter tw = new StreamWriter(fileName))
@@ -327,6 +381,31 @@ namespace WpfControlLibrary.Model
                         foreach (node n in cfg.nodes)
                         {
                             LoadNode(modServer, n, ref nrErrors);
+                        }
+                    }
+                    if (cfg.client != null)
+                    {
+                        foreach (OPCUAParametersTypeClient client in cfg.client)
+                        {
+                            ModNodeClient modClient = new ModNodeClient(client.name, client.encryption, client.ip_address);
+                            _nodes.Add(modClient);
+                            if (client.group != null)
+                            {
+                                foreach (OPCUAParametersTypeClientGroup group in client.group)
+                                {
+                                    ModNodeClientGroup clientGroup = new ModNodeClientGroup(group.name, group.period, GetClientService(group.service));
+                                    modClient.AddSubNode(clientGroup);
+                                    if (group.var != null)
+                                    {
+                                        foreach (OPCUAParametersTypeClientGroupVar groupVar in group.var)
+                                        {
+                                            ModNodeClientVar clientvar = new ModNodeClientVar(groupVar.name, groupVar.id,
+                                                GetBasicType(groupVar.basic_type));
+                                            clientGroup.AddSubNode(clientvar);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

@@ -93,10 +93,19 @@ namespace WpfControlLibrary.View
                         }
                         else
                         {
-                            if(e.NewValue is VmNodeClient vmClient)
+                            if(e.NewValue is VmNodeClient)
                             {
                                 vm.IsEnabledClientGroup = true;
                                 vm.ClientGroupPeriod = 500;
+                            }
+                            else
+                            {
+                                if(e.NewValue is VmNodeClientGroup)
+                                {
+                                    vm.IsEnabledClientVar = true;
+                                    vm.ClientVarNodeId = "N:1:10000";
+                                    vm.ClientVarCount = 1;
+                                }
                             }
                         }
                     }
@@ -156,7 +165,7 @@ namespace WpfControlLibrary.View
                     {
                         string nodeId = NodeIdFactory.GetNextNodeId(ns);
                         string name = NameFactory.NextName(ns, NameFactory.NameSimpleVar);
-                        VmNodeSimpleVariable vmSimple = new VmNodeSimpleVariable(name, nodeId, Model.ModOpcUa.BasicTypes[0], Model.ModOpcUa.VarAccess[0], false, true);
+                        VmNodeSimpleVariable vmSimple = new VmNodeSimpleVariable(name, nodeId, Model.basic_type.Boolean, Model.ModOpcUa.VarAccess[0], false, true);
                         vn.AddVmNode(vmSimple);
                         NodeIdFactory.SetNextNodeId(nodeId);
                         NameFactory.SetName(ns, name);
@@ -187,7 +196,7 @@ namespace WpfControlLibrary.View
                     }
                     string nodeId = NodeIdFactory.GetNextNodeId(ns);
                     string name = NameFactory.NextName(ns, NameFactory.NameArrayVar);
-                    VmNodeArrayVariable vmArray = new VmNodeArrayVariable(name, nodeId, Model.ModOpcUa.BasicTypes[0], Model.ModOpcUa.VarAccess[0], vm.ArrayLength, false, true);
+                    VmNodeArrayVariable vmArray = new VmNodeArrayVariable(name, nodeId, Model.basic_type.Boolean, Model.ModOpcUa.VarAccess[0], vm.ArrayLength, false, true);
                     vn.AddVmNode(vmArray);
                     NodeIdFactory.SetNextNodeId(nodeId);
                     NameFactory.SetName(ns, name);
@@ -218,7 +227,37 @@ namespace WpfControlLibrary.View
                     VmNode vn = (VmNode)vm.SelectedVmNode;
                     vn.AddVmNode(vmGroup);
                     NameFactory.SetName(0, name);
-                    vn.IsExpanded=true;
+                }
+            }
+        }
+
+        private void AddClientVar_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                if (vm.SelectedVmNode != null)
+                {
+                    VmNode vn = (VmNode)vm.SelectedVmNode;
+                    for (int i = 0; i < vm.ClientVarCount; ++i)
+                    {
+                        string name = NameFactory.NextName(0, NameFactory.NameClientVar);
+                        VmNodeClientVar vmVar = new VmNodeClientVar(name, vm.ClientVarNodeId, Model.ModOpcUa.BasicTypes[0], true, false);
+                        vn.AddVmNode(vmVar);
+                        NameFactory.SetName(0, name);
+                        string[] items = vm.ClientVarNodeId.Split(':');
+                        if(items.Length==3)
+                        {
+                            if (items[0] == "N")
+                            {
+                                if (uint.TryParse(items[2], out uint value))
+                                {
+                                    ++value;
+                                    vm.ClientVarNodeId = $"{items[0]}:{items[1]}:{value}";
+                                }
+                            }
+                        }
+                    }
+                    vn.IsExpanded = true;
                 }
             }
         }

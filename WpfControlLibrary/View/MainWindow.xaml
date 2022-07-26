@@ -89,6 +89,14 @@
                                 <TextBlock Text="{Binding Service}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type vm:VmNodeClientVar}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding NodeId}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                <TextBlock Text="{Binding Type}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
                         <DataTemplate DataType="{x:Type vm:VmNodeSimpleVariable}">
                             <StackPanel Orientation="Horizontal" Height="16">
                                 <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
@@ -132,7 +140,7 @@
                             <TextBlock Text="Složka" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding FolderName,Mode=TwoWay}" VerticalContentAlignment="Center" GotKeyboardFocus="KeyboardSelectAll" Margin="5,0,0,0"
                                      MouseDoubleClick="MouseSelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" VerticalAlignment="Center" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledFolder}"
+                            <Button Grid.Column="2" Content="Přidat" Width="50" VerticalAlignment="Center" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledFolder}"
                                     Click="AddFolder_Click"/>
                         </Grid>
                         <Grid Grid.Row="1" Margin="0,2,0,0">
@@ -144,7 +152,7 @@
                             <TextBlock Text="Počet proměnných" VerticalAlignment="Center"/>
                             <local:NumericUpDown Grid.Column="1" NudMin="1" NudMax="{Binding MaximumNrOfVars}" NudIncrement="1" NudValue="{Binding NrOfAddedVars,Mode=TwoWay}" 
                                                  Margin="5,0,0,0"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledSimpleVar}" Click="AddVars_Click"/>
+                            <Button Grid.Column="2" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledSimpleVar}" Click="AddVars_Click"/>
                         </Grid>
                         <Grid Grid.Row="2" Margin="0,2,0,0">
                             <Grid.ColumnDefinitions>
@@ -155,7 +163,7 @@
                             <TextBlock Text="Délka pole" VerticalAlignment="Center"/>
                             <local:NumericUpDown Grid.Column="1" NudMin="1" NudMax="{Binding MaximumArrayLength}" NudIncrement="1" NudValue="{Binding ArrayLength,Mode=TwoWay}" 
                                                  Margin="5,0,0,0"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledArrayVar}" Click="AddArray_Click"/>
+                            <Button Grid.Column="2" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledArrayVar}" Click="AddArray_Click"/>
                         </Grid>
                         <Grid Grid.Row="3" Margin="0,2,0,0">
                             <Grid.ColumnDefinitions>
@@ -165,7 +173,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Typ objektu" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Margin="5,0,0,0"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledObjectType}"/>
+                            <Button Grid.Column="2" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledObjectType}"/>
                         </Grid>
                         <Grid Grid.Row="4" Margin="0,2,0,0">
                             <Grid.ColumnDefinitions>
@@ -177,7 +185,7 @@
                             <TextBlock Text="Objekt" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Margin="5,0,0,0"/>
                             <ComboBox Grid.Column="2" Margin="5,0,0,0"/>
-                            <Button Grid.Column="3" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledObjectVar}"/>
+                            <Button Grid.Column="3" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledObjectVar}"/>
                         </Grid>
                         <Grid Grid.Row="5" Margin="0,2,0,0">
                             <Grid.ColumnDefinitions>
@@ -188,7 +196,7 @@
                             <TextBlock Text="Client Ip" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding ClientIpAddress,Mode=TwoWay}" VerticalContentAlignment="Center" GotKeyboardFocus="KeyboardSelectAll" Margin="5,0,0,0"
                                      MouseDoubleClick="MouseSelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledClient}" Click="AddClient_Click"/>
+                            <Button Grid.Column="2" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledClient}" Click="AddClient_Click"/>
                         </Grid>
                         <Grid Grid.Row="6" Margin="0,2,0,0">
                             <Grid.ColumnDefinitions>
@@ -196,19 +204,26 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Skupina perioda" VerticalAlignment="Center"/>
+                            <TextBlock Text="Perioda" VerticalAlignment="Center"/>
                             <local:NumericUpDown Grid.Column="1" NudMin="10" NudMax="50000" NudIncrement="10" NudValue="{Binding ClientGroupPeriod,Mode=TwoWay}" Margin="5,0,0,0"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledClientGroup}" Click="AddGroup_Click"/>
+                            <Button Grid.Column="2" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledClientGroup}" Click="AddGroup_Click"/>
                         </Grid>
                         <Grid Grid.Row="7" Margin="0,2,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Počet ve skupině" VerticalAlignment="Center"/>
-                            <local:NumericUpDown Grid.Column="1" Margin="5,0,0,0"/>
-                            <Button Grid.Column="2" Content="Přidat" Width="80" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledClientVar}"/>
+                            <TextBlock Text="Id" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" Text="{Binding ClientVarNodeId,Mode=TwoWay}" VerticalContentAlignment="Center" GotKeyboardFocus="KeyboardSelectAll" Margin="5,0,0,0"
+                                     MouseDoubleClick="MouseSelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                            <TextBlock Grid.Column="2" Text="Počet" VerticalAlignment="Center"/>
+                            <local:NumericUpDown Grid.Column="3" NudMin="1" NudMax="100000" NudIncrement="1" NudValue="{Binding ClientVarCount,Mode=TwoWay}" 
+                                                 Margin="5,0,0,0"/>
+                            <Button Grid.Column="4" Content="Přidat" Width="50" Margin="5,0,0,0" IsEnabled="{Binding IsEnabledClientVar}" 
+                                    Click="AddClientVar_Click"/>
                         </Grid>
                     </Grid>
                 </Grid>

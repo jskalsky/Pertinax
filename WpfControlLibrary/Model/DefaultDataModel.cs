@@ -5,9 +5,9 @@ using System.Collections.ObjectModel;
 
 namespace WpfControlLibrary.Model
 {
-  public static class DefaultDataModel
+  internal static class DefaultDataModel
   {
-    public static void Setup(ModNodeNs ns0)
+    internal static void Setup(ModNodeNs ns0)
     {
       ModNode parent = ns0;
       Stack<ModNode> stack = new Stack<ModNode>();
@@ -20,12 +20,12 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("Auditing", new ModNodeIdNumeric(0, 2994), "Boolean", "Write");
+      node = new ModNodeVariable("Auditing", new ModNodeIdNumeric(0, 2994), basic_type.Boolean, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("ServiceLevel", new ModNodeIdNumeric(0, 2267), "UInt8", "Write");
+      node = new ModNodeVariable("ServiceLevel", new ModNodeIdNumeric(0, 2267), basic_type.UInt8, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -40,7 +40,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("RedundancySupport", new ModNodeIdNumeric(0, 3709), "Int32", "Write");
+      node = new ModNodeVariable("RedundancySupport", new ModNodeIdNumeric(0, 3709), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -55,7 +55,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("EnabledFlag", new ModNodeIdNumeric(0, 2294), "Boolean", "Write");
+      node = new ModNodeVariable("EnabledFlag", new ModNodeIdNumeric(0, 2294), basic_type.Boolean, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -68,22 +68,22 @@ namespace WpfControlLibrary.Model
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxHistoryContinuationPoints", new ModNodeIdNumeric(0, 2737), "UInt16", "Write");
+      node = new ModNodeVariable("MaxHistoryContinuationPoints", new ModNodeIdNumeric(0, 2737), basic_type.UInt16, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxQueryContinuationPoints", new ModNodeIdNumeric(0, 2736), "UInt16", "Write");
+      node = new ModNodeVariable("MaxQueryContinuationPoints", new ModNodeIdNumeric(0, 2736), basic_type.UInt16, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxBrowseContinuationPoints", new ModNodeIdNumeric(0, 2735), "UInt16", "Write");
+      node = new ModNodeVariable("MaxBrowseContinuationPoints", new ModNodeIdNumeric(0, 2735), basic_type.UInt16, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MinSupportedSampleRate", new ModNodeIdNumeric(0, 2272), "Double", "Write");
+      node = new ModNodeVariable("MinSupportedSampleRate", new ModNodeIdNumeric(0, 2272), basic_type.Double, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -107,7 +107,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 114), "Int32", "Write");
+      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 114), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -117,7 +117,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 112), "Int32", "Write");
+      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 112), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -127,7 +127,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 11511), "Int32", "Write");
+      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 11511), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -137,7 +137,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 113), "Int32", "Write");
+      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 113), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -147,7 +147,7 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 11509), "Int32", "Write");
+      node = new ModNodeVariable("NamingRule", new ModNodeIdNumeric(0, 11509), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -158,42 +158,42 @@ namespace WpfControlLibrary.Model
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
-      node = new ModNodeVariable("MaxMonitoredItemsPerCall", new ModNodeIdNumeric(0, 11714), "UInt32", "Write");
+      node = new ModNodeVariable("MaxMonitoredItemsPerCall", new ModNodeIdNumeric(0, 11714), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerNodeManagement", new ModNodeIdNumeric(0, 11713), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerNodeManagement", new ModNodeIdNumeric(0, 11713), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerTranslateBrowsePathsToNodeIds", new ModNodeIdNumeric(0, 11712), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerTranslateBrowsePathsToNodeIds", new ModNodeIdNumeric(0, 11712), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerRegisterNodes", new ModNodeIdNumeric(0, 11711), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerRegisterNodes", new ModNodeIdNumeric(0, 11711), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerBrowse", new ModNodeIdNumeric(0, 11710), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerBrowse", new ModNodeIdNumeric(0, 11710), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerMethodCall", new ModNodeIdNumeric(0, 11709), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerMethodCall", new ModNodeIdNumeric(0, 11709), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerWrite", new ModNodeIdNumeric(0, 11707), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerWrite", new ModNodeIdNumeric(0, 11707), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("MaxNodesPerRead", new ModNodeIdNumeric(0, 11705), "UInt32", "Write");
+      node = new ModNodeVariable("MaxNodesPerRead", new ModNodeIdNumeric(0, 11705), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -205,7 +205,7 @@ namespace WpfControlLibrary.Model
       stack.Push(parent);
       parent = node;
       parent = stack.Pop();
-      node = new ModNodeVariable("SecondsTillShutdown", new ModNodeIdNumeric(0, 2992), "UInt32", "Write");
+      node = new ModNodeVariable("SecondsTillShutdown", new ModNodeIdNumeric(0, 2992), basic_type.UInt32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
@@ -231,7 +231,7 @@ namespace WpfControlLibrary.Model
       parent = node;
       parent = stack.Pop();
       parent = stack.Pop();
-      node = new ModNodeVariable("State", new ModNodeIdNumeric(0, 2259), "Int32", "Write");
+      node = new ModNodeVariable("State", new ModNodeIdNumeric(0, 2259), basic_type.Int32, "Write");
       parent.AddSubNode(node);
       stack.Push(parent);
       parent = node;
