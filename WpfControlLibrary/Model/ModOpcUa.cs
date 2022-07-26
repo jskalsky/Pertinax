@@ -11,6 +11,10 @@ namespace WpfControlLibrary.Model
 {
     public class ModOpcUa
     {
+        public static readonly string[] BasicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
+        public static readonly string[] VarAccess = new string[] { "Read", "Write", "ReadWrite" };
+        public static readonly string[] NodeIdType = new string[] { "UInt32", "String", "Guid", "ByteString" };
+
         private List<ModNode> _nodes;
         public ModOpcUa()
         {

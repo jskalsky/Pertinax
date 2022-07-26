@@ -8,7 +8,7 @@ namespace WpfControlLibrary.ViewModel
 {
     public class VmNodeObjectType : VmNodeWithNodeId
     {
-        public VmNodeObjectType(string name, Model.ModNodeId nodeId, bool isExpanded = false, bool isEditable = false) : 
+        public VmNodeObjectType(string name, string nodeId, bool isExpanded = false, bool isEditable = false) : 
             base(name, nodeId, isExpanded, isEditable)
         {
             ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/ClassIcon.png";

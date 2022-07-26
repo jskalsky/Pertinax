@@ -8,7 +8,7 @@ namespace WpfControlLibrary.ViewModel
 {
     public abstract class VmNodeVariable: VmNodeWithNodeId
     {
-        public VmNodeVariable(string name, Model.ModNodeId nodeId, string type, string access, bool isExpanded, bool isEditable) :
+        public VmNodeVariable(string name, string nodeId, string type, string access, bool isExpanded, bool isEditable) :
             base(name, nodeId, isExpanded, isEditable)
         {
             Type = type;

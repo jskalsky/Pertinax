@@ -128,37 +128,6 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="connections">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="connection" minOccurs="0" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="ip_address" type="xs:string"/>
-							<xs:element name="encryption" type="xs:boolean"/>
-							<xs:element name="group" minOccurs="0" maxOccurs="unbounded">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="period" type="xs:unsignedShort"/>
-										<xs:element name="service" type="client_service"/>
-										<xs:element name="var" minOccurs="0" maxOccurs="unbounded">
-											<xs:complexType>
-												<xs:sequence>
-													<xs:element name="id" type="xs:string"/>
-													<xs:element name="basic_type" type="basic_type"/>
-													<xs:element name="alias" type="xs:string"/>
-												</xs:sequence>
-											</xs:complexType>
-										</xs:element>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="OPCUAParameters" type="OPCUAParametersType"/>
 	<xs:complexType name="OPCUAParametersType">
 		<xs:sequence>
@@ -171,8 +140,33 @@
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="nodes" type="node" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element ref="connections" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="client" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="ip_address" type="xs:string"/>
+						<xs:element name="encryption" type="xs:boolean"/>
+						<xs:element name="group" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string"/>
+									<xs:element name="period" type="xs:unsignedShort"/>
+									<xs:element name="service" type="client_service"/>
+									<xs:element name="var" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="name" type="xs:string"/>
+												<xs:element name="id" type="xs:string"/>
+												<xs:element name="basic_type" type="basic_type"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-
 </xs:schema>

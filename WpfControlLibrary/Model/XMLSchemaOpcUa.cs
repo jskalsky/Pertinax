@@ -448,182 +448,6 @@ namespace WpfControlLibrary.Model {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.zat.cz/OPCUAParameters", IsNullable=false)]
-    public partial class connections {
-        
-        private connectionsConnection[] connectionField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("connection")]
-        public connectionsConnection[] connection {
-            get {
-                return this.connectionField;
-            }
-            set {
-                this.connectionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
-    public partial class connectionsConnection {
-        
-        private string ip_addressField;
-        
-        private bool encryptionField;
-        
-        private connectionsConnectionGroup[] groupField;
-        
-        /// <remarks/>
-        public string ip_address {
-            get {
-                return this.ip_addressField;
-            }
-            set {
-                this.ip_addressField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public bool encryption {
-            get {
-                return this.encryptionField;
-            }
-            set {
-                this.encryptionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("group")]
-        public connectionsConnectionGroup[] group {
-            get {
-                return this.groupField;
-            }
-            set {
-                this.groupField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
-    public partial class connectionsConnectionGroup {
-        
-        private ushort periodField;
-        
-        private client_service serviceField;
-        
-        private connectionsConnectionGroupVar[] varField;
-        
-        /// <remarks/>
-        public ushort period {
-            get {
-                return this.periodField;
-            }
-            set {
-                this.periodField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public client_service service {
-            get {
-                return this.serviceField;
-            }
-            set {
-                this.serviceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("var")]
-        public connectionsConnectionGroupVar[] var {
-            get {
-                return this.varField;
-            }
-            set {
-                this.varField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
-    public enum client_service {
-        
-        /// <remarks/>
-        Unknown,
-        
-        /// <remarks/>
-        Read,
-        
-        /// <remarks/>
-        Write,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
-    public partial class connectionsConnectionGroupVar {
-        
-        private string idField;
-        
-        private basic_type basic_typeField;
-        
-        private string aliasField;
-        
-        /// <remarks/>
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public basic_type basic_type {
-            get {
-                return this.basic_typeField;
-            }
-            set {
-                this.basic_typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string alias {
-            get {
-                return this.aliasField;
-            }
-            set {
-                this.aliasField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
     [System.Xml.Serialization.XmlRootAttribute("OPCUAParameters", Namespace="http://www.zat.cz/OPCUAParameters", IsNullable=false)]
     public partial class OPCUAParametersType {
@@ -634,7 +458,7 @@ namespace WpfControlLibrary.Model {
         
         private node[] nodesField;
         
-        private connectionsConnection[] connectionsField;
+        private OPCUAParametersTypeClient[] clientField;
         
         /// <remarks/>
         public settings settings {
@@ -668,13 +492,13 @@ namespace WpfControlLibrary.Model {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("connection", IsNullable=false)]
-        public connectionsConnection[] connections {
+        [System.Xml.Serialization.XmlElementAttribute("client")]
+        public OPCUAParametersTypeClient[] client {
             get {
-                return this.connectionsField;
+                return this.clientField;
             }
             set {
-                this.connectionsField = value;
+                this.clientField = value;
             }
         }
     }
@@ -696,6 +520,183 @@ namespace WpfControlLibrary.Model {
             }
             set {
                 this.encryptionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    public partial class OPCUAParametersTypeClient {
+        
+        private string nameField;
+        
+        private string ip_addressField;
+        
+        private bool encryptionField;
+        
+        private OPCUAParametersTypeClientGroup[] groupField;
+        
+        /// <remarks/>
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ip_address {
+            get {
+                return this.ip_addressField;
+            }
+            set {
+                this.ip_addressField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool encryption {
+            get {
+                return this.encryptionField;
+            }
+            set {
+                this.encryptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("group")]
+        public OPCUAParametersTypeClientGroup[] group {
+            get {
+                return this.groupField;
+            }
+            set {
+                this.groupField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    public partial class OPCUAParametersTypeClientGroup {
+        
+        private string nameField;
+        
+        private ushort periodField;
+        
+        private client_service serviceField;
+        
+        private OPCUAParametersTypeClientGroupVar[] varField;
+        
+        /// <remarks/>
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ushort period {
+            get {
+                return this.periodField;
+            }
+            set {
+                this.periodField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public client_service service {
+            get {
+                return this.serviceField;
+            }
+            set {
+                this.serviceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("var")]
+        public OPCUAParametersTypeClientGroupVar[] var {
+            get {
+                return this.varField;
+            }
+            set {
+                this.varField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.zat.cz/OPCUAParameters")]
+    public enum client_service {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        Read,
+        
+        /// <remarks/>
+        Write,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.7.3081.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.zat.cz/OPCUAParameters")]
+    public partial class OPCUAParametersTypeClientGroupVar {
+        
+        private string nameField;
+        
+        private string idField;
+        
+        private basic_type basic_typeField;
+        
+        /// <remarks/>
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public basic_type basic_type {
+            get {
+                return this.basic_typeField;
+            }
+            set {
+                this.basic_typeField = value;
             }
         }
     }

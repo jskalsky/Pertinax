@@ -8,7 +8,7 @@ namespace WpfControlLibrary.ViewModel
 {
     public class VmNodeArrayVariable : VmNodeVariable
     {
-        public VmNodeArrayVariable(string name, Model.ModNodeId nodeId, string type, string access, int arrayLength, bool isExpanded = false, 
+        public VmNodeArrayVariable(string name, string nodeId, string type, string access, int arrayLength, bool isExpanded = false, 
             bool isEditable = false) : base(name, nodeId, type, access, isExpanded, isEditable)
         {
             ImagePath = "pack://application:,,,/WpfControlLibrary;component/Icons/Type_527.png";

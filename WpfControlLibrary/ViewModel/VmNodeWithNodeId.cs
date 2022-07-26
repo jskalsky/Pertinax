@@ -9,13 +9,11 @@ namespace WpfControlLibrary.ViewModel
 {
     public abstract class VmNodeWithNodeId : VmNode
     {
-        public VmNodeWithNodeId(string name, ModNodeId nodeId, bool isExpanded, bool isEditable) : base(name, isExpanded, isEditable)
+        public VmNodeWithNodeId(string name, string nodeId, bool isExpanded, bool isEditable) : base(name, isExpanded, isEditable)
         {
-            NodeId = nodeId;
-            NodeIdString = nodeId.GetText();
+            NodeIdString = nodeId;
         }
         [Browsable(false)]
-        public Model.ModNodeId NodeId { get; }
         public string NodeIdString { get; set; }
     }
 }
