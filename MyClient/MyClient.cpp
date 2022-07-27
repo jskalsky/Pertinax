@@ -265,7 +265,7 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 										{
 											if (isScalar)
 											{
-												WriteLine(6, fpCs, "node = new ModNodeVariable(\"%s\", new ModNodeIdNumeric(0, %u), basic_type.%s, \"%s\");\n",
+												WriteLine(6, fpCs, "node = new ModNodeVariable(\"%s\", new ModNodeIdNumeric(0, %u), basic_type.%s, access.%s);\n",
 													GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, basicType.c_str(), access.c_str());
 												WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 											}
@@ -273,7 +273,7 @@ void Browse(UA_Client* client, UA_BrowseRequest& browseRequest, int spaces, FILE
 											{
 												if (isArray)
 												{
-													WriteLine(6, fpCs, "node = new ModNodeArrayVariable(\"%s\", new ModNodeIdNumeric(0, %u), basic_type.%s, \"%s\", %d);\n",
+													WriteLine(6, fpCs, "node = new ModNodeArrayVariable(\"%s\", new ModNodeIdNumeric(0, %u), basic_type.%s, access.%s, %d);\n",
 														GetQualifiedName(refD.browseName).c_str(), refD.nodeId.nodeId.identifier.numeric, basicType.c_str(), access.c_str(), arrayLength);
 													WriteLine(6, fpCs, "parent.AddSubNode(node);\n");
 												}
@@ -422,10 +422,10 @@ int main()
 
 	FILE* fp;
 	FILE* fpCs;
-	errno_t err = fopen_s(&fp, "c:\\Work\\BrowseResult.txt", "wt");
+	errno_t err = fopen_s(&fp, "e:\\Work\\BrowseResult.txt", "wt");
 	if (fp != NULL)
 	{
-		err = fopen_s(&fpCs, "c:\\Work\\DefaultDataModel.cs", "wt");
+		err = fopen_s(&fpCs, "e:\\Work\\DefaultDataModel.cs", "wt");
 		if (fpCs != NULL)
 		{
 			printf("1\n");

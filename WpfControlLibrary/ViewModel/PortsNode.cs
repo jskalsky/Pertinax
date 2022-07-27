@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfControlLibrary
+namespace WpfControlLibrary.ViewModel
 {
     public class PortsNode
     {
@@ -31,12 +31,16 @@ namespace WpfControlLibrary
         public IList<PortsNode> Children => _children;
         public string Text { get; }
         public IList<string> Flags => _flags;
-        public bool IsExpanded { get; }
-        public PortsNode Add(string text)
+        public bool IsExpanded { get; set; }
+        public PortsNode Add(string text, bool isExpanded = false)
         {
-            PortsNode result = new PortsNode(text, IsExpanded);
+            PortsNode result = new PortsNode(text, isExpanded);
             _children.Add(result);
             return result;
+        }
+        public void Add(PortsNode pn)
+        {
+            _children.Add(pn);
         }
 
         public void AddFlag(string flag)

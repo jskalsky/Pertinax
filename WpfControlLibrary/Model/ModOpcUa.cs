@@ -13,6 +13,7 @@ namespace WpfControlLibrary.Model
     {
         public static readonly string[] BasicTypes = new string[] { "Boolean", "UInt8", "Int8", "UInt16", "Int16", "UInt32", "Int32", "Float", "Double" };
         public static readonly string[] VarAccess = new string[] { "Read", "Write", "ReadWrite" };
+        public static readonly string[] ClientService = new string[] { "Read", "Write" };
         public static readonly string[] NodeIdType = new string[] { "UInt32", "String", "Guid", "ByteString" };
 
         private List<ModNode> _nodes;
@@ -39,10 +40,10 @@ namespace WpfControlLibrary.Model
             ns1.AddSubNode(folderVariables);
             for (int i = 0; i < 10; ++i)
             {
-                folderVariables.AddSubNode(new ModNodeVariable($"Var{i + 1}", new ModNodeIdNumeric(1, (uint)(5000 + i)), basic_type.Float, "Read"));
+                folderVariables.AddSubNode(new ModNodeVariable($"Var{i + 1}", new ModNodeIdNumeric(1, (uint)(5000 + i)), basic_type.Float, access.Read));
             }
         }
-        private static access GetAccess(string s)
+        public static access GetAccess(string s)
         {
             switch (s)
             {
@@ -56,7 +57,7 @@ namespace WpfControlLibrary.Model
             return access.Unknown;
         }
 
-        private static string GetAccess(access access)
+        public static string GetAccess(access access)
         {
             switch (access)
             {
@@ -69,7 +70,7 @@ namespace WpfControlLibrary.Model
             }
             return "Unknown";
         }
-        private static basic_type GetBasicType(string s)
+        public static basic_type GetBasicType(string s)
         {
             switch (s)
             {
@@ -94,7 +95,7 @@ namespace WpfControlLibrary.Model
             }
             return basic_type.Unknown;
         }
-        private static string GetBasicType(basic_type s)
+        public static string GetBasicType(basic_type s)
         {
             switch (s)
             {
@@ -120,7 +121,7 @@ namespace WpfControlLibrary.Model
             return "Unknown";
         }
 
-        private static string GetClientService(client_service cs)
+        public static string GetClientService(client_service cs)
         {
             switch (cs)
             {
@@ -131,7 +132,7 @@ namespace WpfControlLibrary.Model
             }
             return "Unknown";
         }
-        private static client_service GetClientService(string s)
+        public static client_service GetClientService(string s)
         {
             switch (s)
             {
@@ -168,7 +169,7 @@ namespace WpfControlLibrary.Model
                     {
                         nodeSimple_var simple = new nodeSimple_var();
                         simple.name = modVariable.Name;
-                        simple.access = GetAccess(modVariable.Access);
+                        simple.access = modVariable.Access;
                         simple.basic_type = modVariable.Type;
                         simple.id = modVariable.NodeId.GetText();
                         tn.Item = simple;
@@ -180,7 +181,7 @@ namespace WpfControlLibrary.Model
                         {
                             nodeArray_var array = new nodeArray_var();
                             array.name = modArrayVariable.Name;
-                            array.access = GetAccess(modArrayVariable.Access);
+                            array.access = modArrayVariable.Access;
                             array.basic_type = modArrayVariable.Type;
                             array.length = modArrayVariable.ArrayLength;
                             tn.Item = array;
@@ -251,8 +252,7 @@ namespace WpfControlLibrary.Model
                     {
                         Debug.Print($"LoadNode SIMPLE= {simpleVar.name}");
                         modNode = new ModNodeVariable(simpleVar.name, ModNodeId.GetModNodeId(simpleVar.id),
-                            simpleVar.basic_type,
-                            GetAccess(simpleVar.access));
+                            simpleVar.basic_type, simpleVar.access);
                     }
                     else
                     {
@@ -260,8 +260,7 @@ namespace WpfControlLibrary.Model
                         {
                             Debug.Print($"LoadNode ARRAY= {arrayVar.name}");
                             modNode = new ModNodeArrayVariable(arrayVar.name, ModNodeId.GetModNodeId(arrayVar.id),
-                                arrayVar.basic_type,
-                                GetAccess(arrayVar.access), (int)arrayVar.length);
+                                arrayVar.basic_type, arrayVar.access, (int)arrayVar.length);
                         }
                         else
                         {
@@ -335,7 +334,7 @@ namespace WpfControlLibrary.Model
                             OPCUAParametersTypeClientGroup groupGroup = new OPCUAParametersTypeClientGroup();
                             groupGroup.name = group.Name;
                             groupGroup.period = group.Period;
-                            groupGroup.service = GetClientService(group.Service);
+                            groupGroup.service = group.Service;
                             groups.Add(groupGroup);
                             List<OPCUAParametersTypeClientGroupVar> vars = new List<OPCUAParametersTypeClientGroupVar>();
                             foreach (ModNodeClientVar clientVar in group.SubNodes)
@@ -393,7 +392,7 @@ namespace WpfControlLibrary.Model
                             {
                                 foreach (OPCUAParametersTypeClientGroup group in client.group)
                                 {
-                                    ModNodeClientGroup clientGroup = new ModNodeClientGroup(group.name, group.period, GetClientService(group.service));
+                                    ModNodeClientGroup clientGroup = new ModNodeClientGroup(group.name, group.period, group.service);
                                     modClient.AddSubNode(clientGroup);
                                     if (group.var != null)
                                     {

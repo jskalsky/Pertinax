@@ -138,7 +138,7 @@
     <Compile Include="PortDialog.xaml.cs">
       <DependentUpon>PortDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PortsNode.cs" />
+    <Compile Include="ViewModel\PortsNode.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -149,6 +149,7 @@
     <Compile Include="ViewModel\DataModelManagerViewModel.cs" />
     <Compile Include="ViewModel\OpcUaViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="ViewModel\ViewModelFlags.cs" />
     <Compile Include="ViewModel\VmNodeArrayVariable.cs" />
     <Compile Include="ViewModel\VmNodeClient.cs" />
     <Compile Include="ViewModel\VmNodeClientGroup.cs" />

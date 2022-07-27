@@ -24,13 +24,23 @@ namespace WpfControlLibrary.ViewModel
         bool _isEnabledClientGroup;
         bool _isEnabledClientVar;
         string _folderName;
+
         int _nrOfAddedVars;
         int _maxNrOfVars;
         int _arrayLength;
         int _maxArrayLength;
+        string _varType;
+        string _varAccess;
+        string _varNodeId;
+
         string _clientIpAddress;
+        bool _clientEncrypt;
+
         int _clientGroupPeriod;
+        string _clientGroupService;
+        string _clientVarAccess;
         string _clientVarNodeId;
+        string _clientVarType;
         int _clientVarCount;
         public MainWindowViewModel()
         {
@@ -41,12 +51,22 @@ namespace WpfControlLibrary.ViewModel
             MaximumArrayLength = MaxArrayLength;
             MaximumNrOfVars = MaxNrOfVars;
             NrOfAddedVars = 1;
-            ArrayLength = 1;
+            ArrayLength = 0;
             SelectedVmNode = null;
             ClientIpAddress = "10.10.13.252";
+            VarType = BasicTypes[0];
+            VarAccess = Access[0];
+            VarNodeId = "N:1:10000";
+            ClientVarNodeId= "N:1:10000";
+            ClientVarAccess = ClientService[0];
+            ClientVarType = BasicTypes[0];
+            ClientVarCount = 1;
         }
 
         public ObservableCollection<VmNode> Nodes { get; }
+        public string[] BasicTypes => Model.ModOpcUa.BasicTypes;
+        public string[] Access => Model.ModOpcUa.VarAccess;
+        public string[] ClientService => Model.ModOpcUa.ClientService;
         public object SelectedVmNode
         {
             get { return _selectedVmNode; }
@@ -127,6 +147,11 @@ namespace WpfControlLibrary.ViewModel
             get { return _clientGroupPeriod; }
             set { _clientGroupPeriod = value; OnPropertyChanged(nameof(ClientGroupPeriod)); }
         }
+        public string ClientGroupService
+        {
+            get { return _clientGroupService; }
+            set { _clientGroupService = value; OnPropertyChanged(nameof(ClientGroupService)); }
+        }
         public string ClientVarNodeId
         {
             get { return _clientVarNodeId; }
@@ -136,6 +161,36 @@ namespace WpfControlLibrary.ViewModel
         {
             get { return _clientVarCount; }
             set { _clientVarCount = value; OnPropertyChanged(nameof(ClientVarCount)); }
+        }
+        public string VarType
+        {
+            get { return _varType; }
+            set { _varType = value; OnPropertyChanged(nameof(VarType)); }
+        }
+        public string VarAccess
+        {
+            get { return _varAccess; }
+            set { _varAccess = value; OnPropertyChanged(nameof(VarAccess)); }
+        }
+        public string VarNodeId
+        {
+            get { return _varNodeId; }
+            set { _varNodeId = value; OnPropertyChanged(nameof(VarNodeId)); }
+        }
+        public bool ClientEncrypt
+        {
+            get { return _clientEncrypt; }
+            set { _clientEncrypt = value; OnPropertyChanged(nameof(ClientEncrypt)); }
+        }
+        public string ClientVarAccess
+        {
+            get { return _clientVarAccess; }
+            set { _clientVarAccess = value; OnPropertyChanged(nameof(ClientVarAccess)); }
+        }
+        public string ClientVarType
+        {
+            get { return _clientVarType; }
+            set { _clientVarType = value; OnPropertyChanged(nameof(ClientVarType)); }
         }
         private void LoadModNode(ModNode modNode, VmNode vmNode)
         {
@@ -150,6 +205,8 @@ namespace WpfControlLibrary.ViewModel
                 if (modNode is ModNodeFolder modFolder)
                 {
                     vmN = new VmNodeFolder(modFolder.Name, modFolder.NodeId.GetText(), false, true);
+                    NodeIdFactory.SetNextNodeId(modFolder.NodeId.GetText());
+                    NameFactory.SetName(modFolder.NodeId.Ns, modFolder.Name);
                     vmNode.AddVmNode(vmN);
                 }
                 else
@@ -157,6 +214,8 @@ namespace WpfControlLibrary.ViewModel
                     if (modNode is ModNodeVariable modVar)
                     {
                         vmN = new VmNodeSimpleVariable(modVar.Name, modVar.NodeId.GetText(), modVar.Type, modVar.Access, false, true);
+                        NodeIdFactory.SetNextNodeId(modVar.NodeId.GetText());
+                        NameFactory.SetName(modVar.NodeId.Ns, modVar.Name);
                         vmNode.AddVmNode(vmN);
                     }
                     else
@@ -164,6 +223,8 @@ namespace WpfControlLibrary.ViewModel
                         if (modNode is ModNodeArrayVariable arrayVar)
                         {
                             vmN = new VmNodeArrayVariable(arrayVar.Name, arrayVar.NodeId.GetText(), arrayVar.Type, arrayVar.Access, arrayVar.ArrayLength, false, true);
+                            NodeIdFactory.SetNextNodeId(arrayVar.NodeId.GetText());
+                            NameFactory.SetName(arrayVar.NodeId.Ns, arrayVar.Name);
                             vmNode.AddVmNode(vmN);
                         }
                         else
@@ -171,6 +232,8 @@ namespace WpfControlLibrary.ViewModel
                             if (modNode is ModNodeObjectType modOt)
                             {
                                 vmN = new VmNodeObjectType(modOt.Name, modOt.NodeId.GetText(), true, true);
+                                NodeIdFactory.SetNextNodeId(modOt.NodeId.GetText());
+                                NameFactory.SetName(modOt.NodeId.Ns, modOt.Name);
                                 vmNode.AddVmNode(vmN);
                             }
                             else
@@ -178,6 +241,8 @@ namespace WpfControlLibrary.ViewModel
                                 if (modNode is ModNodeObject modO)
                                 {
                                     vmN = new VmNodeObject(modO.Name, modO.NodeId.GetText(), modO.ObjectType, true, true);
+                                    NodeIdFactory.SetNextNodeId(modO.NodeId.GetText());
+                                    NameFactory.SetName(modO.NodeId.Ns, modO.Name);
                                     vmNode.AddVmNode(vmN);
                                 }
                             }
@@ -211,14 +276,18 @@ namespace WpfControlLibrary.ViewModel
                 if(modNode is ModNodeClient modClient)
                 {
                     VmNodeClient vmClient = new VmNodeClient(modClient.Name,modClient.IpAddress,modClient.Encrypt, true, true);
+                    NameFactory.SetName(0, modClient.Name);
                     Nodes.Add(vmClient);
                     foreach(ModNodeClientGroup modGroup in modClient.SubNodes)
                     {
                         VmNodeClientGroup vmGroup = new VmNodeClientGroup(modGroup.Name,modGroup.Period,modGroup.Service,true,true);
+                        NameFactory.SetName(0, modGroup.Name);
                         vmClient.AddVmNode(vmGroup);
                         foreach(ModNodeClientVar modVar in modGroup.SubNodes)
                         {
                             VmNodeClientVar vmVar = new VmNodeClientVar(modVar.Name, modVar.NodeId, modVar.Type, false, false);
+                            NodeIdFactory.SetNextNodeId(modVar.NodeId);
+                            NameFactory.SetName(0, modVar.Name);
                             vmGroup.AddVmNode(vmVar);
                         }
                     }

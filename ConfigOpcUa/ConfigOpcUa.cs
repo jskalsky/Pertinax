@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpcUaCfg;
-using WpfControlLibrary;
 using WpfControlLibrary.Client;
 using WpfControlLibrary.DataModel;
+using WpfControlLibrary.ViewModel;
 
 namespace ConfigOpcUa
 {
@@ -32,7 +32,7 @@ namespace ConfigOpcUa
         private string _groupAddress;
         private int _publisherId;
         private bool _serverEncryption;
-        private readonly List<WpfControlLibrary.PortsNode> _ports;
+        private readonly List<PortsNode> _ports;
         private readonly List<WpfControlLibrary.Client.ClientConnection> _connections;
         private readonly Dictionary<string, Flag> _allPorts;
         public ConfigOpcUa()
@@ -49,7 +49,7 @@ namespace ConfigOpcUa
             Debug.AutoFlush = true;
             Debug.WriteLine("Start");
 #endif
-            _ports = new List<WpfControlLibrary.PortsNode>();
+            _ports = new List<PortsNode>();
             _connections = new List<ClientConnection>();
             _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
@@ -181,7 +181,7 @@ namespace ConfigOpcUa
             if (pd.DataContext is WpfControlLibrary.ViewModelPorts vmp)
             {
                 vmp.RootNodes.Clear();
-                foreach (WpfControlLibrary.PortsNode pn in _ports)
+                foreach (PortsNode pn in _ports)
                 {
                     vmp.RootNodes.Add(pn);
                 }
@@ -774,8 +774,8 @@ namespace ConfigOpcUa
         private void CreatePorts()
         {
             _ports.Clear();
-            WpfControlLibrary.PortsNode outputs = new WpfControlLibrary.PortsNode("Výstupy");
-            WpfControlLibrary.PortsNode inputs = new WpfControlLibrary.PortsNode("Vstupy");
+            PortsNode outputs = new WpfControlLibrary.PortsNode("Výstupy");
+            PortsNode inputs = new WpfControlLibrary.PortsNode("Vstupy");
             _ports.Add(outputs);
             _ports.Add(inputs);
 

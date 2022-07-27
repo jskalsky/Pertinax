@@ -8,7 +8,7 @@ namespace WpfControlLibrary.Model
 {
     public class ModNodeArrayVariable : ModBaseVariableNode
     {
-        public ModNodeArrayVariable(string name, ModNodeId nodeId, basic_type type, string access, int arrayLength) : base(name, nodeId, type, access)
+        public ModNodeArrayVariable(string name, ModNodeId nodeId, basic_type type, access access, int arrayLength) : base(name, nodeId, type, access)
         {
             ArrayLength = arrayLength;
         }

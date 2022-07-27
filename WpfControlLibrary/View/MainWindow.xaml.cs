@@ -163,43 +163,35 @@ namespace WpfControlLibrary.View
                     }
                     for (int i = 0; i < vm.NrOfAddedVars; ++i)
                     {
-                        string nodeId = NodeIdFactory.GetNextNodeId(ns);
+                        string nodeId = vm.VarNodeId;
                         string name = NameFactory.NextName(ns, NameFactory.NameSimpleVar);
-                        VmNodeSimpleVariable vmSimple = new VmNodeSimpleVariable(name, nodeId, Model.basic_type.Boolean, Model.ModOpcUa.VarAccess[0], false, true);
-                        vn.AddVmNode(vmSimple);
-                        NodeIdFactory.SetNextNodeId(nodeId);
-                        NameFactory.SetName(ns, name);
-                    }
-                    vn.IsExpanded = true;
-                }
-            }
-        }
-
-        private void AddArray_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-                if (vm.SelectedVmNode != null)
-                {
-                    VmNode vn = (VmNode)vm.SelectedVmNode;
-                    ushort ns = 0;
-                    if (vm.SelectedVmNode is VmNodeNs vmNs)
-                    {
-                        ns = vmNs.NsIndex;
-                    }
-                    else
-                    {
-                        if (!vn.GetNamespace(out ns))
+                        if(vm.ArrayLength == 0)
                         {
-                            return;
+                            VmNodeSimpleVariable vmSimple = new VmNodeSimpleVariable(name, nodeId, Model.ModOpcUa.GetBasicType(vm.VarType), Model.ModOpcUa.GetAccess(vm.VarAccess),
+                                false, true);
+                            vn.AddVmNode(vmSimple);
+                            NameFactory.SetName(ns, name);
+                        }
+                        else
+                        {
+                            VmNodeArrayVariable vmArray = new VmNodeArrayVariable(name, nodeId, Model.ModOpcUa.GetBasicType(vm.VarType), Model.ModOpcUa.GetAccess(vm.VarAccess), 
+                                vm.ArrayLength, false, true);
+                            vn.AddVmNode(vmArray);
+                            NameFactory.SetName(ns, name);
+                        }
+                        string[] items = vm.VarNodeId.Split(':');
+                        if (items.Length == 3)
+                        {
+                            if (items[0] == "N")
+                            {
+                                if (uint.TryParse(items[2], out uint value))
+                                {
+                                    ++value;
+                                    vm.VarNodeId = $"{items[0]}:{items[1]}:{value}";
+                                }
+                            }
                         }
                     }
-                    string nodeId = NodeIdFactory.GetNextNodeId(ns);
-                    string name = NameFactory.NextName(ns, NameFactory.NameArrayVar);
-                    VmNodeArrayVariable vmArray = new VmNodeArrayVariable(name, nodeId, Model.basic_type.Boolean, Model.ModOpcUa.VarAccess[0], vm.ArrayLength, false, true);
-                    vn.AddVmNode(vmArray);
-                    NodeIdFactory.SetNextNodeId(nodeId);
-                    NameFactory.SetName(ns, name);
                     vn.IsExpanded = true;
                 }
             }
@@ -223,7 +215,7 @@ namespace WpfControlLibrary.View
                 if (vm.SelectedVmNode != null)
                 {
                     string name = NameFactory.NextName(0, NameFactory.NameClientGroup);
-                    VmNodeClientGroup vmGroup = new VmNodeClientGroup(name, (ushort)vm.ClientGroupPeriod, "Read", true, false);
+                    VmNodeClientGroup vmGroup = new VmNodeClientGroup(name, (ushort)vm.ClientGroupPeriod, Model.ModOpcUa.GetClientService(vm.ClientGroupService), true, false);
                     VmNode vn = (VmNode)vm.SelectedVmNode;
                     vn.AddVmNode(vmGroup);
                     NameFactory.SetName(0, name);

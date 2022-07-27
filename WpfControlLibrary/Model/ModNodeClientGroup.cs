@@ -8,13 +8,13 @@ namespace WpfControlLibrary.Model
 {
     public class ModNodeClientGroup : ModNode
     {
-        public ModNodeClientGroup(string name, ushort period, string service) : base(name)
+        public ModNodeClientGroup(string name, ushort period, client_service service) : base(name)
         {
             Period = period;
             Service = service;
         }
 
         public ushort Period { get; }
-        public string Service { get; }
+        public client_service Service { get; }
     }
 }
