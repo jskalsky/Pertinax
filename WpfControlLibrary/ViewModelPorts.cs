@@ -13,9 +13,9 @@ namespace WpfControlLibrary
     {
         public ViewModelPorts()
         {
-            RootNodes = new ObservableCollection<PortsNode>();
+            RootNodes = new ObservableCollection<VmFlagNode>();
         }
-        public ObservableCollection<PortsNode> RootNodes { get; }
+        public ObservableCollection<VmFlagNode> RootNodes { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)

@@ -14,112 +14,62 @@ namespace WpfControlLibrary.ViewModel
         {
 
         }
-        public ObservableCollection<PortsNode> Ports { get; }
-        private IList<string> GetFlags(Model.basic_type bt, Model.access acc, string name, int arrayLength)
+        public ObservableCollection<VmFlagNode> Flags { get; }
+        private ushort GetArrayIndex(string text)
         {
-
-        }
-        private void LoadModNode(ModNode modNode, PortsNode portsNode)
-        {
-            PortsNode pN = null;
-            if (modNode is ModNodeNs modNs)
+            int i = text.LastIndexOf('.');
+            if (i < 0)
             {
-                pN = new PortsNode(modNs.Name);
-                portsNode.Add(pN);
-                portsNode.IsExpanded = true;
+                return 0;
+            }
+
+            string index = text.Substring(i + 1);
+            if (ushort.TryParse(index, out ushort result))
+            {
+                return result;
+            }
+
+            return 0;
+        }
+
+        private void LoadFlagNode(ModFlagNode mfNode, VmFlagNode parent)
+        {
+            VmFlagNode vmFN = null;
+            if (mfNode is  ModFlagNode modFlagNode)
+            {
+                vmFN = new VmFlagNode(modFlagNode.Name, false);
+                parent.Add(vmFN);
+                parent.IsExpanded = true;
             }
             else
             {
-                if (modNode is ModNodeFolder modFolder)
+                if(mfNode is ModFlagNodeFlag modFlag)
                 {
-                    pN = new PortsNode(modFolder.Name);
-                    portsNode.Add(pN);
-                    portsNode.IsExpanded = true;
-                }
-                else
-                {
-                    if (modNode is ModNodeVariable modVar)
-                    {
-                        pN = new PortsNode(modVar.Name);
-                        portsNode.Add(pN);
-                        portsNode.IsExpanded = true;
-                    }
-                    else
-                    {
-                        if (modNode is ModNodeArrayVariable arrayVar)
-                        {
-                            vmN = new VmNodeArrayVariable(arrayVar.Name, arrayVar.NodeId.GetText(), arrayVar.Type, arrayVar.Access, arrayVar.ArrayLength, false, true);
-                            NodeIdFactory.SetNextNodeId(arrayVar.NodeId.GetText());
-                            NameFactory.SetName(arrayVar.NodeId.Ns, arrayVar.Name);
-                            vmNode.AddVmNode(vmN);
-                        }
-                        else
-                        {
-                            if (modNode is ModNodeObjectType modOt)
-                            {
-                                vmN = new VmNodeObjectType(modOt.Name, modOt.NodeId.GetText(), true, true);
-                                NodeIdFactory.SetNextNodeId(modOt.NodeId.GetText());
-                                NameFactory.SetName(modOt.NodeId.Ns, modOt.Name);
-                                vmNode.AddVmNode(vmN);
-                            }
-                            else
-                            {
-                                if (modNode is ModNodeObject modO)
-                                {
-                                    vmN = new VmNodeObject(modO.Name, modO.NodeId.GetText(), modO.ObjectType, true, true);
-                                    NodeIdFactory.SetNextNodeId(modO.NodeId.GetText());
-                                    NameFactory.SetName(modO.NodeId.Ns, modO.Name);
-                                    vmNode.AddVmNode(vmN);
-                                }
-                            }
-                        }
-                    }
+                    vmFN = new VmFlagNodeFlag(modFlag.Name, false);
+                    parent.Add(vmFN);
+                    parent.IsExpanded = true;
+                    return;
                 }
             }
-            if (vmN != null)
+            if(vmFN != null)
             {
-                foreach (ModNode mN in modNode.SubNodes)
+                foreach(ModFlagNode mfn in mfNode.SubNodes)
                 {
-                    LoadModNode(mN, vmN);
+                    LoadFlagNode(mfn,vmFN);
                 }
             }
         }
-        public void LoadXml(string fileName)
+        public void Load()
         {
-            ModOpcUa opcUa = new Model.ModOpcUa();
-            opcUa.ReadXml(fileName);
-            foreach (ModNode modNode in opcUa.Nodes)
+            foreach(ModFlagNode mfn in Model.ModFlagsTree.FlagsTree)
             {
-                if (modNode is ModNodeServer modServer)
+                VmFlagNode vmFlagNode = new VmFlagNode(mfn.Name, false);
+                Flags.Add(vmFlagNode);
+                foreach(ModFlagNode mfn2 in mfn.SubNodes)
                 {
-                    VmNodeServer vmServer = new VmNodeServer(modServer.Name, modServer.Encrypt, true, true);
-                    foreach (ModNode modSubNode in modServer.SubNodes)
-                    {
-                        LoadModNode(modSubNode, vmServer);
-                    }
-                    Nodes.Add(vmServer);
-                }
-                if (modNode is ModNodeClient modClient)
-                {
-                    VmNodeClient vmClient = new VmNodeClient(modClient.Name, modClient.IpAddress, modClient.Encrypt, true, true);
-                    NameFactory.SetName(0, modClient.Name);
-                    Nodes.Add(vmClient);
-                    foreach (ModNodeClientGroup modGroup in modClient.SubNodes)
-                    {
-                        VmNodeClientGroup vmGroup = new VmNodeClientGroup(modGroup.Name, modGroup.Period, modGroup.Service, true, true);
-                        NameFactory.SetName(0, modGroup.Name);
-                        vmClient.AddVmNode(vmGroup);
-                        foreach (ModNodeClientVar modVar in modGroup.SubNodes)
-                        {
-                            VmNodeClientVar vmVar = new VmNodeClientVar(modVar.Name, modVar.NodeId, modVar.Type, false, false);
-                            NodeIdFactory.SetNextNodeId(modVar.NodeId);
-                            NameFactory.SetName(0, modVar.Name);
-                            vmGroup.AddVmNode(vmVar);
-                        }
-                    }
+                    LoadFlagNode(mfn2,vmFlagNode);
                 }
             }
         }
-
     }
 }

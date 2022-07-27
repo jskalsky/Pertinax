@@ -15,8 +15,10 @@ namespace WpfControlLibrary.Model
         public static readonly string[] VarAccess = new string[] { "Read", "Write", "ReadWrite" };
         public static readonly string[] ClientService = new string[] { "Read", "Write" };
         public static readonly string[] NodeIdType = new string[] { "UInt32", "String", "Guid", "ByteString" };
-
+        public static readonly Dictionary<string, char> PtxBasicTypes = new Dictionary<string, char>() { {"Boolean", 'B' }, { "UInt8", 'U' }, 
+            { "UInt16", 'W' }, { "UInt32", 'Q' }, { "Int8", 'C' }, { "Int16", 'I' }, {"Int32", 'L' }, {"Float", 'R' }, {"Double", 'D' } };
         private List<ModNode> _nodes;
+
         public ModOpcUa()
         {
             _nodes = new List<ModNode>();
