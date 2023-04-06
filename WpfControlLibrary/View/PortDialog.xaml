@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="PortDialog" Height="600" Width="800" WindowStyle="None" ResizeMode="CanResize">
     <Window.DataContext>
-        <vm:ViewModelFlags/>
+        <vm:MainWindowViewModel/>
     </Window.DataContext>
     <Border Background="GhostWhite" BorderBrush="DarkGray" BorderThickness="1">
         <DockPanel LastChildFill="True">
@@ -22,14 +22,67 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TreeView Loaded="TreeView_Loaded" Name="TreePorts" ItemsSource="{Binding Flags}" SelectedItemChanged="TreePorts_SelectedItemChanged">
+                <TreeView Loaded="TreeView_Loaded" Name="TreePorts" ItemsSource="{Binding Nodes}" SelectedItemChanged="TreePorts_SelectedItemChanged">
                     <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type vm:VmFlagNode}" ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Text}"/>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeServer}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </HierarchicalDataTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type vm:VmFlagNodeFlag}" ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Text}"/>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeNs}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeFolder}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeObjectType}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeObject}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeClient}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding IpAddress}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:VmNodeClientGroup}" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Period}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                <TextBlock Text="{Binding Service}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type vm:VmNodeClientVar}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding NodeId}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                <TextBlock Text="{Binding Type}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:VmNodeSimpleVariable}">
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Image Stretch="Fill" Source="{Binding ImagePath}" Height="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
                     </TreeView.Resources>
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="TreeViewItem">

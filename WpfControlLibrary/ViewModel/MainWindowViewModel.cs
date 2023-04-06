@@ -213,7 +213,12 @@ namespace WpfControlLibrary.ViewModel
                 {
                     if (modNode is ModNodeVariable modVar)
                     {
-                        vmN = new VmNodeSimpleVariable(modVar.Name, modVar.NodeId.GetText(), modVar.Type, modVar.Access, false, true);
+                        VmNodeSimpleVariable vmSimple = new VmNodeSimpleVariable(modVar.Name, modVar.NodeId.GetText(), modVar.Type, modVar.Access, false, true);
+                        vmN = vmSimple;
+                        foreach(string flag in modVar.Flags)
+                        {
+                            vmSimple.Flags.Add(flag);
+                        }
                         NodeIdFactory.SetNextNodeId(modVar.NodeId.GetText());
                         NameFactory.SetName(modVar.NodeId.Ns, modVar.Name);
                         vmNode.AddVmNode(vmN);
@@ -222,7 +227,13 @@ namespace WpfControlLibrary.ViewModel
                     {
                         if (modNode is ModNodeArrayVariable arrayVar)
                         {
-                            vmN = new VmNodeArrayVariable(arrayVar.Name, arrayVar.NodeId.GetText(), arrayVar.Type, arrayVar.Access, arrayVar.ArrayLength, false, true);
+                            VmNodeArrayVariable vmArray = new VmNodeArrayVariable(arrayVar.Name, arrayVar.NodeId.GetText(), arrayVar.Type, arrayVar.Access, arrayVar.ArrayLength, 
+                                false, true);
+                            vmN= vmArray;
+                            foreach(string flag in arrayVar.Flags)
+                            {
+                                arrayVar.Flags.Add(flag);
+                            }
                             NodeIdFactory.SetNextNodeId(arrayVar.NodeId.GetText());
                             NameFactory.SetName(arrayVar.NodeId.Ns, arrayVar.Name);
                             vmNode.AddVmNode(vmN);
@@ -258,10 +269,9 @@ namespace WpfControlLibrary.ViewModel
                 }
             }
         }
-        public void LoadXml(string fileName)
+        public void LoadXml(ModOpcUa opcUa)
         {
-            ModOpcUa opcUa = new Model.ModOpcUa();
-            opcUa.ReadXml(fileName);
+            Nodes.Clear();
             foreach (ModNode modNode in opcUa.Nodes)
             {
                 if (modNode is ModNodeServer modServer)
@@ -285,7 +295,7 @@ namespace WpfControlLibrary.ViewModel
                         vmClient.AddVmNode(vmGroup);
                         foreach(ModNodeClientVar modVar in modGroup.SubNodes)
                         {
-                            VmNodeClientVar vmVar = new VmNodeClientVar(modVar.Name, modVar.NodeId, modVar.Type, false, false);
+                            VmNodeClientVar vmVar = new VmNodeClientVar(modVar.Name, modVar.NodeId, modVar.Type, modGroup.Service, false, false);
                             NodeIdFactory.SetNextNodeId(modVar.NodeId);
                             NameFactory.SetName(0, modVar.Name);
                             vmGroup.AddVmNode(vmVar);
@@ -350,9 +360,8 @@ namespace WpfControlLibrary.ViewModel
                 }
             }
         }
-        public void SaveXml(string fileName)
+        public void SaveXml(ModOpcUa opcUa, string fileName)
         {
-            ModOpcUa opcUa = new Model.ModOpcUa();
             opcUa.Nodes.Clear();
             foreach (VmNode vmNode in Nodes)
             {

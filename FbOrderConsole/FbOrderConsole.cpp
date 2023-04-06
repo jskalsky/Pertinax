@@ -237,15 +237,54 @@ int BlockOrder(void)
 int main()
 {
     printf("Start...\n");
-    tagNODE* pn = new tagNODE;
-    pn->component_no = 0;
-    pn->node_type = NODE_H;
-    pn->ref = "H";
-    pn->used = 0;
-    pn->weight = 0;
-    vNodes.push_back(pn);
+
+    FILE* fp;
+    fopen_s(&fp, "e:\\nodes.bin", "r");
+    if (fp != NULL)
+    {
+        DWORD nrNodes = 0;
+        fread(&nrNodes, 4, 1, fp);
+        for (DWORD i = 0; i < nrNodes; ++i)
+        {
+            tagNODE* node = new tagNODE;
+            DWORD h = 0;
+            fread(&h, sizeof(DWORD), 1, fp);
+            char buf[128];
+            memset(buf, 0, 128);
+            fread(buf, h, 1, fp);
+            node->ref = buf;
+            fread(&node->node_type, 4, 1, fp);
+            fread(&node->component_no, 4, 1, fp);
+            fread(&node->weight, 4, 1, fp);
+            fread(&node->used, 4, 1, fp);
+            DWORD sizeSucc = 0;
+            fread(&sizeSucc, sizeof(DWORD), 1, fp);
+            for (DWORD j = 0; j < sizeSucc; ++j)
+            {
+                fread(&h, sizeof(DWORD), 1, fp);
+                node->succ.push_back(h);
+            }
+            DWORD sizeSym = 0;
+            fread(&sizeSym, sizeof(DWORD), 1, fp);
+            for (DWORD j = 0; j < sizeSym; ++j)
+            {
+                fread(&h, sizeof(DWORD), 1, fp);
+                node->succ.push_back(h);
+            }
+            fread(&node->node_status, 4, 1, fp);
+            vNodes.push_back(node);
+        }
+        fclose(fp);
+    }
 
     BlockOrder();
+
+    for (std::vector<tagNODE*>::iterator it = vNodes.begin(); it != vNodes.end(); ++it)
+    {
+        delete (*it);
+    }
+    printf("Konec...\n");
+    return 0;
 }
 
 

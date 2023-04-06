@@ -229,27 +229,29 @@ namespace WpfControlLibrary.View
             {
                 if (vm.SelectedVmNode != null)
                 {
-                    VmNode vn = (VmNode)vm.SelectedVmNode;
-                    for (int i = 0; i < vm.ClientVarCount; ++i)
+                    if(vm.SelectedVmNode is VmNodeClientGroup vmGroup)
                     {
-                        string name = NameFactory.NextName(0, NameFactory.NameClientVar);
-                        VmNodeClientVar vmVar = new VmNodeClientVar(name, vm.ClientVarNodeId, Model.ModOpcUa.BasicTypes[0], true, false);
-                        vn.AddVmNode(vmVar);
-                        NameFactory.SetName(0, name);
-                        string[] items = vm.ClientVarNodeId.Split(':');
-                        if(items.Length==3)
+                        for (int i = 0; i < vm.ClientVarCount; ++i)
                         {
-                            if (items[0] == "N")
+                            string name = NameFactory.NextName(0, NameFactory.NameClientVar);
+                            VmNodeClientVar vmVar = new VmNodeClientVar(name, vm.ClientVarNodeId, Model.ModOpcUa.BasicTypes[0], vmGroup.Service, true, false);
+                            vmGroup.AddVmNode(vmVar);
+                            NameFactory.SetName(0, name);
+                            string[] items = vm.ClientVarNodeId.Split(':');
+                            if (items.Length == 3)
                             {
-                                if (uint.TryParse(items[2], out uint value))
+                                if (items[0] == "N")
                                 {
-                                    ++value;
-                                    vm.ClientVarNodeId = $"{items[0]}:{items[1]}:{value}";
+                                    if (uint.TryParse(items[2], out uint value))
+                                    {
+                                        ++value;
+                                        vm.ClientVarNodeId = $"{items[0]}:{items[1]}:{value}";
+                                    }
                                 }
                             }
                         }
+                        vmGroup.IsExpanded = true;
                     }
-                    vn.IsExpanded = true;
                 }
             }
         }

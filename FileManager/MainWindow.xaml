@@ -19,6 +19,7 @@
                 <Button Content="Settings" Command="{Binding SettingsCommand}"/>
                 <Button Content="Start" Command="{Binding StartCommand}"/>
                 <Button Content="Stop" Command="{Binding StopCommand}"/>
+                <Button Content="Versions" Command="{Binding OnVersions}"/>
             </ToolBar>
         </ToolBarTray>
         <StatusBar DockPanel.Dock="Bottom">

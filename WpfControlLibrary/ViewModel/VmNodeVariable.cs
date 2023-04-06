@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,11 @@ namespace WpfControlLibrary.ViewModel
         {
             Type = type;
             Access = access;
+            Flags = new ObservableCollection<string>();
         }
 
         public Model.basic_type Type { get; set; }
         public Model.access Access { get; set; }
+        public ObservableCollection<string> Flags { get; }
     }
 }

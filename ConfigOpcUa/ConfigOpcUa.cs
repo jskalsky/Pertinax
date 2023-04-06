@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpcUaCfg;
 using WpfControlLibrary.Client;
-using WpfControlLibrary.DataModel;
 using WpfControlLibrary.ViewModel;
 using WpfControlLibrary.View;
 
@@ -33,9 +32,8 @@ namespace ConfigOpcUa
         private string _groupAddress;
         private int _publisherId;
         private bool _serverEncryption;
-        private readonly List<VmFlagNode> _ports;
         private readonly List<WpfControlLibrary.Client.ClientConnection> _connections;
-        private readonly Dictionary<string, Flag> _allPorts;
+        private readonly WpfControlLibrary.Model.ModOpcUa _opcua;
         public ConfigOpcUa()
         {
             lName = "OpcUa";
@@ -50,11 +48,10 @@ namespace ConfigOpcUa
             Debug.AutoFlush = true;
             Debug.WriteLine("Start");
 #endif
-            _ports = new List<VmFlagNode>();
             _connections = new List<ClientConnection>();
-            _allPorts = new Dictionary<string, Flag>();
             _publisherId = 1;
             _serverEncryption = false;
+            _opcua = new WpfControlLibrary.Model.ModOpcUa();
         }
 
         public static void IntelMotorola(byte[] bytes, int start, int length)
@@ -127,11 +124,11 @@ namespace ConfigOpcUa
         public override byte[] CheCoLabel(int mod, string pLabel)
         {
             Debug.Print($"CheCoLabel {mod}, {pLabel}");
-            if (!_allPorts.TryGetValue(pLabel, out Flag flag))
+            if (!WpfControlLibrary.Model.ModFlagsCollection.ModFlags.TryGetValue(pLabel, out WpfControlLibrary.Model.ModFlag flag))
             {
                 throw new ApplicationException($"Unknown label {pLabel}");
             }
-            string[] items = flag.Text.Split('.');
+            string[] items = flag.Flag.Split('.');
             //            for (int i = 0; i < items.Length; ++i)
             //            {
             //                Debug.Print($"item {i}, {items[i]}");
@@ -148,10 +145,9 @@ namespace ConfigOpcUa
             BinaryWriter bw = new BinaryWriter(ms);
 
             bw.Write(tc);
-            bw.Write(IntelMotorola(flag.ArrayIndex));
 
             int idx = 0;
-            string s = flag.Text;
+            string s = flag.Flag;
             for (int i = 0; i < 3; ++i)
             {
                 idx = s.IndexOf('.');
@@ -166,8 +162,20 @@ namespace ConfigOpcUa
                 idx = s.LastIndexOf('.');
                 if (idx > 0)
                 {
+                    string sub = s.Substring(idx + 1);
+                    ushort index = 0;
+                    if(ushort.TryParse(sub, out ushort arrayIndex))
+                    {
+                        index = arrayIndex;
+                    }
+                    bw.Write(IntelMotorola(index));
                     s = s.Remove(idx, s.Length - idx);
                 }
+            }
+            else
+            {
+                bw.Write(IntelMotorola((ushort)0));
+
             }
             bw.Write(IntelMotorola((ushort)s.Length));
             bw.Write(Encoding.ASCII.GetBytes(s));
@@ -179,9 +187,9 @@ namespace ConfigOpcUa
         {
             Debug.Print($"CreatePort");
             PortDialog pd = new WpfControlLibrary.View.PortDialog();
-            if (pd.DataContext is WpfControlLibrary.ViewModel.ViewModelFlags vmp)
+            if (pd.DataContext is WpfControlLibrary.ViewModel.MainWindowViewModel vmp)
             {
-                vmp.Load();
+                vmp.LoadXml(_opcua);
             }
             bool? result = pd.ShowDialog();
             if (result != null && result == true)
@@ -196,250 +204,6 @@ namespace ConfigOpcUa
             return string.Empty;
         }
 
-
-        private void LoadNode(DataModelNode parent, OpcUaCfg.node n, ObservableCollection<DataModelNode> dataModel, ref int nrErrors)
-        {
-            Debug.Print($"LoadNode {n.node_type}, parent= {parent}");
-            DataModelNode dmn = null;
-            if (n.Item is OpcUaCfg.nodeFolder folder)
-            {
-                Debug.Print($"LoadNode FOLDER= {folder.name}, {folder.id}");
-                NodeIdBase nodeId = NodeIdBase.GetNodeIdBase(folder.id);
-                dmn = new DataModelFolder(folder.name, nodeId, parent);
-                /*                if (nodeId.NamespaceIndex == 1)
-                                {
-                                    Debug.Print($"nodeId.NamespaceIndex= {nodeId.NamespaceIndex}");
-                                    switch (folder.name)
-                                    {
-                                        case "Z2Xx":
-                                            DefaultDataModel.FolderZ2Xx = new DataModelFolder(folder.name, nodeId, parent);
-                                            dmn = DefaultDataModel.FolderZ2Xx;
-                                            break;
-                                        case "Objects":
-                                            DefaultDataModel.FolderObjects = new DataModelFolder(folder.name, nodeId, parent);
-                                            dmn = DefaultDataModel.FolderObjects;
-                                            break;
-                                        case "ObjectTypes":
-                                            DefaultDataModel.FolderObjectTypes = new DataModelFolder(folder.name, nodeId, parent);
-                                            dmn = DefaultDataModel.FolderObjectTypes;
-                                            break;
-                                        case "Variables":
-                                            DefaultDataModel.FolderVariables = new DataModelFolder(folder.name, nodeId, parent);
-                                            dmn = DefaultDataModel.FolderVariables;
-                                            break;
-                                    }
-
-                                }
-                                else
-                                {
-                                    dmn = new DataModelFolder(folder.name, nodeId, parent);
-                                }*/
-                Debug.Print($"Folder dmn= {dmn}");
-                if (dmn != null)
-                {
-                    DataModelNamespace ns = dmn.GetNamespace();
-                    IdFactory.AddName(ns.Namespace, IdFactory.NameFolder, folder.name);
-                    if (!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
-                    {
-                        ++nrErrors;
-                        WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
-                            $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
-                    }
-                }
-            }
-            else
-            {
-                if (n.Item is OpcUaCfg.nodeNamespace nodeNamespace)
-                {
-                    Debug.Print($"LoadNode NS= {nodeNamespace.index}");
-                    switch (nodeNamespace.index)
-                    {
-                        case 0:
-                            DefaultDataModel.DataModelNamespace0 = new DataModelNamespace(nodeNamespace.index);
-                            dmn = DefaultDataModel.DataModelNamespace0;
-                            break;
-                        case 1:
-                            DefaultDataModel.DataModelNamespace1 = new DataModelNamespace(nodeNamespace.index);
-                            dmn = DefaultDataModel.DataModelNamespace1;
-                            break;
-                        case 2:
-                            DefaultDataModel.DataModelNamespace2 = new DataModelNamespace(nodeNamespace.index);
-                            dmn = DefaultDataModel.DataModelNamespace2;
-                            break;
-                    }
-                    Debug.Print($"1000, {dmn}");
-                }
-                else
-                {
-                    if (n.Item is OpcUaCfg.nodeSimple_var simpleVar)
-                    {
-                        Debug.Print($"LoadNode SIMPLE= {simpleVar.name}");
-                        dmn = new DataModelSimpleVariable(simpleVar.name, NodeIdBase.GetNodeIdBase(simpleVar.id), GetBasicType(simpleVar.basic_type),
-                            GetAccess(simpleVar.access), parent);
-                        DataModelNamespace ns = dmn.GetNamespace();
-                        IdFactory.AddName(ns.Namespace, IdFactory.NameSimpleVar, simpleVar.name);
-                        if (!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
-                        {
-                            ++nrErrors;
-                            WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
-                                $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
-                        }
-                    }
-                    else
-                    {
-                        if (n.Item is OpcUaCfg.nodeArray_var arrayVar)
-                        {
-                            Debug.Print($"LoadNode ARRAY= {arrayVar.name}");
-                            dmn = new DataModelArrayVariable(arrayVar.name, NodeIdBase.GetNodeIdBase(arrayVar.id), GetBasicType(arrayVar.basic_type),
-                                GetAccess(arrayVar.access), (int)arrayVar.length, parent);
-                            DataModelNamespace ns = dmn.GetNamespace();
-                            IdFactory.AddName(ns.Namespace, IdFactory.NameArrayVar, arrayVar.name);
-                            if (!NodeIdBase.AddVarNodeId(ns.Namespace, dmn.NodeId))
-                            {
-                                ++nrErrors;
-                                WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
-                                    $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
-                            }
-                        }
-                        else
-                        {
-                            if (n.Item is OpcUaCfg.nodeObject_type objectType)
-                            {
-                                Debug.Print($"OT {objectType.id}");
-                                dmn = new DataModelObjectType(objectType.name, NodeIdBase.GetNodeIdBase(objectType.id), parent);
-                                DataModelNamespace ns = dmn.GetNamespace();
-                                IdFactory.AddName(ns.Namespace, IdFactory.NameObjectType, objectType.name);
-                                if (!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
-                                {
-                                    ++nrErrors;
-                                    WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
-                                        $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
-                                }
-                            }
-                            else
-                            {
-                                if (n.Item is OpcUaCfg.nodeObject_var objectVar)
-                                {
-                                    Debug.Print($"LoadNode 4");
-                                    dmn = new DataModelObjectVariable(objectVar.name, NodeIdBase.GetNodeIdBase(objectVar.id), objectVar.object_type_name,
-                                        parent);
-                                    DataModelNamespace ns = dmn.GetNamespace();
-                                    IdFactory.AddName(ns.Namespace, IdFactory.NameObjectVar, objectVar.name);
-                                    if (!NodeIdBase.AddSystemNodeId(ns.Namespace, dmn.NodeId))
-                                    {
-                                        ++nrErrors;
-                                        WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(WpfControlLibrary.ViewModel.StatusMsg._messageTypes[0],
-                                            $"NodeId {dmn.NodeId.GetNodeName()} již existuje", dmn);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            Debug.Print($"parent= {parent}, dmn= {dmn}");
-            if (parent == null)
-            {
-                Debug.Print("5");
-                dataModel.Add(dmn);
-                Debug.Print("6");
-            }
-            else
-            {
-                Debug.Print("7");
-                parent.AddChildren(dmn);
-                Debug.Print("8");
-            }
-            Debug.Print("100");
-            if (n.sub_nodes != null)
-            {
-                Debug.Print($"101, {n.sub_nodes}, {n.sub_nodes.Length}");
-                foreach (OpcUaCfg.node child in n.sub_nodes)
-                {
-                    Debug.Print($"9 {child}, {dmn}");
-                    Debug.Flush();
-                    LoadNode(dmn, child, dataModel, ref nrErrors);
-                    Debug.Print("10");
-                }
-            }
-        }
-
-        private void LoadXml(string pName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
-        {
-            Debug.Print($"LoadXml {pName}, {mvm}");
-            try
-            {
-                if (File.Exists(pName))
-                {
-                    Debug.Print($"Existed");
-                    XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.OPCUAParametersType));
-                    using (TextReader tr = new StreamReader(pName))
-                    {
-                        OpcUaCfg.OPCUAParametersType cfg = (OpcUaCfg.OPCUAParametersType)serializer.Deserialize(tr);
-                        mvm.LocalIpAddress = cfg.settings.local_ip;
-                        mvm.MulticastIpAddress = cfg.settings.multicast_ip;
-                        int nrErrors = 0;
-                        foreach (OpcUaCfg.node node in cfg.nodes)
-                        {
-                            LoadNode(null, node, mvm.DataModel, ref nrErrors);
-                        }
-
-                        WpfControlLibrary.ViewModel.OpcUaViewModel.AddStatusMessage(
-                            WpfControlLibrary.ViewModel.StatusMsg._messageTypes[2],
-                            nrErrors == 0
-                                ? $"Načtení konfigurace bez chyb"
-                                : $"Načtení konfigurace, počet chyb = {nrErrors}");
-                        if (cfg.connections != null)
-                        {
-                            if (cfg.connections.Length != 0)
-                            {
-                                foreach (OpcUaCfg.connectionsConnection connection in cfg.connections)
-                                {
-                                    Debug.Flush();
-                                    WpfControlLibrary.Client.ClientConnection cc =
-                                        new WpfControlLibrary.Client.ClientConnection(connection.ip_address,
-                                            connection.encryption);
-                                    if (connection.group != null)
-                                    {
-                                        foreach (OpcUaCfg.connectionsConnectionGroup group in connection.group)
-                                        {
-                                            WpfControlLibrary.Client.Group gr = new Group(group.period, group.service == client_service.Read ? "Read" : "Write");
-                                            cc.Groups.Add(gr);
-                                            if (group.var != null)
-                                            {
-                                                foreach (OpcUaCfg.connectionsConnectionGroupVar groupVar in group.var)
-                                                {
-                                                    WpfControlLibrary.Client.ClientVar clientVar =
-                                                        new ClientVar(gr, groupVar.id,
-                                                            GetBasicType(groupVar.basic_type), groupVar.alias);
-                                                    gr.Vars.Add(clientVar);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    mvm.Connections.Add(cc);
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    WpfControlLibrary.DataModel.DefaultDataModel.Setup(mvm.DataModel);
-                }
-                DefaultDataModel.DataModelNamespace1.IsExpanded = true;
-            }
-            catch (Exception e)
-            {
-                Debug.Print($"LoadXml Exception: {e.Message}");
-                StackTrace stackTrace = new StackTrace(e, true);
-                for (int i = 0; i < stackTrace.FrameCount; ++i)
-                {
-                    Debug.WriteLine($"  {stackTrace.GetFrame(i).GetFileName()}, {stackTrace.GetFrame(i).GetFileLineNumber()} : {stackTrace.GetFrame(i).GetMethod().Name}");
-                }
-            }
-        }
-
         public override void LoadConfig(string pName)
         {
             Debug.Print($"LoadConfig= {pName}");
@@ -447,7 +211,7 @@ namespace ConfigOpcUa
             {
                 try
                 {
-                    WpfControlLibrary.Model.ModFlagsTree.LoadXml(pName);
+                    _opcua.ReadXml(pName);
                 }
                 catch (Exception e)
                 {
@@ -469,10 +233,10 @@ namespace ConfigOpcUa
                 WpfControlLibrary.View.MainWindow mainWindow = new WpfControlLibrary.View.MainWindow();
                 if (mainWindow.DataContext is WpfControlLibrary.ViewModel.MainWindowViewModel mvm)
                 {
-                    mvm.LoadXml(pName);
+                    mvm.LoadXml(_opcua);
                     if ((bool)mainWindow.ShowDialog())
                     {
-                        mvm.SaveXml(pName);
+                        mvm.SaveXml(_opcua,pName);
                     }
                 }
             }
@@ -732,119 +496,6 @@ namespace ConfigOpcUa
 
         }
 
-        private static OpcUaCfg.nodeFolder GetFolder(DataModelFolder dmFolder)
-        {
-            OpcUaCfg.nodeFolder folder = new OpcUaCfg.nodeFolder();
-            folder.name = dmFolder.Name;
-            folder.id = dmFolder.NodeId.GetNodeName();
-            return folder;
-        }
-
-        private static OpcUaCfg.nodeSimple_var GetSimpleVar(DataModelSimpleVariable dmSimple)
-        {
-            OpcUaCfg.nodeSimple_var simple = new OpcUaCfg.nodeSimple_var();
-            simple.name = dmSimple.Name;
-            simple.access = GetAccess(dmSimple.VarAccess);
-            simple.basic_type = GetBasicType(dmSimple.VarType);
-            simple.id = dmSimple.NodeId.GetNodeName();
-            return simple;
-        }
-
-        private static OpcUaCfg.nodeArray_var GetArrayVar(DataModelArrayVariable dmArray)
-        {
-            OpcUaCfg.nodeArray_var array = new OpcUaCfg.nodeArray_var();
-            array.name = dmArray.Name;
-            array.access = GetAccess(dmArray.VarAccess);
-            array.basic_type = GetBasicType(dmArray.BasicType);
-            array.id = dmArray.NodeId.GetNodeName();
-            array.length = (uint)dmArray.ArrayLength;
-            return array;
-        }
-
-        private static OpcUaCfg.nodeObject_type GetObjectType(DataModelObjectType dmObjectType)
-        {
-            OpcUaCfg.nodeObject_type ot = new OpcUaCfg.nodeObject_type();
-            ot.name = dmObjectType.Name;
-            ot.id = dmObjectType.NodeId.GetNodeName();
-            return ot;
-        }
-
-        private static OpcUaCfg.nodeObject_var GetObjectvar(DataModelObjectVariable dmObjectVar)
-        {
-            OpcUaCfg.nodeObject_var objectVar = new OpcUaCfg.nodeObject_var();
-            objectVar.name = dmObjectVar.Name;
-            objectVar.object_type_name = dmObjectVar.ObjectTypeName;
-            objectVar.id = dmObjectVar.NodeId.GetNodeName();
-            return objectVar;
-        }
-
-        private static void SaveTreeNode(DataModelNode node, OpcUaCfg.node tn)
-        {
-            Debug.Print($"SaveTreeNode {node}");
-            if (node is DataModelNamespace dmNs)
-            {
-                OpcUaCfg.nodeNamespace objNamespace = new OpcUaCfg.nodeNamespace();
-                objNamespace.index = dmNs.Namespace;
-                tn.Item = objNamespace;
-                tn.node_type = node_type.Namespace;
-            }
-            else
-            {
-                if (node is DataModelFolder dmFolder)
-                {
-                    tn.Item = GetFolder(dmFolder);
-                    tn.node_type = node_type.Folder;
-                }
-                else
-                {
-                    if (node is DataModelSimpleVariable dmSimple)
-                    {
-                        tn.Item = GetSimpleVar(dmSimple);
-                        tn.node_type = node_type.SimpleVariable;
-                    }
-                    else
-                    {
-                        if (node is DataModelArrayVariable dmArray)
-                        {
-                            tn.Item = GetArrayVar(dmArray);
-                            tn.node_type = node_type.ArrayVariable;
-                        }
-                        else
-                        {
-                            if (node is DataModelObjectType dmObjectType)
-                            {
-                                tn.Item = GetObjectType(dmObjectType);
-                                tn.node_type = node_type.ObjectType;
-                            }
-                            else
-                            {
-                                if (node is DataModelObjectVariable dmObjectVar)
-                                {
-                                    tn.Item = GetObjectvar(dmObjectVar);
-                                    tn.node_type = node_type.ObjectVariable;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (node.Children.Count != 0)
-            {
-                tn.sub_nodes = new OpcUaCfg.node[node.Children.Count];
-                int index = 0;
-                foreach (DataModelNode child in node.Children)
-                {
-                    tn.sub_nodes[index] = new OpcUaCfg.node();
-                    SaveTreeNode(child, tn.sub_nodes[index]);
-                    ++index;
-                }
-            }
-            else
-            {
-                tn.sub_nodes = new node[] { };
-            }
-        }
-
         private void SaveConnection(WpfControlLibrary.Client.ClientConnection connection, OpcUaCfg.connectionsConnection ct)
         {
             ct.ip_address = connection.IpAddress;
@@ -870,43 +521,6 @@ namespace ConfigOpcUa
             }
 
             ct.group = groups.ToArray();
-        }
-        private void SaveConfiguration(string fileName, WpfControlLibrary.ViewModel.OpcUaViewModel mvm)
-        {
-            Debug.Print($"SaveConfiguration {fileName}");
-
-            OpcUaCfg.OPCUAParametersType cfg = new OpcUaCfg.OPCUAParametersType();
-            cfg.settings = new OpcUaCfg.settings();
-            cfg.settings.local_ip = mvm.LocalIpAddress;
-            cfg.settings.multicast_ip = mvm.MulticastIpAddress;
-
-            cfg.server = new OPCUAParametersTypeServer();
-            cfg.server.encryption = false;
-
-            List<OpcUaCfg.node> nodes = new List<OpcUaCfg.node>();
-            foreach (WpfControlLibrary.DataModel.DataModelNode modelNode in mvm.DataModel)
-            {
-                OpcUaCfg.node tn = new OpcUaCfg.node();
-                SaveTreeNode(modelNode, tn);
-                nodes.Add(tn);
-            }
-            cfg.nodes = nodes.ToArray();
-
-            List<OpcUaCfg.connectionsConnection> connections = new List<OpcUaCfg.connectionsConnection>();
-            foreach (WpfControlLibrary.Client.ClientConnection connection in mvm.Connections)
-            {
-                OpcUaCfg.connectionsConnection ct = new OpcUaCfg.connectionsConnection();
-                SaveConnection(connection, ct);
-                connections.Add(ct);
-            }
-            cfg.connections = connections.ToArray();
-
-            XmlSerializer serializer = new XmlSerializer(typeof(OpcUaCfg.OPCUAParametersType));
-            using (TextWriter tw = new StreamWriter(fileName))
-            {
-                serializer.Serialize(tw, cfg);
-                Debug.Print("Po serialize");
-            }
         }
     }
 }

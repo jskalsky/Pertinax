@@ -61,6 +61,8 @@ namespace FileManager.ViewModel
         private RelayCommand _rightLink;
         private RelayCommand _rightRemove;
 
+        private RelayCommand _versions;
+
         private string _selectedServer;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -523,6 +525,11 @@ namespace FileManager.ViewModel
                 RightDirectory.Clear();
                 _rightPanel.RefreshDirectory();
             }
+        }
+
+        public RelayCommand OnVersions => _versions ?? (_versions = new RelayCommand(Versions));
+        private void Versions()
+        {
         }
     }
 }

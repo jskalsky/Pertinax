@@ -95,23 +95,12 @@
     <Compile Include="Client\ClientConnection.cs" />
     <Compile Include="Client\ClientVar.cs" />
     <Compile Include="Client\Group.cs" />
-    <Compile Include="DataModel\DataModelArrayVariable.cs" />
-    <Compile Include="DataModel\DataModelFolder.cs" />
-    <Compile Include="DataModel\DataModelNamespace.cs" />
-    <Compile Include="DataModel\DataModelNode.cs" />
-    <Compile Include="DataModel\DataModelObjectType.cs" />
-    <Compile Include="DataModel\DataModelObjectVariable.cs" />
-    <Compile Include="DataModel\DataModelSimpleVariable.cs" />
-    <Compile Include="DataModel\DefaultDataModel.cs" />
-    <Compile Include="DataModel\IdFactory.cs" />
     <Compile Include="Exceptions\OpcUaException.cs" />
     <Compile Include="ImportedItem.cs" />
     <Compile Include="Model\DefaultDataModel.cs" />
-    <Compile Include="Model\ModFlagNodeFlag.cs" />
-    <Compile Include="Model\ModFlagNodeVariable.cs" />
-    <Compile Include="Model\ModFlagsTree.cs" />
-    <Compile Include="Model\ModFlagNode.cs" />
     <Compile Include="Model\ModBaseVariableNode.cs" />
+    <Compile Include="Model\ModFlag.cs" />
+    <Compile Include="Model\ModFlagsCollection.cs" />
     <Compile Include="Model\ModNodeClientGroup.cs" />
     <Compile Include="Model\ModNodeClient.cs" />
     <Compile Include="Model\ModNode.cs" />
@@ -136,9 +125,6 @@
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\StatusMsg.cs" />
     <Compile Include="ViewModel\Variable.cs" />
-    <Compile Include="DataModel\NodeIdBase.cs" />
-    <Compile Include="DataModel\NodeIdNumeric.cs" />
-    <Compile Include="DataModel\NodeIdString.cs" />
     <Compile Include="ViewModel\VmFlagNodeFlag.cs" />
     <Compile Include="View\PortDialog.xaml.cs">
       <DependentUpon>PortDialog.xaml</DependentUpon>
@@ -150,11 +136,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ViewModelPorts.cs" />
-    <Compile Include="ViewModel\AddVariableViewModel.cs" />
     <Compile Include="ViewModel\DataModelManagerViewModel.cs" />
     <Compile Include="ViewModel\OpcUaViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
-    <Compile Include="ViewModel\ViewModelFlags.cs" />
     <Compile Include="ViewModel\VmNodeArrayVariable.cs" />
     <Compile Include="ViewModel\VmNodeClient.cs" />
     <Compile Include="ViewModel\VmNodeClientGroup.cs" />
@@ -168,29 +152,16 @@
     <Compile Include="ViewModel\VmNodeSimpleVariable.cs" />
     <Compile Include="ViewModel\VmNodeVariable.cs" />
     <Compile Include="ViewModel\VmNodeWithNodeId.cs" />
-    <Compile Include="View\DataModelManager.xaml.cs">
-      <DependentUpon>DataModelManager.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\DialogAddVariable.xaml.cs">
-      <DependentUpon>DialogAddVariable.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\FormControl.xaml.cs">
       <DependentUpon>FormControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\OpcUaMainWindow.xaml.cs">
-      <DependentUpon>OpcUaMainWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\VariableProperties.xaml.cs">
       <DependentUpon>VariableProperties.xaml</DependentUpon>
     </Compile>
     <Page Include="IpAddressBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\DataModelManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,14 +185,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\PortDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\DialogAddVariable.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\OpcUaMainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -272,6 +235,13 @@
   <ItemGroup>
     <Resource Include="Icons\ComplexType_12905.png" />
     <Resource Include="Icons\WindowsGroups_7309.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Properties\DesignTimeResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

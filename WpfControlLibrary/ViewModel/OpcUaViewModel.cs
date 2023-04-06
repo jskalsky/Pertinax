@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfControlLibrary.DataModel;
 using WpfControlLibrary.Client;
 using System.Windows;
 using System.Diagnostics;
@@ -55,11 +54,8 @@ namespace WpfControlLibrary.ViewModel
         private int _connectionNrVars;
         public OpcUaViewModel()
         {
-            SelectedNode = null;
-            DataModel = new ObservableCollection<DataModelNode>();
             Connections = new ObservableCollection<ClientConnection>();
             Status = new ObservableCollection<StatusMsg>();
-            ObjectTypes = new List<DataModelObjectType>();
             MulticastIpAddress = "224.0.0.22";
             LocalIpAddress = "10.10.13.252";
             SelectedBasicType = _basicTypes[0];
@@ -75,11 +71,8 @@ namespace WpfControlLibrary.ViewModel
             _instance = this;
         }
 
-        public DataModelNode SelectedNode { get; set; }
-        public ObservableCollection<DataModelNode> DataModel { get; }
         public ObservableCollection<ClientConnection> Connections { get; }
         public ObservableCollection<StatusMsg> Status { get; }
-        public List<DataModelObjectType> ObjectTypes { get; }
         public object SelectedConnectionObject { get; set; }
         public ClientVar SelectedClientVar { get; set; }
 

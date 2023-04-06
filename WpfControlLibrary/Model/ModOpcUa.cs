@@ -231,15 +231,17 @@ namespace WpfControlLibrary.Model
                 tn.sub_nodes = new node[] { };
             }
         }
-        private void LoadNode(ModNode parent, node n, ref int nrErrors)
+        private void LoadNode(ModNode parent, node n, string path, ref int nrErrors)
         {
             Debug.Print($"LoadNode {n.node_type}, parent= {parent}");
+            string pathPart = string.Empty;
             ModNode modNode = null;
             if (n.Item is nodeFolder folder)
             {
                 Debug.Print($"LoadNode FOLDER= {folder.name}, {folder.id}");
                 ModNodeId nodeId = ModNodeId.GetModNodeId(folder.id);
                 modNode = new ModNodeFolder(folder.name, nodeId);
+                pathPart = folder.name;
             }
             else
             {
@@ -247,22 +249,27 @@ namespace WpfControlLibrary.Model
                 {
                     Debug.Print($"LoadNode NS= {nodeNamespace.index}");
                     modNode = new ModNodeNs($"Ns{nodeNamespace.index}", nodeNamespace.index);
+                    pathPart = modNode.Name;
                 }
                 else
                 {
                     if (n.Item is nodeSimple_var simpleVar)
                     {
                         Debug.Print($"LoadNode SIMPLE= {simpleVar.name}");
-                        modNode = new ModNodeVariable(simpleVar.name, ModNodeId.GetModNodeId(simpleVar.id),
+                        ModNodeVariable modVar = new ModNodeVariable(simpleVar.name, ModNodeId.GetModNodeId(simpleVar.id),
                             simpleVar.basic_type, simpleVar.access);
+                        modNode = modVar;
+                        modVar.CreateFlags(path);
                     }
                     else
                     {
                         if (n.Item is nodeArray_var arrayVar)
                         {
                             Debug.Print($"LoadNode ARRAY= {arrayVar.name}");
-                            modNode = new ModNodeArrayVariable(arrayVar.name, ModNodeId.GetModNodeId(arrayVar.id),
+                            ModNodeArrayVariable modArray = new ModNodeArrayVariable(arrayVar.name, ModNodeId.GetModNodeId(arrayVar.id),
                                 arrayVar.basic_type, arrayVar.access, (int)arrayVar.length);
+                            modNode = modArray;
+                            modArray.CreateFlags(path);
                         }
                         else
                         {
@@ -297,7 +304,7 @@ namespace WpfControlLibrary.Model
                 Debug.Print($"101, {n.sub_nodes}, {n.sub_nodes.Length}");
                 foreach (node child in n.sub_nodes)
                 {
-                    LoadNode(modNode, child, ref nrErrors);
+                    LoadNode(modNode, child, path + $".{pathPart}", ref nrErrors);
                 }
             }
         }
@@ -365,6 +372,7 @@ namespace WpfControlLibrary.Model
         }
         public void ReadXml(string fileName)
         {
+            _nodes.Clear();
             if (File.Exists(fileName))
             {
                 Debug.Print($"Existed");
@@ -374,14 +382,16 @@ namespace WpfControlLibrary.Model
                     OPCUAParametersType cfg = (OPCUAParametersType)serializer.Deserialize(tr);
                     LocalIpAddress = cfg.settings.local_ip;
                     MulticastIpAddress = cfg.settings.multicast_ip;
+                    string path = string.Empty;
                     if (cfg.server != null)
                     {
                         ModNodeServer modServer = new ModNodeServer("Server", cfg.server.encryption);
                         _nodes.Add(modServer);
                         int nrErrors = 0;
+                        path = modServer.Name;
                         foreach (node n in cfg.nodes)
                         {
-                            LoadNode(modServer, n, ref nrErrors);
+                            LoadNode(modServer, n, path, ref nrErrors);
                         }
                     }
                     if (cfg.client != null)

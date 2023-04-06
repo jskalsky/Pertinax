@@ -22,8 +22,8 @@ namespace BupLst
         {
             try
             {
-                string bup1 = "TNAM_1.bup";
-                string bup2 = "TNAM_2.bup";
+                string bup1 = "GLAND_1.bup";
+                string bup2 = "GLAND_stažený.bup";
                 BupReader.Net = Net1;
                 BupReader.Pars = Pars1;
                 BupReader.FbPars = FbPars1;

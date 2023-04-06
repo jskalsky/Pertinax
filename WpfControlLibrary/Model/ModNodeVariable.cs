@@ -12,5 +12,36 @@ namespace WpfControlLibrary.Model
         {
 
         }
+        public override void CreateFlags(string path)
+        {
+            if (ModOpcUa.PtxBasicTypes.TryGetValue(ModOpcUa.GetBasicType(Type), out char basicTypeChar))
+            {
+                string outFlag = $"O.OPCUA.{basicTypeChar}.{path}.{Name}";
+                string inFlag = $"I.OPCUA.{basicTypeChar}.{path}.{Name}";
+                if (Access == access.ReadWrite)
+                {
+                    _flags.Add(inFlag);
+                    _flags.Add(outFlag);
+                    ModFlagsCollection.ModFlags[inFlag.ToUpperInvariant()] = new ModFlag(inFlag, false);
+                    ModFlagsCollection.ModFlags[outFlag.ToUpperInvariant()] = new ModFlag(outFlag, false);
+                }
+                else
+                {
+                    if (Access == access.Read)
+                    {
+                        _flags.Add(outFlag);
+                        ModFlagsCollection.ModFlags[outFlag.ToUpperInvariant()] = new ModFlag(outFlag, false);
+                    }
+                    else
+                    {
+                        if (Access == access.Write)
+                        {
+                            _flags.Add(inFlag);
+                            ModFlagsCollection.ModFlags[inFlag.ToUpperInvariant()] = new ModFlag(inFlag, false);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

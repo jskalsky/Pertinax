@@ -63,12 +63,12 @@ namespace WpfControlLibrary.View
 
         private void TreePorts_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-/*            Debug.Print($"ItemChanged {sender}, {e.NewValue}");
-            if (e.NewValue is VmFlagNode pn)
+            Debug.Print($"ItemChanged {sender}, {e.NewValue}");
+            if (e.NewValue is VmNodeSimpleVariable simpleVar)
             {
-                Debug.Print($"pn Flags= {pn.Flags.Count}");
+                Debug.Print($"pn Flags= {simpleVar.Flags.Count}");
                 Flags.Items.Clear();
-                foreach (string s in pn.Flags)
+                foreach (string s in simpleVar.Flags)
                 {
                     Flags.Items.Add(s);
                 }
@@ -77,7 +77,7 @@ namespace WpfControlLibrary.View
                 {
                     Flags.SelectedIndex = 0;
                 }
-            }*/
+            }
 
             e.Handled = true;
         }
