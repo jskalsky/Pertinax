@@ -417,6 +417,7 @@ namespace FileManager.ViewModel
                 {
                     string sourceFilename = _leftPanel.MakeFilename(_leftSelectedDir);
                     string destinationFilename = _rightPanel.MakeFilename(_leftSelectedDir);
+                    Debug.Print($"Left copy source= {sourceFilename}, dest= {destinationFilename}");
                     byte[] fileInBytes = _leftPanel.Upload(sourceFilename);
                     _rightPanel.Download(destinationFilename, fileInBytes);
                     RightDirectory.Clear();

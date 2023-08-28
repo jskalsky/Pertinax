@@ -22,8 +22,8 @@ namespace BupLst
         {
             try
             {
-                string bup1 = "GLAND_1.bup";
-                string bup2 = "GLAND_stažený.bup";
+                string bup1 = "Filtryold.bup";
+                string bup2 = "Filtry.bup";
                 BupReader.Net = Net1;
                 BupReader.Pars = Pars1;
                 BupReader.FbPars = FbPars1;
@@ -54,10 +54,13 @@ namespace BupLst
                 }
                 for (int i = 0; i < FbOrder1.Count; ++i)
                 {
-                    if (FbOrder1[i] != FbOrder2[i])
+                    if(i < FbOrder2.Count)
                     {
-                        Console.WriteLine($"Different block order {FbOrder1[i]}, {FbOrder2[i]}");
-                        ++errors;
+                        if (FbOrder1[i] != FbOrder2[i])
+                        {
+                            Console.WriteLine($"Different block order {FbOrder1[i]}, {FbOrder2[i]}");
+                            ++errors;
+                        }
                     }
                 }
                 foreach (KeyValuePair<ushort, List<string>> pair in Net1)

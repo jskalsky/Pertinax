@@ -186,6 +186,7 @@ namespace FileManager.Model
 
         public async void DownloadFile(string ip, string destinationName, byte[] fileInBytes, int rxTimeout = 5000)
         {
+            Debug.Print($"DownloadFile {ip}, {destinationName}, {fileInBytes.Length}");
             TcpClient tcpClient = new TcpClient();
             try
             {
